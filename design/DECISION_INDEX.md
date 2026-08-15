@@ -9,7 +9,8 @@
 | DR-02-S03 | Mobile, Edge, Quantization, and Distillation Direction | APPROVED | 2026-08-15 | [`approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md`](approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md) |
 | DR-03 | Scope, Refusal, and Sensitive-Use Policy | APPROVED | 2026-08-15 | [`approved/DR-03-scope-refusal-and-sensitive-use-policy.md`](approved/DR-03-scope-refusal-and-sensitive-use-policy.md) |
 | DR-04 | Canon, Reference, and Versification Model | APPROVED | 2026-08-15 | [`approved/DR-04-canon-reference-and-versification-model.md`](approved/DR-04-canon-reference-and-versification-model.md) |
+| DR-05 | Textual-History and Provenance Graph | APPROVED | 2026-08-15 | [`approved/DR-05-textual-history-and-provenance-graph.md`](approved/DR-05-textual-history-and-provenance-graph.md) |
 
 ## Next review
 
-`DR-05 — Textual-History and Provenance Graph`
+`DR-06 — Translation Nuance Core`
