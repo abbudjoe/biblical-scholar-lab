@@ -28,5 +28,6 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 - `DR-03` — Scope, Refusal, and Sensitive-Use Policy
 - `DR-04` — Canon, Reference, and Versification Model
 - `DR-05` — Textual-History and Provenance Graph
+- `DR-06` — Translation Nuance Core, including the approved A0–A6 architecture-extension ladder and profiling-gated compute-kernel policy
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.

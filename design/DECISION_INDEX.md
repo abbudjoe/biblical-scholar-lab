@@ -10,7 +10,8 @@
 | DR-03 | Scope, Refusal, and Sensitive-Use Policy | APPROVED | 2026-08-15 | [`approved/DR-03-scope-refusal-and-sensitive-use-policy.md`](approved/DR-03-scope-refusal-and-sensitive-use-policy.md) |
 | DR-04 | Canon, Reference, and Versification Model | APPROVED | 2026-08-15 | [`approved/DR-04-canon-reference-and-versification-model.md`](approved/DR-04-canon-reference-and-versification-model.md) |
 | DR-05 | Textual-History and Provenance Graph | APPROVED | 2026-08-15 | [`approved/DR-05-textual-history-and-provenance-graph.md`](approved/DR-05-textual-history-and-provenance-graph.md) |
+| DR-06 | Translation Nuance Core | APPROVED | 2026-08-15 | [`approved/DR-06-translation-nuance-core.md`](approved/DR-06-translation-nuance-core.md) |
 
 ## Next review
 
-`DR-06 — Translation Nuance Core`
+`DR-07 — Linguistic Representation`
