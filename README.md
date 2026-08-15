@@ -26,5 +26,6 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 - `DR-01` — Version-One Product Contract
 - `DR-02` revision 2 — Scholarly Epistemology and Methodology, including the approved architecture-contract schedule, model-capacity and family-bake-off policy, Gemma budget posture, and mobile/quantization direction
 - `DR-03` — Scope, Refusal, and Sensitive-Use Policy
+- `DR-04` — Canon, Reference, and Versification Model
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.
