@@ -1,9 +1,11 @@
 # DR-02 — Scholarly Epistemology and Methodology
 
-**Status:** APPROVED  
-**Approved by:** Joseph Abbud  
-**Approval date:** 2026-08-15  
-**Supersedes:** none
+**Status:** AMENDED — CURRENT
+**Approved by:** Joseph Abbud
+**Original approval date:** 2026-08-15
+**Amendment approval date:** 2026-08-15
+**Current revision:** 2
+**Supersedes:** revision 1 approved at `b989478489ecb76732ffdd52051f789849246e36`
 
 ## 1. Governing principle
 
@@ -718,7 +720,35 @@ BLOCKED_REQUIRES_DESIGN_REVIEW
 
 Sol may propose alternatives and explain their engineering implications, but may not implement a material design change before ChatGPT designs it and the project owner approves it.
 
-### 23.5 Conformance declaration
+### 23.5 Architecture-contract schedule
+
+The project will define consequential logical architecture and contracts before Sol receives the corresponding implementation task. The minimum design sequence is:
+
+| Review | Binding architecture and contract decisions |
+|---|---|
+| `DR-04` | Canon-independent passage identity, localized references, versification mappings, aliases, and mapping uncertainty |
+| `DR-05` | Textual-history and provenance graph: entities, relationships, lineage, immutability, and source-of-truth rules |
+| `DR-06` | Translation Nuance Core: many-to-many span alignment, cause taxonomy, translation genealogy, competing diagnoses, and confidence |
+| `DR-07` | Linguistic representation for Greek, Hebrew, Aramaic, and later supported languages |
+| `DR-08` | Ancient-version and apparatus roles, retroversion limits, and training-versus-retrieval boundaries |
+| `DR-09` | Scholarship, bibliographic identity, claim ledger, evidence records, citation entailment, and quotation provenance |
+| `DR-10` | Rights partitions, storage boundaries, access controls, lineage separation, and release constraints |
+| `DR-13` | Source, question, answer, quotation, and retrieval language identities and multilingual retrieval contracts |
+| `DR-14` | Page, region, OCR span, layout, edition resolution, image provenance, and user-upload contracts |
+| `DR-15` | Evidence-pack structure, token budgets, ordering, truncation, and citation-survival rules |
+| `DR-16` | Runtime scholar harness, exact tool interfaces, retrieval planner, evidence bundles, claim verification, answer contract, and audit trace |
+| `DR-17` | Corpus manifests, grouping, deduplication, sampling identity, and reproducible materialization |
+| `DR-20`–`DR-22` | Benchmark cases, scoring, run identity, logs, reports, human review, and baseline comparison contracts |
+| `DR-23` | Experiment, model, dataset, stage, checkpoint, metric, artifact, and backend-adapter contracts |
+| `DR-25` | Campaign envelopes, immutable run identity, Luna permissions, retries, costs, shutdown, and returned evidence |
+| `DR-28` | Integrated Logical Architecture and Contract Registry consolidating all component contracts before production implementation |
+| `DR-29` | Mobile, edge, quantization, distillation, local OCR, device capability tiers, and cloud-fallback architecture |
+
+`DR-28` must establish the integrated source-of-truth topology, derived and rebuildable indexes, identifier namespaces, cross-component lineage rules, public/private/restricted storage boundaries, canonical serializations, versioning and migration policy, tool and service interfaces, validation boundaries, failure semantics, audit events, report schemas, performance requirements, and compatibility rules.
+
+A component may be implemented before `DR-28` only when its own approved design fully defines its external contract and the implementation cannot prejudice unresolved integrated-architecture decisions. Production integration of the complete system remains blocked until `DR-28` is approved.
+
+### 23.6 Conformance declaration
 
 Every Sol handoff implementing DR-02 must state:
 
@@ -785,6 +815,16 @@ Approval of DR-02 freezes these principles:
 18. User corrections trigger source reinspection rather than defensive consistency.
 19. Consequential internal architecture is designed and approved before Sol implements it.
 20. Sol owns implementation correctness and design conformance, not experiment or architecture authority.
+21. Component-level architecture contracts are defined in their designated reviews and consolidated in `DR-28` before complete-system integration.
+22. No compact model is presumed sufficient; capacity is measured with the same tools, evidence, harness, and benchmark.
+23. The primary system assumption is model-plus-tools rather than a self-contained model expected to memorize the scholarly corpus.
+24. Capacity evaluation includes compact candidates, a larger open-weight comparator, a frontier ceiling where permitted, and qualified human experts on a representative subset.
+25. No model family is selected in advance; Qwen, Gemma, and Ministral compact families enter a current-release, project-specific bake-off subject to `DR-11` verification.
+26. Gemma approximately 12B is a full compact bake-off candidate; Gemma approximately 31B is initially an inference-only capacity comparator.
+27. Adapting a 31B model requires a separate capacity-value design gate and blinded expert confirmation.
+28. The Gemma bake-off receives an incremental planning allocation of $300–$700 within the existing $3,500 active cap and $500 reserve.
+29. Quantized mobile performance must be benchmarked; it may not be inferred from weight size or generic scores.
+30. The provisional mobile architecture favors a 2B–4B student, native OCR, deterministic tools, compact local retrieval, and remote escalation rather than promising the full compact multimodal model on current phones.
 
 ## 26. Deferred decisions
 
@@ -801,10 +841,252 @@ DR-02 does not yet select:
 - exact claim-ledger serialization;
 - answer-interface visualization;
 - benchmark case count;
-- exact human-review panel.
+- exact human-review panel;
+- final model family, official repository names, and immutable revisions;
+- final bake-off weights, confidence treatment, and numerical promotion thresholds;
+- whether any 31B adaptation is warranted;
+- quantization method, student-model family, and supported mobile devices.
 
 These are deferred because they require dedicated design review, evidence, or both—not because Sol has unilateral discretion to decide them.
 
 ## 27. Approval statement
 
 > **Biblical Scholar Lab will use a typed, source-aware epistemic model in which every important claim is associated with an appropriate method, relevant evidence, an epistemic status, and material counterevidence. The assistant will distinguish textual attestation, textual-critical judgment, philological analysis, translation diagnosis, historical inference, literary interpretation, reception history, theology, confessional interpretation, and application. It will make calibrated best-supported assessments without false certainty or false balance; evaluate sources according to their fitness for the claim; preserve Jewish and earlier textual contexts before later reception; explicitly label methodological and theological perspectives; treat scholarly consensus as a separately evidenced claim; and provide inspectable citations and provenance without exposing hidden chain-of-thought. Consequential logical architecture, schemas, storage and retrieval contracts, validation behavior, and reporting contracts will be designed and approved before implementation. GPT-5.6 Sol will implement those approved designs and remain responsible for code correctness, testing, execution, reproducibility, and conformance, while escalating any material design decision for review.**
+
+---
+
+## Appendix A — Model-capacity and system-decomposition decisions
+
+This appendix is binding and forms part of the current approved DR-02 contract.
+
+### A.1 Capacity is an empirical question
+
+No compact model is presumed sufficient merely because it can execute the runtime or accept the context. The project must test whether a compact model can reliably perform the claim typing, source-role discrimination, translation-causal diagnosis, evidence synthesis, calibration, and multilingual/multimodal behavior required by this design.
+
+The primary architectural assumption is a **model-plus-tools scholarly system**, not a self-contained model expected to memorize every text, witness, apparatus, translation, and scholarly source.
+
+Responsibility is distributed as follows:
+
+| Capability | Primary system owner |
+|---|---|
+| Exact passage wording and edition identity | Deterministic passage and edition tools |
+| Morphology, syntax, and licensed linguistic annotations | Structured linguistic resources |
+| Witness, edition, and textual-history identity | Textual-history graph |
+| Translation genealogy and causal hypotheses | Translation Nuance Core |
+| Modern scholarship | Retrieval library |
+| Canon and versification mapping | Reference service |
+| Exact source spans and citation verification | Citation resolver |
+| Claim-to-evidence mapping | Evidence ledger |
+| Comparison, explanation, tool planning, and calibrated synthesis | Language model plus post-training |
+| Page segmentation and transcription | Multimodal model and deterministic resolution pipeline |
+
+A compact model succeeds if it can use these components correctly and produce a reliable, inspectable answer. It need not internalize the complete knowledge base in its weights.
+
+### A.2 Required capacity comparison
+
+Before committing the main adaptation budget, the same scholar harness, evidence packs, tools, prompts, decoding policy, and benchmark must compare:
+
+1. surviving compact candidate models;
+2. at least one materially larger open-weight capacity comparator;
+3. a strong current frontier-model ceiling, where permitted;
+4. qualified human experts on a representative subset.
+
+The comparison must isolate at least:
+
+- Translation Nuance causal diagnosis;
+- Greek and Hebrew analysis;
+- textual-variant versus translation-choice discrimination;
+- multi-source synthesis;
+- evidence-ledger completeness;
+- citation entailment;
+- source-role compatibility;
+- consensus restraint;
+- tool selection;
+- long-context evidence use;
+- multilingual response quality;
+- printed-page interpretation;
+- calibration under incomplete evidence.
+
+### A.3 Acceptable capacity outcomes
+
+The project explicitly permits four outcomes:
+
+- **Compact model sufficient:** use it as the primary adapted model.
+- **Tiered system:** use the compact model for routine work and a larger model for designated complex cases or second-pass verification.
+- **Larger model required:** revise the primary model size when the larger model produces material, expert-validated gains that justify cost.
+- **Harness/data limitation:** if neither compact nor larger models succeed, improve structured evidence, training tasks, retrieval, annotation, or architecture rather than attributing every failure to parameter count.
+
+A tiered or modular architecture is an acceptable product result and is not treated as failure of the compact-model research track.
+
+### A.4 Capability claims
+
+Version-one capability claims must follow measured results. The project may not describe a compact model as professional-scholar grade across all tasks unless the private benchmark and human evaluation support that claim.
+
+## Appendix B — Model-family bake-off and budget decisions
+
+This appendix records the approved model-selection posture. Exact repository names and immutable revisions remain subject to a current official-release audit in `DR-11` immediately before implementation.
+
+### B.1 No family is preselected
+
+Qwen is a leading candidate, not the predetermined winner. Model family is an experimental variable because generic math, coding, MMLU, OCR, or VQA rankings do not establish superiority on ancient-language philology, Translation Nuance, source-role discrimination, citation-grounded scholarship, long-canon reasoning, or printed Bible-page study.
+
+### B.2 Provisional compact candidates
+
+Subject to official availability, licensing, and technical verification at `DR-11`, the initial compact candidate families are:
+
+- Qwen 3.5 approximately 9B, with matched Base and post-trained checkpoints where available;
+- Gemma 4 approximately 12B, with matched pretrained and instruction-tuned checkpoints where available;
+- Ministral 3 approximately 8B, with Base and suitable post-trained variants where available.
+
+A specialized multilingual control may be included only when it adds diagnostic value within the approved budget.
+
+Community-pruned, layer-reduced, unofficially renamed, or otherwise noncanonical derivatives may not substitute for an official intact foundation checkpoint in the primary bake-off.
+
+### B.3 Provisional larger comparators
+
+The initial larger-capacity comparison should include:
+
+- Gemma 4 approximately 31B as the preferred clean Base/instruction-family comparator where officially available;
+- the latest officially released dense Qwen model in the approximately 27B class that passes the `DR-11` release audit;
+- a current frontier ceiling where permitted and budgeted.
+
+No unreleased, preview-only, inaccessible, or unverified model name is frozen by this document.
+
+### B.4 Bake-off stages
+
+The bake-off proceeds in stages:
+
+1. **No-training screen:** tokenizer efficiency, closed-book, fixed-evidence, tools, retrieval, long-context, page-image, memory, latency, and cost.
+2. **Compact adaptation smoke:** an equivalent bounded continued-pretraining sample for surviving Base candidates, with retention and multimodal checks.
+3. **Compact scholarly post-training smoke:** matched SFT/retrieval-aware examples and a bounded preference subset for surviving product candidates.
+4. **Capacity comparison:** larger models receive the same inference and harness evaluation before any large-model adaptation is authorized.
+
+The project must not conduct a fully symmetrical expensive training program merely for aesthetic fairness. Each stage exists to answer a decision question.
+
+### B.5 Approved selection priorities
+
+The model-selection design must give greatest weight to project-specific behavior. The approved provisional weighting to be reviewed and formally frozen in `DR-11` and the benchmark reviews is:
+
+| Category | Provisional weight |
+|---|---:|
+| Translation Nuance and original-language analysis | 30% |
+| Evidence use, citation fidelity, tool selection, and source distinctions | 15% |
+| Ancient- and modern-language capability | 15% |
+| Printed-page and document understanding | 10% |
+| Full-book and full-New-Testament long-context performance | 10% |
+| Adaptation stability and general/multimodal retention | 10% |
+| Training, inference, quantization, and deployment cost | 10% |
+
+Hard failures—including systematic source confusion, material citation fabrication, catastrophic multimodal regression, unmanageable training instability, or incompatible rights—override aggregate score.
+
+### B.6 Gemma 12B and 31B treatment
+
+The approved initial Gemma treatment is:
+
+- **Gemma approximately 12B:** full compact-candidate evaluation, including Base/instruction baselines, tokenizer and script analysis, multimodal and long-context tests, a bounded 20–50M-token full-parameter CPT smoke where technically feasible, and a small matched scholarly SFT or PEFT test.
+- **Gemma approximately 31B:** inference-only capacity comparator initially, including closed-book, fixed-evidence, tools, retrieval, Translation Nuance, difficult synthesis, long-context, page-image, latency, and cost measurements.
+
+Full-parameter or parameter-efficient 31B adaptation is not initially authorized.
+
+### B.7 Capacity-value gate for 31B adaptation
+
+A 31B adaptation experiment requires a separate approved design after the inference-only comparison. The design must demonstrate a material capability gap that is relevant to the product and survives blinded expert review.
+
+The current provisional trigger is either:
+
+- at least an eight-point absolute improvement on a preregistered capacity-sensitive subset; or
+- at least a 50% reduction in designated epistemic hard failures;
+
+plus evidence that the gain is not merely verbosity, citation-format imitation, or benchmark leakage. The final numerical gate must be reconciled with the scale and uncertainty model approved in the benchmark reviews.
+
+### B.8 Approved incremental budget posture
+
+The approved incremental budget for adding Gemma 12B as a full compact candidate and Gemma 31B as an inference-only comparator is:
+
+```text
+$300–$700 in additional Lambda compute
+```
+
+This budget includes baseline inference, compact adaptation smoke, small post-training evaluation, environment setup, and a bounded rerun reserve. It does not authorize 31B adaptation.
+
+The program retains:
+
+```text
+Operational target: approximately $2,800–$3,200 after adding the Gemma bake-off
+Active hard cap: $3,500
+Untouched reserve: $500
+```
+
+Model-selection spending is part of the active program budget, not an automatic addition on top of every later main run. Later stages must be reallocated according to the winning model and measured throughput.
+
+These figures are planning allocations, not provider price quotes. Current instance prices and projected campaign cost must be reverified under `DR-25` immediately before any billable run is approved.
+
+## Appendix C — Mobile, edge, quantization, and distillation posture
+
+This appendix records approved direction, not a version-one mobile deployment guarantee.
+
+### C.1 Quantization is expected but must be evaluated
+
+A fine-tuned compact checkpoint may be quantized after training. The project must preserve an unquantized master checkpoint and evaluate quantized variants on the project benchmark rather than assuming that generic quality is preserved.
+
+Quantization evaluation must cover at least:
+
+- original-script fidelity;
+- morphology and syntax tasks;
+- Translation Nuance diagnosis;
+- citation and tool-call formatting;
+- multilingual output;
+- calibration and refusal behavior;
+- multimodal/page behavior where included.
+
+Uniform low-bit quantization is not presumed optimal. Mixed precision for embeddings, output heads, norms, sensitive projections, vision components, and cache state may be evaluated.
+
+### C.2 Device posture
+
+A full approximately 9B multimodal model is not a promised version-one target for an iPhone-class device. It may be tested as a constrained engineering demonstration on sufficiently capable hardware, but local product claims require device-specific evidence for memory, latency, battery, thermal behavior, context length, and accuracy.
+
+A modern high-memory Pixel-class device is a plausible experimental target for a short-context, aggressively quantized, text-focused compact model, subject to runtime and kernel support. It is not assumed product-ready.
+
+Apple Intelligence and other operating-system foundation models are separate providers; their presence does not automatically host, accelerate, or grant memory to the project's custom checkpoint.
+
+### C.3 Preferred mobile architecture
+
+The provisional preferred mobile architecture is:
+
+```text
+2B–4B domain-adapted or distilled student
+    + native device OCR/layout services
+    + deterministic Bible and reference tools
+    + compact local retrieval
+    + remote 9B/12B/31B escalation for difficult Scholarly-mode work
+```
+
+The mobile student should learn from approved scholarly SFT, Translation Nuance tasks, verified tool-use traces, and carefully controlled distillation from stronger systems. It need not memorize the corpus because exact texts and structured evidence can remain local or retrievable.
+
+### C.4 Dedicated review
+
+`DR-29 — Mobile, Edge, Quantization, and Distillation Architecture` will define:
+
+- capability tiers and supported devices;
+- student-model candidate families;
+- local OCR and page pipeline;
+- quantization and calibration methods;
+- memory and context budgets;
+- privacy and local-data boundaries;
+- battery and thermal limits;
+- offline claims;
+- cloud-fallback policy;
+- device benchmark matrix.
+
+No mobile support claim may precede `DR-29` and device-specific measurement.
+
+## Amendment approval statement
+
+> **DR-02 is amended to establish that consequential logical architecture and external contracts will be designed and approved before implementation; Sol owns implementation correctness and conformance rather than architecture or experiment authority. Model capacity is an empirical system-level question, and no compact model is presumed sufficient. Biblical Scholar Lab will compare multiple official compact model families against larger open-weight and frontier/human capacity references using the same evidence-centered harness. Gemma approximately 12B is approved as a full compact bake-off candidate, while Gemma approximately 31B is initially an inference-only capacity comparator under an incremental $300–$700 compute allocation and a separate capacity-value gate before adaptation. Mobile deployment remains an evidence-gated later track centered on quantization evaluation, a smaller distilled student, native OCR, deterministic tools, local retrieval, and cloud escalation rather than a promise that the full compact multimodal model will run well on current phones.**
+
+## Amendment history
+
+| Revision | Date | Summary | Approval |
+|---|---|---|---|
+| 1 | 2026-08-15 | Original scholarly epistemology and methodology contract | Joseph Abbud |
+| 2 | 2026-08-15 | Added architecture-contract schedule, model-capacity gate, multi-family bake-off and Gemma budget, and mobile/quantization posture | Joseph Abbud |
