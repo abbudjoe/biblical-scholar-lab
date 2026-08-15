@@ -11,7 +11,8 @@
 | DR-04 | Canon, Reference, and Versification Model | APPROVED | 2026-08-15 | [`approved/DR-04-canon-reference-and-versification-model.md`](approved/DR-04-canon-reference-and-versification-model.md) |
 | DR-05 | Textual-History and Provenance Graph | APPROVED | 2026-08-15 | [`approved/DR-05-textual-history-and-provenance-graph.md`](approved/DR-05-textual-history-and-provenance-graph.md) |
 | DR-06 | Translation Nuance Core | APPROVED | 2026-08-15 | [`approved/DR-06-translation-nuance-core.md`](approved/DR-06-translation-nuance-core.md) |
+| DR-07 | Linguistic Representation | APPROVED | 2026-08-15 | [`approved/DR-07-linguistic-representation.md`](approved/DR-07-linguistic-representation.md) |
 
 ## Next review
 
-`DR-07 — Linguistic Representation`
+`DR-08 — Ancient Versions and Apparatus Policy`

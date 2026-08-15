@@ -29,5 +29,6 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 - `DR-04` — Canon, Reference, and Versification Model
 - `DR-05` — Textual-History and Provenance Graph
 - `DR-06` — Translation Nuance Core, including the approved A0–A6 architecture-extension ladder and profiling-gated compute-kernel policy
+- `DR-07` — Linguistic Representation, including stand-off multilingual analysis, explicit source-text views and coordinate contracts, source-native annotation preservation, language-specific Greek/Hebrew/Aramaic profiles, and word-study-fallacy guardrails
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.
