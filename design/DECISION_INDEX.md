@@ -7,7 +7,8 @@
 | DR-02-S01 | Preimplementation Architecture Contract Schedule | APPROVED | 2026-08-15 | [`approved/DR-02-S01-preimplementation-architecture-contract-schedule.md`](approved/DR-02-S01-preimplementation-architecture-contract-schedule.md) |
 | DR-02-S02 | Model Capacity, Family Bake-Off, and Budget Policy | APPROVED | 2026-08-15 | [`approved/DR-02-S02-model-capacity-family-bakeoff-and-budget-policy.md`](approved/DR-02-S02-model-capacity-family-bakeoff-and-budget-policy.md) |
 | DR-02-S03 | Mobile, Edge, Quantization, and Distillation Direction | APPROVED | 2026-08-15 | [`approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md`](approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md) |
+| DR-03 | Scope, Refusal, and Sensitive-Use Policy | APPROVED | 2026-08-15 | [`approved/DR-03-scope-refusal-and-sensitive-use-policy.md`](approved/DR-03-scope-refusal-and-sensitive-use-policy.md) |
 
 ## Next review
 
-`DR-03 — Scope, Refusal, and Sensitive-Use Policy`
+`DR-04 — Canon, Reference, and Versification Model`
