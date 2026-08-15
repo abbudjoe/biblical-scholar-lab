@@ -46,6 +46,8 @@ Unapproved design changes executed: none
 
 Draft discussion in chat is not an implementation authorization. Material changes to an approved design require an amendment document or a new design review approved by the project owner.
 
+Approved supplemental decisions use the parent design ID plus an `Sxx` suffix. A supplement is binding within its stated scope, must be indexed, hashed, and committed, and may not silently contradict its parent. Any discovered conflict stops implementation for design review.
+
 ## Implementation boundary
 
 Approved design documents define what must be built, evaluated, or run. Consequential logical architecture, external contracts, storage and rights boundaries, retrieval semantics, validation behavior, reporting, benchmark identity, and experiment design are project-design decisions and must be approved before implementation.
