@@ -19,7 +19,8 @@
 | DR-12 | Translation Nuance Model Integration Architecture | APPROVED | 2026-08-16 | [`approved/DR-12-translation-nuance-model-integration-architecture.md`](approved/DR-12-translation-nuance-model-integration-architecture.md) |
 | DR-13 | Multilingual Architecture | APPROVED | 2026-08-16 | [`approved/DR-13-multilingual-architecture.md`](approved/DR-13-multilingual-architecture.md) |
 | DR-14 | Multimodal and Page-Understanding Architecture | APPROVED | 2026-08-16 | [`approved/DR-14-multimodal-and-page-understanding-architecture.md`](approved/DR-14-multimodal-and-page-understanding-architecture.md) |
+| DR-15 | Long-Context and Context-Composer Design | APPROVED | 2026-08-16 | [`approved/DR-15-long-context-and-context-composer-design.md`](approved/DR-15-long-context-and-context-composer-design.md) |
 
 ## Next review
 
-`DR-15 — Long-Context and Context-Composer Design`
+`DR-16 — Runtime Scholar Harness`
