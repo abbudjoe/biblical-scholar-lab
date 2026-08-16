@@ -17,7 +17,8 @@
 | DR-10 | Rights, Lineage, and Release Architecture | APPROVED | 2026-08-15 | [`approved/DR-10-rights-lineage-and-release-architecture.md`](approved/DR-10-rights-lineage-and-release-architecture.md) |
 | DR-11 | Foundation-Model Family and Component Architecture | APPROVED | 2026-08-15 | [`approved/DR-11-foundation-model-family-and-component-architecture.md`](approved/DR-11-foundation-model-family-and-component-architecture.md) |
 | DR-12 | Translation Nuance Model Integration Architecture | APPROVED | 2026-08-16 | [`approved/DR-12-translation-nuance-model-integration-architecture.md`](approved/DR-12-translation-nuance-model-integration-architecture.md) |
+| DR-13 | Multilingual Architecture | APPROVED | 2026-08-16 | [`approved/DR-13-multilingual-architecture.md`](approved/DR-13-multilingual-architecture.md) |
 
 ## Next review
 
-`DR-13 — Multilingual Architecture`
+`DR-14 — Multimodal and Page-Understanding Architecture`
