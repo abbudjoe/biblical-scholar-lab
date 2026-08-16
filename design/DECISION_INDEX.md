@@ -16,7 +16,8 @@
 | DR-09 | Scholarship and Citation Model | APPROVED | 2026-08-15 | [`approved/DR-09-scholarship-and-citation-model.md`](approved/DR-09-scholarship-and-citation-model.md) |
 | DR-10 | Rights, Lineage, and Release Architecture | APPROVED | 2026-08-15 | [`approved/DR-10-rights-lineage-and-release-architecture.md`](approved/DR-10-rights-lineage-and-release-architecture.md) |
 | DR-11 | Foundation-Model Family and Component Architecture | APPROVED | 2026-08-15 | [`approved/DR-11-foundation-model-family-and-component-architecture.md`](approved/DR-11-foundation-model-family-and-component-architecture.md) |
+| DR-12 | Translation Nuance Model Integration Architecture | APPROVED | 2026-08-16 | [`approved/DR-12-translation-nuance-model-integration-architecture.md`](approved/DR-12-translation-nuance-model-integration-architecture.md) |
 
 ## Next review
 
-`DR-12 — Translation Nuance Model Integration Architecture`
+`DR-13 — Multilingual Architecture`
