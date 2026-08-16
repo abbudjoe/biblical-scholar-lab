@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes the authoritative model-adaptation lineages, stage order, objective taxonomy, replay and capability-preservation requirements, checkpoint and evaluation policy, baseline and ablation matrix, stage-promotion gates, synthetic-data and teacher-use rules, and separation among continued pretraining, Translation Nuance mid-training, scholarly SFT, retrieval-aware SFT, preference optimization, distillation, and later architecture-extension experiments |
+| Approved change | Establishes the authoritative model-adaptation lineages, stage order, objective taxonomy, replay and capability-preservation requirements, checkpoint and evaluation policy, baseline and ablation matrix, stage-promotion gates, synthetic-data and teacher-use rules, and separation among continued pretraining, Translation Nuance mid-training, scholarly SFT, retrieval-aware SFT, preference optimization, distillation, and later architecture-extension experiments |
 
 ## 1. Purpose
 
