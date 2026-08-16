@@ -22,7 +22,8 @@
 | DR-15 | Long-Context and Context-Composer Design | APPROVED | 2026-08-16 | [`approved/DR-15-long-context-and-context-composer-design.md`](approved/DR-15-long-context-and-context-composer-design.md) |
 | DR-16 | Runtime Scholar Harness | APPROVED | 2026-08-16 | [`approved/DR-16-runtime-scholar-harness.md`](approved/DR-16-runtime-scholar-harness.md) |
 | DR-17 | Corpus Composition and Sampling | APPROVED | 2026-08-16 | [`approved/DR-17-corpus-composition-and-sampling.md`](approved/DR-17-corpus-composition-and-sampling.md) |
+| DR-18 | Training Curriculum and Objectives | APPROVED | 2026-08-16 | [`approved/DR-18-training-curriculum-and-objectives.md`](approved/DR-18-training-curriculum-and-objectives.md) |
 
 ## Next review
 
-`DR-18 — Training Curriculum and Objectives`
+`DR-19 — Preference and Behavioral Shaping`
