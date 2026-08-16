@@ -18,7 +18,8 @@
 | DR-11 | Foundation-Model Family and Component Architecture | APPROVED | 2026-08-15 | [`approved/DR-11-foundation-model-family-and-component-architecture.md`](approved/DR-11-foundation-model-family-and-component-architecture.md) |
 | DR-12 | Translation Nuance Model Integration Architecture | APPROVED | 2026-08-16 | [`approved/DR-12-translation-nuance-model-integration-architecture.md`](approved/DR-12-translation-nuance-model-integration-architecture.md) |
 | DR-13 | Multilingual Architecture | APPROVED | 2026-08-16 | [`approved/DR-13-multilingual-architecture.md`](approved/DR-13-multilingual-architecture.md) |
+| DR-14 | Multimodal and Page-Understanding Architecture | APPROVED | 2026-08-16 | [`approved/DR-14-multimodal-and-page-understanding-architecture.md`](approved/DR-14-multimodal-and-page-understanding-architecture.md) |
 
 ## Next review
 
-`DR-14 — Multimodal and Page-Understanding Architecture`
+`DR-15 — Long-Context and Context-Composer Design`
