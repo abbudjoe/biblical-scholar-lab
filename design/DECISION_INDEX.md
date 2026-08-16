@@ -24,7 +24,8 @@
 | DR-17 | Corpus Composition and Sampling | APPROVED | 2026-08-16 | [`approved/DR-17-corpus-composition-and-sampling.md`](approved/DR-17-corpus-composition-and-sampling.md) |
 | DR-18 | Training Curriculum and Objectives | APPROVED | 2026-08-16 | [`approved/DR-18-training-curriculum-and-objectives.md`](approved/DR-18-training-curriculum-and-objectives.md) |
 | DR-19 | Preference and Behavioral Shaping | APPROVED | 2026-08-16 | [`approved/DR-19-preference-and-behavioral-shaping.md`](approved/DR-19-preference-and-behavioral-shaping.md) |
+| DR-20 | Benchmark Charter | APPROVED | 2026-08-16 | [`approved/DR-20-benchmark-charter.md`](approved/DR-20-benchmark-charter.md) |
 
 ## Next review
 
-`DR-20 — Benchmark Charter`
+`DR-21 — Benchmark Annotation, Scoring, and Governance`
