@@ -13,6 +13,8 @@
 | DR-06 | Translation Nuance Core | APPROVED | 2026-08-15 | [`approved/DR-06-translation-nuance-core.md`](approved/DR-06-translation-nuance-core.md) |
 | DR-07 | Linguistic Representation | APPROVED | 2026-08-15 | [`approved/DR-07-linguistic-representation.md`](approved/DR-07-linguistic-representation.md) |
 
+| DR-08 | Ancient Versions and Apparatus Policy | APPROVED | 2026-08-15 | [`approved/DR-08-ancient-versions-and-apparatus-policy.md`](approved/DR-08-ancient-versions-and-apparatus-policy.md) |
+
 ## Next review
 
-`DR-08 — Ancient Versions and Apparatus Policy`
+`DR-09 — Scholarship and Citation Model`
