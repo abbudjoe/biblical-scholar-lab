@@ -12,9 +12,9 @@
 | DR-05 | Textual-History and Provenance Graph | APPROVED | 2026-08-15 | [`approved/DR-05-textual-history-and-provenance-graph.md`](approved/DR-05-textual-history-and-provenance-graph.md) |
 | DR-06 | Translation Nuance Core | APPROVED | 2026-08-15 | [`approved/DR-06-translation-nuance-core.md`](approved/DR-06-translation-nuance-core.md) |
 | DR-07 | Linguistic Representation | APPROVED | 2026-08-15 | [`approved/DR-07-linguistic-representation.md`](approved/DR-07-linguistic-representation.md) |
-
 | DR-08 | Ancient Versions and Apparatus Policy | APPROVED | 2026-08-15 | [`approved/DR-08-ancient-versions-and-apparatus-policy.md`](approved/DR-08-ancient-versions-and-apparatus-policy.md) |
+| DR-09 | Scholarship and Citation Model | APPROVED | 2026-08-15 | [`approved/DR-09-scholarship-and-citation-model.md`](approved/DR-09-scholarship-and-citation-model.md) |
 
 ## Next review
 
-`DR-09 — Scholarship and Citation Model`
+`DR-10 — Rights, Lineage, and Release Architecture`
