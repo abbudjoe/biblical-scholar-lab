@@ -27,7 +27,8 @@
 | DR-20 | Benchmark Charter | APPROVED | 2026-08-16 | [`approved/DR-20-benchmark-charter.md`](approved/DR-20-benchmark-charter.md) |
 | DR-21 | Benchmark Annotation, Scoring, and Governance | APPROVED | 2026-08-16 | [`approved/DR-21-benchmark-annotation-scoring-and-governance.md`](approved/DR-21-benchmark-annotation-scoring-and-governance.md) |
 | DR-22 | Evaluation Harness and Prior-Art Baseline Design | APPROVED | 2026-08-16 | [`approved/DR-22-evaluation-harness-and-prior-art-baseline-design.md`](approved/DR-22-evaluation-harness-and-prior-art-baseline-design.md) |
+| DR-23 | Model and Training Harness Contract | APPROVED | 2026-08-16 | [`approved/DR-23-model-and-training-harness-contract.md`](approved/DR-23-model-and-training-harness-contract.md) |
 
 ## Next review
 
-`DR-23 — Model and Training Harness Contract`
+`DR-24 — Experiment Ladder and Promotion Gates`
