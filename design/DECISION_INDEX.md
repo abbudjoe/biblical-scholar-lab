@@ -15,7 +15,8 @@
 | DR-08 | Ancient Versions and Apparatus Policy | APPROVED | 2026-08-15 | [`approved/DR-08-ancient-versions-and-apparatus-policy.md`](approved/DR-08-ancient-versions-and-apparatus-policy.md) |
 | DR-09 | Scholarship and Citation Model | APPROVED | 2026-08-15 | [`approved/DR-09-scholarship-and-citation-model.md`](approved/DR-09-scholarship-and-citation-model.md) |
 | DR-10 | Rights, Lineage, and Release Architecture | APPROVED | 2026-08-15 | [`approved/DR-10-rights-lineage-and-release-architecture.md`](approved/DR-10-rights-lineage-and-release-architecture.md) |
+| DR-11 | Foundation-Model Family and Component Architecture | APPROVED | 2026-08-15 | [`approved/DR-11-foundation-model-family-and-component-architecture.md`](approved/DR-11-foundation-model-family-and-component-architecture.md) |
 
 ## Next review
 
-`DR-11 — Foundation-Model Family and Component Architecture`
+`DR-12 — Translation Nuance Model Integration Architecture`
