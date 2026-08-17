@@ -30,7 +30,8 @@
 | DR-23 | Model and Training Harness Contract | APPROVED | 2026-08-16 | [`approved/DR-23-model-and-training-harness-contract.md`](approved/DR-23-model-and-training-harness-contract.md) |
 | DR-24 | Experiment Ladder and Promotion Gates | APPROVED | 2026-08-16 | [`approved/DR-24-experiment-ladder-and-promotion-gates.md`](approved/DR-24-experiment-ladder-and-promotion-gates.md) |
 | DR-25 | Cloud Campaign and Sol-to-Luna Operating Design | APPROVED | 2026-08-16 | [`approved/DR-25-cloud-campaign-and-sol-to-luna-operating-design.md`](approved/DR-25-cloud-campaign-and-sol-to-luna-operating-design.md) |
+| DR-26 | User Experience and Answer Contract | APPROVED | 2026-08-16 | [`approved/DR-26-user-experience-and-answer-contract.md`](approved/DR-26-user-experience-and-answer-contract.md) |
 
 ## Next review
 
-`DR-26 — User Experience and Answer Contract`
+`DR-27 — Privacy, Security, Telemetry, and Release`
