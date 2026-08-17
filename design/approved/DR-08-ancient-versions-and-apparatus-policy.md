@@ -1689,5 +1689,3 @@ Those decisions belong to DR-09, DR-10, DR-16 through DR-23, DR-25, DR-28, and l
 [^coptic]: Coptic SCRIPTORIUM, “Sahidic Coptic OT corpora licensing information” and corpus metadata. The corpus is source-specifically licensed CC BY-SA 4.0, while its metadata warns about possible versification and alignment issues: https://copticscriptorium.org/download/corpora/sahidic_bible_ot.html
 
 [^vetus-latina]: Brepols, “Vetus Latina Database.” The subscription database contains citations to the Old Latin Bible from patristic writings and returns images of archival card records: https://www.brepols.net/series/vld-o
-
-[^tei-apparatus]: TEI Consortium, “Critical Apparatus.” TEI models readings, witnesses, hands, source, editorial responsibility, certainty, witness details, and notes, illustrating why apparatus entries must preserve edition-specific responsibility and witness distinctions: https://www.tei-c.org/release/doc/tei-p5-doc/en/html/TC.html

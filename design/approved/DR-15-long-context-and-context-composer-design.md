@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes long context as an evidence-composition and routing problem rather than a raw token-capacity claim; defines the deterministic Context Composer, immutable context plans and packets, full-New-Testament and hybrid modes, budget, compression, and provenance-preserving compaction policy, multi-turn memory boundaries, positional-robustness tests, and evidence-gated routing among tools, RAG, book context, canon context, and larger models |
+| Approved change | Establishes long context as an evidence-composition and routing problem rather than a raw token-capacity claim; defines the deterministic Context Composer, immutable context plans and packets, full-New-Testament and hybrid modes, budget, compression, and provenance-preserving compaction policy, multi-turn memory boundaries, positional-robustness tests, and evidence-gated routing among tools, RAG, book context, canon context, and larger models |
 
 ## 1. Purpose
 

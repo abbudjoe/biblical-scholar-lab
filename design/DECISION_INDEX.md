@@ -72,6 +72,10 @@
 |---|---|---|---|---|---|
 | ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
 
+## Documentation normalization
+
+- `DOC-NORM-2026-08-17` — nonsemantic cleanup of unused footnote definitions and stale approval-state labels, with old/new hashes recorded in [`NORMALIZATION-2026-08-17.json`](NORMALIZATION-2026-08-17.json)
+
 ## Design-review status
 
 The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until documentation normalization and clean-room package review are closed; W00 itself additionally requires the owner bootstrap specified by GOV-01. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.

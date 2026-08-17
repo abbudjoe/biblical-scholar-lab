@@ -351,7 +351,7 @@ The package contains:
 - JSON Schemas and templates.
 - Sol implementation and merge-only prompt templates.
 - Luna custom-agent policy.
-- Proposed W00 activation.
+- Approved W00 activation.
 
 The static package contains no executable GitHub Actions workflows or validators. Sol writes those during W00.
 

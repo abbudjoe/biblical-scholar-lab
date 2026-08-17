@@ -9,7 +9,7 @@
 | Designer and independent reviewer | ChatGPT |
 | Depends on | DR-01; DR-02 revision 2 and supplements; DR-03; DR-04; DR-05; DR-06; DR-07; DR-08; DR-09; DR-10 |
 | Implementation authority | GPT-5.6 Sol, under the approved design |
-| Supersedes if approved | The dated model-release inventory in DR-02-S02 where the current official catalog has changed; all DR-02 capacity, bake-off, hard-gate, and budget principles remain binding unless explicitly changed here |
+| Supersedes | The dated model-release inventory in DR-02-S02 where the current official catalog has changed; all DR-02 capacity, bake-off, hard-gate, and budget principles remain binding unless explicitly changed here |
 
 ## 1. Purpose
 
@@ -893,25 +893,3 @@ Those decisions belong to DR-12 through DR-16, DR-18, DR-20 through DR-25, DR-28
 ---
 
 ## References
-
-[^qwen35-base]: Qwen, `Qwen/Qwen3.5-9B-Base`. The official repository identifies a pretrained-only native vision-language checkpoint intended for fine-tuning and research and documents its 9B language model, hybrid Gated DeltaNet/full-attention stack, 248,320-entry padded vocabulary, MTP training, and 262,144-token native context: https://huggingface.co/Qwen/Qwen3.5-9B-Base
-
-[^qwen35-transformers]: Hugging Face Transformers, “Qwen3.5.” The documentation describes Qwen3.5 as a natively multimodal family trained on interleaved text, image, and video tokens with three Gated DeltaNet layers per full-attention layer and shared architecture support for dense Qwen3.5 and Qwen3.6 variants: https://huggingface.co/docs/transformers/model_doc/qwen3_5
-
-[^qwen38]: Qwen, `Qwen/Qwen3.8-27B`. The official repository identifies a post-trained 27B vision-language model with the Qwen3.5-derived hybrid architecture, configurable reasoning effort, 248,320-entry padded vocabulary, MTP, and 262,144-token native context: https://huggingface.co/Qwen/Qwen3.8-27B
-
-[^qwen38-collection]: Qwen, “Qwen3.8 Collection.” The official collection currently lists Qwen3.8-27B and its FP8 derivative but no 27B Base checkpoint: https://huggingface.co/collections/Qwen/qwen38
-
-[^qwen36]: Qwen, `Qwen/Qwen3.6-27B`. The official repository identifies the checkpoint as post-trained and architecture-compatible with the Qwen3.5 family: https://huggingface.co/Qwen/Qwen3.6-27B
-
-[^qwen35-collection]: Qwen, “Qwen3.5 Collection.” The official collection lists 9B and 4B Base checkpoints, 27B post-trained weights, and the 35B-A3B Base and post-trained family: https://huggingface.co/collections/Qwen/qwen35
-
-[^gemma4-card]: Google DeepMind, “Gemma 4 Model Card.” The official card describes pretrained and instruction-tuned variants, hybrid sliding/global attention, 256K context for the 12B and 31B models, a 262K vocabulary, the encoder-free 12B Unified model, the separate-vision-encoder 31B model, the 26B A4B MoE model, and support for more than 140 pretraining languages: https://ai.google.dev/gemma/docs/core/model_card_4
-
-[^gemma4-collection]: Google, “Gemma 4 Collection.” The official collection lists Base and instruction-tuned 12B, 26B A4B, and 31B checkpoints along with mobile-oriented E2B and E4B variants: https://huggingface.co/collections/google/gemma-4
-
-[^gemma4-mtp]: Google AI for Developers, “Speed up Gemma 4 with Multi-Token Prediction.” Google describes Gemma 4 MTP as a draft component for speculative decoding that shares embeddings and builds on target-model activations: https://ai.google.dev/gemma/docs/mtp/overview
-
-[^ministral-base]: Mistral AI, `mistralai/Ministral-3-8B-Base-2512`. The official card identifies an 8.4B language model, 0.4B vision encoder, 256K context, Apache 2.0 license, edge orientation, and a Base checkpoint intended for custom post-training: https://huggingface.co/mistralai/Ministral-3-8B-Base-2512
-
-[^ministral-collection]: Mistral AI, “Ministral 3 Collection.” The official collection provides Base, Instruct, and Reasoning checkpoints at 3B, 8B, and 14B sizes with vision support: https://huggingface.co/collections/mistralai/ministral-3

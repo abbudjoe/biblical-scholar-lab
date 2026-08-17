@@ -179,7 +179,7 @@ DR-25 establishes the following operational classes.
 
 A standing, owner-approved low-cost allowance intended to prevent excessive manual launch overhead.
 
-Proposed default limits:
+Approved initial limits:
 
 ```text
 maximum aggregate Lambda cost per Sol root turn: $25
@@ -1383,5 +1383,3 @@ Those are consolidated in DR-28 and campaign-specific designs after implementati
 [^lambda-audit]: Lambda, “Access and security.” Lambda documents audit event logs, automatic capture, a six-month retention period, and resource lifecycle events: <https://docs.lambda.ai/public-cloud/access-security/>.
 
 [^openai-model-guidance]: OpenAI, “Model guidance.” OpenAI describes `gpt-5.6-sol` as the flagship-capability model and `gpt-5.6-luna` as the efficient high-volume model: <https://developers.openai.com/api/docs/guides/latest-model>.
-
-[^openai-codex-safety]: OpenAI, “Running Codex safely.” OpenAI describes managed configuration, sandboxing, network controls, credential restrictions, telemetry, and audit trails as core controls for coding-agent deployment: <https://openai.com/index/running-codex-safely/>.

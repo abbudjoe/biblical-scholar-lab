@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes the deterministic, policy-governed Runtime Scholar Harness that classifies requests, plans evidence acquisition, exposes typed tools, composes context, routes among model roles, verifies structured claims and citations, renders accessible answers, maintains compactable session state, and produces an auditable receipt without allowing the model to become the authority over evidence, rights, safety, or experiment design; also establishes a framework-neutral project-owned runtime core, a deterministic reference executor, LangGraph v1 as the provisional durable workflow substrate, and the OpenAI Agents SDK only as an optional bounded adapter rather than the authoritative runtime |
+| Approved change | Establishes the deterministic, policy-governed Runtime Scholar Harness that classifies requests, plans evidence acquisition, exposes typed tools, composes context, routes among model roles, verifies structured claims and citations, renders accessible answers, maintains compactable session state, and produces an auditable receipt without allowing the model to become the authority over evidence, rights, safety, or experiment design; also establishes a framework-neutral project-owned runtime core, a deterministic reference executor, LangGraph v1 as the provisional durable workflow substrate, and the OpenAI Agents SDK only as an optional bounded adapter rather than the authoritative runtime |
 
 ## 1. Purpose
 
@@ -2049,4 +2049,3 @@ Those decisions belong to later design reviews, DR-28’s integrated logical arc
 [^openai-handoffs]: OpenAI, “Handoffs,” describing transfer and filtering of conversation history between agents: <https://openai.github.io/openai-agents-python/handoffs/>.
 [^openai-guardrails]: OpenAI, “Guardrails,” documenting that tool guardrails apply to custom function tools but not uniformly to handoffs, hosted tools, built-in execution tools, or `Agent.as_tool()`: <https://openai.github.io/openai-agents-python/guardrails/>.
 [^openai-tracing]: OpenAI, “Tracing,” describing default tracing of runs, generations, tools, guardrails, and handoffs and the ability to disable or redirect traces: <https://openai.github.io/openai-agents-js/guides/tracing/>.
-

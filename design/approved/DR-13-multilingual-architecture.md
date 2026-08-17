@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes multilingualism as a cross-cutting product, corpus, retrieval, training, benchmark, multimodal, safety, and release contract rather than a later translation layer |
+| Approved change | Establishes multilingualism as a cross-cutting product, corpus, retrieval, training, benchmark, multimodal, safety, and release contract rather than a later translation layer |
 
 ## 1. Purpose
 

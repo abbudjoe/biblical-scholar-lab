@@ -1624,54 +1624,13 @@ Those decisions require LE-00–LE-13 evidence, later release design, and owner 
 
 ## References
 
-[^apple-foundation-models]: Apple Developer Documentation, “Foundation Models” and “What’s New in iOS 27.” Apple documents access to Apple’s on-device and Private Cloud Compute models, custom `LanguageModel` providers, multimodal prompts, tools, structured output, and dynamic profiles: <https://developer.apple.com/documentation/FoundationModels> and <https://developer.apple.com/ios/whats-new/>.
-
-[^google-mlkit-genai]: Google for Developers, “Overview of the ML Kit GenAI APIs.” Google documents AICore/Gemini Nano on-device execution, supported Pixel devices, model-version variation, application quotas, battery-use quotas, and foreground-only inference: <https://developers.google.com/ml-kit/genai>.
-
-[^apple-intelligence-devices]: Apple Support, “How to get Apple Intelligence.” Apple lists iPhone 15 Pro models and newer supported devices: <https://support.apple.com/121115>.
-
-[^pixel-10-pro]: Google Store, “Pixel 10 Pro & Pixel 10 Pro XL Specs.” Google lists 16 GB RAM and Tensor G5 for the Pixel 10 Pro family: <https://store.google.com/product/pixel_10_pro_specs?hl=en-US>.
-
-[^tensor-sdk]: Google AI Edge, “Tensor SDK Beta release notes” and “Compile models with Google Tensor SDK.” Google documents Tensor G5, LiteRT integration, AOT compilation, Pixel TPU execution, multimodal LiteRT-LM demonstrations, and power/performance controls: <https://developers.google.com/edge/tensor-sdk/release-notes> and <https://developers.google.com/edge/tensor-sdk/compilation-flags>.
-
-[^apple-foundation-updates]: Apple Developer Documentation, “Foundation Models updates.” Apple notes that the system model changes with OS updates and recommends retesting prompts; it also exposes token and context-size introspection: <https://developer.apple.com/documentation/updates/foundationmodels>.
-
-[^apple-adapter-toolkit]: Apple Developer, “Foundation Models adapter training.” Apple states that version 26.0.0 is the final adapter toolkit release and is not compatible with iOS, iPadOS, macOS, or visionOS 27 and later: <https://developer.apple.com/apple-intelligence/foundation-models-adapter/>.
-
-[^apple-core-ai]: Apple Developer, “Core AI,” “Core AI PyTorch Extensions,” and “Core AI Optimization.” Apple documents `.aimodel` deployment, hardware specialization, stateful on-device inference, PyTorch conversion, quantization, palettization, and custom Metal kernels: <https://developer.apple.com/core-ai/>, <https://apple.github.io/coreai-torch/>, and <https://apple.github.io/coreai-optimization/>.
-
-[^litert-api]: Google AI Edge, “LiteRT-LM API Overview.” LiteRT-LM provides Kotlin, Swift, Python, JavaScript, and C++ APIs, multimodal input, function calling, and platform-specific backends: <https://developers.google.com/edge/litert-lm/api_overview>.
-
-[^litert-overview]: Google AI Edge, “LiteRT-LM Overview.” Google documents cross-platform Android/iOS/desktop execution, GPU/NPU acceleration, multimodality, function calling, and broad model support: <https://developers.google.com/edge/litert-lm/overview>.
-
-[^gemma4]: Google AI for Developers, “Gemma 4 model card.” Google documents Base and instruction-tuned E2B/E4B models, mobile/edge orientation, multimodality, 128K architectural context, multilingual pretraining, and model-family details: <https://ai.google.dev/gemma/docs/core/model_card_4>.
-
 [^gemma4-mobile-qat]: Google, `gemma-4-E2B-it-qat-mobile-ct` model card and Gemma 4 QAT releases. Google documents unquantized QAT, GGUF, mobile-optimized, and compressed-tensor variants, including targeted lower-bit decoding and optimized KV caches for E2B/E4B: <https://huggingface.co/google/gemma-4-E2B-it-qat-mobile-ct>.
-
-[^qwen35-small]: Qwen, `Qwen3.5-2B-Base`, `Qwen3.5-2B`, `Qwen3.5-4B-Base`, and `Qwen3.5-4B` model cards. Qwen documents official Base/post-trained pairs, native vision, hybrid Gated DeltaNet/full-attention architecture, large vocabulary, and long context: <https://huggingface.co/Qwen/Qwen3.5-2B-Base>, <https://huggingface.co/Qwen/Qwen3.5-2B>, <https://huggingface.co/Qwen/Qwen3.5-4B-Base>, and <https://huggingface.co/Qwen/Qwen3.5-4B>.
-
-[^ministral3-3b]: Mistral AI, `Ministral-3-3B-Base-2512` model card. Mistral documents a Base model with a 3.4B language model, 0.4B vision encoder, 256K context, edge orientation, and Apache 2.0 licensing: <https://huggingface.co/mistralai/Ministral-3-3B-Base-2512>.
 
 [^sequence-kd]: Yoon Kim and Alexander Rush, “Sequence-Level Knowledge Distillation,” EMNLP 2016: <https://aclanthology.org/D16-1139/>.
 
 [^minillm]: Yuxian Gu et al., “MiniLLM: Knowledge Distillation of Large Language Models,” 2023. The paper proposes reverse-KL distillation for generative language models and evaluates students across several scales: <https://arxiv.org/abs/2306.08543>.
 
 [^apple-coreai-opt]: Apple Core AI Optimization Documentation. Apple describes PTQ, calibration-based compression, compression-aware fine-tuning, mixed-bit compression, and the need for more expensive training approaches at aggressive precision: <https://apple.github.io/coreai-optimization/>.
-
-[^embeddinggemma]: Google AI for Developers, “EmbeddingGemma.” Google documents a 308M multilingual, configurable-dimension embedding model intended for on-device deployment: <https://ai.google.dev/gemma/docs/embeddinggemma>.
-
-[^apple-vision]: Apple Developer Documentation, “Vision.” Apple documents text recognition, document segmentation, structured document recognition, confidence, and bounding regions: <https://developer.apple.com/documentation/vision>.
-
-[^google-prompt-api]: Google for Developers, “Send custom requests to Gemini Nano with GenAI Prompt API.” Google recommends using ML Kit Text Recognition first for intelligent document scanning when exact text extraction matters: <https://developers.google.com/ml-kit/genai/prompt/android>.
-
-[^coreml]: Apple Developer Documentation, “Core ML” and “Personalizing a Model with On-Device Updates.” Core ML supports on-device prediction and certain updatable-model workflows; DR-29 does not extend that general capability into authorization for LLM personalization: <https://developer.apple.com/documentation/CoreML>.
-
-[^apple-model-download]: Apple Developer Documentation, “Downloading and Compiling a Model on the User’s Device” and “Reducing the Size of Your Core ML App.” Apple documents post-install model download, compilation, persistent placement, and lower-precision model packaging: <https://developer.apple.com/documentation/coreml/downloading-and-compiling-a-model-on-the-user-s-device> and <https://developer.apple.com/documentation/coreml/reducing-the-size-of-your-core-ml-app>.
-
-[^litert-model-management]: Google AI Edge, “LiteRT-LM Model Management.” LiteRT-LM provides local model import and registry mechanisms: <https://developers.google.com/edge/litert-lm/cli/model_management>.
-
-[^litert-gemma4]: Google AI Edge, “Gemma 4.” Google publishes current LiteRT-LM model sizes and reference-device CPU/GPU performance for Gemma 4 E2B and E4B on Android, iOS, macOS, and other platforms: <https://developers.google.com/edge/litert-lm/models/gemma-4>.
-
 
 [^mlx-lm]: Apple Machine Learning Research, `mlx-lm`. MLX-LM is a package for generating text and fine-tuning LLMs on Apple silicon, with Hugging Face integration and quantization support: <https://github.com/ml-explore/mlx-lm>.
 

@@ -585,7 +585,7 @@ There is no automatic internal-disk fallback.
 
 The Git repository will contain the normative `ContractRegistry`.
 
-Proposed layout:
+Approved initial layout:
 
 ```text
 contracts/
@@ -1072,7 +1072,7 @@ Exact values are versioned configuration artifacts by assurance class and deploy
 
 The implementation monorepo will contain project-owned packages corresponding to logical authorities.
 
-Proposed layout:
+Approved initial layout:
 
 ```text
 apps/

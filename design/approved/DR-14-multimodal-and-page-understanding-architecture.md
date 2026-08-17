@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes a provenance-preserving, dual-path visual-document architecture for printed Bible, study, interlinear, commentary, and scholarly pages without treating pixels, OCR, VLM output, paratext, or canonical text as interchangeable evidence |
+| Approved change | Establishes a provenance-preserving, dual-path visual-document architecture for printed Bible, study, interlinear, commentary, and scholarly pages without treating pixels, OCR, VLM output, paratext, or canonical text as interchangeable evidence |
 
 ## 1. Purpose
 

@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Establishes the authoritative corpus roles, source-quality and relevance model, vertical-slice and expansion policy, lineage-aware deduplication and contamination controls, hierarchical sampling architecture, general-replay and multilingual balancing requirements, tokenizer- and model-family materializations, immutable corpus and mixture manifests, per-sample exposure receipts, and evidence-gated mixture optimization needed before continued pretraining or translation-focused mid-training |
+| Approved change | Establishes the authoritative corpus roles, source-quality and relevance model, vertical-slice and expansion policy, lineage-aware deduplication and contamination controls, hierarchical sampling architecture, general-replay and multilingual balancing requirements, tokenizer- and model-family materializations, immutable corpus and mixture manifests, per-sample exposure receipts, and evidence-gated mixture optimization needed before continued pretraining or translation-focused mid-training |
 
 ## 1. Purpose
 

@@ -11,7 +11,7 @@
 | Implementation authority | GPT-5.6 Sol, under the approved design |
 | Execution authority | GPT-5.6 Luna only for frozen campaigns delegated by Sol under a later approved campaign envelope |
 | Experiment-design authority | ChatGPT designs; Joseph Abbud approves; Sol implements only the approved design |
-| Changes if approved | Refines and operationalizes DR-06 section 32 without authorizing an architecture-extension campaign by itself |
+| Approved change | Refines and operationalizes DR-06 section 32 without authorizing an architecture-extension campaign by itself |
 
 ## 1. Purpose
 

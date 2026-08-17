@@ -21,6 +21,8 @@ Production code is intentionally absent. Approved product, scholarly, architectu
 
 See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.md`](design/DECISION_INDEX.md).
 
+Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROVED_BASELINE_SUMMARY.md), [`design/TERMINOLOGY_REGISTRY.md`](design/TERMINOLOGY_REGISTRY.md), and [`design/PACKAGE_STATUS.md`](design/PACKAGE_STATUS.md).
+
 ## Current approved baseline
 
 - `DR-01` — Version-One Product Contract

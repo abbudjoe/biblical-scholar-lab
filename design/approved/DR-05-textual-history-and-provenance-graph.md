@@ -1404,21 +1404,3 @@ Sol may report implementation constraints and propose alternatives, but it may n
 ## 44. External reference anchors
 
 These sources inform the interoperability and conceptual architecture. They do not replace the project's approved internal model or source-specific scholarly review.
-
-[^prov-o]: World Wide Web Consortium, *PROV-O: The PROV Ontology*. PROV-O models entities, activities, agents, generation, usage, attribution, association, delegation, derivation, revision, quotation, and qualified relations: https://www.w3.org/TR/prov-o/
-
-[^web-annotation]: World Wide Web Consortium, *Web Annotation Data Model*. The model represents annotation bodies and targets, selectors for segments of resources, resource states, creators, generators, and provenance: https://www.w3.org/TR/annotation-model/
-
-[^iiif-presentation]: International Image Interoperability Framework, *Presentation API 3.0*. The API models manifests, canvases, ranges, annotation pages, annotations, and selected regions for compound digital objects: https://iiif.io/api/presentation/3.0/
-
-[^tei-manuscript]: Text Encoding Initiative, *TEI P5 Guidelines — Manuscript Description*. The module distinguishes manuscript identifiers, intellectual contents, physical description, history, administrative information, surrogates, manuscript parts, and fragments: https://www.tei-c.org/release/doc/tei-p5-doc/en/html/MS.html
-
-[^tei-apparatus]: Text Encoding Initiative, *TEI P5 Guidelines — Critical Apparatus*. The module represents apparatus entries, readings, witnesses, witness details, responsibility, certainty, variant types, and competing editorial strategies: https://www.tei-c.org/release/doc/tei-p5-doc/en/html/TC.html
-
-[^cidoc-crm]: CIDOC CRM Special Interest Group, *Definition of the CIDOC Conceptual Reference Model*, official ISO-corresponding release 7.1.3. CIDOC CRM supports integration and interchange of cultural-heritage information, including physical objects, events, actors, conceptual objects, and information objects: https://cidoc-crm.org/Version/version-7.1.3
-
-[^crmtex]: CIDOC CRM Special Interest Group, *CRMtex 2.0*. CRMtex models ancient textual entities and scholarly processes including written text, writing fields, text recognition, transliteration, graphemes, glyphs, readings, and text segments: https://cidoc-crm.org/extensions/crmtex/
-
-[^crmdig]: CIDOC CRM Special Interest Group, *CRMdig 5.0*. CRMdig models digital objects, digitization, formal derivation, software execution, devices, measurements, transfers, and annotation creation: https://cidoc-crm.org/extensions/crmdig/html/CRMdig_v5.0.html
-
-[^crminf]: CIDOC CRM Special Interest Group, *CRMinf 1.2.1*. CRMinf models argumentation, beliefs, proposition sets, inference methods, evidence, adopted interpretation, and provenance assessment: https://cidoc-crm.org/extensions/crminf/html/CRMinf_v1.2.1.html

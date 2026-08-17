@@ -1,0 +1,306 @@
+{
+  "normalization_id": "DOC-NORM-2026-08-17",
+  "source_commit": "a4d48632196da2de20bfbe856efb3e719aa2353d",
+  "classification": "NONSEMANTIC",
+  "approved_at": "2026-08-17",
+  "transformations": [
+    "Removed footnote definitions that had no reference in the same approved document.",
+    "Normalized only approved-state metadata labels and approval-statement headings.",
+    "Added navigation summary, terminology registry, and package-status guidance."
+  ],
+  "changed_approved_documents": [
+    {
+      "path": "design/approved/BENCH-VS01-BATCH-01.md",
+      "old_sha256": "ec1dc10e8e2d45ed0acc3c448498af1140223a3c3b347100cf9ed39cf699ca19",
+      "new_sha256": "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed approval statement heading",
+          "to": "Approval statement heading",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-05-textual-history-and-provenance-graph.md",
+      "old_sha256": "6206fec8f4480e645b9953e27d98a21cc90e6a2fc48c870d681022fffdcee58e",
+      "new_sha256": "e49a8c9ff2739e7dfb704178e9edb684b9bedc9af340a783d0ce7e121fd8ee7a",
+      "unused_footnotes_removed": 9,
+      "removed_footnote_ids": [
+        "cidoc-crm",
+        "crmdig",
+        "crminf",
+        "crmtex",
+        "iiif-presentation",
+        "prov-o",
+        "tei-apparatus",
+        "tei-manuscript",
+        "web-annotation"
+      ],
+      "approved_state_labels_normalized": []
+    },
+    {
+      "path": "design/approved/DR-08-ancient-versions-and-apparatus-policy.md",
+      "old_sha256": "40885ffdfe1f74a9673ca331fe3473df906628466efc65c2be8d8fef8a626214",
+      "new_sha256": "6ab24818c89258863615b1c146a54b4a22826a2f1514a6e6c0d94eed04e6c5e1",
+      "unused_footnotes_removed": 1,
+      "removed_footnote_ids": [
+        "tei-apparatus"
+      ],
+      "approved_state_labels_normalized": []
+    },
+    {
+      "path": "design/approved/DR-09-scholarship-and-citation-model.md",
+      "old_sha256": "51ca75ae3be320de150cb114e6107cef2425ce3d4848704913d1310b6290415c",
+      "new_sha256": "23abef126cfaaaf9264784f4dd1d065d132e59eb264860aec5654e120f847ad9",
+      "unused_footnotes_removed": 18,
+      "removed_footnote_ids": [
+        "cope-transparency",
+        "credit",
+        "crossref-crossmark",
+        "crossref-metadata",
+        "crossref-nexus",
+        "crossref-retraction-watch",
+        "crossref-versioning",
+        "csl",
+        "datacite-relations",
+        "datacite-translations",
+        "datacite-versioning",
+        "doaj",
+        "jats",
+        "orcid-source",
+        "orcid-trust",
+        "peer-review",
+        "ror",
+        "unpaywall"
+      ],
+      "approved_state_labels_normalized": []
+    },
+    {
+      "path": "design/approved/DR-11-foundation-model-family-and-component-architecture.md",
+      "old_sha256": "2f98558aa423383d5c52674fae6c5db79693aa44136857e765a94cd0c44c9760",
+      "new_sha256": "75d85f50d0fba2c487e9caaab146a93ffdc694d868886edcece7cc57783cc4d0",
+      "unused_footnotes_removed": 11,
+      "removed_footnote_ids": [
+        "gemma4-card",
+        "gemma4-collection",
+        "gemma4-mtp",
+        "ministral-base",
+        "ministral-collection",
+        "qwen35-base",
+        "qwen35-collection",
+        "qwen35-transformers",
+        "qwen36",
+        "qwen38",
+        "qwen38-collection"
+      ],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Supersedes if approved |",
+          "to": "| Supersedes |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-12-translation-nuance-model-integration-architecture.md",
+      "old_sha256": "0e60c710698fe8e12048a6c7656c5de4f9f15f1b5b7c9029eb412196297b20df",
+      "new_sha256": "059f4b014be28e28a40b4b96de94abe832601c0d52ab44f2ee714f11e098b62d",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-13-multilingual-architecture.md",
+      "old_sha256": "a609167cd71b9dcca5a371c954f9d3cfc1c65a5aaea209f42f71a6f25ee1f7c1",
+      "new_sha256": "533942059da92d06c374db4394a33c132837aba1c2ef16e693ba66b38110da43",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-14-multimodal-and-page-understanding-architecture.md",
+      "old_sha256": "6c317f368412b133619098d2bcc59b359825886eca168cedc84a5b1c2cb8af6c",
+      "new_sha256": "3e324050e0cc89cfacb1781192af9eb30a0cdf51fd3882e8bcdbe8e5ca037766",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-15-long-context-and-context-composer-design.md",
+      "old_sha256": "c421ca431170290b17163e6eef7f5b6bffc4b59b1bf6e2610095afa9a8e93947",
+      "new_sha256": "9fd34a9c6d2fcad0fdf617af7d0f2221edbcae6ef32a3909f91537f207bf15f7",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-16-runtime-scholar-harness.md",
+      "old_sha256": "f99163539ce616864b5f2d6f598e75dc4038ef5c3cdb9524c498084292c650f5",
+      "new_sha256": "5e86eddab3f9db8502c287401e7b4da57079092cedb7125904c559bc94ba1cf1",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-17-corpus-composition-and-sampling.md",
+      "old_sha256": "b8b96319455edb76a596b105034d14fe7d089694a979af5daa4f25dd9d92a409",
+      "new_sha256": "b99b9791fe86ec52a4d88257aae655be222ddfa44cb05669d89055e4938eea15",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "| Changes if approved |",
+          "to": "| Approved change |"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-21-benchmark-annotation-scoring-and-governance.md",
+      "old_sha256": "1db2fe990f5e5123840dc7b00895681e2fc6f59c12de9d83e38864aa9747c0bb",
+      "new_sha256": "81e9e06bbd81e75a9e71494318da885e64ac8b73733f799c36cdb95eb1221016",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed approval statement heading",
+          "to": "Approval statement heading",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-22-evaluation-harness-and-prior-art-baseline-design.md",
+      "old_sha256": "984085c75825aac2ba03bd5df64454f3fa961495e784e92a008a7674af004bf3",
+      "new_sha256": "3f4567d9e6c5c39869122df206cdbc583feaadd458b8f9230a2dde51b14c1d6c",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed approval statement heading",
+          "to": "Approval statement heading",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-23-model-and-training-harness-contract.md",
+      "old_sha256": "69500441194bbfc16a3c7a70e7c64a34605e0573dc0332c8eed34c38cf2a821a",
+      "new_sha256": "60e831a3bd2ee0edacc9632f636fb27447e76bdf63be0c0d556677c703c8caac",
+      "unused_footnotes_removed": 6,
+      "removed_footnote_ids": [
+        "lambda-api",
+        "lambda-billing",
+        "lambda-filesystems",
+        "lambda-lifecycle",
+        "peft",
+        "trl"
+      ],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed approval statement heading",
+          "to": "Approval statement heading",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-25-cloud-campaign-and-sol-to-luna-operating-design.md",
+      "old_sha256": "c7496f4320e0af369bc2a9566c1ab90a835d4c2430faf10a124826d840b6688d",
+      "new_sha256": "8c5bec800bd5a95cae3fe132b2b09f7029da8eefe26aa0268f6633e65a4870d1",
+      "unused_footnotes_removed": 1,
+      "removed_footnote_ids": [
+        "openai-codex-safety"
+      ],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed default limits:",
+          "to": "Approved initial limits:"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-28-integrated-logical-architecture-and-contract-registry.md",
+      "old_sha256": "9f36eaca4cad7de74e952ecbac52c8b7c70a0267d5139484037554cefc399a8b",
+      "new_sha256": "a1dbb02f3f484b8f9d9b0fd0ee39977ac1dddd42f1f34c8e44fc9ae04840fc9f",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "Proposed layout:",
+          "to": "Approved initial layout:"
+        }
+      ]
+    },
+    {
+      "path": "design/approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md",
+      "old_sha256": "27d5aa3087c0db77232fb5002ee83e8c1c61563f6bfc7d6522a7e4d11ee68d3a",
+      "new_sha256": "e0265fdd6f9823007571e582ae1838c4be84c5a4b9f2665e62b8bbba50e20b8d",
+      "unused_footnotes_removed": 20,
+      "removed_footnote_ids": [
+        "apple-adapter-toolkit",
+        "apple-core-ai",
+        "apple-foundation-models",
+        "apple-foundation-updates",
+        "apple-intelligence-devices",
+        "apple-model-download",
+        "apple-vision",
+        "coreml",
+        "embeddinggemma",
+        "gemma4",
+        "google-mlkit-genai",
+        "google-prompt-api",
+        "litert-api",
+        "litert-gemma4",
+        "litert-model-management",
+        "litert-overview",
+        "ministral3-3b",
+        "pixel-10-pro",
+        "qwen35-small",
+        "tensor-sdk"
+      ],
+      "approved_state_labels_normalized": []
+    },
+    {
+      "path": "design/approved/GOV-01-public-repository-governance-and-review-package.md",
+      "old_sha256": "25fc82175f3b10c22049489f1f3e489ed355fe4c23cf5984b0ce219d8e7bce7d",
+      "new_sha256": "c51dd827ad972c7e4c9afbc4a5908b06998ad9145fe0f9ee617aa961244f1cb6",
+      "unused_footnotes_removed": 0,
+      "removed_footnote_ids": [],
+      "approved_state_labels_normalized": [
+        {
+          "from": "- Proposed W00 activation.",
+          "to": "- Approved W00 activation."
+        }
+      ]
+    }
+  ],
+  "removed_unreferenced_footnotes": 66,
+  "semantic_decisions_changed": false
+}
