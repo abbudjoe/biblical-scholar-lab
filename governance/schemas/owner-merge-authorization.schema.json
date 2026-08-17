@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://biblical-scholar-lab.invalid/schemas/owner-merge-authorization.schema.json",
+  "title": "Biblical Scholar Lab Owner Merge Authorization Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authorization_id",
+    "repository",
+    "pr_url",
+    "activation_id",
+    "chatgpt_review_id",
+    "authorized_head_sha",
+    "owner_login",
+    "authorization_channel",
+    "owner_approval_reference",
+    "approved_at",
+    "merge_method",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "authorization_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[^/]+/[^/]+$"
+    },
+    "pr_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "activation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chatgpt_review_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorized_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "owner_login": {
+      "const": "abbudjoe"
+    },
+    "authorization_channel": {
+      "const": "CHATGPT_CONVERSATION_EXPLICIT_APPROVAL"
+    },
+    "owner_approval_reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "merge_method": {
+      "const": "squash"
+    },
+    "status": {
+      "enum": [
+        "AUTHORIZED",
+        "REJECTED",
+        "EXPIRED",
+        "SUPERSEDED",
+        "USED"
+      ]
+    }
+  }
+}

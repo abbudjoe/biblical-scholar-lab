@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v1",
+  "status": "PROPOSED_OWNER_REVIEW",
+  "approved_design_commit": "0000000000000000000000000000000000000000",
+  "approved_design_ids": [
+    "DR-20",
+    "DR-21",
+    "DR-25",
+    "DR-30",
+    "GOV-01"
+  ],
+  "root_turn": {
+    "task_id": "W00",
+    "title": "Public repository governance and integrity controls",
+    "model": "gpt-5.6",
+    "reasoning_effort": "max",
+    "base_branch": "main",
+    "task_branch": "codex/w00-repository-governance",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Implement and prove trusted repository integrity, handoff, exact-head ChatGPT review, existing-gh-CLI operation, exact-head owner authorization records, separate merge-only execution, model-role, and anti-slop controls without adding biblical domain behavior.",
+  "vertical_slice_id": null,
+  "activated_user_visible_capability": "None; owner and reviewer governance only.",
+  "activated_invariants": [
+    "Sol is the exclusive implementation author; Luna cannot write code or executable configuration.",
+    "Codex may use the existing authenticated gh CLI session as @abbudjoe.",
+    "No GH_TOKEN/GITHUB_TOKEN/GH_ENTERPRISE_TOKEN/GITHUB_ENTERPRISE_TOKEN override is active; stored gh authentication is used.",
+    "Token display, authentication mutation, repository administration, and unactivated write API operations are prohibited.",
+    "The implementation root turn stops before authorization and merge.",
+    "Only Joseph can provide the binding exact-head owner approval in the current ChatGPT conversation.",
+    "A separate merge-only Sol turn may squash-merge only the exact approved head after every required check passes.",
+    "The governance report must disclose that GitHub cannot distinguish Joseph from Codex under the shared credential.",
+    "No unactivated contract or future scaffold is implemented."
+  ],
+  "activated_paths": [
+    ".github/CODEOWNERS",
+    ".github/pull_request_template.md",
+    ".github/workflows/",
+    "AGENTS.md",
+    "EXPERIMENT_AUTHORITY.md",
+    "governance/",
+    "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
+    "handoffs/W00/",
+    "reviews/",
+    "governance/GITHUB_CLI_OPERATION_POLICY.md"
+  ],
+  "activated_contracts": [
+    "ImplementationActivationManifest",
+    "RootTurnHandoff",
+    "ChatGPTReviewRecord",
+    "OwnerMergeAuthorizationRecord",
+    "GOV-01 ruleset and root-turn protocol",
+    "owner-merge-authorization.schema.json"
+  ],
+  "activated_interfaces": [
+    "project-integrity GitHub check",
+    "turn-handoff-integrity GitHub check",
+    "chatgpt-review-integrity trusted GitHub check",
+    "owner-merge-record-integrity trusted GitHub check",
+    "local governance verification CLI",
+    "owner-authorized merge-only prompt and receipt"
+  ],
+  "activated_data_stores": [
+    "Git repository and GitHub PR/check metadata only"
+  ],
+  "activated_adapters": [
+    "GitHub Actions",
+    "GitHub ruleset/read APIs",
+    "Existing authenticated GitHub CLI"
+  ],
+  "required_tests": [
+    "Valid and invalid activation fixtures.",
+    "Valid and invalid handoff fixtures, including parent mismatch and non-handoff final commit.",
+    "Model-role and prohibited-claim fixtures.",
+    "Ruleset verification against the live public repository.",
+    "Stored gh authentication preflight with abbudjoe active and no token override variables.",
+    "Exact-head and stale-head ChatGPT review and owner-authorization fixtures.",
+    "Negative direct-push, missing-authorization merge, stale-record, unresolved-conversation, force-push, and deletion probes.",
+    "Negative token-display/auth-mutation command policy fixtures.",
+    "Postauthorization separate merge-only success fixture."
+  ],
+  "required_evidence": [
+    "Exact workflow/check run links.",
+    "Ruleset and review-limit receipt.",
+    "Positive and negative fixture report.",
+    "One complete draft-PR handoff and exact-head review cycle.",
+    "Post-merge validation receipt.",
+    "Nonsecret gh authentication receipt showing active login abbudjoe and no token override variables.",
+    "OwnerMergeAuthorizationRecord for the W00 proof PR.",
+    "Separate merge-only prompt and squash-merge receipt.",
+    "Explicit same-credential enforcement limitation statement."
+  ],
+  "explicit_non_goals": [
+    "No source acquisition.",
+    "No benchmark execution.",
+    "No biblical domain model or VS-01 runtime.",
+    "No PostgreSQL domain schema.",
+    "No LangGraph, Inspect, inference, embedding, vector, Lambda, training, or web UI work.",
+    "No public deployment or secrets.",
+    "No new fine-grained token, GitHub App, or separate Codex GitHub account.",
+    "No protected-environment approval workflow.",
+    "No custom cryptographic approval mechanism."
+  ],
+  "prohibited_scaffolding": [
+    "No future service or package shells.",
+    "No generic plugin or DI framework.",
+    "No placeholder CI checks.",
+    "No stubs for domain, runtime, evaluation, training, or cloud systems.",
+    "No dependency not directly required by the activated validators."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 800,
+    "substantive_changed_lines_hard_limit": 1500,
+    "handwritten_production_files_hard_limit": 12,
+    "new_public_contracts_hard_limit": 3,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 2
+  },
+  "completion_criteria": [
+    "All W00 acceptance tests pass.",
+    "The existing stored gh session is verified as abbudjoe without revealing or mutating credentials.",
+    "The four trusted checks are operational after W00 merge.",
+    "The final W00 PR follows the non-self-referential handoff protocol.",
+    "ChatGPT reviews the exact final head and Joseph explicitly authorizes that exact head in the current conversation.",
+    "A separate merge-only Sol turn posts the authorization record, waits for the required check, squash-merges, and produces post-merge evidence.",
+    "The governance report explicitly states that shared GitHub identity/credential is a procedural rather than cryptographic human/agent boundary.",
+    "No non-goal or future scaffold is present."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "PENDING",
+    "approved_at": null
+  }
+}

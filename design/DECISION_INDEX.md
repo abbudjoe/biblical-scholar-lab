@@ -42,6 +42,12 @@
 |---|---|---|---|---|
 | VS-01 | John 1:5 Translation Nuance Vertical Slice | APPROVED | 2026-08-17 | [`approved/VS-01-john-1-5-translation-nuance-vertical-slice.md`](approved/VS-01-john-1-5-translation-nuance-vertical-slice.md) |
 
+## Approved governance packages
+
+| ID | Title | Status | Approved | File |
+|---|---|---|---|---|
+| GOV-01 | Public Repository Governance and Review Package | APPROVED — revision 3 | 2026-08-17 | [`approved/GOV-01-public-repository-governance-and-review-package.md`](approved/GOV-01-public-repository-governance-and-review-package.md) |
+
 ## Approved source plans
 
 | ID | Title | Status | Approved | File | Manifest |
@@ -54,6 +60,12 @@
 |---|---|---|---|---|---|
 | BENCH-VS01-BATCH-01 | John 1:5 Benchmark Seed | APPROVED — content frozen pending execution prerequisites | 2026-08-17 | [`approved/BENCH-VS01-BATCH-01.md`](approved/BENCH-VS01-BATCH-01.md) | [`approved/BENCH-VS01-BATCH-01-cases.json`](approved/BENCH-VS01-BATCH-01-cases.json) |
 
+## Approved repository governance
+
+| ID | Title | Status | Approved | File | Active package manifest |
+|---|---|---|---|---|---|
+| GOV-01 | Public Repository Governance and Review Package, revision 3 | APPROVED | 2026-08-17 | [`approved/GOV-01-public-repository-governance-and-review-package.md`](approved/GOV-01-public-repository-governance-and-review-package.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
+
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. Production implementation remains blocked until the public-repository governance package, documentation normalization, and clean-room package review are closed. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until W00 activation freeze, documentation normalization, and clean-room package review are closed. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.

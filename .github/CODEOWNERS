@@ -1,0 +1,14 @@
+# Joseph Abbud is the sole code owner for every path.
+* @abbudjoe
+
+# Security- and governance-sensitive paths are listed explicitly.
+/.github/ @abbudjoe
+/AGENTS.md @abbudjoe
+/EXPERIMENT_AUTHORITY.md @abbudjoe
+/governance/ @abbudjoe
+/activations/ @abbudjoe
+/handoffs/ @abbudjoe
+/reviews/ @abbudjoe
+/contracts/ @abbudjoe
+/migrations/ @abbudjoe
+/benchmark/ @abbudjoe

@@ -60,6 +60,10 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 - `VS-01` — John 1:5 Translation Nuance Vertical Slice, activating the smallest end-to-end source, linguistic, translation-comparison, evidence, runtime, page-study, correction, audit, and seed-benchmark workflow while explicitly excluding cloud execution, training, vector search, mobile clients, full-canon context, and speculative service scaffolding
 
+## Approved governance packages
+
+- `GOV-01` — Public Repository Governance and Review Package, revision 3, authorizing the existing stored `gh` CLI identity `@abbudjoe`, exact-head ChatGPT review, explicit exact-head owner approval in this conversation, and a separate merge-only Sol turn
+
 ## Approved source plans
 
 - `SOURCE-PLAN-01` — John 1:5 Vertical-Slice Source Admission Plan, freezing the exact SBLGNT, MorphGNT, ASV, WEB Classic, Abbott-Smith, and Source Serif components, revisions, rights lineages, exclusions, derived-artifact boundaries, and hard-stop conditions for VS-01
@@ -68,6 +72,10 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 - `BENCH-VS01-BATCH-01` — first ChatGPT-authored, owner-approved, public-safe John 1:5 benchmark seed, freezing twelve `REV-P0`/bounded `REV-P1` cases, evidence and answer contracts, atomic rubrics, hard failures, contamination relationships, and the fixed-evidence-versus-proactive-full-runtime distinction
 
+## Approved repository governance
+
+- `GOV-01` revision 3 — Public Repository Governance and Review Package, allowing Sol to use Joseph's existing authenticated `gh` CLI identity for task-branch and PR operations, while requiring an exact-head ChatGPT review, Joseph's explicit approval in this conversation, and a separate merge-only Sol turn before squash merge
+
 ## Preimplementation design status
 
-The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. Preimplementation closure still requires the public-repository governance package, documentation normalization, and an independent clean-room package review. Source acquisition and benchmark execution remain blocked until governance, source verification, derivative-fixture verification, and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. The public-repository governance package is approved. Preimplementation closure still requires W00 activation freeze, documentation normalization, and an independent clean-room package review. Source acquisition and benchmark execution remain blocked until governance, source verification, derivative-fixture verification, and an approved implementation activation manifest are active.

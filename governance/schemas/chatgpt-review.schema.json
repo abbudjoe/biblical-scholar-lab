@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://biblical-scholar-lab.invalid/schemas/chatgpt-review.schema.json",
+  "title": "Biblical Scholar Lab ChatGPT Review Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_id",
+    "pr_url",
+    "activation_id",
+    "base_sha",
+    "reviewed_head_sha",
+    "reviewer",
+    "disposition",
+    "summary",
+    "findings",
+    "evidence_reviewed",
+    "required_next_action",
+    "review_timestamp"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "pr_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "activation_id": {
+      "type": "string"
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "reviewed_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "reviewer": {
+      "const": "ChatGPT"
+    },
+    "disposition": {
+      "enum": [
+        "CHATGPT_REVIEW_CLEAN",
+        "REPAIR_REQUIRED",
+        "BLOCKED_MISSING_EVIDENCE",
+        "NO_GO_EXPERIMENT",
+        "SPLIT_REQUIRED"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_reviewed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_next_action": {
+      "enum": [
+        "OWNER_AUTHORIZATION",
+        "SOL_REPAIR",
+        "DESIGN_REVIEW",
+        "STOP"
+      ]
+    },
+    "review_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "supersedes_review_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

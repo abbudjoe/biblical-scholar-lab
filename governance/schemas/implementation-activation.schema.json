@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://biblical-scholar-lab.invalid/schemas/implementation-activation.schema.json",
+  "title": "Biblical Scholar Lab Implementation Activation Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "activation_id", "status", "approved_design_commit",
+    "approved_design_ids", "root_turn", "objective", "vertical_slice_id",
+    "activated_user_visible_capability", "activated_invariants",
+    "activated_paths", "activated_contracts", "activated_interfaces",
+    "activated_data_stores", "activated_adapters", "required_tests",
+    "required_evidence", "explicit_non_goals", "prohibited_scaffolding",
+    "budgets", "completion_criteria", "owner_approval"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "activation_id": {"type": "string", "pattern": "^ACT-[A-Z0-9-]+-v[0-9]+$"},
+    "status": {"enum": ["PROPOSED_OWNER_REVIEW", "APPROVED", "SUPERSEDED", "REJECTED"]},
+    "approved_design_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "approved_design_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "root_turn": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_id", "title", "model", "reasoning_effort", "base_branch", "task_branch"],
+      "properties": {
+        "task_id": {"type": "string"}, "title": {"type": "string"},
+        "model": {"const": "gpt-5.6"},
+        "reasoning_effort": {"enum": ["high", "max", "ultra"]},
+        "base_branch": {"const": "main"},
+        "task_branch": {"type": "string", "pattern": "^codex/[a-z0-9][a-z0-9-]*$"},
+        "luna_delegation_allowed": {"type": "boolean", "default": false}
+      }
+    },
+    "objective": {"type": "string", "minLength": 1},
+    "vertical_slice_id": {"type": ["string", "null"]},
+    "activated_user_visible_capability": {"type": "string"},
+    "activated_invariants": {"type": "array", "items": {"type": "string"}},
+    "activated_paths": {"type": "array", "items": {"type": "string"}},
+    "activated_contracts": {"type": "array", "items": {"type": "string"}},
+    "activated_interfaces": {"type": "array", "items": {"type": "string"}},
+    "activated_data_stores": {"type": "array", "items": {"type": "string"}},
+    "activated_adapters": {"type": "array", "items": {"type": "string"}},
+    "required_tests": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "required_evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "explicit_non_goals": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "prohibited_scaffolding": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "budgets": {
+      "type": "object", "additionalProperties": false,
+      "required": ["substantive_changed_lines_target", "substantive_changed_lines_hard_limit", "handwritten_production_files_hard_limit", "new_public_contracts_hard_limit", "migrations_hard_limit", "new_direct_dependencies_hard_limit"],
+      "properties": {
+        "substantive_changed_lines_target": {"type": "integer", "minimum": 1},
+        "substantive_changed_lines_hard_limit": {"type": "integer", "minimum": 1},
+        "handwritten_production_files_hard_limit": {"type": "integer", "minimum": 0},
+        "new_public_contracts_hard_limit": {"type": "integer", "minimum": 0},
+        "migrations_hard_limit": {"type": "integer", "minimum": 0},
+        "new_direct_dependencies_hard_limit": {"type": "integer", "minimum": 0}
+      }
+    },
+    "completion_criteria": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "owner_approval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owner", "status", "approved_at"],
+      "properties": {
+        "owner": {"const": "Joseph Abbud"},
+        "status": {"enum": ["PENDING", "APPROVED", "REJECTED"]},
+        "approved_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
+  }
+}
