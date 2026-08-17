@@ -65,6 +65,7 @@
 | ID | Title | Status | Approved | File | Active package manifest |
 |---|---|---|---|---|---|
 | GOV-01 | Public Repository Governance and Review Package, revision 3 | APPROVED | 2026-08-17 | [`approved/GOV-01-public-repository-governance-and-review-package.md`](approved/GOV-01-public-repository-governance-and-review-package.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
+| GOV-01-ERRATA-01 | W00 Bootstrap Merge Conformance | APPROVED CONFORMANCE CORRECTION | 2026-08-17 | [`approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md`](approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
 
 ## Approved implementation activations
 

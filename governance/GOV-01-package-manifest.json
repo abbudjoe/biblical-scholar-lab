@@ -1,7 +1,7 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": 3,
+  "approved_revision": "3 + ERRATA-01",
   "proposal_date": "2026-08-17",
   "approval_date": "2026-08-17",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
@@ -108,8 +108,8 @@
     },
     {
       "path": "governance/W00_ACCEPTANCE.md",
-      "sha256": "399c44fdd9ad193a3689c179a85dc7114c947b6c0b9e5058e751fb109f973e09",
-      "bytes": 2392
+      "sha256": "4cda7b9550e63454251fb4b2c0c388a2a87ff5f1c1436c29bc982d9f5afad43b",
+      "bytes": 3147
     },
     {
       "path": "governance/schemas/chatgpt-review.schema.json",
@@ -179,5 +179,10 @@
     "sha256": "b8478ad42a95453546f4e434bb826c7682a6007ef2f4313af4dc5ebac7c169c5",
     "approved_design_commit": "578fd4a913984c3d025c9c32971cbd8426477f8c",
     "approved_at": "2026-08-17T21:51:31Z"
+  },
+  "conformance_errata": {
+    "id": "GOV-01-ERRATA-01",
+    "path": "design/approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md",
+    "sha256": "7e1f39790236295a9d1722c7e188b72f025157443e015d8684ef25426c4b4969"
   }
 }
