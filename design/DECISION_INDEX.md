@@ -32,7 +32,8 @@
 | DR-25 | Cloud Campaign and Sol-to-Luna Operating Design | APPROVED | 2026-08-16 | [`approved/DR-25-cloud-campaign-and-sol-to-luna-operating-design.md`](approved/DR-25-cloud-campaign-and-sol-to-luna-operating-design.md) |
 | DR-26 | User Experience and Answer Contract | APPROVED | 2026-08-16 | [`approved/DR-26-user-experience-and-answer-contract.md`](approved/DR-26-user-experience-and-answer-contract.md) |
 | DR-27 | Privacy, Security, Telemetry, and Release | APPROVED | 2026-08-16 | [`approved/DR-27-privacy-security-telemetry-and-release.md`](approved/DR-27-privacy-security-telemetry-and-release.md) |
+| DR-28 | Integrated Logical Architecture and Contract Registry | APPROVED | 2026-08-16 | [`approved/DR-28-integrated-logical-architecture-and-contract-registry.md`](approved/DR-28-integrated-logical-architecture-and-contract-registry.md) |
 
 ## Next review
 
-`DR-28 — Integrated Logical Architecture and Contract Registry`
+`DR-29 — Mobile, Edge, Quantization, and Distillation Architecture`
