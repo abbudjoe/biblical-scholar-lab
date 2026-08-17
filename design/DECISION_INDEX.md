@@ -66,6 +66,12 @@
 |---|---|---|---|---|---|
 | GOV-01 | Public Repository Governance and Review Package, revision 3 | APPROVED | 2026-08-17 | [`approved/GOV-01-public-repository-governance-and-review-package.md`](approved/GOV-01-public-repository-governance-and-review-package.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
 
+## Approved implementation activations
+
+| ID | Title | Status | Approved | File | Bound design commit |
+|---|---|---|---|---|---|
+| ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
+
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until W00 activation freeze, documentation normalization, and clean-room package review are closed. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until documentation normalization and clean-room package review are closed; W00 itself additionally requires the owner bootstrap specified by GOV-01. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.

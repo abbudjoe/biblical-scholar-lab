@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v1",
-  "status": "PROPOSED_OWNER_REVIEW",
-  "approved_design_commit": "0000000000000000000000000000000000000000",
+  "status": "APPROVED",
+  "approved_design_commit": "578fd4a913984c3d025c9c32971cbd8426477f8c",
   "approved_design_ids": [
     "DR-20",
     "DR-21",
@@ -129,7 +129,7 @@
   ],
   "owner_approval": {
     "owner": "Joseph Abbud",
-    "status": "PENDING",
-    "approved_at": null
+    "status": "APPROVED",
+    "approved_at": "2026-08-17T21:51:31Z"
   }
 }

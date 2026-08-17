@@ -9,7 +9,7 @@
   "github_auth_mode": "GH_CLI_EXISTING_AUTH",
   "owner_merge_authorization": "EXACT_HEAD_CHATGPT_CONVERSATION_APPROVAL_AND_SEPARATE_MERGE_ONLY_TURN",
   "approved_design_document": "design/approved/GOV-01-public-repository-governance-and-review-package.md",
-  "activation_state": "PROPOSED_PENDING_FREEZE",
+  "activation_state": "FROZEN_APPROVED",
   "files": [
     {
       "path": ".codex/agents/luna-runner.toml",
@@ -62,9 +62,9 @@
       "bytes": 515
     },
     {
-      "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.PROPOSED.json",
-      "sha256": "d7cf9442757d78c90e4fcf46eef313d55f9d63bae78f8ffd2e96dc7e293d5a4f",
-      "bytes": 6271
+      "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
+      "sha256": "b8478ad42a95453546f4e434bb826c7682a6007ef2f4313af4dc5ebac7c169c5",
+      "bytes": 6277
     },
     {
       "path": "governance/BRANCH_AND_RULESET_SPEC.md",
@@ -172,5 +172,12 @@
       "bytes": 0
     }
   ],
-  "file_count": 32
+  "file_count": 32,
+  "activation": {
+    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v1",
+    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
+    "sha256": "b8478ad42a95453546f4e434bb826c7682a6007ef2f4313af4dc5ebac7c169c5",
+    "approved_design_commit": "578fd4a913984c3d025c9c32971cbd8426477f8c",
+    "approved_at": "2026-08-17T21:51:31Z"
+  }
 }

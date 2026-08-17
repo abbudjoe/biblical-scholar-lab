@@ -16,6 +16,7 @@
 | Human merge-approval mechanism | Explicit exact-head owner authorization in the current ChatGPT conversation, followed by one separate merge-only Sol turn |
 | Depends on | Design baseline `2056d707865df8ab5e3f5ba55e07bd372c6ef752`; DR-20, DR-21, DR-25, DR-30; VS-01; SOURCE-PLAN-01; BENCH-VS01-BATCH-01 |
 | Purpose | Establish public-repository authority, branch protection, root-turn handoff, exact-head ChatGPT review, explicit owner authorization, same-account GitHub CLI operation, merge control, model-role, activation, and anti-slop contracts before Sol writes production implementation |
+| W00 activation | `APPROVED`; `ACT-W00-REPOSITORY-GOVERNANCE-v1`; bound to GOV-01 approval commit `578fd4a913984c3d025c9c32971cbd8426477f8c` |
 
 ## 1. Governing principle
 

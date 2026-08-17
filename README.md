@@ -76,6 +76,10 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 - `GOV-01` revision 3 — Public Repository Governance and Review Package, allowing Sol to use Joseph's existing authenticated `gh` CLI identity for task-branch and PR operations, while requiring an exact-head ChatGPT review, Joseph's explicit approval in this conversation, and a separate merge-only Sol turn before squash merge
 
+## Approved implementation activations
+
+- `ACT-W00-REPOSITORY-GOVERNANCE-v1` — authorizes one bounded GPT-5.6 Sol root turn to implement and prove repository-governance integrity only; owner bootstrap remains a prerequisite and no biblical domain, source acquisition, benchmark execution, model, cloud, or training work is activated
+
 ## Preimplementation design status
 
-The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. The public-repository governance package is approved. Preimplementation closure still requires W00 activation freeze, documentation normalization, and an independent clean-room package review. Source acquisition and benchmark execution remain blocked until governance, source verification, derivative-fixture verification, and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. The public-repository governance package and W00 activation are approved. Preimplementation closure still requires documentation normalization and an independent clean-room package review. Source acquisition and benchmark execution remain blocked until governance, source verification, derivative-fixture verification, and an approved implementation activation manifest are active.

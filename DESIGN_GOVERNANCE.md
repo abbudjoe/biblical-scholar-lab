@@ -61,6 +61,9 @@ Approved repository-governance packages use a `GOV-xx` identifier. They define s
 
 Approved public-repository governance packages use a `GOV-xx` identifier. A governance package freezes static authority, review, GitHub-operation, model-role, handoff, schema, and activation-template artifacts before production implementation. Active static governance files may live at repository root while the approved governing record remains under `design/approved/`. Executable checks and automation remain Sol-authored under a separately approved activation. Every approved governance package must be indexed, hashed, committed, and bound to its active package manifest.
 
+
+Approved implementation activations use an `ACT-<task>-<name>-vN` identifier. An activation binds one Sol root turn to exact approved design IDs, one approved design commit, activated contracts/paths/interfaces, explicit non-goals, tests, evidence, budgets, completion criteria, and owner approval. It authorizes no work until repository bootstrap prerequisites in the activation and task prompt are satisfied. Activations must be indexed, schema-valid, hashed, committed, and superseded rather than edited after execution begins.
+
 Every Sol root turn must also receive an immutable implementation activation manifest conforming to DR-30. Unactivated design concepts remain normative future obligations and must not receive production stubs, tables, interfaces, packages, services, feature flags, or TODOs. Material activation expansion requires ChatGPT design review and project-owner approval.
 
 ## Implementation boundary
