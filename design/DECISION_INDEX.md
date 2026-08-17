@@ -36,6 +36,12 @@
 | DR-29 | Local Desktop, Mobile Client, Quantization, and Distillation Architecture | APPROVED | 2026-08-17 | [`approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md`](approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md) |
 | DR-30 | Implementation Readiness, Simplicity, and Anti-Slop Contract | APPROVED | 2026-08-17 | [`approved/DR-30-implementation-readiness-simplicity-and-anti-slop-contract.md`](approved/DR-30-implementation-readiness-simplicity-and-anti-slop-contract.md) |
 
+## Approved implementation scopes
+
+| ID | Title | Status | Approved | File |
+|---|---|---|---|---|
+| VS-01 | John 1:5 Translation Nuance Vertical Slice | APPROVED | 2026-08-17 | [`approved/VS-01-john-1-5-translation-nuance-vertical-slice.md`](approved/VS-01-john-1-5-translation-nuance-vertical-slice.md) |
+
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, is approved. Production implementation remains blocked until the first vertical slice, source plan, seed benchmark content, public-repository governance package, documentation normalization, and clean-room package review are closed.
+The architecture and implementation-governance series, DR-01 through DR-30, and VS-01 are approved. Production implementation remains blocked until SOURCE-PLAN-01, the VS-01 benchmark seed, the public-repository governance package, documentation normalization, and clean-room package review are closed.

@@ -56,7 +56,10 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.
 
+## Approved initial implementation scope
+
+- `VS-01` — John 1:5 Translation Nuance Vertical Slice, activating the smallest end-to-end source, linguistic, translation-comparison, evidence, runtime, page-study, correction, audit, and seed-benchmark workflow while explicitly excluding cloud execution, training, vector search, mobile clients, full-canon context, and speculative service scaffolding
 
 ## Preimplementation design status
 
-The scheduled architecture and implementation-governance series, `DR-01` through `DR-30`, is approved. Production implementation remains absent. The next binding scope is the first approved implementation vertical slice, followed by source admission, seed benchmark content, public-repository governance artifacts, documentation normalization, and a clean-room package review before substantial Sol domain implementation.
+The architecture and implementation-governance series, `DR-01` through `DR-30`, and the first implementation scope, `VS-01`, are approved. Production implementation remains absent. Preimplementation closure still requires `SOURCE-PLAN-01`, the ChatGPT-authored and owner-approved VS-01 benchmark seed, the public-repository governance package, documentation normalization, and an independent clean-room package review.
