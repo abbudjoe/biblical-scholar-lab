@@ -291,6 +291,15 @@ class HandoffFixtures(unittest.TestCase):
         with self.assertRaises(ContractError):
             validate_handoff(luna)
 
+    def test_design_review_blocker_handoff_accepts_only_matching_design_state(self) -> None:
+        blocked = _handoff()
+        blocked["status"] = "BLOCKED_REQUIRES_DESIGN_REVIEW"
+        blocked["design_conformance"]["status"] = "BLOCKED_REQUIRES_DESIGN_REVIEW"
+        validate_handoff(blocked)
+        blocked["design_conformance"]["status"] = "CONFORMING"
+        with self.assertRaises(ContractError):
+            validate_handoff(blocked)
+
 
 class ExactHeadRecordFixtures(unittest.TestCase):
     def test_current_review_and_authorization_accept(self) -> None:

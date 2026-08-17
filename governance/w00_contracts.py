@@ -175,8 +175,13 @@ def _validate_handoff_receipts(record: dict[str, Any]) -> None:
         raise ContractError("GitHub auth preflight is not compliant")
     design = _typed(record, "design_conformance", dict)
     _fields(design, {"status", "approved_design_ids", "unapproved_design_changes_executed"})
-    if design.get("status") != "CONFORMING" or design.get("unapproved_design_changes_executed") is not False:
-        raise ContractError("handoff design conformance is not clean")
+    expected_design_status = (
+        "BLOCKED_REQUIRES_DESIGN_REVIEW"
+        if record.get("status") == "BLOCKED_REQUIRES_DESIGN_REVIEW"
+        else "CONFORMING"
+    )
+    if design.get("status") != expected_design_status or design.get("unapproved_design_changes_executed") is not False:
+        raise ContractError("handoff design state does not match the turn disposition")
     complexity = _typed(record, "complexity_receipt", dict)
     required_complexity = {
         "production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed",
