@@ -88,4 +88,6 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 ## Preimplementation design status
 
-The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. The public-repository governance package and W00 activation are approved. Preimplementation closure still requires documentation normalization and an independent clean-room package review. Source acquisition and benchmark execution remain blocked until governance, source verification, derivative-fixture verification, and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. Documentation normalization and the independent clean-room review are complete with no findings. The next prerequisite is the owner bootstrap of the public repository, followed by the bounded W00 Sol turn. Source acquisition and benchmark execution remain blocked until their later activations and verification gates are approved.
+
+Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

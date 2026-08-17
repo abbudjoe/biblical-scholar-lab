@@ -83,3 +83,10 @@
 ## Design-review status
 
 The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until documentation normalization and clean-room package review are closed; W00 itself additionally requires the owner bootstrap specified by GOV-01. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.
+
+
+## Preimplementation audits
+
+| ID | Title | Status | Date | Report | Audited commit |
+|---|---|---|---|---|---|
+| PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17 | Static clean-room implementation-handoff audit | PASS | 2026-08-17 | [`../audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](../audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md) | `ed5791e0746e32642e3853fe16b666acd9701dc8` |
