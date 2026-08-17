@@ -34,7 +34,8 @@
 | DR-27 | Privacy, Security, Telemetry, and Release | APPROVED | 2026-08-16 | [`approved/DR-27-privacy-security-telemetry-and-release.md`](approved/DR-27-privacy-security-telemetry-and-release.md) |
 | DR-28 | Integrated Logical Architecture and Contract Registry | APPROVED | 2026-08-16 | [`approved/DR-28-integrated-logical-architecture-and-contract-registry.md`](approved/DR-28-integrated-logical-architecture-and-contract-registry.md) |
 | DR-29 | Local Desktop, Mobile Client, Quantization, and Distillation Architecture | APPROVED | 2026-08-17 | [`approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md`](approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md) |
+| DR-30 | Implementation Readiness, Simplicity, and Anti-Slop Contract | APPROVED | 2026-08-17 | [`approved/DR-30-implementation-readiness-simplicity-and-anti-slop-contract.md`](approved/DR-30-implementation-readiness-simplicity-and-anti-slop-contract.md) |
 
 ## Design-review status
 
-The scheduled preimplementation design-review series, DR-01 through DR-29, is complete. The next artifact is the consolidated Sol implementation build package derived from the approved design baseline.
+The architecture and implementation-governance series, DR-01 through DR-30, is approved. Production implementation remains blocked until the first vertical slice, source plan, seed benchmark content, public-repository governance package, documentation normalization, and clean-room package review are closed.

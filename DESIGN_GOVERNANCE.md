@@ -48,6 +48,12 @@ Draft discussion in chat is not an implementation authorization. Material change
 
 Approved supplemental decisions use the parent design ID plus an `Sxx` suffix. A supplement is binding within its stated scope, must be indexed, hashed, and committed, and may not silently contradict its parent. Any discovered conflict stops implementation for design review.
 
+## Implementation scope records
+
+Approved vertical slices use a `VS-xx` identifier. A vertical slice is a binding implementation scope rather than a replacement for the design reviews it cites. It activates only the minimum named contracts, user-visible behavior, evidence, tests, and non-goals needed for that slice. Every approved vertical slice must be indexed, hashed, and committed.
+
+Every Sol root turn must also receive an immutable implementation activation manifest conforming to DR-30. Unactivated design concepts remain normative future obligations and must not receive production stubs, tables, interfaces, packages, services, feature flags, or TODOs. Material activation expansion requires ChatGPT design review and project-owner approval.
+
 ## Implementation boundary
 
 Approved design documents define what must be built, evaluated, or run. Consequential logical architecture, external contracts, storage and rights boundaries, retrieval semantics, validation behavior, reporting, benchmark identity, and experiment design are project-design decisions and must be approved before implementation.
