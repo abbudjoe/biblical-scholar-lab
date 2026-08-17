@@ -1,0 +1,162 @@
+name: Governance integrity
+
+on:
+  pull_request:
+    branches: [main]
+  issue_comment:
+    types: [created, edited, deleted]
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  w00-bootstrap:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.base.sha == '3d3ebb706fe6c8779445cbbfd9fea271b86d3646' &&
+      github.head_ref == 'codex/w00-repository-governance'
+    name: >-
+      ${{ github.event.pull_request.base.sha == '3d3ebb706fe6c8779445cbbfd9fea271b86d3646'
+          && matrix.check || format('w00-bootstrap-disabled-{0}', matrix.check) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - project-integrity
+          - turn-handoff-integrity
+          - chatgpt-review-integrity
+          - owner-merge-record-integrity
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch public PR comments
+        if: matrix.check == 'chatgpt-review-integrity' || matrix.check == 'owner-merge-record-integrity'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > "$RUNNER_TEMP/pr.json"
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" > "$RUNNER_TEMP/comments.json"
+      - name: Run bootstrap check
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BRANCH_NAME: ${{ github.head_ref }}
+          CHECK_NAME: ${{ matrix.check }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          case "$CHECK_NAME" in
+            project-integrity)
+              python3 -m py_compile governance/w00_contracts.py governance/w00_checks.py
+              python3 -m unittest -v governance/test_w00_checks.py
+              python3 governance/w00_checks.py project-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME"
+              ;;
+            turn-handoff-integrity)
+              python3 governance/w00_checks.py turn-handoff-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME" --pr-url "$PR_URL"
+              ;;
+            chatgpt-review-integrity)
+              python3 governance/w00_checks.py chatgpt-review-integrity --pr-json "$RUNNER_TEMP/pr.json" --comments-json "$RUNNER_TEMP/comments.json"
+              ;;
+            owner-merge-record-integrity)
+              python3 governance/w00_checks.py owner-merge-record-integrity --pr-json "$RUNNER_TEMP/pr.json" --comments-json "$RUNNER_TEMP/comments.json"
+              ;;
+          esac
+
+  trusted-controller:
+    if: >-
+      github.event_name == 'issue_comment' && github.event.issue.pull_request
+    name: trusted-${{ matrix.check }}-controller
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: read
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - project-integrity
+          - turn-handoff-integrity
+          - chatgpt-review-integrity
+          - owner-merge-record-integrity
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate from main and attach result to the exact PR head
+        env:
+          CHECK_NAME: ${{ matrix.check }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > "$RUNNER_TEMP/pr.json"
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" > "$RUNNER_TEMP/comments.json"
+          base_sha=$(jq -r .base.sha "$RUNNER_TEMP/pr.json")
+          branch_name=$(jq -r .head.ref "$RUNNER_TEMP/pr.json")
+          head_sha=$(jq -r .head.sha "$RUNNER_TEMP/pr.json")
+          pr_url=$(jq -r .html_url "$RUNNER_TEMP/pr.json")
+          git fetch --no-tags origin "$head_sha"
+          set +e
+          case "$CHECK_NAME" in
+            project-integrity)
+              python3 -m unittest -v governance/test_w00_checks.py && \
+                python3 governance/w00_checks.py project-integrity --base-sha "$base_sha" --head-sha "$head_sha" --branch "$branch_name"
+              ;;
+            turn-handoff-integrity)
+              python3 governance/w00_checks.py turn-handoff-integrity --base-sha "$base_sha" --head-sha "$head_sha" --branch "$branch_name" --pr-url "$pr_url"
+              ;;
+            chatgpt-review-integrity)
+              python3 governance/w00_checks.py chatgpt-review-integrity --pr-json "$RUNNER_TEMP/pr.json" --comments-json "$RUNNER_TEMP/comments.json"
+              ;;
+            owner-merge-record-integrity)
+              python3 governance/w00_checks.py owner-merge-record-integrity --pr-json "$RUNNER_TEMP/pr.json" --comments-json "$RUNNER_TEMP/comments.json"
+              ;;
+          esac
+          validation_status=$?
+          set -e
+          conclusion=failure
+          if [[ "$validation_status" == "0" ]]; then conclusion=success; fi
+          gh api -X POST "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f "name=$CHECK_NAME" \
+            -f "head_sha=$head_sha" \
+            -f "status=completed" \
+            -f "conclusion=$conclusion" \
+            -f "output[title]=$CHECK_NAME" \
+            -f "output[summary]=Trusted default-branch validation: $conclusion" > /dev/null
+          exit "$validation_status"
+
+  post-merge-conformance:
+    if: github.event_name == 'push'
+    name: ${{ matrix.check }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - project-integrity
+          - turn-handoff-integrity
+          - chatgpt-review-integrity
+          - owner-merge-record-integrity
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prove reviewed validators are operational from main
+        run: |
+          python3 -m py_compile governance/w00_contracts.py governance/w00_checks.py
+          python3 -m unittest -v governance/test_w00_checks.py

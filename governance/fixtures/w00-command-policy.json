@@ -1,0 +1,30 @@
+[
+{"name":"stored-auth-status","phase":"implementation","command":"gh auth status --active --hostname github.com","allowed":true},
+{"name":"draft-pr-create","phase":"implementation","command":"gh pr create --draft --base main --head codex/w00-repository-governance","allowed":true},
+{"name":"task-branch-push","phase":"implementation","command":"git push -u origin codex/w00-repository-governance","allowed":true},
+{"name":"w00-merge-settings","phase":"w00-governance","command":"gh repo edit abbudjoe/biblical-scholar-lab --enable-squash-merge=true --enable-merge-commit=false --enable-rebase-merge=false --enable-auto-merge=false --delete-branch-on-merge=true","allowed":true},
+{"name":"w00-ruleset-create","phase":"w00-governance","command":"gh api -X POST repos/abbudjoe/biblical-scholar-lab/rulesets --input ruleset.json","allowed":true},
+{"name":"exact-merge-only","phase":"merge-only","command":"gh pr merge 1 --squash --match-head-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --delete-branch","allowed":true},
+{"name":"token-display","phase":"implementation","command":"gh auth token","allowed":false},
+{"name":"show-token","phase":"implementation","command":"gh auth status --show-token","allowed":false},
+{"name":"auth-login","phase":"implementation","command":"gh auth login","allowed":false},
+{"name":"auth-logout","phase":"implementation","command":"gh auth logout","allowed":false},
+{"name":"auth-refresh","phase":"implementation","command":"gh auth refresh","allowed":false},
+{"name":"auth-switch","phase":"implementation","command":"gh auth switch","allowed":false},
+{"name":"unactivated-repository-mutation","phase":"implementation","command":"gh repo edit abbudjoe/biblical-scholar-lab --enable-wiki=false","allowed":false},
+{"name":"unrestricted-mutating-api","phase":"w00-governance","command":"gh api -X PATCH repos/abbudjoe/biblical-scholar-lab --input settings.json","allowed":false},
+{"name":"implementation-merge","phase":"implementation","command":"gh pr merge 1 --squash --match-head-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --delete-branch","allowed":false},
+{"name":"admin-merge","phase":"merge-only","command":"gh pr merge 1 --squash --admin --match-head-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --delete-branch","allowed":false},
+{"name":"auto-merge","phase":"merge-only","command":"gh pr merge 1 --squash --auto --match-head-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --delete-branch","allowed":false},
+{"name":"direct-main-push","phase":"implementation","command":"git push origin main","allowed":false},
+{"name":"force-push","phase":"implementation","command":"git push --force origin codex/w00-repository-governance","allowed":false},
+{"name":"self-approval","phase":"implementation","command":"gh pr review --approve","allowed":false}
+,{"name":"incomplete-gh","phase":"implementation","command":"gh","allowed":false}
+,{"name":"ready-outside-merge","phase":"implementation","command":"gh pr ready 1","allowed":false}
+,{"name":"ready-in-merge","phase":"merge-only","command":"gh pr ready 1","allowed":true}
+,{"name":"read-only-api","phase":"implementation","command":"gh api repos/abbudjoe/biblical-scholar-lab/rulesets","allowed":true}
+,{"name":"incomplete-git","phase":"implementation","command":"git","allowed":false}
+,{"name":"empty-command","phase":"implementation","command":"","allowed":false}
+,{"name":"malformed-command","phase":"implementation","command":"'","allowed":false}
+,{"name":"local-command","phase":"implementation","command":"python3 --version","allowed":true}
+]
