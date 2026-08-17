@@ -1,14 +1,15 @@
 {
   "schema_version": "1.0",
-  "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v1",
-  "status": "SUPERSEDED",
-  "approved_design_commit": "578fd4a913984c3d025c9c32971cbd8426477f8c",
+  "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v2",
+  "status": "APPROVED",
+  "approved_design_commit": "b32acf74e2560bd840f2c7aa542f24e6566bd553",
   "approved_design_ids": [
     "DR-20",
     "DR-21",
     "DR-25",
     "DR-30",
-    "GOV-01"
+    "GOV-01",
+    "GOV-01-ERRATA-01"
   ],
   "root_turn": {
     "task_id": "W00",
@@ -81,15 +82,15 @@
     "Postauthorization separate merge-only success fixture."
   ],
   "required_evidence": [
-    "Exact workflow/check run links.",
+    "Exact workflow/check implementation and post-merge run links.",
     "Ruleset and review-limit receipt.",
     "Positive and negative fixture report.",
-    "One complete draft-PR handoff and exact-head review cycle.",
-    "Post-merge validation receipt.",
+    "One complete W00 draft-PR handoff and exact-head ChatGPT review cycle.",
+    "Joseph exact-head approval reference and owner-manual W00 squash-merge receipt.",
+    "Post-merge validation showing all four trusted checks active from main.",
     "Nonsecret gh authentication receipt showing active login abbudjoe and no token override variables.",
-    "OwnerMergeAuthorizationRecord for the W00 proof PR.",
-    "Separate merge-only prompt and squash-merge receipt.",
-    "Explicit same-credential enforcement limitation statement."
+    "Explicit same-credential enforcement limitation statement.",
+    "Explicit statement that W01 is the first live Codex merge-only proof and blocks W02."
   ],
   "explicit_non_goals": [
     "No source acquisition.",
@@ -100,7 +101,8 @@
     "No public deployment or secrets.",
     "No new fine-grained token, GitHub App, or separate Codex GitHub account.",
     "No protected-environment approval workflow.",
-    "No custom cryptographic approval mechanism."
+    "No custom cryptographic approval mechanism.",
+    "No live Codex merge-only execution on the W00 bootstrap PR; that proof is deferred to W01."
   ],
   "prohibited_scaffolding": [
     "No future service or package shells.",
@@ -118,12 +120,13 @@
     "new_direct_dependencies_hard_limit": 2
   },
   "completion_criteria": [
-    "All W00 acceptance tests pass.",
+    "All bootstrap-safe W00 acceptance tests pass.",
     "The existing stored gh session is verified as abbudjoe without revealing or mutating credentials.",
-    "The four trusted checks are operational after W00 merge.",
     "The final W00 PR follows the non-self-referential handoff protocol.",
     "ChatGPT reviews the exact final head and Joseph explicitly authorizes that exact head in the current conversation.",
-    "A separate merge-only Sol turn posts the authorization record, waits for the required check, squash-merges, and produces post-merge evidence.",
+    "Joseph manually squash-merges the exact W00 head as the one bootstrap exception.",
+    "The four trusted checks are operational from main after W00 merge.",
+    "The governance report records that W01 must prove the live Codex merge-only path before W02 or later work.",
     "The governance report explicitly states that shared GitHub identity/credential is a procedural rather than cryptographic human/agent boundary.",
     "No non-goal or future scaffold is present."
   ],

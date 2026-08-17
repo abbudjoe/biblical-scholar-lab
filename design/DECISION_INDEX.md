@@ -71,7 +71,8 @@
 
 | ID | Title | Status | Approved | File | Bound design commit |
 |---|---|---|---|---|---|
-| ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
+| ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | SUPERSEDED BY v2 | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
+| ACT-W00-REPOSITORY-GOVERNANCE-v2 | Public repository governance and integrity controls; owner-manual bootstrap merge | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json) | `b32acf74e2560bd840f2c7aa542f24e6566bd553` |
 
 ## Documentation normalization
 

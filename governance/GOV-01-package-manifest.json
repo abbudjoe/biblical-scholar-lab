@@ -9,7 +9,7 @@
   "github_auth_mode": "GH_CLI_EXISTING_AUTH",
   "owner_merge_authorization": "EXACT_HEAD_CHATGPT_CONVERSATION_APPROVAL_AND_SEPARATE_MERGE_ONLY_TURN",
   "approved_design_document": "design/approved/GOV-01-public-repository-governance-and-review-package.md",
-  "activation_state": "FROZEN_APPROVED",
+  "activation_state": "V1_SUPERSEDED_V2_FROZEN_APPROVED",
   "files": [
     {
       "path": ".codex/agents/luna-runner.toml",
@@ -63,8 +63,8 @@
     },
     {
       "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
-      "sha256": "b8478ad42a95453546f4e434bb826c7682a6007ef2f4313af4dc5ebac7c169c5",
-      "bytes": 6277
+      "sha256": "bccea9c6e06aec6f002ecb3420b7a1b6a800c3d9ce37df7372fee7dc22b1c4d4",
+      "bytes": 6279
     },
     {
       "path": "governance/BRANCH_AND_RULESET_SPEC.md",
@@ -170,14 +170,19 @@
       "path": "reviews/.gitkeep",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
+    },
+    {
+      "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json",
+      "sha256": "84e48a85f60a7fbad9fa79c967eaabd6e8a7e6661d1b87c1eb21e86a92603c5d",
+      "bytes": 6620
     }
   ],
-  "file_count": 32,
+  "file_count": 33,
   "activation": {
-    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v1",
-    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
-    "sha256": "b8478ad42a95453546f4e434bb826c7682a6007ef2f4313af4dc5ebac7c169c5",
-    "approved_design_commit": "578fd4a913984c3d025c9c32971cbd8426477f8c",
+    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v2",
+    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json",
+    "sha256": "84e48a85f60a7fbad9fa79c967eaabd6e8a7e6661d1b87c1eb21e86a92603c5d",
+    "approved_design_commit": "b32acf74e2560bd840f2c7aa542f24e6566bd553",
     "approved_at": "2026-08-17T21:51:31Z"
   },
   "conformance_errata": {
