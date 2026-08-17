@@ -1,15 +1,16 @@
 {
   "schema_version": "1.0",
-  "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v2",
-  "status": "SUPERSEDED",
-  "approved_design_commit": "b32acf74e2560bd840f2c7aa542f24e6566bd553",
+  "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
+  "status": "APPROVED",
+  "approved_design_commit": "09f3f30b4638d0bdc3345e7eda554266270c1267",
   "approved_design_ids": [
     "DR-20",
     "DR-21",
     "DR-25",
     "DR-30",
     "GOV-01",
-    "GOV-01-ERRATA-01"
+    "GOV-01-ERRATA-01",
+    "GOV-01-ERRATA-02"
   ],
   "root_turn": {
     "task_id": "W00",
@@ -20,7 +21,7 @@
     "task_branch": "codex/w00-repository-governance",
     "luna_delegation_allowed": false
   },
-  "objective": "Implement and prove trusted repository integrity, handoff, exact-head ChatGPT review, existing-gh-CLI operation, exact-head owner authorization records, separate merge-only execution, model-role, and anti-slop controls without adding biblical domain behavior.",
+  "objective": "Implement and prove trusted repository integrity, handoff, exact-head ChatGPT review, existing-gh-CLI operation, exact-head owner-authorization records and merge-only control fixtures, model-role enforcement, and anti-slop controls without adding biblical domain behavior.",
   "vertical_slice_id": null,
   "activated_user_visible_capability": "None; owner and reviewer governance only.",
   "activated_invariants": [
@@ -30,7 +31,7 @@
     "Token display, authentication mutation, repository administration, and unactivated write API operations are prohibited.",
     "The implementation root turn stops before authorization and merge.",
     "Only Joseph can provide the binding exact-head owner approval in the current ChatGPT conversation.",
-    "A separate merge-only Sol turn may squash-merge only the exact approved head after every required check passes.",
+    "W00 implements and fixture-tests the separate merge-only Sol controls; the first live Codex merge-only proof occurs in W01 after the owner-manual W00 bootstrap merge.",
     "The governance report must disclose that GitHub cannot distinguish Joseph from Codex under the shared credential.",
     "No unactivated contract or future scaffold is implemented."
   ],
@@ -41,7 +42,6 @@
     "AGENTS.md",
     "EXPERIMENT_AUTHORITY.md",
     "governance/",
-    "activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json",
     "handoffs/W00/",
     "reviews/",
     "governance/GITHUB_CLI_OPERATION_POLICY.md"
@@ -79,7 +79,7 @@
     "Exact-head and stale-head ChatGPT review and owner-authorization fixtures.",
     "Negative direct-push, missing-authorization merge, stale-record, unresolved-conversation, force-push, and deletion probes.",
     "Negative token-display/auth-mutation command policy fixtures.",
-    "Postauthorization separate merge-only success fixture."
+    "Postauthorization separate merge-only success fixture; live GitHub execution is deferred to W01."
   ],
   "required_evidence": [
     "Exact workflow/check implementation and post-merge run links.",

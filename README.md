@@ -82,8 +82,9 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 ## Approved implementation activations
 
-- `ACT-W00-REPOSITORY-GOVERNANCE-v1` — superseded by v2; historical only
-- `ACT-W00-REPOSITORY-GOVERNANCE-v2` — authorizes one bounded GPT-5.6 Sol root turn to implement and prove repository-governance integrity only; owner bootstrap remains a prerequisite and no biblical domain, source acquisition, benchmark execution, model, cloud, or training work is activated
+- `ACT-W00-REPOSITORY-GOVERNANCE-v1` — superseded; historical only
+- `ACT-W00-REPOSITORY-GOVERNANCE-v2` — superseded by v3; historical only
+- `ACT-W00-REPOSITORY-GOVERNANCE-v3` — active bootstrap-safe authorization for one bounded GPT-5.6 Sol root turn to implement and prove repository-governance integrity only; owner bootstrap remains a prerequisite and no biblical domain, source acquisition, benchmark execution, model, cloud, or training work is activated
 
 ## Preimplementation design status
 

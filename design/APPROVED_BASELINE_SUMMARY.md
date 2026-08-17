@@ -42,4 +42,4 @@ Only contracts named by the active `ImplementationActivationManifest` may become
 
 ## Current implementation gate
 
-`GOV-01` and `ACT-W00-REPOSITORY-GOVERNANCE-v1` are approved. Production implementation may begin only after the final clean-room package review and owner bootstrap of the public repository.
+`GOV-01`, GOV-01-ERRATA-01/02, and `ACT-W00-REPOSITORY-GOVERNANCE-v3` are approved. Production implementation may begin only after the final clean-room package review and owner bootstrap of the public repository.

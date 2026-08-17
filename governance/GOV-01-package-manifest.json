@@ -1,7 +1,7 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": "3 + ERRATA-01",
+  "approved_revision": "3 + ERRATA-01 + ERRATA-02",
   "proposal_date": "2026-08-17",
   "approval_date": "2026-08-17",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
@@ -9,7 +9,7 @@
   "github_auth_mode": "GH_CLI_EXISTING_AUTH",
   "owner_merge_authorization": "EXACT_HEAD_CHATGPT_CONVERSATION_APPROVAL_AND_SEPARATE_MERGE_ONLY_TURN",
   "approved_design_document": "design/approved/GOV-01-public-repository-governance-and-review-package.md",
-  "activation_state": "V1_SUPERSEDED_V2_FROZEN_APPROVED",
+  "activation_state": "V1_SUPERSEDED_V2_SUPERSEDED_V3_FROZEN_APPROVED",
   "files": [
     {
       "path": ".codex/agents/luna-runner.toml",
@@ -173,21 +173,31 @@
     },
     {
       "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json",
-      "sha256": "84e48a85f60a7fbad9fa79c967eaabd6e8a7e6661d1b87c1eb21e86a92603c5d",
-      "bytes": 6620
+      "sha256": "a890b36c8c0161a191390552ab90f23057c02910d8adb3aebc23268b54cb4a0a",
+      "bytes": 6622
+    },
+    {
+      "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
+      "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
+      "bytes": 6697
     }
   ],
-  "file_count": 33,
+  "file_count": 34,
   "activation": {
-    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v2",
-    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json",
-    "sha256": "84e48a85f60a7fbad9fa79c967eaabd6e8a7e6661d1b87c1eb21e86a92603c5d",
-    "approved_design_commit": "b32acf74e2560bd840f2c7aa542f24e6566bd553",
+    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
+    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
+    "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
+    "approved_design_commit": "09f3f30b4638d0bdc3345e7eda554266270c1267",
     "approved_at": "2026-08-17T21:51:31Z"
   },
   "conformance_errata": {
     "id": "GOV-01-ERRATA-01",
     "path": "design/approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md",
     "sha256": "7e1f39790236295a9d1722c7e188b72f025157443e015d8684ef25426c4b4969"
+  },
+  "activation_scope_errata": {
+    "id": "GOV-01-ERRATA-02",
+    "path": "design/approved/GOV-01-ERRATA-02-w00-activation-scope-integrity.md",
+    "sha256": "7c0558ec99fe7233d8694ff814a6311be67433993ef9ff550dcf2c1be45ad069"
   }
 }
