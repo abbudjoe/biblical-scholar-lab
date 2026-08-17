@@ -48,6 +48,12 @@
 |---|---|---|---|---|---|
 | SOURCE-PLAN-01 | John 1:5 Vertical-Slice Source Admission Plan | APPROVED | 2026-08-17 | [`approved/SOURCE-PLAN-01-john-1-5-source-admission-plan.md`](approved/SOURCE-PLAN-01-john-1-5-source-admission-plan.md) | [`approved/SOURCE-PLAN-01-source-admission-manifest.json`](approved/SOURCE-PLAN-01-source-admission-manifest.json) |
 
+## Approved benchmark batches
+
+| ID | Title | Status | Approved | Human-readable file | Machine-readable cases |
+|---|---|---|---|---|---|
+| BENCH-VS01-BATCH-01 | John 1:5 Benchmark Seed | APPROVED — content frozen pending execution prerequisites | 2026-08-17 | [`approved/BENCH-VS01-BATCH-01.md`](approved/BENCH-VS01-BATCH-01.md) | [`approved/BENCH-VS01-BATCH-01-cases.json`](approved/BENCH-VS01-BATCH-01-cases.json) |
+
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, VS-01, and SOURCE-PLAN-01 are approved. Production implementation remains blocked until the VS-01 benchmark seed, the public-repository governance package, documentation normalization, and clean-room package review are closed. Source acquisition remains blocked until governance and an approved implementation activation manifest are active.
+The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. Production implementation remains blocked until the public-repository governance package, documentation normalization, and clean-room package review are closed. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.

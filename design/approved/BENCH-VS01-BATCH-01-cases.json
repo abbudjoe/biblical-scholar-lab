@@ -1,0 +1,1761 @@
+{
+  "schema_version": "0.1-approved",
+  "batch_id": "BENCH-VS01-BATCH-01",
+  "status": "APPROVED_CONTENT_FROZEN_PENDING_EXECUTION_PREREQUISITES",
+  "proposal_date": "2026-08-17",
+  "design_author": "ChatGPT",
+  "owner_approver": "Joseph Abbud",
+  "sol_content_authority": "NONE",
+  "luna_authority": "FROZEN_EXECUTION_ONLY_AFTER_APPROVAL",
+  "depends_on": {
+    "design_baseline_commit": "2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+    "vertical_slice": "VS-01",
+    "source_plan": "SOURCE-PLAN-01"
+  },
+  "purpose": "First public-safe benchmark seed for the John 1:5 Translation Nuance vertical slice.",
+  "author_model_contamination": {
+    "status": "CHATGPT_AUTHORED",
+    "restriction": "These cases may evaluate project systems and non-OpenAI model families, but cannot by themselves support an uncontaminated independent final-exam claim for an OpenAI frontier model."
+  },
+  "execution_status": "BLOCKED_PENDING_SOURCE_VERIFICATION_DERIVATIVE_VERIFICATION_REPOSITORY_GOVERNANCE_AND_IMPLEMENTATION_ACTIVATION",
+  "training_eligible": false,
+  "private_final_eligible": false,
+  "public_safe_candidate": true,
+  "evidence_contracts": [
+    {
+      "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+      "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+      "required": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5"
+      ],
+      "permitted": [],
+      "withheld": [
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5"
+      ],
+      "can_support": [
+        "exact passage identity",
+        "exact edition wording",
+        "surface translation comparison"
+      ],
+      "cannot_support": [
+        "contextual Greek sense",
+        "morphological analysis",
+        "textual-critical reconstruction",
+        "translator intent",
+        "scholarly consensus"
+      ]
+    },
+    {
+      "evidence_contract_id": "EC-VS01-02-GREEK-MORPH",
+      "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+      "required": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν"
+      ],
+      "permitted": [
+        "SP01-SRC-005#καταλαμβάνω"
+      ],
+      "withheld": [
+        "SP01-DER-001#John.1.5"
+      ],
+      "can_support": [
+        "exact Greek token identity",
+        "lemma",
+        "morphological form"
+      ],
+      "cannot_support": [
+        "one exclusive contextual sense",
+        "translator intent",
+        "current scholarly consensus"
+      ]
+    },
+    {
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "completeness": "SUFFICIENT_WITH_QUALIFICATION",
+      "required": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5"
+      ],
+      "permitted": [],
+      "withheld": [
+        "critical apparatus",
+        "modern specialist scholarship",
+        "translation committee documentation"
+      ],
+      "can_support": [
+        "the controlled wording difference does not require a different Greek source reading",
+        "bounded cognitive/apprehension and conflict/defeat effects",
+        "source-verifiable uncertainty and alternative analysis"
+      ],
+      "cannot_support": [
+        "the projects used identical complete Greek base editions",
+        "one final specialist-preferred rendering",
+        "translator intent",
+        "current scholarly consensus"
+      ]
+    },
+    {
+      "evidence_contract_id": "EC-VS01-04-TRANSLATIONS-ONLY",
+      "completeness": "INTENTIONALLY_INCOMPLETE",
+      "required": [
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5"
+      ],
+      "permitted": [],
+      "withheld": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5",
+        "critical apparatus"
+      ],
+      "can_support": [
+        "the two English editions have different wording"
+      ],
+      "cannot_support": [
+        "Greek lexical range",
+        "morphology",
+        "textual variant status",
+        "source edition identity",
+        "one preferred interpretation"
+      ],
+      "expected_behavior": "Qualify or abstain from claims that require withheld source-language evidence."
+    },
+    {
+      "evidence_contract_id": "EC-VS01-05-PAGE-BASE",
+      "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+      "required": [
+        "SP01-DER-002#base-page",
+        "SP01-SRC-003#John.1.5"
+      ],
+      "permitted": [
+        "deterministic page-region ground truth",
+        "canonical passage lookup"
+      ],
+      "withheld": [
+        "historical study-Bible provenance",
+        "publisher paratext"
+      ],
+      "can_support": [
+        "page-region role",
+        "authority class",
+        "exact ASV canonical wording"
+      ],
+      "cannot_support": [
+        "the synthetic page is a historical or publisher-produced page"
+      ]
+    },
+    {
+      "evidence_contract_id": "EC-VS01-06-PAGE-DEGRADED",
+      "completeness": "INTENTIONALLY_INCOMPLETE",
+      "required": [
+        "SP01-DER-002#degraded-illegibility-v1",
+        "SP01-SRC-003#John.1.5"
+      ],
+      "permitted": [
+        "canonical passage lookup labeled separately from visual transcription"
+      ],
+      "withheld": [
+        "clean pixels for the obscured phrase"
+      ],
+      "can_support": [
+        "which words are visibly legible",
+        "what the canonical ASV source contains when explicitly looked up"
+      ],
+      "cannot_support": [
+        "claim that obscured words were visually read"
+      ],
+      "expected_behavior": "Mark the obscured visual phrase illegible and distinguish canonical lookup from visual observation."
+    },
+    {
+      "evidence_contract_id": "EC-VS01-07-SESSION-COMPACTION",
+      "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+      "required": [
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "session-event:initial-web-primary",
+        "session-event:user-correction-asv-primary",
+        "compaction-artifact:K1-K2-v1"
+      ],
+      "permitted": [
+        "rehydration of exact ASV and WEB source handles"
+      ],
+      "withheld": [],
+      "can_support": [
+        "latest active edition preference",
+        "correction precedence",
+        "correct primary and secondary quotation roles"
+      ],
+      "cannot_support": [
+        "discarding the user correction because an older preference appeared earlier"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "VS01-B01-C01",
+      "family_id": "VS01-B01",
+      "title": "Resolve and quote John 1:5 from the approved ASV edition",
+      "track": "PRIMARY_TEXT_REFERENCE_AND_CANON",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "DETERMINISTIC_TOOLS_ONLY",
+      "answer_mode": "BRIEF",
+      "construct": "Exact reference and edition resolution without silently substituting another translation.",
+      "prompt": "In the approved American Standard Version edition, quote John 1:5 exactly and identify the edition. Do not substitute the World English Bible.",
+      "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+      "source_dependencies": [
+        "SP01-SRC-003#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "The selected edition is the American Standard Version (1901), openbibleinfo digital USX edition.",
+          "The exact approved wording is: “And the light shineth in the darkness; and the darkness apprehended it not.”"
+        ],
+        "required_citations": [
+          "SP01-SRC-003#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Presenting WEB wording as ASV.",
+          "Omitting the edition identity.",
+          "Adding footnotes or headings as canonical text."
+        ],
+        "acceptable_abstention": "Only if the exact ASV source handle is unavailable or fails verification."
+      },
+      "deterministic_checks": [
+        {
+          "type": "EXACT_STRING",
+          "value": "And the light shineth in the darkness; and the darkness apprehended it not."
+        },
+        {
+          "type": "REQUIRED_SOURCE_HANDLE",
+          "value": "SP01-SRC-003#John.1.5"
+        },
+        {
+          "type": "FORBIDDEN_STRING",
+          "value": "hasn’t overcome it"
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B01-R1",
+          "label": "Exact ASV wording",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Wrong or fabricated canonical wording."
+        },
+        {
+          "criterion_id": "B01-R2",
+          "label": "Edition identity and citation",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Exact quotation without edition/source identity."
+        }
+      ],
+      "reference_response": "The approved American Standard Version (1901), in the openbibleinfo digital USX edition, reads: “And the light shineth in the darkness; and the darkness apprehended it not.” [SP01-SRC-003#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B01"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311"
+    },
+    {
+      "case_id": "VS01-B02-C01",
+      "family_id": "VS01-B02",
+      "title": "Identify the Greek target span and morphology",
+      "track": "LINGUISTIC_REPRESENTATION_AND_ANALYSIS",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+      "answer_mode": "STUDY",
+      "construct": "Exact source-span, lemma, and morphological-form identification without inferring contextual sense from morphology alone.",
+      "prompt": "In the supplied SBLGNT John 1:5 text, identify the Greek verb corresponding to the disputed final rendering. Give its lemma and morphological form, then state one thing morphology alone does not establish.",
+      "evidence_contract_id": "EC-VS01-02-GREEK-MORPH",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "The target surface form is κατέλαβεν.",
+          "The lemma is καταλαμβάνω.",
+          "The form is a verb, third-person singular, aorist active indicative.",
+          "Morphology alone does not determine the contextual English sense or settle the translation question."
+        ],
+        "required_citations": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-002#John.1.5:κατέλαβεν"
+        ],
+        "prohibited_claims": [
+          "The aorist proves a once-for-all action.",
+          "Morphology proves “understand” or “overcome.”"
+        ]
+      },
+      "deterministic_checks": [
+        {
+          "type": "TEXT_QUOTE_SELECTOR",
+          "exact": "κατέλαβεν",
+          "prefix": "αὐτὸ οὐ "
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "lemma",
+          "value": "καταλαμβάνω"
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "person",
+          "value": "third"
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "number",
+          "value": "singular"
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "tense_form",
+          "value": "aorist"
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "voice_form",
+          "value": "active"
+        },
+        {
+          "type": "EXACT_FIELD",
+          "field": "mood_form",
+          "value": "indicative"
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B02-R1",
+          "label": "Exact Greek span and lemma",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Wrong Greek source span or lemma."
+        },
+        {
+          "criterion_id": "B02-R2",
+          "label": "Morphological form",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Materially incorrect parse."
+        },
+        {
+          "criterion_id": "B02-R3",
+          "label": "Formal-versus-contextual restraint",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Morphology presented as decisive contextual meaning."
+        }
+      ],
+      "reference_response": "The target verb is κατέλαβεν, from the lemma καταλαμβάνω. MorphGNT parses it as a third-person singular aorist active indicative verb. That formal analysis does not by itself determine whether the best contextual English rendering is cognitive (“apprehend/understand”), conflict-oriented (“overcome/master”), or another defensible option. [SP01-SRC-001#John.1.5] [SP01-SRC-002#John.1.5:κατέλαβεν]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B02"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6"
+    },
+    {
+      "case_id": "VS01-B03-C01",
+      "family_id": "VS01-B03",
+      "title": "Compare exact ASV and WEB wording without interpretation",
+      "track": "PRIMARY_TEXT_REFERENCE_AND_CANON",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "DEV_PUBLIC_CANDIDATE",
+      "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+      "answer_mode": "BRIEF",
+      "construct": "Exact edition-labeled surface comparison before interpretation.",
+      "prompt": "Quote John 1:5 from the approved ASV and WEB Classic editions, then identify only the final-clause wording difference. Do not yet explain why they differ.",
+      "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+      "source_dependencies": [
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "ASV wording exactly matches the approved ASV source.",
+          "WEB Classic wording exactly matches the acquisition-frozen approved WEB source.",
+          "The salient final-clause contrast is “apprehended it not” versus “hasn’t overcome it.”"
+        ],
+        "required_citations": [
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Interpretive diagnosis.",
+          "Textual-variant claim.",
+          "Translator-intent claim."
+        ]
+      },
+      "deterministic_checks": [
+        {
+          "type": "EXACT_STRING",
+          "source": "SP01-SRC-003#John.1.5",
+          "value": "And the light shineth in the darkness; and the darkness apprehended it not."
+        },
+        {
+          "type": "EXACT_STRING",
+          "source": "SP01-SRC-004#John.1.5",
+          "value": "The light shines in the darkness, and the darkness hasn’t overcome it."
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B03-R1",
+          "label": "Exact edition-labeled quotations",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Quotation or edition substitution."
+        },
+        {
+          "criterion_id": "B03-R2",
+          "label": "Surface difference isolated without overanalysis",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1
+        }
+      ],
+      "reference_response": "ASV (1901): “And the light shineth in the darkness; and the darkness apprehended it not.” [SP01-SRC-003#John.1.5]\n\nWEB Classic: “The light shines in the darkness, and the darkness hasn’t overcome it.” [SP01-SRC-004#John.1.5]\n\nThe final-clause contrast is “apprehended it not” versus “hasn’t overcome it.”",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B03"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1"
+    },
+    {
+      "case_id": "VS01-B04-C01",
+      "family_id": "VS01-B04",
+      "title": "Reject the false manuscript-variant inference",
+      "track": "TRANSLATION_NUANCE",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+      "answer_mode": "STUDY",
+      "construct": "Distinguish a translation choice from evidence of different manuscript readings.",
+      "prompt": "The ASV says “apprehended it not,” while WEB Classic says “hasn’t overcome it.” Does that prove the translations were based on different Greek manuscripts? Explain using only the supplied evidence.",
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "SP01-DER-001#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "No: the English wording difference does not prove different Greek manuscripts.",
+          "In the controlled evidence packet, no different Greek source reading is required to explain the contrast.",
+          "The difference can be analyzed as a translation choice within the bounded lexical/semantic possibilities of καταλαμβάνω.",
+          "The case does not establish that the two projects used identical complete Greek base editions."
+        ],
+        "required_uncertainty": [
+          "Do not infer complete source-edition identity beyond the supplied passage-level evidence."
+        ],
+        "required_citations": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5",
+          "SP01-DER-001#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Translation agreement or disagreement counts as manuscript evidence.",
+          "The projects definitely used the same full Greek edition.",
+          "A textual variant is established."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B04-R1",
+          "label": "Rejects translation-as-witness inference",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "States or implies that the two English renderings prove different manuscripts."
+        },
+        {
+          "criterion_id": "B04-R2",
+          "label": "Correct bounded cause diagnosis",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B04-R3",
+          "label": "Preserves source-edition uncertainty",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Claims identical full Greek base editions without evidence."
+        },
+        {
+          "criterion_id": "B04-R4",
+          "label": "Claim-level evidence support",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Central claim lacks or misuses source evidence."
+        }
+      ],
+      "reference_response": "No. Different English renderings do not by themselves prove that the translations reflect different Greek manuscripts. In this controlled case, the same supplied SBLGNT wording contains κατέλαβεν, and no different Greek reading is required to explain the ASV’s “apprehended it not” and WEB Classic’s “hasn’t overcome it.” The contrast can therefore be analyzed as a translation choice that foregrounds different effects within the bounded lexical/semantic range. This passage-level evidence does not establish that the two translation projects used identical complete Greek base editions. [SP01-SRC-001#John.1.5] [SP01-SRC-003#John.1.5] [SP01-SRC-004#John.1.5] [SP01-DER-001#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B04"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600"
+    },
+    {
+      "case_id": "VS01-B05-C01",
+      "family_id": "VS01-B05",
+      "title": "Correct illegitimate totality transfer",
+      "track": "LINGUISTIC_REPRESENTATION_AND_ANALYSIS",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "split_recommendation": "DEV_PUBLIC_CANDIDATE",
+      "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+      "answer_mode": "STUDY",
+      "construct": "Prevent a lexicon’s possible senses from being treated as simultaneously active contextual meaning.",
+      "prompt": "A study note claims: “Because καταλαμβάνω can mean understand, seize, attain, overtake, and overcome, all those meanings are present in John 1:5.” Evaluate that claim using the supplied evidence.",
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "The claim commits a gloss-as-definition or illegitimate-totality-transfer error.",
+          "A lexicon records possible uses across contexts; it does not make every gloss active in one occurrence.",
+          "The bounded evidence permits cognitive/apprehension and conflict/defeat effects to be considered, but the lexicon alone does not settle the contextual meaning."
+        ],
+        "required_citations": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-005#καταλαμβάνω",
+          "SP01-DER-001#John.1.5"
+        ],
+        "prohibited_claims": [
+          "All listed senses are simultaneously present.",
+          "The root or morphology settles the meaning.",
+          "The Greek literally means both."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B05-R1",
+          "label": "Identifies the lexical fallacy",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Endorses every gloss as simultaneously active."
+        },
+        {
+          "criterion_id": "B05-R2",
+          "label": "Explains contextual sense selection",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B05-R3",
+          "label": "Preserves bounded alternatives and uncertainty",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Claims the lexicon alone settles the verse."
+        }
+      ],
+      "reference_response": "That claim is too strong. A lexicon records possible uses of a word across different contexts; it does not make every gloss part of the meaning of one occurrence. Treating the whole entry as the meaning of John 1:5 would be illegitimate totality transfer. In this bounded case, cognitive/apprehension and conflict/defeat effects are both defensible possibilities to examine, but the lexicon alone does not decide which rendering is best or whether more than one resonance is active. [SP01-SRC-001#John.1.5] [SP01-SRC-005#καταλαμβάνω] [SP01-DER-001#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B05"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811"
+    },
+    {
+      "case_id": "VS01-B06-C01",
+      "family_id": "VS01-B06",
+      "title": "Explain alternatives without false certainty",
+      "track": "TRANSLATION_NUANCE",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+      "answer_mode": "STUDY",
+      "construct": "Present cognitive and conflict-oriented effects as defensible alternatives while preserving the limit of the P1 evidence.",
+      "prompt": "Why might one translation use “apprehended” and another use “overcome” in John 1:5? Give a calibrated explanation and state what the supplied evidence does not settle.",
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "ASV foregrounds a cognitive/apprehension effect.",
+          "WEB Classic foregrounds a conflict/defeat effect.",
+          "Both are connected to a broader grasping/seizing semantic family in the bounded evidence.",
+          "A possible ambiguity or double resonance may be discussed as a possibility, not a settled fact.",
+          "The evidence does not settle one final specialist-preferred rendering or translator intent."
+        ],
+        "required_uncertainty": [
+          "No definitive single rendering is established by this evidence packet.",
+          "No translator-intent claim without translation documentation."
+        ],
+        "required_citations": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5",
+          "SP01-SRC-005#καταλαμβάνω",
+          "SP01-DER-001#John.1.5"
+        ],
+        "prohibited_claims": [
+          "The Greek literally means both.",
+          "One rendering is definitively correct.",
+          "Current scholarly consensus is established."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B06-R1",
+          "label": "Explains both principal effects",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B06-R2",
+          "label": "Connects effects to bounded evidence",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B06-R3",
+          "label": "Calibrates ambiguity and uncertainty",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "States that the Greek literally and definitively means both."
+        },
+        {
+          "criterion_id": "B06-R4",
+          "label": "Avoids translator-intent and consensus overclaim",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Infers translator intent or consensus without evidence."
+        }
+      ],
+      "reference_response": "The ASV’s “apprehended” foregrounds a cognitive or epistemic effect: the darkness does not grasp or understand the light. WEB Classic’s “overcome” foregrounds a conflict or defeat effect: the darkness does not master or extinguish the light. The supplied Greek and lexical evidence place both within a broader family of grasping or seizing ideas, so the translations make different effects salient. A double resonance is possible, but this P1 evidence packet does not prove that both senses are simultaneously intended, settle one final specialist-preferred rendering, or establish the translators’ intentions. [SP01-SRC-001#John.1.5] [SP01-SRC-003#John.1.5] [SP01-SRC-004#John.1.5] [SP01-SRC-005#καταλαμβάνω] [SP01-DER-001#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B06"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee"
+    },
+    {
+      "case_id": "VS01-B07-C01",
+      "family_id": "VS01-B07",
+      "title": "Attach each claim to evidence that actually supports it",
+      "track": "SCHOLARSHIP_CITATION_AND_LANDSCAPE",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+      "answer_mode": "STUDY",
+      "construct": "Claim-level citation entailment and source-role compatibility.",
+      "prompt": "Give a short cited explanation of the John 1:5 wording difference. Cite the Greek wording, morphology, each English rendering, and lexical-range claim to the source that actually supports it.",
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "SP01-SRC-005#καταλαμβάνω"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "Greek wording claim cites SBLGNT.",
+          "Morphology claim cites MorphGNT.",
+          "ASV wording claim cites ASV.",
+          "WEB wording claim cites WEB.",
+          "Lexical-range claim cites Abbott-Smith."
+        ],
+        "required_citations": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-002#John.1.5:κατέλαβεν",
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5",
+          "SP01-SRC-005#καταλαμβάνω"
+        ],
+        "prohibited_claims": [
+          "Citing the lexicon as manuscript evidence.",
+          "Citing a translation as the source of Greek morphology.",
+          "Fabricated bibliography or locator."
+        ]
+      },
+      "deterministic_checks": [
+        {
+          "type": "CLAIM_SOURCE_MAP",
+          "claim": "greek_wording",
+          "required_source": "SP01-SRC-001#John.1.5"
+        },
+        {
+          "type": "CLAIM_SOURCE_MAP",
+          "claim": "morphology",
+          "required_source": "SP01-SRC-002#John.1.5:κατέλαβεν"
+        },
+        {
+          "type": "CLAIM_SOURCE_MAP",
+          "claim": "asv_wording",
+          "required_source": "SP01-SRC-003#John.1.5"
+        },
+        {
+          "type": "CLAIM_SOURCE_MAP",
+          "claim": "web_wording",
+          "required_source": "SP01-SRC-004#John.1.5"
+        },
+        {
+          "type": "CLAIM_SOURCE_MAP",
+          "claim": "lexical_range",
+          "required_source": "SP01-SRC-005#καταλαμβάνω"
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B07-R1",
+          "label": "Source identity and locator correctness",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Fabricated source or locator."
+        },
+        {
+          "criterion_id": "B07-R2",
+          "label": "Claim-level entailment",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "A central claim is attached to evidence that does not support it."
+        },
+        {
+          "criterion_id": "B07-R3",
+          "label": "Source-role compatibility",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Translation or lexicon treated as manuscript attestation."
+        }
+      ],
+      "reference_response": "The SBLGNT text of John 1:5 ends with καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν. [SP01-SRC-001#John.1.5] MorphGNT identifies κατέλαβεν as a third-person singular aorist active indicative form of καταλαμβάνω. [SP01-SRC-002#John.1.5:κατέλαβεν] The ASV renders the final clause “the darkness apprehended it not,” [SP01-SRC-003#John.1.5] while WEB Classic says “the darkness hasn’t overcome it.” [SP01-SRC-004#John.1.5] Abbott-Smith supplies lexical evidence for a range involving grasping or seizing ideas, which can support different contextual effects but does not by itself settle the verse. [SP01-SRC-005#καταλαμβάνω]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B07"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a"
+    },
+    {
+      "case_id": "VS01-B08-C01",
+      "family_id": "VS01-B08",
+      "title": "Qualify when only translations are available",
+      "track": "TOOLS_RETRIEVAL_AND_RUNTIME",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "split_recommendation": "DEV_PUBLIC_CANDIDATE",
+      "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+      "answer_mode": "STUDY",
+      "construct": "Evidence-sufficiency recognition and appropriate abstention from source-language claims.",
+      "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+      "evidence_contract_id": "EC-VS01-04-TRANSLATIONS-ONLY",
+      "source_dependencies": [
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "The evidence establishes only that the two English editions differ in wording.",
+          "The available evidence is insufficient to establish the Greek lexical range, morphology, textual-variant status, or whether both senses are contextually active.",
+          "The system should request or retrieve the Greek source, linguistic evidence, and if needed textual-critical evidence before answering those questions."
+        ],
+        "required_uncertainty": [
+          "No Greek or textual-critical conclusion from translations alone."
+        ],
+        "required_citations": [
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5"
+        ],
+        "acceptable_abstention": "Required for the Greek-meaning and textual-variant portions unless additional evidence is acquired.",
+        "prohibited_claims": [
+          "Inventing Greek evidence.",
+          "Declaring a textual variant from English wording.",
+          "Claiming both meanings are present."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B08-R1",
+          "label": "Recognizes evidence insufficiency",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Gives a confident Greek or variant conclusion from translations alone."
+        },
+        {
+          "criterion_id": "B08-R2",
+          "label": "States what the available evidence does establish",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1
+        },
+        {
+          "criterion_id": "B08-R3",
+          "label": "Requests the right missing evidence",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1
+        }
+      ],
+      "reference_response": "From the two translations alone, we can establish only that the ASV and WEB Classic use different English wording. We cannot responsibly determine the Greek lexical range, morphology, whether both effects are contextually active, or whether a textual variant is involved without the Greek source and relevant linguistic—and, if necessary, textual-critical—evidence. [SP01-SRC-003#John.1.5] [SP01-SRC-004#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B08"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "fixed_evidence_purpose": "Test restraint under deliberately incomplete fixed evidence.",
+      "not_product_default": true,
+      "paired_future_runtime_case_required": true,
+      "product_expectation": "When approved Greek, morphology, and lexical tools are available, acquire the missing evidence and continue the analysis rather than ending at evidence insufficiency.",
+      "paired_future_runtime_expectation": [
+        "Recognize that the Greek source and linguistic evidence are required.",
+        "Invoke the approved exact-text, morphology, and bounded lexical-evidence tools.",
+        "Resolve the exact edition and source span.",
+        "Complete the bounded Translation Nuance analysis.",
+        "Preserve uncertainty that remains after evidence acquisition."
+      ],
+      "runtime_failure_condition": "In FULL_RUNTIME_HARNESS mode, failing to attempt available approved evidence acquisition is a tool-selection or runtime-planning failure and is not rewarded as epistemic caution.",
+      "case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+    },
+    {
+      "case_id": "VS01-B09-C01",
+      "family_id": "VS01-B09",
+      "title": "Separate Scripture from page paratext and user annotation",
+      "track": "MULTIMODAL_PAGE_STUDY",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "IMAGE_PLUS_TOOLS",
+      "answer_mode": "STUDY",
+      "construct": "Page-region role and authority classification with exact canonical quotation.",
+      "prompt": "On the supplied synthetic study page, identify which regions are canonical Scripture and which are page header, section heading, verse number, study note, cross-reference, and user annotation. Quote only the canonical text.",
+      "evidence_contract_id": "EC-VS01-05-PAGE-BASE",
+      "source_dependencies": [
+        "SP01-DER-002#base-page",
+        "SP01-SRC-003#John.1.5"
+      ],
+      "page_fixture": {
+        "canvas_px": [
+          1600,
+          2200
+        ],
+        "label": "Synthetic demonstration page — not a historical facsimile or published study Bible.",
+        "regions": [
+          {
+            "region_id": "r_header",
+            "bbox": [
+              120,
+              80,
+              1360,
+              110
+            ],
+            "text": "John 1",
+            "role": "PAGE_HEADER"
+          },
+          {
+            "region_id": "r_heading",
+            "bbox": [
+              120,
+              250,
+              1360,
+              150
+            ],
+            "text": "The Light in the Darkness",
+            "role": "SECTION_HEADING"
+          },
+          {
+            "region_id": "r_verse_number",
+            "bbox": [
+              120,
+              500,
+              70,
+              90
+            ],
+            "text": "5",
+            "role": "VERSE_NUMBER"
+          },
+          {
+            "region_id": "r_canonical",
+            "bbox": [
+              220,
+              470,
+              1160,
+              280
+            ],
+            "text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+            "role": "CANONICAL_TEXT"
+          },
+          {
+            "region_id": "r_note",
+            "bbox": [
+              180,
+              930,
+              1240,
+              320
+            ],
+            "text": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering.",
+            "role": "STUDY_NOTE_OR_FOOTNOTE"
+          },
+          {
+            "region_id": "r_crossref",
+            "bbox": [
+              180,
+              1320,
+              620,
+              80
+            ],
+            "text": "Cross-reference: John 12:35",
+            "role": "CROSS_REFERENCE"
+          },
+          {
+            "region_id": "r_annotation",
+            "bbox": [
+              860,
+              1500,
+              520,
+              150
+            ],
+            "text": "understand—or overcome?",
+            "role": "USER_ANNOTATION"
+          }
+        ],
+        "reading_order": [
+          "r_header",
+          "r_heading",
+          "r_verse_number",
+          "r_canonical",
+          "r_note",
+          "r_crossref",
+          "r_annotation"
+        ]
+      },
+      "answer_contract": {
+        "required_claims": [
+          "Only r_canonical is canonical Scripture text.",
+          "r_verse_number is an address marker, not canonical wording.",
+          "The note, heading, cross-reference, header, and annotation are not canonical Scripture.",
+          "The exact ASV verse is quoted from the approved canonical source."
+        ],
+        "required_citations": [
+          "SP01-DER-002#base-page",
+          "SP01-SRC-003#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Quoting the note or annotation as Scripture.",
+          "Calling the synthetic page a historical facsimile or published study Bible."
+        ]
+      },
+      "deterministic_checks": [
+        {
+          "type": "REGION_ROLE_MAP",
+          "expected": {
+            "r_header": "PAGE_HEADER",
+            "r_heading": "SECTION_HEADING",
+            "r_verse_number": "VERSE_NUMBER",
+            "r_canonical": "CANONICAL_TEXT",
+            "r_note": "STUDY_NOTE_OR_FOOTNOTE",
+            "r_crossref": "CROSS_REFERENCE",
+            "r_annotation": "USER_ANNOTATION"
+          }
+        },
+        {
+          "type": "ONLY_CANONICAL_QUOTE",
+          "value": "And the light shineth in the darkness; and the darkness apprehended it not."
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B09-R1",
+          "label": "Region classification",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Study note, heading, cross-reference, or user annotation presented as Scripture."
+        },
+        {
+          "criterion_id": "B09-R2",
+          "label": "Canonical quotation and edition grounding",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Canonical text is fabricated or ungrounded."
+        },
+        {
+          "criterion_id": "B09-R3",
+          "label": "Synthetic-fixture disclosure",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Page presented as historical or publisher-produced."
+        }
+      ],
+      "reference_response": "Canonical Scripture: “And the light shineth in the darkness; and the darkness apprehended it not.” [SP01-SRC-003#John.1.5]\n\nNoncanonical page regions: “John 1” is the page header; “The Light in the Darkness” is a section heading; “5” is a verse-number/address marker; the study note is editorial study content; “John 12:35” is a cross-reference; and “understand—or overcome?” is a user annotation. This is a synthetic demonstration page, not a historical facsimile or published study Bible. [SP01-DER-002#base-page]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B09",
+        "fixture:SP01-DER-002"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367"
+    },
+    {
+      "case_id": "VS01-B10-C01",
+      "family_id": "VS01-B10",
+      "title": "Do not invent obscured page text",
+      "track": "MULTIMODAL_PAGE_STUDY",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "IMAGE_PLUS_TOOLS",
+      "answer_mode": "STUDY",
+      "construct": "Separate visual transcription confidence from deterministic canonical lookup.",
+      "prompt": "Transcribe only what is visibly legible in the highlighted canonical-text region. You may use the exact-edition lookup to say what the ASV source contains, but clearly distinguish lookup from visual observation.",
+      "evidence_contract_id": "EC-VS01-06-PAGE-DEGRADED",
+      "source_dependencies": [
+        "SP01-DER-002#degraded-illegibility-v1",
+        "SP01-SRC-003#John.1.5"
+      ],
+      "degradation_spec": {
+        "parent_fixture": "SP01-DER-002#base-page",
+        "variant_id": "degraded-illegibility-v1",
+        "deterministic_seed": 150105,
+        "operations": [
+          {
+            "type": "GAUSSIAN_BLUR_MASK",
+            "region_id": "r_canonical",
+            "target_substring": "apprehended it not",
+            "sigma": 18.0
+          },
+          {
+            "type": "OPAQUE_GLARE_MASK",
+            "region_id": "r_annotation",
+            "coverage_ratio": 0.55
+          }
+        ],
+        "invariant": "The underlying source and region labels do not change; only visual legibility changes."
+      },
+      "answer_contract": {
+        "required_claims": [
+          "The obscured phrase is marked illegible or uncertain in the visual transcription.",
+          "Canonical lookup may separately report that the approved ASV source contains “apprehended it not.”",
+          "The answer states that the phrase came from source lookup, not from reading the obscured pixels."
+        ],
+        "required_citations": [
+          "SP01-DER-002#degraded-illegibility-v1",
+          "SP01-SRC-003#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Claiming the obscured phrase was visibly recognized.",
+          "Silently replacing OCR/visual evidence with expected canonical wording."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B10-R1",
+          "label": "Visual illegibility calibration",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Claims visually reading the obscured phrase."
+        },
+        {
+          "criterion_id": "B10-R2",
+          "label": "Lookup-versus-observation distinction",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Canonical lookup silently replaces page evidence."
+        },
+        {
+          "criterion_id": "B10-R3",
+          "label": "No invention in obscured annotation",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Invents obscured user handwriting."
+        }
+      ],
+      "reference_response": "Visible transcription: “And the light shineth in the darkness; and the darkness [illegible].” The obscured final words cannot be claimed as visually read. The approved ASV source lookup identifies the full phrase as “apprehended it not,” but that wording comes from the canonical source tool rather than the obscured pixels. [SP01-DER-002#degraded-illegibility-v1] [SP01-SRC-003#John.1.5]",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B10",
+        "fixture:SP01-DER-002"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06"
+    },
+    {
+      "case_id": "VS01-B11-C01",
+      "family_id": "VS01-B11",
+      "title": "Preserve a corrected edition preference through compaction",
+      "track": "LONG_CONTEXT_SESSION_AND_COMPACTION",
+      "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "COMPACTED_SESSION",
+      "answer_mode": "STUDY",
+      "construct": "Latest user correction survives structured state extraction and evidence-handle compaction.",
+      "turns": [
+        {
+          "turn": 1,
+          "role": "user",
+          "content": "Use WEB Classic as the primary display translation for this study."
+        },
+        {
+          "turn": 2,
+          "role": "assistant_state",
+          "content": "Primary translation set to WEB Classic."
+        },
+        {
+          "turn": 3,
+          "role": "user",
+          "content": "Correction: use the ASV as the primary display translation, and compare WEB Classic only as the secondary translation."
+        },
+        {
+          "turn": 4,
+          "role": "runtime",
+          "content": "Apply K1 structured-state extraction and K2 evidence-handle compaction."
+        },
+        {
+          "turn": 5,
+          "role": "user",
+          "content": "Now quote the primary translation and summarize the secondary comparison."
+        }
+      ],
+      "evidence_contract_id": "EC-VS01-07-SESSION-COMPACTION",
+      "source_dependencies": [
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5"
+      ],
+      "answer_contract": {
+        "required_claims": [
+          "ASV is the active primary display translation because the later user correction supersedes the earlier preference.",
+          "The exact ASV verse is quoted as primary.",
+          "WEB Classic is summarized or quoted only as the secondary comparison.",
+          "The correction and its precedence are preserved in the session/audit state."
+        ],
+        "required_citations": [
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5"
+        ],
+        "prohibited_claims": [
+          "Using WEB as primary.",
+          "Losing or ignoring the correction.",
+          "Silently rewriting session history."
+        ]
+      },
+      "deterministic_checks": [
+        {
+          "type": "SESSION_STATE",
+          "field": "primary_translation",
+          "value": "SP01-SRC-003"
+        },
+        {
+          "type": "SESSION_STATE",
+          "field": "secondary_translations",
+          "contains": "SP01-SRC-004"
+        },
+        {
+          "type": "REQUIRED_EVENT",
+          "value": "user-correction-asv-primary"
+        }
+      ],
+      "rubric": [
+        {
+          "criterion_id": "B11-R1",
+          "label": "Correction precedence retained",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Stale WEB preference overrides the later correction."
+        },
+        {
+          "criterion_id": "B11-R2",
+          "label": "Correct primary and secondary source use",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B11-R3",
+          "label": "Compaction and audit integrity",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Correction disappears or history is silently overwritten."
+        }
+      ],
+      "reference_response": "Primary — ASV (1901): “And the light shineth in the darkness; and the darkness apprehended it not.” [SP01-SRC-003#John.1.5]\n\nSecondary comparison — WEB Classic renders the final clause “the darkness hasn’t overcome it.” [SP01-SRC-004#John.1.5]\n\nThe later correction made ASV the primary display translation; that correction supersedes the earlier WEB preference and must remain in the compacted session state.",
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "NOT_REQUIRED_FOR_REV_P0",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B11",
+        "session:VS01-compaction"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090"
+    },
+    {
+      "case_id": "VS01-B12-C01",
+      "family_id": "VS01-B12",
+      "title": "Keep Brief and Study answers substantively consistent",
+      "track": "RESEARCH_WORKFLOW_AND_ACCESSIBILITY",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "split_recommendation": "PUBLIC_REPRODUCTION_CANDIDATE",
+      "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+      "answer_mode": "PAIRED_BRIEF_AND_STUDY",
+      "construct": "Progressive disclosure changes depth without changing the verified conclusion or suppressing material uncertainty.",
+      "prompts": {
+        "brief": "Brief mode: Why do the ASV and WEB Classic differ in John 1:5?",
+        "study": "Study mode: Why do the ASV and WEB Classic differ in John 1:5? Include the source-language evidence, alternatives, and uncertainty."
+      },
+      "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+      "source_dependencies": [
+        "SP01-SRC-001#John.1.5",
+        "SP01-SRC-002#John.1.5:κατέλαβεν",
+        "SP01-SRC-003#John.1.5",
+        "SP01-SRC-004#John.1.5",
+        "SP01-SRC-005#καταλαμβάνω",
+        "SP01-DER-001#John.1.5"
+      ],
+      "answer_contract": {
+        "shared_required_claims": [
+          "The difference does not by itself prove different Greek manuscripts.",
+          "ASV foregrounds apprehension/cognition; WEB foregrounds overcoming/defeat.",
+          "The evidence does not settle one exclusive rendering."
+        ],
+        "brief_requirements": [
+          "Direct answer.",
+          "Central source-state distinction.",
+          "Material uncertainty.",
+          "Key source links."
+        ],
+        "study_requirements": [
+          "Exact edition identity.",
+          "Greek token and morphology.",
+          "Lexical/semantic alternatives.",
+          "No translator-intent or consensus claim.",
+          "Full source links."
+        ],
+        "prohibited_claims": [
+          "Brief and Study answers materially contradict.",
+          "Brief mode removes the material uncertainty.",
+          "Study mode invents specialist consensus."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B12-R1",
+          "label": "Shared conclusion consistency",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2,
+          "hard_failure_if": "Brief and Study answers materially contradict."
+        },
+        {
+          "criterion_id": "B12-R2",
+          "label": "Brief-mode adequacy",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Brief mode hides a material qualification."
+        },
+        {
+          "criterion_id": "B12-R3",
+          "label": "Study-mode added depth and evidence",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 2
+        },
+        {
+          "criterion_id": "B12-R4",
+          "label": "No unsupported specialist escalation",
+          "scoring_type": "ORDINAL_0_2",
+          "anchors": {
+            "0": "Absent, incorrect, or materially unsupported.",
+            "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+            "2": "Correct, sufficiently supported, and appropriately qualified."
+          },
+          "weight": 1,
+          "hard_failure_if": "Study mode invents consensus, intent, or certainty."
+        }
+      ],
+      "reference_responses": {
+        "brief": "The ASV’s “apprehended it not” foregrounds grasping or understanding, while WEB Classic’s “hasn’t overcome it” foregrounds conflict or defeat. In this controlled comparison, that is a translation-choice issue—not proof of different Greek manuscripts—and the supplied evidence does not settle one exclusive rendering. [SP01-SRC-003#John.1.5] [SP01-SRC-004#John.1.5] [SP01-DER-001#John.1.5]",
+        "study": "The SBLGNT text contains κατέλαβεν, parsed as a third-person singular aorist active indicative form of καταλαμβάνω. [SP01-SRC-001#John.1.5] [SP01-SRC-002#John.1.5:κατέλαβεν] The ASV renders the clause “the darkness apprehended it not,” while WEB Classic says “the darkness hasn’t overcome it.” [SP01-SRC-003#John.1.5] [SP01-SRC-004#John.1.5] The bounded lexical evidence permits grasping or seizing effects broad enough for a cognitive/apprehension reading and a conflict/defeat reading. [SP01-SRC-005#καταλαμβάνω] No different Greek reading is required to explain this controlled contrast, but the evidence does not establish that the projects used identical complete base editions, prove both senses are simultaneously intended, or settle one final specialist-preferred rendering. [SP01-DER-001#John.1.5]"
+      },
+      "status": "APPROVED_CONTENT_FROZEN_PENDING_SOURCE_VERIFICATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED",
+      "source_verification_state": "PENDING_SOURCE_ACQUISITION_AND_DERIVATIVE_VERIFICATION",
+      "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+      "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+      "rights_snapshot": "SOURCE-PLAN-01@2f9f0a1d2e56279787ebac81fffc9ded4cdfd92d",
+      "public_safe_candidate": true,
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "relationship_cluster_ids": [
+        "passage:John.1.5",
+        "source-plan:SOURCE-PLAN-01",
+        "family:VS01-B12"
+      ],
+      "contamination_cluster_ids": [
+        "passage:John.1.5",
+        "batch:BENCH-VS01-BATCH-01"
+      ],
+      "answer_contract_type": "STRUCTURED_DEFENSIBLE_BEHAVIOR_BOUNDARY",
+      "permitted_scorer_types": [
+        "DETERMINISTIC_EXACT",
+        "DETERMINISTIC_STRUCTURED",
+        "SOURCE_GROUNDED_ATOMIC_RUBRIC"
+      ],
+      "approval_date": "2026-08-17",
+      "case_content_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28"
+    }
+  ],
+  "batch_hard_prohibitions": [
+    "Sol may not author, rewrite, semantically label, repartition, or materially alter case content.",
+    "No case may execute before the admitted source snapshots and derived evidence/page artifacts are verified.",
+    "No case may be used for training, preference optimization, retrieval tuning, or model-selection holdout claims.",
+    "No case may be treated as SME-validated specialist gold.",
+    "No benchmark case may authorize cloud execution or source acquisition."
+  ],
+  "owner_dispositions": [
+    "APPROVE_BATCH",
+    "APPROVE_WITH_EXPLICIT_LIMITATIONS",
+    "REVISION_REQUIRED",
+    "SPLIT_REQUIRED",
+    "REJECT_BATCH",
+    "SME_REVIEW_REQUIRED_BEFORE_APPROVAL"
+  ],
+  "approval_date": "2026-08-17",
+  "owner_disposition": "APPROVED_WITH_FIXED_EVIDENCE_RUNTIME_CLARIFICATION",
+  "fixed_evidence_vs_runtime_policy": {
+    "governing_rule": "Evidence absent from the prompt is not evidence unavailable to the system.",
+    "fixed_evidence_cases": "When the case explicitly prohibits tools or withholds evidence, the subject must limit conclusions to the supplied evidence, identify the missing evidentiary layer, and qualify or abstain from unsupported claims.",
+    "full_runtime_cases": "When an approved deterministic source or retrieval tool is available, the Runtime Scholar Harness must recognize the missing evidentiary layer, acquire it, and continue the analysis. Passive termination without attempting available evidence acquisition is a runtime-planning or tool-selection failure.",
+    "product_ux_boundary": "Fixed-evidence cases measure epistemic discipline under controlled evidence conditions; they do not define the default end-to-end user experience.",
+    "required_follow_up": "A paired full-runtime variant of VS01-B08 must be authored and owner-approved before VS-01 runtime promotion."
+  },
+  "required_follow_up_case_designs": [
+    {
+      "planned_case_id": "VS01-B08-RUNTIME-C01",
+      "family_id": "VS01-B08",
+      "evaluation_mode": "FULL_RUNTIME_HARNESS",
+      "purpose": "Verify proactive acquisition of the Greek source, morphology, and bounded lexical evidence when approved tools are available.",
+      "content_authority": "ChatGPT designs; Joseph Abbud approves; Sol may implement machinery only.",
+      "status": "REQUIRED_NOT_YET_AUTHORED"
+    }
+  ]
+}
