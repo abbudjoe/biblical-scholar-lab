@@ -52,6 +52,8 @@ Approved supplemental decisions use the parent design ID plus an `Sxx` suffix. A
 
 Approved vertical slices use a `VS-xx` identifier. A vertical slice is a binding implementation scope rather than a replacement for the design reviews it cites. It activates only the minimum named contracts, user-visible behavior, evidence, tests, and non-goals needed for that slice. Every approved vertical slice must be indexed, hashed, and committed.
 
+Approved source-admission plans use a `SOURCE-PLAN-xx` identifier. They freeze exact sources, revisions, components, rights evidence, authorized operations, exclusions, derived-artifact boundaries, and hard-stop conditions for an approved implementation scope. They do not by themselves authorize acquisition; acquisition requires active repository governance and an approved implementation activation manifest. Every approved source plan and its machine-readable manifest must be indexed, hashed, and committed.
+
 Every Sol root turn must also receive an immutable implementation activation manifest conforming to DR-30. Unactivated design concepts remain normative future obligations and must not receive production stubs, tables, interfaces, packages, services, feature flags, or TODOs. Material activation expansion requires ChatGPT design review and project-owner approval.
 
 ## Implementation boundary

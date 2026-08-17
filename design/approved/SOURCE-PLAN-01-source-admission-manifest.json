@@ -1,0 +1,197 @@
+{
+  "artifact_id": "SOURCE-PLAN-01",
+  "status": "APPROVED",
+  "vertical_slice": "VS-01",
+  "design_baseline_commit": "62e22ca12d5cd480f91d588d0a81d54236745c2a",
+  "training_authorized": false,
+  "embedding_authorized": false,
+  "cloud_execution_authorized": false,
+  "sources": [
+    {
+      "source_id": "SP01-SRC-001",
+      "name": "SBL Greek New Testament",
+      "provider": "Faithlife / Society of Biblical Literature / Logos Bible Software",
+      "source_type": "git",
+      "repository": "https://github.com/Faithlife/SBLGNT",
+      "revision": "c4d241a9c1c479a55b989ba35a4976c1d0b8052c",
+      "components": [
+        "README.md",
+        "LICENSE",
+        "data/sblgnt/text/John.txt"
+      ],
+      "normalized_scope": [
+        "John 1:5"
+      ],
+      "license": "CC-BY-4.0",
+      "lineage": "L0_OPEN_PERMISSIVE",
+      "disposition": "ADMIT_OPEN",
+      "excluded_components": [
+        "data/sblgntapp/**",
+        "all passages outside activated VS-01 scope"
+      ]
+    },
+    {
+      "source_id": "SP01-SRC-002",
+      "name": "MorphGNT: SBLGNT Edition 6.12",
+      "provider": "MorphGNT / J. K. Tauber",
+      "source_type": "git_release",
+      "repository": "https://github.com/morphgnt/sblgnt",
+      "tag": "6.12",
+      "revision": "a2afca0e96e367fb2ca113395bae978115942dfb",
+      "doi": "10.5281/zenodo.376200",
+      "components": [
+        "README.md",
+        "64-Jn-morphgnt.txt"
+      ],
+      "normalized_scope": [
+        "John 1:5 lemma and morphology"
+      ],
+      "license": "CC-BY-SA-3.0_EXPECTED_VERIFY_AT_ACQUISITION",
+      "lineage": "L1_OPEN_RECIPROCAL",
+      "disposition": "ADMIT_OPEN_RECIPROCAL",
+      "admitted_fields": [
+        "bcv",
+        "part_of_speech",
+        "parsing_code",
+        "text_alignment",
+        "word",
+        "normalized_word",
+        "lemma"
+      ],
+      "excluded_fields": [
+        "syntax",
+        "semantic_roles",
+        "referents",
+        "glosses",
+        "word_senses"
+      ]
+    },
+    {
+      "source_id": "SP01-SRC-003",
+      "name": "American Standard Version Bible (1901), openbibleinfo digital edition",
+      "source_type": "git",
+      "repository": "https://github.com/openbibleinfo/American-Standard-Version-Bible",
+      "revision": "5c83ee265c75b3b1c056435eff622a875f1edc45",
+      "components": [
+        "README.md",
+        "License.html",
+        "usx/43-JHN.usx"
+      ],
+      "normalized_scope": [
+        "John 1:5 canonical verse text"
+      ],
+      "license": "PUBLIC_DOMAIN",
+      "lineage": "L0_OPEN_PERMISSIVE",
+      "disposition": "ADMIT_PUBLIC_DOMAIN",
+      "excluded_components": [
+        "footnotes",
+        "headings",
+        "cross-references",
+        "all other verses in normalized VS-01 data"
+      ]
+    },
+    {
+      "source_id": "SP01-SRC-004",
+      "name": "World English Bible Classic",
+      "source_type": "mutable_official_package",
+      "source_page": "https://ebible.org/find/details.php?id=eng-web",
+      "package": "https://ebible.org/Scriptures/eng-web_usfm.zip",
+      "revision": "ACQUISITION_TIMESTAMP_PLUS_SHA256_REQUIRED",
+      "components": [
+        "John USFM",
+        "package metadata and public-domain statement"
+      ],
+      "normalized_scope": [
+        "John 1:5 canonical verse text"
+      ],
+      "license": "PUBLIC_DOMAIN",
+      "trademark": "World English Bible",
+      "lineage": "L0_OPEN_PERMISSIVE",
+      "disposition": "ADMIT_PUBLIC_DOMAIN_SNAPSHOT_REQUIRED",
+      "excluded_components": [
+        "footnotes",
+        "headings",
+        "cross-references",
+        "all other verses in normalized VS-01 data"
+      ]
+    },
+    {
+      "source_id": "SP01-SRC-005",
+      "name": "Abbott-Smith Greek Lexicon TEI",
+      "source_type": "git_release",
+      "repository": "https://github.com/translatable-exegetical-tools/Abbott-Smith",
+      "tag": "1.1",
+      "revision": "64fd85df2139209abb82261b633fe9dbcf91afc5",
+      "components": [
+        "abbott-smith.tei.xml"
+      ],
+      "normalized_scope": [
+        "entry καταλαμβάνω"
+      ],
+      "license": "PUBLIC_DOMAIN",
+      "lineage": "L0_OPEN_PERMISSIVE",
+      "disposition": "ADMIT_PUBLIC_DOMAIN_COMPONENT",
+      "excluded_components": [
+        "manualgreeklexic00abborich.pdf",
+        "all other lexical entries in normalized VS-01 data"
+      ]
+    },
+    {
+      "source_id": "SP01-SRC-006",
+      "name": "Source Serif 4",
+      "source_type": "git_release",
+      "repository": "https://github.com/adobe-fonts/source-serif",
+      "tag": "4.005R",
+      "revision": "2823e993c53fca27c5c8749f529b56a5a7c77b6b",
+      "components": [
+        "static TTF Regular",
+        "static TTF Italic",
+        "LICENSE.md"
+      ],
+      "normalized_scope": [],
+      "license": "OFL-1.1",
+      "lineage": "L0_OPEN_PERMISSIVE_DEPENDENCY",
+      "disposition": "ADMIT_OFL_DEPENDENCY",
+      "excluded_components": [
+        "CFF2 variable OTFs",
+        "font redistribution not separately approved"
+      ]
+    }
+  ],
+  "held_sources": [
+    {
+      "source": "Clear-Bible/macula-greek integrated files",
+      "disposition": "HOLD_FOR_LATER_COMPONENT_REVIEW",
+      "reason": "Integrated files include third-party MARBLE/Louw-Nida fields described as used with permission; VS-01 uses MorphGNT instead."
+    }
+  ],
+  "derived_artifacts": [
+    {
+      "artifact_id": "SP01-DER-001",
+      "name": "John 1:5 source-verifiable Translation Nuance evidence packet",
+      "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "training_eligible": false
+    },
+    {
+      "artifact_id": "SP01-DER-002",
+      "name": "Synthetic John 1:5 study-page fixture",
+      "review_partition": "REV-P0_REGIONS_PLUS_REV-P1_NOTE",
+      "training_eligible": false
+    }
+  ],
+  "hard_prohibitions": [
+    "no training",
+    "no embeddings or vector indexes",
+    "no Lambda or other cloud execution",
+    "no automatic source updates",
+    "no mixed-rights MACULA ingestion",
+    "no apparatus",
+    "no copyrighted modern translation or study Bible page",
+    "no user-private source",
+    "no model-generated source evidence"
+  ],
+  "approval_date": "2026-08-17",
+  "owner_disposition": "APPROVED_WITHOUT_AMENDMENT",
+  "source_acquisition_authorized_now": false,
+  "next_required_gate": "PUBLIC_REPOSITORY_GOVERNANCE_AND_IMPLEMENTATION_ACTIVATION"
+}

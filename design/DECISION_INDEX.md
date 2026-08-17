@@ -42,6 +42,12 @@
 |---|---|---|---|---|
 | VS-01 | John 1:5 Translation Nuance Vertical Slice | APPROVED | 2026-08-17 | [`approved/VS-01-john-1-5-translation-nuance-vertical-slice.md`](approved/VS-01-john-1-5-translation-nuance-vertical-slice.md) |
 
+## Approved source plans
+
+| ID | Title | Status | Approved | File | Manifest |
+|---|---|---|---|---|---|
+| SOURCE-PLAN-01 | John 1:5 Vertical-Slice Source Admission Plan | APPROVED | 2026-08-17 | [`approved/SOURCE-PLAN-01-john-1-5-source-admission-plan.md`](approved/SOURCE-PLAN-01-john-1-5-source-admission-plan.md) | [`approved/SOURCE-PLAN-01-source-admission-manifest.json`](approved/SOURCE-PLAN-01-source-admission-manifest.json) |
+
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, and VS-01 are approved. Production implementation remains blocked until SOURCE-PLAN-01, the VS-01 benchmark seed, the public-repository governance package, documentation normalization, and clean-room package review are closed.
+The architecture and implementation-governance series, DR-01 through DR-30, VS-01, and SOURCE-PLAN-01 are approved. Production implementation remains blocked until the VS-01 benchmark seed, the public-repository governance package, documentation normalization, and clean-room package review are closed. Source acquisition remains blocked until governance and an approved implementation activation manifest are active.
