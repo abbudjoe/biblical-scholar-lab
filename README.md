@@ -78,6 +78,7 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 - `GOV-01` revision 3 — Public Repository Governance and Review Package, allowing Sol to use Joseph's existing authenticated `gh` CLI identity for task-branch and PR operations, while requiring an exact-head ChatGPT review, Joseph's explicit approval in this conversation, and a separate merge-only Sol turn before squash merge
 - `GOV-01-ERRATA-01` — makes the W00 PR the one owner-manual bootstrap merge and moves the first live Codex merge-only proof to W01, before W02 or later work
+- `GOV-01-ERRATA-02` — removes the superseded activation manifest from W00's writable scope and requires an immutable v3 activation aligned with the W00/W01 merge-proof boundary
 
 ## Approved implementation activations
 
