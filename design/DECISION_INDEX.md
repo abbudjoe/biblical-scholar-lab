@@ -6,7 +6,7 @@
 | DR-02 | Scholarly Epistemology and Methodology | AMENDED — CURRENT (rev. 2) | 2026-08-15 | [`approved/DR-02-scholarly-epistemology-and-methodology.md`](approved/DR-02-scholarly-epistemology-and-methodology.md) |
 | DR-02-S01 | Preimplementation Architecture Contract Schedule | APPROVED | 2026-08-15 | [`approved/DR-02-S01-preimplementation-architecture-contract-schedule.md`](approved/DR-02-S01-preimplementation-architecture-contract-schedule.md) |
 | DR-02-S02 | Model Capacity, Family Bake-Off, and Budget Policy | APPROVED | 2026-08-15 | [`approved/DR-02-S02-model-capacity-family-bakeoff-and-budget-policy.md`](approved/DR-02-S02-model-capacity-family-bakeoff-and-budget-policy.md) |
-| DR-02-S03 | Mobile, Edge, Quantization, and Distillation Direction | APPROVED | 2026-08-15 | [`approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md`](approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md) |
+| DR-02-S03 | Mobile, Edge, Quantization, and Distillation Direction | SUPERSEDED IN PART BY DR-29 | 2026-08-15 | [`approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md`](approved/DR-02-S03-mobile-edge-quantization-and-distillation-direction.md) |
 | DR-03 | Scope, Refusal, and Sensitive-Use Policy | APPROVED | 2026-08-15 | [`approved/DR-03-scope-refusal-and-sensitive-use-policy.md`](approved/DR-03-scope-refusal-and-sensitive-use-policy.md) |
 | DR-04 | Canon, Reference, and Versification Model | APPROVED | 2026-08-15 | [`approved/DR-04-canon-reference-and-versification-model.md`](approved/DR-04-canon-reference-and-versification-model.md) |
 | DR-05 | Textual-History and Provenance Graph | APPROVED | 2026-08-15 | [`approved/DR-05-textual-history-and-provenance-graph.md`](approved/DR-05-textual-history-and-provenance-graph.md) |
@@ -33,7 +33,8 @@
 | DR-26 | User Experience and Answer Contract | APPROVED | 2026-08-16 | [`approved/DR-26-user-experience-and-answer-contract.md`](approved/DR-26-user-experience-and-answer-contract.md) |
 | DR-27 | Privacy, Security, Telemetry, and Release | APPROVED | 2026-08-16 | [`approved/DR-27-privacy-security-telemetry-and-release.md`](approved/DR-27-privacy-security-telemetry-and-release.md) |
 | DR-28 | Integrated Logical Architecture and Contract Registry | APPROVED | 2026-08-16 | [`approved/DR-28-integrated-logical-architecture-and-contract-registry.md`](approved/DR-28-integrated-logical-architecture-and-contract-registry.md) |
+| DR-29 | Local Desktop, Mobile Client, Quantization, and Distillation Architecture | APPROVED | 2026-08-17 | [`approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md`](approved/DR-29-local-desktop-mobile-client-quantization-and-distillation-architecture.md) |
 
-## Next review
+## Design-review status
 
-`DR-29 — Mobile, Edge, Quantization, and Distillation Architecture`
+The scheduled preimplementation design-review series, DR-01 through DR-29, is complete. The next artifact is the consolidated Sol implementation build package derived from the approved design baseline.

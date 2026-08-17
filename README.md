@@ -24,7 +24,7 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 ## Current approved baseline
 
 - `DR-01` — Version-One Product Contract
-- `DR-02` revision 2 — Scholarly Epistemology and Methodology, including the approved architecture-contract schedule, model-capacity and family-bake-off policy, Gemma budget posture, and mobile/quantization direction
+- `DR-02` revision 2 — Scholarly Epistemology and Methodology, including the approved architecture-contract schedule, model-capacity and family-bake-off policy, Gemma budget posture, and the original mobile/quantization direction later superseded within scope by DR-29
 - `DR-03` — Scope, Refusal, and Sensitive-Use Policy
 - `DR-04` — Canon, Reference, and Versification Model
 - `DR-05` — Textual-History and Provenance Graph
@@ -51,5 +51,11 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 - `DR-26` — User Experience and Answer Contract, including the evidence-centered research workspace, Brief/Study/Scholarly rendering from one verified claim ledger, visible active passage/edition/canon/language/method/context state, inspectable citations and Translation Nuance, multimodal page-study evidence separation, versioned user corrections and exports, compaction visibility and rehydration, multilingual/RTL behavior, WCAG 2.2 AA accessibility, anti-overtrust and anti-dependency controls, and the public-safe expert-collaboration preview surface
 - `DR-27` — Privacy, Security, Telemetry, and Release, including sensitivity and purpose separation, private-by-default user data, granular consent and user controls, trust zones and least privilege, provider-route and secrets isolation, content-minimized telemetry, upload/RAG/output and LLM-specific defenses, supply-chain provenance and signing, incident response and kill switches, staged public release, rollback and revocation, and owner-only consequential processing and release authority
 - `DR-28` — Integrated Logical Architecture and Contract Registry, including the modular-monolith-first system, PostgreSQL authoritative records, the Thunderbolt research archive and deletable private vault, project-owned configuration and inference gateways, source acquisition and freshness, PostgreSQL work control, embedding/reranker bake-off and index contracts, retention and erasure, and the IA-00–IA-11 implementation gates
+- `DR-29` — Local Desktop, Mobile Client, Quantization, and Distillation Architecture, including Mac mini M4 local inference as the first edge priority, Apple-silicon MacBook support, a secure paired-Mac/Lambda mobile-client architecture, the Local Scholar Node boundary, MLX-LM and llama.cpp runtime comparison, 8B–12B local model quantization, optional 2B–4B distillation and on-phone inference, native mobile OCR, explicit route disclosure, and LE-00–LE-13 implementation gates
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.
+
+
+## Preimplementation design status
+
+The scheduled design-review series, `DR-01` through `DR-29`, is approved and complete. The next artifact is the consolidated Sol implementation build package. Production implementation remains absent from this design repository.
