@@ -181,7 +181,7 @@ def _handoff_identity(record: dict[str, Any]) -> None:
     need(record.get("merge_performed") is False and record.get("next_task_started") is False, "handoff crossed the stop boundary")
     for field in ("base_sha", "implementation_head_sha"):
         need(isinstance(record.get(field), str) and SHA.fullmatch(record[field]) is not None, f"{field} differs")
-    need(_url(record.get("pr_url")) and (record.get("compare_url") is None or _url(record.get("compare_url"))), "handoff URL is invalid")
+    need((_url(record.get("pr_url")), record.get("compare_url") is None or _url(record.get("compare_url"))) == (True, True), "handoff URL is invalid")
     auth = record.get("github_auth_preflight")
     need(isinstance(auth, dict), "handoff auth evidence differs")
     exact(cast(dict[str, Any], auth), {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
