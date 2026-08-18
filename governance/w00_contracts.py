@@ -33,7 +33,7 @@ P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
 SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
 EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1".split()
 EXTERNAL_TOOLS += "radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
-CONTROLLED, SAFE = "<controlled>", "<safe>"
+CONTROLLED, SAFE, UNKNOWN = "<controlled>", "<safe>", "<unknown>"
 PROSE_FIELDS = (
     "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt "
     "evaluations artifacts delegated_operations".split()
@@ -246,16 +246,19 @@ def _matches(name: str | None, values: set[str]) -> bool:
 
 def _controlled(node: ast.AST, aliases: dict[str, str], values: set[str]) -> bool:
     leaves = {value.rsplit(".", 1)[-1] for value in values}
-    prefixes = {value.rpartition(".")[0] for value in values if not value.startswith("*")}
+    prefixes = {value.rpartition(".")[0] for value in values}
+    unknown = namespace = False
     for item in ast.walk(node):
         name, label = _resolve(item, aliases), getattr(item, "attr", getattr(item, "value", None))
-        if name == CONTROLLED or _matches(name, values) or name in prefixes or label in leaves:
+        unknown, namespace = unknown or name == UNKNOWN, namespace or name in prefixes
+        if name == CONTROLLED or _matches(name, values) or label in leaves:
             return True
-    return False
+    return unknown and namespace
 
 
 def _taint(node: ast.AST, aliases: dict[str, str], values: set[str]) -> str:
-    return CONTROLLED if _controlled(node, aliases, values) else SAFE
+    dynamic = any(_resolve(x, aliases) == UNKNOWN or isinstance(x, (ast.Call, ast.Lambda)) for x in ast.walk(node))
+    return CONTROLLED if _controlled(node, aliases, values) else UNKNOWN if dynamic else SAFE
 
 
 class _Symbols(ast.NodeVisitor):
