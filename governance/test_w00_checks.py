@@ -31,11 +31,14 @@ def activation() -> dict[str, Any]:
 
 def complexity(modules: list[str] | None = None) -> dict[str, Any]:
     value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"]["complexity_receipt"]))
-    return value | {"production_files_added": len(modules or []), "modules_added": modules or []}
+    return value | {"production_files_added": len(modules or []), "modules_added": modules or [], "cli_commands_added": sorted(checks.CLI_COMMANDS)}
 
 
 def handoff(parent: str = IMPL) -> dict[str, Any]:
-    return cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"])) | {"implementation_head_sha": parent}
+    value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"])) | {"implementation_head_sha": parent}
+    value["commands"] = [{"phase": "implementation", "command": command, "exit_status": 0, "result": "pass"} for command in sorted(checks.REQUIRED_HANDOFF_COMMANDS)]
+    value["evaluations"] = [{"name": name, "status": "PASS", "evidence": "fixture"} for name in checks.REQUIRED_EVALUATIONS]
+    return value
 
 
 def marked(marker: str, record: dict[str, Any], identifier: int, when: datetime) -> dict[str, Any]:
@@ -74,7 +77,7 @@ class ContractTests(unittest.TestCase):
         contracts.validate_activation(record)
         contracts.validate_auth("abbudjoe", [])
         contracts.validate_handoff(handoff(), w00a=True)
-        mutations = [(record, ("root_turn", "model"), "other"), (record, ("root_turn", "luna_delegation_allowed"), True), (handoff(), ("branch",), "main"), (handoff(), ("design_conformance", "approved_design_ids"), ["GOV-01"]), (handoff(), ("delegated_operations",), [{"role": "luna_runner", "write_performed": False}]), (handoff(), ("billable_actions", "performed"), True)]
+        mutations = [(record, ("root_turn", "model"), "other"), (record, ("root_turn", "luna_delegation_allowed"), True), (handoff(), ("branch",), "main"), (handoff(), ("design_conformance", "approved_design_ids"), ["GOV-01"]), (handoff(), ("delegated_operations",), [{"role": "luna_runner", "write_performed": False}]), (handoff(), ("billable_actions", "performed"), True), (handoff(), ("github_auth_preflight", "token"), "secret")]
         for original, path, value in mutations:
             changed = copy.deepcopy(original)
             target = changed
@@ -89,12 +92,16 @@ class ContractTests(unittest.TestCase):
 
     def test_command_fixture_and_phase_isolation(self) -> None:
         fixture = json.loads((ROOT / "governance/fixtures/w00-command-policy.json").read_text())
+        payload = {key: RECORDS["live"][1][key] for key in ("name", "target", "enforcement", "bypass_actors", "conditions", "rules")}
         for item in fixture:
             for command in item["commands"]:
-                actual = contracts.assess_command(command, contracts.CommandPhase(item["phase"]))[0]
+                authority = item["phase"] == "w00a-governance" and item["allowed"]
+                actual = contracts.assess_command(command, contracts.CommandPhase(item["phase"]), governance_available=authority, governance_payload=payload if authority else None)[0]
                 self.assertEqual(actual, item["allowed"], command)
         put = f"gh api --method PUT repos/{contracts.REPOSITORY}/rulesets/{contracts.RULESET} --input .codex-tmp-ruleset-w00a.json"
-        self.assertTrue(contracts.assess_command(put, contracts.CommandPhase.W00A_GOVERNANCE)[0])
+        self.assertTrue(contracts.assess_command(put, contracts.CommandPhase.W00A_GOVERNANCE, governance_available=True, governance_payload=payload)[0])
+        self.assertFalse(contracts.assess_command(put, contracts.CommandPhase.W00A_GOVERNANCE, governance_available=True, governance_payload=payload | {"enforcement": "evaluate"})[0])
+        self.assertFalse(contracts.assess_command(put, contracts.CommandPhase.W00A_GOVERNANCE)[0])
         self.assertFalse(contracts.assess_command(put, contracts.CommandPhase.IMPLEMENTATION)[0])
 
     def test_completion_review_order_and_w00b_records_fail_closed(self) -> None:
@@ -117,7 +124,8 @@ class ContractTests(unittest.TestCase):
 
 class RepositoryTests(GitFixture):
     def metrics(self, **changes: object) -> dict[str, Any]:
-        values = {"additions": 1, "deletions": 0, "production_files": sorted(checks.PRODUCTION), "test_files": ["governance/test_w00_checks.py"], "governance_files": [], "dependencies": ["actions/checkout", "actions/upload-artifact"], "public_contracts": list(checks.PUBLIC_CONTRACTS), "workflows": sorted(checks.WORKFLOWS), "migrations": []}
+        values = {"additions": 1, "deletions": 0, "production_loc_added": 1, "production_loc_removed": 0, "test_loc_added": 1, "test_loc_removed": 0, "production_files": sorted(checks.PRODUCTION), "production_added": sorted(checks.PRODUCTION), "production_removed": []}
+        values.update({"test_files": ["governance/test_w00_checks.py"], "governance_files": [], "dependencies": ["actions/checkout", "actions/upload-artifact"], "public_contracts": list(checks.PUBLIC_CONTRACTS), "workflows": sorted(checks.WORKFLOWS), "migrations": [], "cli_commands": sorted(checks.CLI_COMMANDS)})
         values.update(changes)
         return values
 
@@ -141,11 +149,12 @@ class RepositoryTests(GitFixture):
                 checks.validate_budget(item, activation())
 
     def test_dependency_schema_migration_and_complexity_discovery(self) -> None:
-        with mock.patch.object(checks, "_diff_lines", return_value=(1, 0)):
-            for path in ("governance/package.json", "governance/schemas/other.json"):
+        with mock.patch.object(checks, "_diff_lines", return_value=(1, 0)), mock.patch.object(checks, "_statuses", side_effect=lambda _b, _h, paths, _r: dict.fromkeys(paths, "A")), mock.patch.object(checks, "_record_types", return_value=set()):
+            for path in ("governance/package.json", "governance/Pipfile", "governance/schemas/other.json"):
                 with self.assertRaises(ContractError):
                     checks.budget(BASE, HEAD, [path])
-            self.assertEqual(checks.budget(BASE, HEAD, ["db/migrations/x.py"])["migrations"], ["db/migrations/x.py"])
+            self.assertEqual(checks.budget(BASE, HEAD, ["governance/alembic/versions/x.py"])["migrations"], ["governance/alembic/versions/x.py"])
+            self.assertEqual(checks.budget(BASE, HEAD, ["governance/run.sh"])["production_files"], ["governance/run.sh"])
         contracts.validate_python("ok.py", "def ok():\n    return True\n")
         with self.assertRaises(ContractError):
             contracts.validate_python("large.py", "\n".join(f"x{i}={i}" for i in range(501)))
@@ -153,6 +162,13 @@ class RepositoryTests(GitFixture):
     def test_base_package_is_fully_bound_and_corruption_fails(self) -> None:
         self.assertGreater(checks.validate_package(None, "3d3ebb706fe6c8779445cbbfd9fea271b86d3646")["checksum_files"], 30)
         with mock.patch.object(checks, "blob", return_value=b"{}"), self.assertRaises(ContractError):
+            checks.validate_package(None, HEAD)
+        empty = {"artifact_id": "GOV-01", "status": "APPROVED", "file_count": 0, "files": []}
+        content = json.dumps(empty, separators=(",", ":")).encode()
+        sidecar = f"{__import__('hashlib').sha256(content).hexdigest()}  {checks.PACKAGE}\n".encode()
+        original = checks.blob
+        forged = lambda repository, revision, path: (sidecar if path == checks.CHECKSUMS else content) if revision == HEAD else original(repository, revision, path)
+        with mock.patch.object(checks, "blob", side_effect=forged), self.assertRaises(ContractError):
             checks.validate_package(None, HEAD)
 
 
@@ -176,8 +192,8 @@ class CandidateTests(GitFixture):
         for path in ("", "a//b", "../x", "x.zip", "bad\\path", "bad\x1bpath"):
             with self.assertRaises(ContractError):
                 checks.safe_path(path)
-        for path, content in (("bad.json", b"{"), ("bad.yml", b"x: ["), ("bad.py", b"def:"), ("log.md", b"x\x1b[31m"), ("text.py", b"\xff")):
-            with self.assertRaises(ContractError):
+        for path, content in (("bad.json", b"{"), ("nan.json", b'{"x":NaN}'), ("duplicate.json", b'{"x":1,"x":2}'), ("bad.yml", b"x: ["), ("duplicate.yml", b"x: 1\nx: 2\n"), ("multi.yml", b"x: 1\n---\ny: 2\n"), ("bad.py", b"def:"), ("log.md", b"x\rcontrol"), ("text.py", b"\xff")):
+            with self.assertRaises((ContractError, SyntaxError, UnicodeDecodeError)):
                 checks._content(path, content)
 
     def test_candidate_scripts_workflows_hooks_makefiles_and_dependencies_are_inert(self) -> None:
@@ -218,6 +234,8 @@ class HandoffAndReceiptTests(unittest.TestCase):
 
     def test_exact_handoff_parent_head_pair_and_complexity_binding(self) -> None:
         record = handoff()
+        payload = {key: RECORDS["live"][1][key] for key in ("name", "target", "enforcement", "bypass_actors", "conditions", "rules")}
+        record["commands"].append({"phase": "w00a-governance", "command": f"gh api --method PUT repos/{contracts.REPOSITORY}/rulesets/{contracts.RULESET} --input .codex-tmp-ruleset-w00a.json", "exit_status": 0, "result": "applied once", "input": payload})
         record["complexity_receipt"] = complexity(sorted(checks.PRODUCTION))
         record["complexity_receipt"]["dependencies_added"] = ["actions/checkout", "actions/upload-artifact"]
         record["complexity_receipt"]["public_contracts_changed"] = list(checks.PUBLIC_CONTRACTS)
@@ -242,6 +260,21 @@ class HandoffAndReceiptTests(unittest.TestCase):
             patched["git"].side_effect = git_side
             patched["blob"].return_value = phrases.encode()
             self.assertEqual(checks.validate_handoff(BASE, HEAD, contracts.BRANCH, PR_URL)["implementation_head_sha"], IMPL)
+            failed_exit = copy.deepcopy(record)
+            failed_exit["commands"][0]["exit_status"] = 99
+            for invalid in (record | {"commands": []}, record | {"evaluations": []}, failed_exit):
+                with self.assertRaises(ContractError):
+                    checks._handoff_commands(invalid, contracts.BRANCH, PR_URL, True)
+            patched["blob"].return_value = (phrases + " SAFE_TO_MERGE").encode()
+            with self.assertRaises(ContractError):
+                checks._handoff_markdown(None, HEAD, pair[1], IMPL, record["status"], True)
+            replay = [(HEAD, IMPL, pair, record), ("d" * 40, HEAD, pair, record)]
+            with self.assertRaises(ContractError):
+                checks._w00a_mutation(replay)
+            forged = copy.deepcopy(record)
+            forged["complexity_receipt"]["production_loc_added"] = 999999
+            with self.assertRaises(ContractError):
+                checks._handoff_receipt(forged, metrics)
             patched["_history"].return_value = [(IMPL, BASE)]
             patched["_pair"].side_effect = [pair]
             with self.assertRaises(ContractError):
@@ -266,31 +299,39 @@ class HandoffAndReceiptTests(unittest.TestCase):
 
 class WorkflowAndLiveTests(unittest.TestCase):
     def live_records(self) -> list[dict[str, Any]]:
-        return cast(list[dict[str, Any]], copy.deepcopy(RECORDS["live"]))
+        records = cast(list[dict[str, Any]], copy.deepcopy(RECORDS["live"]))
+        records[2].update({"id": 20070063288})
+        records[2]["protection_rules"][0].update({"id": 62973311})
+        records[2]["protection_rules"][0]["reviewers"][0].update({"type": "User"})
+        records[2]["protection_rules"][0]["reviewers"][0]["reviewer"].update({"id": 43298060})
+        source = __import__("base64").b64encode((ROOT / ".github/CODEOWNERS").read_bytes()).decode()
+        codeowners = {"path": ".github/CODEOWNERS", "encoding": "base64", "content": source}
+        records[4]["total_count"] = len(records[4]["workflows"])
+        records[5].update({"number": 1, "html_url": PR_URL})
+        records[5]["base"].update({"sha": checks.BASE_SHA, "repo": {"full_name": contracts.REPOSITORY}})
+        records[5]["head"].update({"ref": contracts.BRANCH, "repo": {"full_name": contracts.REPOSITORY}})
+        runs = [{"id": index, "name": name, "head_sha": HEAD, "status": "completed", "conclusion": "success", "app": {"id": 15368}} for index, name in enumerate(("project-integrity", "turn-handoff-integrity"))]
+        return [*records[:3], codeowners, records[3], records[4], records[5], {"total_count": len(runs), "check_runs": runs}]
 
     def test_live_queries_are_separate_and_capabilities_truthful(self) -> None:
         now = datetime.now(timezone.utc).isoformat()
         graph = {"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": [], "pageInfo": {"hasNextPage": False}}}}}}
         with mock.patch.object(checks, "_api", side_effect=self.live_records()) as api, mock.patch.object(checks, "run", return_value=subprocess.CompletedProcess([], 0, json.dumps(graph), "")):
             result = checks.validate_live(HEAD, now, now, True, True)
-        self.assertEqual(api.call_count, 6)
+        self.assertEqual(api.call_count, 8)
         self.assertEqual((result["owner_authorization"], result["required_checks_role"]), ("INACTIVE_REQUIRES_W00B", "DEFENSE_IN_DEPTH_ONLY"))
         with self.assertRaises(ContractError):
             checks.validate_live(HEAD, "2000-01-01T00:00:00Z", now, True, True)
 
     def test_trusted_workflow_uses_only_base_code_and_bounded_inert_input(self) -> None:
         source = (ROOT / ".github/workflows/trusted-governance-validator.yml").read_text()
-        self.assertIn("pull_request_target", source)
-        self.assertIn("ref: ${{ github.event.pull_request.base.sha }}", source)
+        self.assertTrue(all(item in source for item in ("pull_request_target", "ref: ${{ github.event.pull_request.base.sha }}", "$RUNNER_TEMP/candidate", "GIT_NO_LAZY_FETCH")))
         self.assertLess(source.index("candidate-metadata"), source.index("Fetch exact candidate"))
         self.assertEqual(source.count("actions/checkout@"), 1)
-        self.assertIn("$RUNNER_TEMP/candidate", source)
-        self.assertIn("GIT_NO_LAZY_FETCH", source)
         self.assertNotIn("owner-merge-authorization", source)
         self.assertNotRegex(source, r"\b(?:source|make|npm|pip)\b")
         ordinary = (ROOT / ".github/workflows/governance-integrity.yml").read_text()
-        self.assertNotIn("chatgpt-review-integrity", ordinary)
-        self.assertNotIn("owner-merge-record-integrity", ordinary)
+        self.assertTrue(all(item not in ordinary for item in ("chatgpt-review-integrity", "owner-merge-record-integrity")))
 
 
 class AdapterAndCliTests(unittest.TestCase):

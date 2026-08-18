@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 import re
 import shlex
@@ -25,42 +26,26 @@ REVIEW = "<!-- BSL_CHATGPT_REVIEW_V1 -->"
 INACTIVE_MARKERS = ("<!-- BSL_OWNER_MERGE_AUTHORIZATION_V1 -->", "<!-- BSL_MERGE_RECEIPT_V1 -->")
 STATUSES = {"READY_FOR_CHATGPT_REVIEW", "BLOCKED_MISSING_EVIDENCE", "BLOCKED_DEPENDENCY", "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR", "SPLIT_REQUIRED", "NO_CHANGE", "FAILED"}
 TOKEN_OVERRIDES = {"GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"}
-HANDOFF_FIELDS = {
-    "schema_version",
-    "project_id",
-    "activation_id",
-    "task_id",
-    "turn_id",
-    "codex_run_id",
-    "status",
-    "repository",
-    "branch",
-    "base_sha",
-    "implementation_head_sha",
-    "pr_url",
-    "github_actor_login",
-    "github_auth_mode",
-    "github_auth_preflight",
-    "objective",
-    "acceptance_criteria",
-    "design_conformance",
-    "changes",
-    "review_targets",
-    "commands",
-    "evaluations",
-    "artifacts",
-    "delegated_operations",
-    "complexity_receipt",
-    "known_risks",
-    "decisions_required",
-    "billable_actions",
-    "next_required_action",
-    "merge_performed",
-    "next_task_started",
-}
+W00A_RULESET_PAYLOAD_SHA256 = "a52b3d6c6a94a14a89fba182eb29ebc34af0fc6a6f34465031c7887d769caf65"
+HANDOFF_IDENTITY_FIELDS = {"schema_version", "project_id", "activation_id", "task_id", "turn_id", "codex_run_id", "status", "repository", "branch", "base_sha", "implementation_head_sha", "pr_url", "github_actor_login", "github_auth_mode", "github_auth_preflight"}
+HANDOFF_FIELDS = HANDOFF_IDENTITY_FIELDS | {"objective", "acceptance_criteria", "design_conformance", "changes", "review_targets", "commands", "evaluations", "artifacts", "delegated_operations", "complexity_receipt", "known_risks", "decisions_required", "billable_actions", "next_required_action", "merge_performed", "next_task_started"}
 COMPLEXITY_FIELDS = {"production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed", "modules_added", "modules_removed", "tables_added", "migrations_added", "endpoints_added", "cli_commands_added", "dependencies_added", "dependencies_removed", "public_contracts_changed", "abstractions", "simpler_alternatives_considered", "known_duplication_or_debt", "waivers", "simplicity_conformance"}
 ACTIVATION_FIELDS = {"schema_version", "activation_id", "status", "approved_design_commit", "approved_design_ids", "root_turn", "objective", "vertical_slice_id", "activated_user_visible_capability", "activated_invariants", "activated_paths", "activated_contracts", "activated_interfaces", "activated_data_stores", "activated_adapters", "required_tests", "required_evidence", "explicit_non_goals", "prohibited_scaffolding", "budgets", "completion_criteria", "owner_approval"}
 REVIEW_FIELDS = {"schema_version", "review_id", "pr_url", "activation_id", "base_sha", "reviewed_head_sha", "reviewer", "disposition", "summary", "findings", "evidence_reviewed", "required_next_action", "review_timestamp"}
+VALIDATION_FILES = ["governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py"]
+VALIDATION_COMMANDS = (
+    ["python3", "-m", "unittest", "-v", VALIDATION_FILES[-1]],
+    ["python3", "-m", "py_compile", *VALIDATION_FILES[:-1]],
+    ["uvx", "--from", "coverage", "coverage", "run", "--branch", "-m", "unittest", VALIDATION_FILES[-1]],
+    ["uvx", "--from", "coverage", "coverage", "report", "--show-missing", "--fail-under=90"],
+    ["uvx", "ruff", "check", "--config", "governance/ruff.toml", *VALIDATION_FILES],
+    ["uvx", "ruff", "format", "--config", "governance/ruff.toml", *VALIDATION_FILES],
+    ["uvx", "ruff", "format", "--check", "--config", "governance/ruff.toml", *VALIDATION_FILES],
+    ["uvx", "mypy", "--strict", *VALIDATION_FILES[:-1]],
+    ["uvx", "detect-secrets", "scan", "--all-files"],
+    ["uvx", "zizmor", ".github/workflows/governance-integrity.yml", ".github/workflows/trusted-governance-validator.yml"],
+    ["shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"],
+)
 
 
 class ContractError(ValueError):
@@ -101,6 +86,21 @@ def validate_python(path: str, source: str) -> None:
 def exact(record: dict[str, Any], required: set[str], optional: set[str] | None = None) -> None:
     optional = optional or set()
     need(record.keys() <= required | optional and required <= record.keys(), "record fields differ")
+
+
+def strict_json(source: str | bytes) -> Any:
+    def unique(items: list[tuple[str, Any]]) -> dict[str, Any]:
+        output = dict(items)
+        need(len(output) == len(items), "JSON object key is duplicated")
+        return output
+
+    def finite(value: str) -> Any:
+        raise ContractError(f"JSON number is non-finite: {value}")
+
+    try:
+        return json.loads(source, object_pairs_hook=unique, parse_constant=finite)
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise ContractError("JSON is malformed") from error
 
 
 def timestamp(value: Any) -> datetime:
@@ -158,8 +158,11 @@ def _handoff_identity(record: dict[str, Any]) -> None:
         need(isinstance(record.get(field), str) and SHA.fullmatch(record[field]) is not None, f"{field} differs")
     need(_url(record.get("pr_url")), "handoff PR URL is invalid")
     auth = record.get("github_auth_preflight")
+    need(isinstance(auth, dict), "handoff auth evidence differs")
+    exact(cast(dict[str, Any], auth), {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
     observed = tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) if isinstance(auth, dict) else ()
     need(observed == ("github.com", "abbudjoe", True, False, False), "handoff auth evidence differs")
+    need(cast(dict[str, Any], auth).get("receipt_path") is None or isinstance(cast(dict[str, Any], auth).get("receipt_path"), str), "handoff auth receipt differs")
     need((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff actor differs")
 
 
@@ -208,10 +211,7 @@ def marked(comments: Iterable[dict[str, Any]], marker: str) -> list[tuple[dict[s
         created, updated = (timestamp(comment.get("created_at")), timestamp(comment.get("updated_at")))
         matches = pattern.findall(str(comment["body"]))
         need(created == updated and len(matches) == 1 and isinstance(comment.get("id"), int), "marked comment is edited or malformed")
-        try:
-            record = json.loads(matches[0])
-        except json.JSONDecodeError as error:
-            raise ContractError("marked comment JSON is malformed") from error
+        record = strict_json(matches[0])
         need(isinstance(record, dict), "marked comment record is not an object")
         output.append((record, comment["id"], created))
     need([item[2] for item in output] == sorted(item[2] for item in output), "marked comments were reordered")
@@ -257,7 +257,7 @@ class CommandPhase(Enum):
     W00A_GOVERNANCE = "w00a-governance"
 
 
-def assess_command(command: str, phase: CommandPhase, *, branch: str = BRANCH, pr_number: int = 1) -> tuple[bool, str]:
+def assess_command(command: str, phase: CommandPhase, *, branch: str = BRANCH, pr_number: int = 1, governance_available: bool = False, governance_payload: Any = None) -> tuple[bool, str]:
     if re.search(r"[\n\r;&|`<>$\\*?\[\]{}()~#!]", command):
         return False, "shell composition or expansion is prohibited"
     try:
@@ -268,7 +268,9 @@ def assess_command(command: str, phase: CommandPhase, *, branch: str = BRANCH, p
         return (False, "prefix, alias, nested shell, or environment smuggling is prohibited")
     if phase is CommandPhase.W00A_GOVERNANCE:
         exact_put = ["gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/rulesets/{RULESET}", "--input", ".codex-tmp-ruleset-w00a.json"]
-        return (tokens == exact_put, "exact W00A ruleset adjustment" if tokens == exact_put else "governance mutation differs")
+        digest = hashlib.sha256(json.dumps(governance_payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        allowed = governance_available and tokens == exact_put and digest == W00A_RULESET_PAYLOAD_SHA256
+        return (allowed, "exact unconsumed W00A ruleset adjustment" if allowed else "governance mutation is unavailable or differs")
     return _implementation(tokens, branch, pr_number)
 
 
@@ -287,7 +289,7 @@ def _github_operation(tokens: list[str], pr_number: int) -> tuple[bool, str] | N
         return (allowed, "redacted auth preflight" if allowed else "authentication display or mutation is prohibited")
     if tokens[:2] == ["gh", "api"]:
         endpoint = tokens[2].lstrip("/").split("?", 1)[0] if len(tokens) == 3 else ""
-        patterns = (r"user", rf"repos/{REPOSITORY}", rf"repos/{REPOSITORY}/pulls/1", rf"repos/{REPOSITORY}/issues/1/comments", rf"repos/{REPOSITORY}/actions/(?:workflows|runs/[0-9]+)", rf"repos/{REPOSITORY}/rulesets/{RULESET}", rf"repos/{REPOSITORY}/codeowners/errors", rf"repos/{REPOSITORY}/environments/{ENVIRONMENT}")
+        patterns = (r"user", rf"repos/{REPOSITORY}", rf"repos/{REPOSITORY}/pulls/1", rf"repos/{REPOSITORY}/issues/1/comments", rf"repos/{REPOSITORY}/actions/(?:workflows|runs/[0-9]+)", rf"repos/{REPOSITORY}/rulesets/{RULESET}", rf"repos/{REPOSITORY}/(?:codeowners/errors|contents/\.github/CODEOWNERS|commits/[0-9a-f]{{40}}/check-runs)", rf"repos/{REPOSITORY}/environments/{ENVIRONMENT}")
         allowed = any(re.fullmatch(pattern, endpoint) for pattern in patterns)
         return (allowed, "bounded API read" if allowed else "mutating or unbounded API is prohibited")
     return _pr_operation(tokens, pr_number)
@@ -324,22 +326,7 @@ def _git_read(tokens: list[str]) -> tuple[bool, str]:
 
 
 def _local(tokens: list[str]) -> tuple[bool, str]:
-    files = ["governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py"]
-    ruff = ["--config", "governance/ruff.toml"]
-    exact_commands = (
-        ["python3", "-m", "unittest", "-v", files[-1]],
-        ["python3", "-m", "py_compile", *files[:-1]],
-        ["uvx", "--from", "coverage", "coverage", "run", "--branch", "-m", "unittest", files[-1]],
-        ["uvx", "--from", "coverage", "coverage", "report", "--show-missing", "--fail-under=90"],
-        ["uvx", "ruff", "check", *ruff, *files],
-        ["uvx", "ruff", "format", *ruff, *files],
-        ["uvx", "ruff", "format", "--check", *ruff, *files],
-        ["uvx", "mypy", "--strict", *files[:-1]],
-        ["uvx", "detect-secrets", "scan", "--all-files"],
-        ["uvx", "zizmor", ".github/workflows/governance-integrity.yml", ".github/workflows/trusted-governance-validator.yml"],
-        ["shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"],
-    )
-    if tokens in exact_commands:
+    if tokens in VALIDATION_COMMANDS:
         return True, "exact validation command"
     allowed = _validator_command(tokens)
     return (allowed, "governance validator" if allowed else "local command is not allowlisted")

@@ -34,6 +34,7 @@ jobs:
         run: |
           python3 -m py_compile governance/w00_contracts.py governance/w00_checks.py
           if [ "$CHECK_NAME" = project-integrity ]; then
+            python3 -m unittest -v governance/test_w00_checks.py
             python3 governance/w00_checks.py project-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME"
           else
             python3 governance/w00_checks.py turn-handoff-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME" --pr-url "$PR_URL"

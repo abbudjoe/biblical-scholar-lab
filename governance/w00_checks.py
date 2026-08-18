@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import base64
 import hashlib
 import json
 import re
@@ -14,16 +15,20 @@ from typing import Any, cast
 import w00_contracts as contracts
 from w00_contracts import ContractError, need
 
-ACTIVATION_PATH = "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json"
-ACTIVATION_HASH = "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6"
+ACTIVATION_PATH, ACTIVATION_HASH, BASE_SHA = ("activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json", "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6", "3d3ebb706fe6c8779445cbbfd9fea271b86d3646")
 PACKAGE = "governance/GOV-01-package-manifest.json"
 CHECKSUMS = "governance/GOV-01-artifacts.sha256"
 WORKFLOWS = {".github/workflows/governance-integrity.yml", ".github/workflows/trusted-governance-validator.yml"}
-WORKFLOW_HASHES = {".github/workflows/governance-integrity.yml": "5c141666a16e74bac382a1ff2067afa7d1716452a4f1c3ba790215de590f8377", ".github/workflows/trusted-governance-validator.yml": "4781eb2e8fb7febad2d15663404c4ab01f046dcd08d52fc29e60cbbeb3f6672a"}
+WORKFLOW_HASHES = {".github/workflows/governance-integrity.yml": "b7a6e8e879834ce821f7f1c4092f59ed4a68307dfcbf4051ff703420fa5ddf6a", ".github/workflows/trusted-governance-validator.yml": "4781eb2e8fb7febad2d15663404c4ab01f046dcd08d52fc29e60cbbeb3f6672a"}
 PRODUCTION = {*WORKFLOWS, "governance/ruff.toml", "governance/w00_contracts.py", "governance/w00_checks.py"}
-PUBLIC_CONTRACTS = ("RootTurnHandoff:SPLIT_REQUIRED", "TrustedGovernanceValidationReceipt", "W00ABootstrapState")
+PUBLIC_CONTRACTS = ("TrustedGovernanceValidationReceipt", "W00ABootstrapState", "schema:governance/schemas/turn-handoff.schema.json")
 TRUSTED_FILES = (".github/workflows/trusted-governance-validator.yml", "governance/w00_contracts.py", "governance/w00_checks.py")
 LIMITS = {"tree_entries": 512, "tree_bytes": 16_777_216, "files": 128, "file_bytes": 524_288, "changed_bytes": 4_194_304, "commits": 64, "json_depth": 32}
+REQUIRED_EVALUATIONS = {"unit-and-adversarial", "branch-coverage", "formatter", "linter", "strict-typing", "workflow-static-security", "dependency-and-secret-scan", "package-integrity", "project-integrity", "live-governance", "independent-review"}
+REQUIRED_HANDOFF_COMMANDS = {" ".join(command) for command in contracts.VALIDATION_COMMANDS if command[:3] != ["uvx", "ruff", "format"]} | {" ".join(contracts.VALIDATION_COMMANDS[6]), "git diff --check", "git fsck --full"}
+CLI_SPECS = {"project-integrity": ("base-sha", "head-sha", "branch"), "turn-handoff-integrity": ("base-sha", "head-sha", "branch", "pr-url"), "package-integrity": ("revision",), "candidate-metadata": ("base-sha", "head-sha", "tree-json", "compare-json")}
+CLI_SPECS.update({"trusted-governance": ("repository", "pr-number", "base-sha", "head-sha", "trusted-revision", "branch", "event", "run-id", "run-attempt", "candidate-repository", "tree-json", "compare-json", "output"), "completion-integrity": ("base-sha", "head-sha", "branch", "pr-json", "comments-json"), "live-governance": ("expected-head", "review-limit-observed-at", "environment-ui-observed-at")})
+CLI_COMMANDS = {*CLI_SPECS, "command-policy"}
 PRIOR_HANDOFFS = (
     ("03e20dfb4692bad3f76710824e7535a4e6a59446", "516254fff643371f4315376a4a2ee0f5aaaaad64", {"handoffs/W00/W00-SOL-20260817T234806Z.md": "c1ce6a9f4849cc9280045e2825d38b794027fce8eb59e8d0facb94b238cafdd6", "handoffs/W00/W00-SOL-20260817T234806Z.json": "1a48f94e97651175c9689ea99fa9b824ad4751ce42414951da00467288a6ee07"}),
     ("e5a7fb3ff3c20d7eebdcf73af1ba9c0b18084cab", "80e52f0c4f91b3b0dc9314e73e7c270e34475927", {"handoffs/W00/W00-SOL-REPAIR01-20260818T021301Z.md": "b05bbd1f56d2d6df2175f2ea9ef2ab954ed022b48080b97aded2878dd68b105e", "handoffs/W00/W00-SOL-REPAIR01-20260818T021301Z.json": "42339bc0be5da1c6d74699e86fea88677e2202c521cde14e906d497f98c246e4"}),
@@ -48,7 +53,7 @@ def blob(repository: str | None, revision: str, path: str) -> bytes:
 
 
 def object_at(repository: str | None, revision: str, path: str) -> dict[str, Any]:
-    value = json.loads(blob(repository, revision, path))
+    value = contracts.strict_json(blob(repository, revision, path))
     need(isinstance(value, dict), f"{path} is not a JSON object")
     return cast(dict[str, Any], value)
 
@@ -74,21 +79,20 @@ def activation(repository: str | None, revision: str, branch: str) -> dict[str, 
 
 def changed_paths(base: str, head: str, repository: str | None = None) -> list[str]:
     raw = cast(bytes, run(command(repository, "diff", "--no-renames", "--name-only", "-z", f"{base}...{head}"), text=False).stdout)
-    try:
-        return [item.decode() for item in raw.split(b"\0") if item]
-    except UnicodeDecodeError as error:
-        raise ContractError("changed paths are not UTF-8") from error
+    return [item.decode() for item in raw.split(b"\0") if item]
 
 
 def safe_path(path: str) -> None:
     pure = PurePosixPath(path)
-    unsafe = not path or pure.is_absolute() or str(pure) != path or any(part in {"", ".", ".."} for part in pure.parts) or "\\" in path or len(path) > 240
-    unsafe = unsafe or any(ord(character) < 32 or ord(character) == 127 for character in path)
+    unsafe = not path or pure.is_absolute() or str(pure) != path or any(part in {"", ".", ".."} for part in pure.parts) or "\\" in path or len(path) > 240 or any(ord(character) < 32 or ord(character) == 127 for character in path)
     need(not unsafe and not path.lower().endswith((".zip", ".tar", ".gz", ".tgz", ".7z", ".rar")), "candidate path is unsafe")
 
 
-def _diff_lines(base: str, head: str, repository: str | None) -> tuple[int, int]:
-    source, additions, deletions, hunk = (git(repository, "diff", "--no-renames", "--unified=0", f"{base}...{head}"), 0, 0, False)
+def _diff_lines(base: str, head: str, repository: str | None, paths: list[str] | None = None) -> tuple[int, int]:
+    if paths == []:
+        return 0, 0
+    arguments = ["diff", "--no-renames", "--unified=0", f"{base}...{head}", *(("--", *paths) if paths else ())]
+    source, additions, deletions, hunk = (git(repository, *arguments), 0, 0, False)
     for line in source.splitlines():
         if line.startswith("diff --git"):
             hunk = False
@@ -114,19 +118,41 @@ def _dependencies(repository: str | None, revision: str, workflows: set[str]) ->
     return output
 
 
+def _record_types(repository: str | None, revision: str, production: set[str], schemas: set[str]) -> set[str]:
+    output = {f"schema:{path}" for path in schemas}
+    for path in (item for item in production if item.endswith(".py")):
+        tree = ast.parse(blob(repository, revision, path).decode(), filename=path)
+        pairs = (pair for node in ast.walk(tree) if isinstance(node, ast.Dict) for pair in zip(node.keys, node.values, strict=True))
+        output.update(value.value for key, value in pairs if isinstance(key, ast.Constant) and key.value in {"receipt_type", "state_type"} and isinstance(value, ast.Constant) and isinstance(value.value, str))
+    return output
+
+
+def _statuses(base: str, head: str, paths: list[str], repository: str | None) -> dict[str, str]:
+    rows = [line.split("\t", 1) for line in git(repository, "diff", "--no-renames", "--name-status", f"{base}...{head}").splitlines()]
+    for status, path in rows:
+        safe_path(path)
+    output = {path: status for status, path in rows if status in {"A", "M", "D"}}
+    need(len(output) == len(rows), "candidate change status differs")
+    need(set(output) == set(paths), "candidate change set differs")
+    return output
+
+
 def budget(base: str, head: str, paths: list[str], repository: str | None = None) -> dict[str, Any]:
     names = {PurePosixPath(path).name for path in paths}
-    manifests = {name for name in names if name in {"pyproject.toml", "setup.py", "setup.cfg", "package.json", "Cargo.toml", "go.mod"} or name.startswith("requirements") or name.endswith((".lock", "-lock.json"))}
+    manifests = {name for name in names if name in {"pyproject.toml", "setup.py", "setup.cfg", "package.json", "Cargo.toml", "go.mod", "Pipfile", "Gemfile", "pom.xml", "build.gradle", "composer.json"} or name.startswith("requirements") or name.endswith((".lock", "-lock.json"))}
     need(not manifests, "dependency manifest change is unclassified")
     schemas = {path for path in paths if path.startswith("governance/schemas/")}
     need(schemas <= {"governance/schemas/turn-handoff.schema.json"}, "public schema change is unclassified")
     additions, deletions = _diff_lines(base, head, repository)
     workflows = {path for path in paths if path.startswith(".github/workflows/")}
-    migrations = {path for path in paths if path.endswith(".sql") or "migrations" in PurePosixPath(path).parts}
-    contracts_changed = PUBLIC_CONTRACTS if {"governance/w00_contracts.py", "governance/schemas/turn-handoff.schema.json"}.intersection(paths) else ()
+    migrations = {path for path in paths if path.endswith(".sql") or "migrations" in PurePosixPath(path).parts or {"alembic", "versions"} <= set(PurePosixPath(path).parts)}
     dependencies = _dependencies(repository, head, workflows) - _dependencies(repository, base, workflows)
-    production = {path for path in paths if path in workflows or path == "governance/ruff.toml" or path.startswith("governance/") and path.endswith(".py") and not PurePosixPath(path).name.startswith("test_")}
-    return {"additions": additions, "deletions": deletions, "production_files": sorted(production), "test_files": sorted(path for path in paths if path.startswith("governance/test_")), "governance_files": sorted(path for path in paths if path.startswith("governance/")), "dependencies": sorted(dependencies), "public_contracts": list(contracts_changed), "workflows": sorted(workflows), "migrations": sorted(migrations)}
+    tests = {path for path in paths if path.startswith(("governance/test_", "governance/fixtures/"))}
+    production = {path for path in paths if path in workflows or path.startswith("governance/") and path not in tests and not path.startswith("governance/schemas/") and PurePosixPath(path).suffix not in {".md", ".json", ".sha256"}}
+    statuses, production_lines, test_lines = _statuses(base, head, paths, repository), _diff_lines(base, head, repository, sorted(production)), _diff_lines(base, head, repository, sorted(tests))
+    metrics = {"additions": additions, "deletions": deletions, "production_loc_added": production_lines[0], "production_loc_removed": production_lines[1], "test_loc_added": test_lines[0], "test_loc_removed": test_lines[1], "production_files": sorted(production), "production_added": sorted(path for path in production if statuses[path] == "A"), "production_removed": sorted(path for path in production if statuses[path] == "D")}
+    metrics.update({"test_files": sorted(tests), "governance_files": sorted(path for path in paths if path.startswith("governance/")), "dependencies": sorted(dependencies), "public_contracts": sorted(_record_types(repository, head, production, schemas)), "workflows": sorted(workflows), "migrations": sorted(migrations), "cli_commands": sorted(CLI_COMMANDS if statuses.get("governance/w00_checks.py") == "A" else ())})
+    return metrics
 
 
 def validate_budget(metrics: dict[str, Any], record: dict[str, Any]) -> None:
@@ -134,10 +160,10 @@ def validate_budget(metrics: dict[str, Any], record: dict[str, Any]) -> None:
     actual = (metrics["additions"] + metrics["deletions"], len(metrics["production_files"]), len(metrics["dependencies"]), len(metrics["public_contracts"]), len(metrics["migrations"]))
     maximum = (limits["substantive_changed_lines_hard_limit"], limits["handwritten_production_files_hard_limit"], limits["new_direct_dependencies_hard_limit"], limits["new_public_contracts_hard_limit"], limits["migrations_hard_limit"])
     need(all(value <= limit for value, limit in zip(actual, maximum, strict=True)), "an activation budget is exceeded")
-    need(record["activation_id"] != contracts.ACTIVATION or set(metrics["workflows"]) == WORKFLOWS, "W00A workflow set differs")
+    need(record["activation_id"] != contracts.ACTIVATION or (set(metrics["workflows"]), set(metrics["production_files"]), set(metrics["public_contracts"])) == (WORKFLOWS, PRODUCTION, set(PUBLIC_CONTRACTS)), "W00A activated surface differs")
 
 
-def validate_package(repository: str | None, revision: str) -> dict[str, int]:
+def validate_package(repository: str | None, revision: str, baseline: str = BASE_SHA) -> dict[str, Any]:
     manifest, entries = (object_at(repository, revision, PACKAGE), _checksums(blob(repository, revision, CHECKSUMS).decode()))
     files = manifest.get("files")
     need((manifest.get("artifact_id"), manifest.get("status")) == ("GOV-01", "APPROVED") and isinstance(files, list) and manifest.get("file_count") == len(files), "package manifest identity differs")
@@ -154,7 +180,12 @@ def validate_package(repository: str | None, revision: str) -> dict[str, int]:
     for path, digest in entries.items():
         need(hashlib.sha256(blob(repository, revision, path)).hexdigest() == digest, f"package checksum mismatch: {path}")
     need(PACKAGE in entries, "package manifest lacks a sidecar binding")
-    return {"manifest_files": len(files), "checksum_files": len(entries)}
+    trusted_manifest = object_at(repository, baseline, PACKAGE).get("files")
+    need(isinstance(trusted_manifest, list), "baseline package manifest is malformed")
+    required_files = {item.get("path") for item in cast(list[Any], trusted_manifest) if isinstance(item, dict)}
+    required_checksums = set(_checksums(blob(repository, baseline, CHECKSUMS).decode()))
+    need(required_files <= seen and required_checksums <= entries.keys(), "governed package membership was removed")
+    return {"manifest_files": len(files), "checksum_files": len(entries), "manifest_paths": sorted(seen), "checksum_paths": sorted(entries)}
 
 
 def _checksums(source: str) -> dict[str, str]:
@@ -176,8 +207,8 @@ def validate_project(base: str, head: str, branch: str, repository: str | None =
     need(not any(path.startswith(("design/", "activations/", "benchmark/", "sources/")) for path in paths), "immutable content changed")
     metrics = budget(base, head, paths, repository)
     validate_budget(metrics, record)
-    validate_package(repository, base)
-    validate_package(repository, head)
+    validate_package(repository, base, base)
+    validate_package(repository, head, base)
     for path in metrics["production_files"]:
         source = blob(repository, head, path).decode()
         need(not re.search(r"\b(?:TO" + "DO|FIX" + "ME|Not" + "ImplementedError|place" + "holder)\b", source, re.IGNORECASE), f"unfinished marker: {path}")
@@ -238,27 +269,15 @@ def _json_depth(value: Any, depth: int = 0) -> int:
 def _content(path: str, content: bytes) -> None:
     if not path.endswith((".json", ".md", ".py", ".yml", ".yaml")):
         return
-    try:
-        text = content.decode()
-    except UnicodeDecodeError as error:
-        raise ContractError("candidate governed text is not UTF-8") from error
-    need(not re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", text), "candidate contains log-control bytes")
+    text = content.decode()
+    need(not re.search(r"[\x00-\x08\x0b-\x1f\x7f]", text), "candidate contains log-control bytes")
     if path.endswith(".json"):
-        try:
-            _json_depth(json.loads(text))
-        except json.JSONDecodeError as error:
-            raise ContractError("candidate JSON is malformed") from error
+        _json_depth(contracts.strict_json(text))
     if path.endswith(".py"):
-        try:
-            ast.parse(text, filename=path)
-        except SyntaxError as error:
-            raise ContractError("candidate Python is malformed") from error
+        ast.parse(text, filename=path)
     if path.endswith((".yml", ".yaml")):
-        script = "require 'yaml'; YAML.safe_load(STDIN.read, permitted_classes: [], permitted_symbols: [], aliases: false)"
-        try:
-            result = run(["ruby", "-e", script], text=False, input_data=content, timeout=5, check=False)
-        except subprocess.TimeoutExpired as error:
-            raise ContractError("candidate YAML parse timed out") from error
+        script = "require 'yaml'; s=STDIN.read; d=Psych.parse_stream(s); raise unless d.children.length==1; w=nil; w=->(n){if n.is_a?(Psych::Nodes::Mapping); k=n.children.each_slice(2).map(&:first); raise unless k.all?{|x| x.is_a?(Psych::Nodes::Scalar)} && k.map{|x| [x.tag,x.value]}.uniq.length==k.length; end; Array(n.children).each{|c| w.call(c)}}; w.call(d); YAML.safe_load(s, permitted_classes: [], permitted_symbols: [], aliases: false)"
+        result = run(["ruby", "-e", script], text=False, input_data=content, timeout=5, check=False)
         need(result.returncode == 0, "candidate YAML is malformed")
 
 
@@ -321,13 +340,14 @@ def validate_handoff(base: str, head: str, branch: str, pr_url: str, repository:
         _prior(repository, head)
     turns = _append_only_turns(repository, base, head, prefix, is_w00a)
     _, parent, pair, record = turns[-1]
+    mutation_owner = _w00a_mutation(turns) if is_w00a else None
     need(_pair(repository, parent, git(repository, "rev-parse", f"{parent}^"), prefix) is None, "implementation head is itself a handoff commit")
     expected = (active["activation_id"], task, branch, base, pr_url, contracts.REPOSITORY)
     need(tuple(record[key] for key in ("activation_id", "task_id", "branch", "base_sha", "pr_url", "repository")) == expected, "handoff binding differs")
     metrics = budget(base, head, changed_paths(base, head, repository), repository)
     validate_budget(metrics, active)
     _handoff_receipt(record, metrics)
-    _handoff_commands(record, branch, pr_url)
+    _handoff_commands(record, branch, pr_url, mutation_owner is record)
     _handoff_markdown(repository, head, pair[1], parent, record["status"], is_w00a)
     return {"turn_id": record["turn_id"], "json": pair[0], "markdown": pair[1], "implementation_head_sha": parent, "status": record["status"]}
 
@@ -349,21 +369,41 @@ def _append_only_turns(repository: str | None, base: str, head: str, prefix: str
     return turns
 
 
+def _w00a_mutation(turns: list[tuple[str, str, tuple[str, str], dict[str, Any]]]) -> dict[str, Any]:
+    matches = [(record, item) for _, _, _, record in turns for item in record["commands"] if item.get("phase") == contracts.CommandPhase.W00A_GOVERNANCE.value]
+    need(len(matches) == 1, "W00A governance exception must be consumed exactly once")
+    record, item = matches[0]
+    exact = {"phase", "command", "exit_status", "result", "input"}
+    need(item.keys() == exact and item["exit_status"] == 0 and contracts.assess_command(item["command"], contracts.CommandPhase.W00A_GOVERNANCE, governance_available=True, governance_payload=item["input"])[0], "W00A governance receipt differs")
+    return record
+
+
 def _handoff_receipt(record: dict[str, Any], metrics: dict[str, Any]) -> None:
     receipt = record["complexity_receipt"]
-    need(receipt["production_files_added"] == len(metrics["production_files"]), "handoff production-file receipt differs")
-    for key, value in (("modules_added", metrics["production_files"]), ("dependencies_added", metrics["dependencies"]), ("public_contracts_changed", metrics["public_contracts"]), ("migrations_added", metrics["migrations"])):
+    counts = {"production_loc_added": metrics["production_loc_added"], "production_loc_removed": metrics["production_loc_removed"], "test_loc_added": metrics["test_loc_added"], "test_loc_removed": metrics["test_loc_removed"], "production_files_added": len(metrics["production_added"]), "production_files_removed": len(metrics["production_removed"]), "generated_loc": 0}
+    need(all(receipt[key] == value for key, value in counts.items()), "handoff complexity counts differ")
+    for key, value in (("modules_added", metrics["production_added"]), ("modules_removed", metrics["production_removed"]), ("dependencies_added", metrics["dependencies"]), ("dependencies_removed", []), ("public_contracts_changed", metrics["public_contracts"]), ("migrations_added", metrics["migrations"]), ("cli_commands_added", metrics["cli_commands"]), ("tables_added", []), ("endpoints_added", [])):
         need(sorted(receipt[key]) == sorted(value), f"handoff complexity field differs: {key}")
 
 
-def _handoff_commands(record: dict[str, Any], branch: str, pr_url: str) -> None:
+def _command_evidence(item: dict[str, Any], branch: str, number: int, allow_mutation: bool) -> None:
+    need(item.get("phase") in {phase.value for phase in contracts.CommandPhase}, "handoff command phase differs")
+    phase = contracts.CommandPhase(item["phase"])
+    fields = {"phase", "command", "exit_status", "result"} | ({"input"} if phase is contracts.CommandPhase.W00A_GOVERNANCE else set())
+    payload = item.get("input") if phase is contracts.CommandPhase.W00A_GOVERNANCE else None
+    need(item.keys() == fields and isinstance(item.get("command"), str) and item.get("exit_status") == 0 and isinstance(item.get("result"), str) and contracts.assess_command(item["command"], phase, branch=branch, pr_number=number, governance_available=allow_mutation, governance_payload=payload)[0], "handoff command evidence differs")
+
+
+def _handoff_commands(record: dict[str, Any], branch: str, pr_url: str, allow_mutation: bool) -> None:
     number = int(pr_url.rsplit("/", 1)[1])
+    need(bool(record["commands"]), "handoff command evidence is absent")
     for item in record["commands"]:
-        try:
-            phase = contracts.CommandPhase(item.get("phase", "implementation"))
-        except ValueError as error:
-            raise ContractError("handoff command phase differs") from error
-        need(isinstance(item.get("command"), str) and isinstance(item.get("exit_status"), int) and contracts.assess_command(item["command"], phase, branch=branch, pr_number=number)[0], "handoff records a prohibited command")
+        _command_evidence(item, branch, number, allow_mutation)
+    evaluations = record["evaluations"]
+    need(all(item.keys() == {"name", "status", "evidence"} and isinstance(item.get("evidence"), str) and item.get("status") in {"PASS", "PASS_WITH_REVIEW"} for item in evaluations), "handoff evaluation evidence differs")
+    names = [item["name"] for item in evaluations]
+    need(len(names) == len(set(names)) and REQUIRED_EVALUATIONS <= set(names), "required W00A evaluation evidence is absent")
+    need(REQUIRED_HANDOFF_COMMANDS <= {item["command"] for item in record["commands"]}, "required W00A command evidence is absent")
 
 
 def _handoff_markdown(repository: str | None, head: str, path: str, parent: str, status: str, w00a: bool) -> None:
@@ -371,16 +411,17 @@ def _handoff_markdown(repository: str | None, head: str, path: str, parent: str,
     phrases = ("Required GitHub Actions checks are defense-in-depth evidence and are not treated as proof of trusted workflow provenance.", "The trusted base-controlled validator becomes operational from main only after W00A is manually merged.", "Owner authorization, receipt consumption, and the merge-only path are not active after W00A and require W00B.")
     required = (*phrases, contracts.TITLE) if w00a else ()
     need(all(item in markdown for item in (*required, parent, status)), "handoff declaration differs")
+    prohibited = ("MERGE_READY", "SAFE_TO_MERGE", "OWNER_AUTHORIZATION_ACTIVE", "MERGE_ONLY_PATH_ACTIVE", "TRUSTED_VALIDATOR_LIVE_PROVEN_FOR_PR1", "owner authorization is active", "merge-only path is active", "safe to merge")
+    need(not any(item.lower() in markdown.lower() for item in prohibited), "handoff makes a prohibited capability claim")
 
 
 def _load(path: str) -> Any:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return contracts.strict_json(Path(path).read_bytes())
 
 
 def _comments(path: str) -> list[dict[str, Any]]:
     value = _load(path)
-    if isinstance(value, list) and value and all(isinstance(item, list) for item in value):
-        value = [entry for page in value for entry in page]
+    value = [entry for page in value for entry in page] if isinstance(value, list) and value and all(isinstance(item, list) for item in value) else value
     need(isinstance(value, list) and all(isinstance(item, dict) for item in value), "comments are malformed")
     return cast(list[dict[str, Any]], value)
 
@@ -409,8 +450,7 @@ def content_hash(repository: str | None, revision: str) -> str:
 
 
 def _receipt_hash(record: dict[str, Any]) -> str:
-    value = {key: item for key, item in record.items() if key != "receipt_hash"}
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return hashlib.sha256(json.dumps({key: item for key, item in record.items() if key != "receipt_hash"}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def create_receipt(arguments: argparse.Namespace) -> dict[str, Any]:
@@ -422,25 +462,8 @@ def create_receipt(arguments: argparse.Namespace) -> dict[str, Any]:
     project = validate_project(arguments.base_sha, arguments.head_sha, arguments.branch, arguments.candidate_repository)
     url = f"https://github.com/{contracts.REPOSITORY}/pull/{arguments.pr_number}"
     handoff = validate_handoff(arguments.base_sha, arguments.head_sha, arguments.branch, url, arguments.candidate_repository)
-    record = {
-        "schema_version": "1.0",
-        "receipt_type": "TrustedGovernanceValidationReceipt",
-        "repository": contracts.REPOSITORY,
-        "pr_number": arguments.pr_number,
-        "inspected_head_sha": arguments.head_sha,
-        "base_sha": arguments.base_sha,
-        "trusted_validator_revision": arguments.trusted_revision,
-        "workflow_path": ".github/workflows/trusted-governance-validator.yml",
-        "workflow_run_id": arguments.run_id,
-        "workflow_run_attempt": arguments.run_attempt,
-        "event": arguments.event,
-        "validator_content_hash": content_hash(None, arguments.trusted_revision),
-        "handoff_path": handoff["json"],
-        "handoff_sha256": hashlib.sha256(blob(arguments.candidate_repository, arguments.head_sha, handoff["json"])).hexdigest(),
-        "validation_results": {"candidate_input_safety": "PASS", "project_integrity": "PASS", "turn_handoff_integrity": "PASS", "package_integrity": "PASS"},
-        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "conclusion": "success",
-    }
+    record = {"schema_version": "1.0", "receipt_type": "TrustedGovernanceValidationReceipt", "repository": contracts.REPOSITORY, "pr_number": arguments.pr_number, "inspected_head_sha": arguments.head_sha, "base_sha": arguments.base_sha, "trusted_validator_revision": arguments.trusted_revision, "workflow_path": ".github/workflows/trusted-governance-validator.yml", "workflow_run_id": arguments.run_id, "workflow_run_attempt": arguments.run_attempt, "event": arguments.event}
+    record.update({"validator_content_hash": content_hash(None, arguments.trusted_revision), "handoff_path": handoff["json"], "handoff_sha256": hashlib.sha256(blob(arguments.candidate_repository, arguments.head_sha, handoff["json"])).hexdigest(), "validation_results": {"candidate_input_safety": "PASS", "project_integrity": "PASS", "turn_handoff_integrity": "PASS", "package_integrity": "PASS"}, "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "conclusion": "success"})
     record["receipt_hash"] = _receipt_hash(record)
     need(all(contracts.DIGEST.fullmatch(record[key]) for key in ("validator_content_hash", "handoff_sha256", "receipt_hash")), "trusted receipt digest differs")
     Path(arguments.output).write_text(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
@@ -448,7 +471,7 @@ def create_receipt(arguments: argparse.Namespace) -> dict[str, Any]:
 
 
 def _api(endpoint: str) -> dict[str, Any]:
-    value = json.loads(run(["gh", "api", endpoint]).stdout)
+    value = contracts.strict_json(run(["gh", "api", endpoint]).stdout)
     need(isinstance(value, dict), "GitHub response is not an object")
     return cast(dict[str, Any], value)
 
@@ -472,8 +495,26 @@ def _ruleset(record: dict[str, Any]) -> None:
 def _environment(record: dict[str, Any]) -> None:
     reviewers = [item for item in record.get("protection_rules", []) if isinstance(item, dict) and item.get("type") == "required_reviewers"]
     reviewer = reviewers[0] if len(reviewers) == 1 else {}
-    logins = [item.get("reviewer", {}).get("login") for item in reviewer.get("reviewers", [])]
-    need((record.get("name"), record.get("can_admins_bypass"), reviewer.get("prevent_self_review"), logins) == (contracts.ENVIRONMENT, False, False, ["abbudjoe"]), "future environment differs")
+    identities = [(item.get("type"), item.get("reviewer", {}).get("login"), item.get("reviewer", {}).get("id")) for item in reviewer.get("reviewers", [])]
+    need((record.get("id"), record.get("name"), record.get("can_admins_bypass"), reviewer.get("id"), reviewer.get("prevent_self_review"), identities) == (20070063288, contracts.ENVIRONMENT, False, 62973311, False, [("User", "abbudjoe", 43298060)]), "future environment differs")
+
+
+def _check_runs(record: dict[str, Any], head: str) -> None:
+    runs = record.get("check_runs")
+    need(isinstance(runs, list) and record.get("total_count") == len(runs) and len(runs) <= 100, "check-run state is incomplete")
+    for name in ("project-integrity", "turn-handoff-integrity"):
+        matches = [item for item in cast(list[Any], runs) if isinstance(item, dict) and item.get("name") == name and isinstance(item.get("app"), dict) and item["app"].get("id") == 15368]
+        need(bool(matches), f"required defense check is absent: {name}")
+        latest = max(matches, key=lambda item: item.get("id", -1))
+        need((latest.get("head_sha"), latest.get("status"), latest.get("conclusion")) == (head, "completed", "success"), f"required defense check differs: {name}")
+
+
+def _codeowners(record: dict[str, Any], errors: dict[str, Any]) -> None:
+    need((record.get("path"), record.get("encoding")) == (".github/CODEOWNERS", "base64") and isinstance(record.get("content"), str), "default-branch CODEOWNERS response differs")
+    source = base64.b64decode("".join(cast(str, record["content"]).split()), validate=True).decode()
+    required = {"*", "/.github/", "/AGENTS.md", "/EXPERIMENT_AUTHORITY.md", "/governance/", "/activations/", "/handoffs/", "/reviews/"}
+    owned = {line.split()[0] for line in source.splitlines() if line.strip() and not line.startswith("#") and line.split()[-1] == "@abbudjoe"}
+    need(required <= owned and errors.get("errors") == [], "CODEOWNERS differs")
 
 
 def validate_live(head: str, review_at: str, environment_at: str, review_limit: bool, admin_disabled: bool) -> dict[str, str]:
@@ -486,55 +527,34 @@ def validate_live(head: str, review_at: str, environment_at: str, review_limit: 
     need(settings == ("main", "public", True, False, False, False, True), "repository merge settings differ")
     _ruleset(rules)
     _environment(environment)
-    source, errors = (Path(".github/CODEOWNERS").read_text(), _api(f"{prefix}/codeowners/errors"))
-    required = {"*", "/.github/", "/AGENTS.md", "/EXPERIMENT_AUTHORITY.md", "/governance/", "/activations/", "/handoffs/", "/reviews/"}
-    owned = {line.split()[0] for line in source.splitlines() if line.strip() and not line.startswith("#") and line.split()[-1] == "@abbudjoe"}
-    need(required <= owned and errors.get("errors") == [], "CODEOWNERS differs")
-    workflows, pr = _api(f"{prefix}/actions/workflows"), _api(f"{prefix}/pulls/1")
+    codeowners, errors = (_api(f"{prefix}/contents/.github/CODEOWNERS?ref=main"), _api(f"{prefix}/codeowners/errors"))
+    _codeowners(codeowners, errors)
+    workflows, pr, checks = (_api(f"{prefix}/actions/workflows?per_page=100"), _api(f"{prefix}/pulls/1"), _api(f"{prefix}/commits/{head}/check-runs?per_page=100"))
+    need(isinstance(workflows.get("workflows"), list) and all(isinstance(item, dict) for item in workflows["workflows"]) and workflows.get("total_count") == len(workflows["workflows"]) and len(workflows["workflows"]) <= 100, "workflow state is incomplete")
     live_paths = {item.get("path") for item in workflows.get("workflows", []) if item.get("state") == "active"}
     need(live_paths == {".github/workflows/governance-integrity.yml"}, "pre-merge workflow state differs")
-    need((pr.get("state"), pr.get("draft"), pr.get("base", {}).get("ref"), pr.get("head", {}).get("sha")) == ("open", True, "main", head), "draft PR state differs")
+    pr_identity = (pr.get("number"), pr.get("state"), pr.get("draft"), pr.get("html_url"), pr.get("base", {}).get("ref"), pr.get("base", {}).get("sha"), pr.get("base", {}).get("repo", {}).get("full_name"), pr.get("head", {}).get("ref"), pr.get("head", {}).get("sha"), pr.get("head", {}).get("repo", {}).get("full_name"))
+    need(pr_identity == (1, "open", True, f"https://github.com/{contracts.REPOSITORY}/pull/1", "main", BASE_SHA, contracts.REPOSITORY, contracts.BRANCH, head, contracts.REPOSITORY), "draft PR identity differs")
+    _check_runs(checks, head)
     query = "query($owner:String!,$repo:String!,$number:Int!){repository(owner:$owner,name:$repo){pullRequest(number:$number){reviewThreads(first:100){nodes{isResolved}pageInfo{hasNextPage}}}}}"
-    conversations = json.loads(run(["gh", "api", "graphql", "-f", f"query={query}", "-f", "owner=abbudjoe", "-f", "repo=biblical-scholar-lab", "-F", "number=1"]).stdout)
+    conversations = contracts.strict_json(run(["gh", "api", "graphql", "-f", f"query={query}", "-f", "owner=abbudjoe", "-f", "repo=biblical-scholar-lab", "-F", "number=1"]).stdout)
     try:
         threads = conversations["data"]["repository"]["pullRequest"]["reviewThreads"]
     except (KeyError, TypeError) as error:
         raise ContractError("conversation state is unavailable") from error
     need(not any(not item.get("isResolved") for item in threads["nodes"]) and threads["pageInfo"].get("hasNextPage") is False, "conversation state is unresolved or incomplete")
-    return {"repository_settings": "PASS", "ruleset": "PASS_W00A_TWO_CHECKS", "codeowners": "PASS_API", "environment": "OBSERVED_FUTURE_DEPENDENCY_UNCHANGED", "workflow_state": "TRUSTED_VALIDATOR_NOT_LIVE_UNTIL_W00A_MERGE", "owner_authorization": "INACTIVE_REQUIRES_W00B", "required_checks_role": "DEFENSE_IN_DEPTH_ONLY"}
-
-
-def _identity(parser: argparse.ArgumentParser, *, url: bool = False) -> None:
-    for name in ("base-sha", "head-sha", "branch"):
-        parser.add_argument(f"--{name}", required=True)
-    if url:
-        parser.add_argument("--pr-url", required=True)
+    return {"state_type": "W00ABootstrapState", "repository_settings": "PASS", "ruleset": "PASS_W00A_TWO_CHECKS", "codeowners": "PASS_DEFAULT_BRANCH_API", "environment": "OBSERVED_FUTURE_DEPENDENCY_UNCHANGED", "workflow_state": "TRUSTED_VALIDATOR_NOT_LIVE_UNTIL_W00A_MERGE", "owner_authorization": "INACTIVE_REQUIRES_W00B", "required_checks_role": "DEFENSE_IN_DEPTH_ONLY"}
 
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     sub = root.add_subparsers(dest="check", required=True)
-    _identity(sub.add_parser("project-integrity"))
-    _identity(sub.add_parser("turn-handoff-integrity"), url=True)
-    package = sub.add_parser("package-integrity")
-    package.add_argument("--revision", required=True)
-    metadata = sub.add_parser("candidate-metadata")
-    for name in ("base-sha", "head-sha", "tree-json", "compare-json"):
-        metadata.add_argument(f"--{name}", required=True)
-    trusted = sub.add_parser("trusted-governance")
-    for name in ("repository", "base-sha", "head-sha", "trusted-revision", "branch", "event", "candidate-repository", "tree-json", "compare-json", "output"):
-        trusted.add_argument(f"--{name}", required=True)
-    for name in ("pr-number", "run-id", "run-attempt"):
-        trusted.add_argument(f"--{name}", required=True, type=int)
-    completion = sub.add_parser("completion-integrity")
-    _identity(completion)
-    completion.add_argument("--pr-json", required=True)
-    completion.add_argument("--comments-json", required=True)
-    live = sub.add_parser("live-governance")
-    for name in ("expected-head", "review-limit-observed-at", "environment-ui-observed-at"):
-        live.add_argument(f"--{name}", required=True)
-    live.add_argument("--review-limit-enabled", action="store_true")
-    live.add_argument("--admin-bypass-disabled", action="store_true")
+    commands = {check: sub.add_parser(check) for check in CLI_SPECS}
+    for check, names in CLI_SPECS.items():
+        for name in names:
+            commands[check].add_argument(f"--{name}", required=True, type=int if name in {"pr-number", "run-id", "run-attempt"} else str)
+    for name in ("review-limit-enabled", "admin-bypass-disabled"):
+        commands["live-governance"].add_argument(f"--{name}", action="store_true")
     policy = sub.add_parser("command-policy")
     policy.add_argument("--phase", choices=[item.value for item in contracts.CommandPhase], required=True)
     policy.add_argument("command")
