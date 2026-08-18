@@ -198,8 +198,8 @@
     },
     {
       "path": "governance/w00_checks.py",
-      "sha256": "143d1c0fbf72000d8079fb2f30ebc5315a464b89376f952d4f416636bd25694b",
-      "bytes": 19572
+      "sha256": "d3d912625419971d749bf14e49ed94d07c66c43197bc4e83c18bfcb850ee594a",
+      "bytes": 19651
     },
     {
       "path": "governance/w00_contracts.py",

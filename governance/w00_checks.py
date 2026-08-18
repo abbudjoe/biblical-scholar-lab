@@ -246,7 +246,8 @@ def _validate_sources(head: str, metrics: dict[str, Any]) -> None:
         if path in metrics["production_removed"]:
             continue
         source = blob(head, path)
-        markers = (b"TODO", b"FIXME", b"NotImplementedError", b"placeholder")
+        parts = (("TO", "DO"), ("FIX", "ME"), ("NotImplemented", "Error"), ("place", "holder"))
+        markers = ("".join(part).encode() for part in parts)
         unfinished = re.search(rb"\b(?:" + b"|".join(markers) + rb")\b", source, re.IGNORECASE)
         contracts.need(not unfinished, f"unfinished marker: {path}")
         if path.endswith(".py"):
