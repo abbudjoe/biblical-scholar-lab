@@ -89,15 +89,24 @@ def exact(record: dict[str, Any], required: set[str], optional: set[str] | None 
     need(record.keys() <= required | optional and required <= record.keys(), "record fields differ")
 
 
+def _cli_definitions(tree: ast.Module) -> list[ast.expr]:
+    values = [node.value for node in tree.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "CLI_SPECS" for target in node.targets)] + [node.value.args[0] for node in tree.body if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute) and isinstance(node.value.func.value, ast.Name) and (node.value.func.value.id, node.value.func.attr, len(node.value.args)) == ("CLI_SPECS", "update", 1)]
+    return values
+
+
+def _cli_writes(tree: ast.Module) -> list[ast.AST]:
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete)) and any(isinstance(name, ast.Name) and name.id == "CLI_SPECS" for target in (node.targets if isinstance(node, (ast.Assign, ast.Delete)) else [node.target]) for name in ast.walk(target))]
+
+
 def cli_surface(tree: ast.Module) -> set[str]:
-    definitions = [node.value for node in tree.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "CLI_SPECS" for target in node.targets)] + [node.value.args[0] for node in tree.body if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute) and isinstance(node.value.func.value, ast.Name) and (node.value.func.value.id, node.value.func.attr, len(node.value.args)) == ("CLI_SPECS", "update", 1)]
+    definitions, writes = _cli_definitions(tree), _cli_writes(tree)
     calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)]
     parsers = [call for call in calls if getattr(call.func, "attr", None) == "add_parser"]
     shapes = {(type(call.args[0]), getattr(call.args[0], "id", getattr(call.args[0], "value", None))) for call in parsers if len(call.args) == 1 and not call.keywords}
-    writes = [node for node in ast.walk(tree) if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete)) and any(isinstance(name, ast.Name) and name.id == "CLI_SPECS" for target in (node.targets if isinstance(node, (ast.Assign, ast.Delete)) else [node.target]) for name in ast.walk(target))]
     methods = [attribute.attr for call in calls if isinstance(attribute := call.func, ast.Attribute) and isinstance(attribute.value, ast.Name) and attribute.value.id == "CLI_SPECS"]
     keys = [key.value for definition in definitions if isinstance(definition, ast.Dict) for key in definition.keys if isinstance(key, ast.Constant) and isinstance(key.value, str)]
-    need(len(definitions) == 2 and all(isinstance(item, ast.Dict) for item in definitions) and len(keys) == len(set(keys)) == sum(len(cast(ast.Dict, item).keys) for item in definitions) and len(writes) == 1 and sorted(methods) == ["items", "update"] and len(parsers) == 2 and shapes == {(ast.Name, "check"), (ast.Constant, "command-policy")}, "CLI parser surface is unclassified")
+    identity = (len(definitions), all(isinstance(item, ast.Dict) for item in definitions), len(keys) == len(set(keys)) == sum(len(cast(ast.Dict, item).keys) for item in definitions), len(writes), sorted(methods), len(parsers), shapes)
+    need(identity == (2, True, True, 1, ["items", "update"], 2, {(ast.Name, "check"), (ast.Constant, "command-policy")}), "CLI parser surface is unclassified")
     return set(keys) | {"command-policy"}
 
 

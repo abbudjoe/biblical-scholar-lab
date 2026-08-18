@@ -261,22 +261,17 @@ class HandoffAndReceiptTests(unittest.TestCase):
             failed_exit = copy.deepcopy(record)
             failed_exit["commands"][0]["exit_status"] = 99
             for invalid in (record | {"commands": []}, record | {"commands": [item for item in record["commands"] if "project-integrity" not in item["command"]]}, record | {"commands": [record["commands"][0] | {"result": ""}, *record["commands"][1:]]}, record | {"evaluations": []}, record | {"evaluations": [record["evaluations"][0] | {"evidence": ""}, *record["evaluations"][1:]]}, failed_exit):
-                with self.assertRaises(ContractError):
-                    checks._handoff_commands(invalid, contracts.BRANCH, PR_URL, True)
+                self.assertRaises(ContractError, checks._handoff_commands, invalid, contracts.BRANCH, PR_URL, True)
             patched["blob"].return_value = (phrases + " SAFE_TO_MERGE").encode()
-            with self.assertRaises(ContractError):
-                checks._handoff_markdown(None, HEAD, pair[1], IMPL, record["status"], True)
+            self.assertRaises(ContractError, checks._handoff_markdown, None, HEAD, pair[1], IMPL, record["status"], True)
             replay = [(HEAD, IMPL, pair, record), ("d" * 40, HEAD, pair, record)]
-            with self.assertRaises(ContractError):
-                checks._w00a_mutation(replay)
+            self.assertRaises(ContractError, checks._w00a_mutation, replay)
             forged = copy.deepcopy(record)
             forged["complexity_receipt"]["production_loc_added"] = 999999
-            with self.assertRaises(ContractError):
-                checks._handoff_receipt(forged, metrics)
+            self.assertRaises(ContractError, checks._handoff_receipt, forged, metrics)
             patched["_history"].return_value = [(IMPL, BASE)]
             patched["_pair"].side_effect = [pair]
-            with self.assertRaises(ContractError):
-                checks.validate_handoff(BASE, HEAD, contracts.BRANCH, PR_URL)
+            self.assertRaises(ContractError, checks.validate_handoff, BASE, HEAD, contracts.BRANCH, PR_URL)
 
     def test_trusted_receipt_binds_head_base_run_workflow_hash_and_handoff(self) -> None:
         tree, compare = metadata()
@@ -355,8 +350,7 @@ class AdapterAndCliTests(unittest.TestCase):
             cast(mock.Mock, patched["git"]).return_value = ""
             self.assertEqual(checks.validate_project(BASE, HEAD, contracts.BRANCH)["changed_paths"], paths)
             cast(mock.Mock, patched["changed_paths"]).return_value = ["outside"]
-            with self.assertRaises(ContractError):
-                checks.validate_project(BASE, HEAD, contracts.BRANCH)
+            self.assertRaises(ContractError, checks.validate_project, BASE, HEAD, contracts.BRANCH)
 
     def test_completion_adapter_binds_pr_comments_and_prior_records(self) -> None:
         now = datetime.now(timezone.utc)
