@@ -91,22 +91,20 @@ Before W00 exists, create a no-bypass ruleset on the default branch with:
 - Block force pushes.
 - Block deletion.
 
-W00 is merged manually by Joseph after exact-head ChatGPT review because the trusted checks do not yet exist on `main`.
+W00A and W00B are manually merged by Joseph after exact-head ChatGPT review and approval. The owner environment remains an observed future dependency during W00A.
 
-## 6. Strengthen the ruleset after W00
+## 6. W00A bootstrap checks
 
-After W00 merges, retain these defense-in-depth contexts:
+W00A requires only these defense-in-depth contexts:
 
 ```text
 project-integrity
 turn-handoff-integrity
-chatgpt-review-integrity
-owner-merge-record-integrity
 ```
 
 Use strict/current-head checks. Keep the bypass list empty.
 
-Expected GitHub Actions App identity does not establish workflow provenance. W01 must separately prove the `pull_request_target` trusted-validator receipt and the protected owner-authorization workflow before W02 begins.
+Expected GitHub Actions App identity does not establish workflow provenance. W00B activates the authorization-chain checks and receipt path; W01 is the first live end-to-end proof.
 
 ## 7. Protect CODEOWNERS and governance
 

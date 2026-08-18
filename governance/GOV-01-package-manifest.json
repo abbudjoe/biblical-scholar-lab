@@ -68,23 +68,23 @@
     },
     {
       "path": "governance/BRANCH_AND_RULESET_SPEC.md",
-      "sha256": "e0be27823917836717e3aa0b1d8c8823a82c012675d4987abe34d0286242931c",
-      "bytes": 2465
+      "sha256": "0dee7a06faaf25a99b7196b9c5aaeb8fe94a6c53c3ce36a9cc15355ec0fb07be",
+      "bytes": 2471
     },
     {
       "path": "governance/CHATGPT_REVIEW_SPEC.md",
-      "sha256": "9ed87b8b815c5002f913883047d7c7852d2c906f04f236a3aa7d337767f66f70",
-      "bytes": 1061
+      "sha256": "5a2cbb579cb285bee53e1cb7329775613e3c257a60019f5117ee67096202e53d",
+      "bytes": 1436
     },
     {
       "path": "governance/GITHUB_CLI_OPERATION_POLICY.md",
-      "sha256": "70205a69839635bd1fd8c1a0520ddaa88d52b150ce5a905b8ff2dd844fbe7420",
-      "bytes": 4891
+      "sha256": "5b125e49c7ef696aa72813724fbb6542037f5438a5134c405114e549e9a9d896",
+      "bytes": 5173
     },
     {
       "path": "governance/GITHUB_OWNER_SETUP.md",
-      "sha256": "35d674b6a3af660a8f454b8d494e06b4dfc28046c07be90e28b1958b9f26d05c",
-      "bytes": 4400
+      "sha256": "d2c4a006624844b7419fe5bf28125300bc7a52235601a8428f28032936edc6f5",
+      "bytes": 4719
     },
     {
       "path": "governance/MODEL_ROLE_POLICY.md",
@@ -93,13 +93,13 @@
     },
     {
       "path": "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md",
-      "sha256": "c663f0c148890ecb453ac8cf190e8ac7d9959137b4163e49a60c15473fb6062c",
-      "bytes": 3095
+      "sha256": "d6ea0c6628f0b08f63853264febb96a6782dbcf43ca6dc3cd9224e7fcdc62063",
+      "bytes": 3750
     },
     {
       "path": "governance/REQUIRED_CHECKS_SPEC.md",
-      "sha256": "f3715de8bef718722ef83debc13f44da61068f556f290bec0f4c0f4cae2da3dd",
-      "bytes": 3239
+      "sha256": "2369e81ed8162c4cd6a9ebeeff0fa871e8668946762376941287961bc9d60b91",
+      "bytes": 3327
     },
     {
       "path": "governance/ROOT_TURN_HANDOFF_SPEC.md",
@@ -108,8 +108,8 @@
     },
     {
       "path": "governance/W00_ACCEPTANCE.md",
-      "sha256": "4cda7b9550e63454251fb4b2c0c388a2a87ff5f1c1436c29bc982d9f5afad43b",
-      "bytes": 3147
+      "sha256": "75292930bd04c86fa7545409061f55972e1c5a828c681cee044d72f76369f441",
+      "bytes": 3177
     },
     {
       "path": "governance/schemas/chatgpt-review.schema.json",
@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "d261834452d1263282926d5f8fd4ca9db23e323a736d70ec6445289dcedc65fe",
-      "bytes": 8507
+      "sha256": "f2aafc0d616b3b552035f3dcba81e05cc330c17efc59a3ee6e687941ca4dc2e0",
+      "bytes": 8533
     },
     {
       "path": "governance/templates/chatgpt-review.md",

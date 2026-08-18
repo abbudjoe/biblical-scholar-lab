@@ -1,438 +1,345 @@
-"""Adversarial W00 and GOV-01-S01 conformance tests."""
-
 from __future__ import annotations
 
-import contextlib
+import argparse
 import copy
-import io
 import json
-import os
-import re
 import subprocess
 import sys
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any, cast
 from unittest import mock
 
-GOVERNANCE = Path(__file__).resolve().parent
-ROOT = GOVERNANCE.parent
-sys.path.insert(0, str(GOVERNANCE))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "governance"))
 
 import w00_checks as checks
-from w00_checks import BudgetMetrics
-from w00_contracts import (
-    AUTHORIZATION_MARKER,
-    REVIEW_MARKER,
-    CommandPhase,
-    ContractError,
-    assess_command,
-    current_authorization,
-    current_clean_review,
-    receipt_hash,
-    validate_activation,
-    validate_append_only_comments,
-    validate_auth_preflight,
-    validate_handoff,
-    validate_owner_receipt,
-    validate_owner_receipt_binding,
-    validate_review_schema,
-    validate_trusted_receipt,
-    validate_trusted_receipt_binding,
-)
+import w00_contracts as contracts
+from w00_contracts import ContractError
 
 BASE, HEAD, IMPL = "a" * 40, "b" * 40, "c" * 40
-PR_URL = "https://github.com/abbudjoe/biblical-scholar-lab/pull/1"
-NOW = datetime.now(timezone.utc).replace(microsecond=0)
+TREE = "d" * 40
+PR_URL = f"https://github.com/{contracts.REPOSITORY}/pull/1"
+RECORDS = cast(dict[str, Any], json.loads((ROOT / "governance/fixtures/w00-records.json").read_text()))
 
 
-def _time(minutes: int) -> str:
-    return (NOW + timedelta(minutes=minutes)).isoformat().replace("+00:00", "Z")
+def activation() -> dict[str, Any]:
+    return cast(dict[str, Any], json.loads((ROOT / checks.ACTIVATION_PATH).read_text()))
 
 
-def _replace(record: dict, path: tuple[str, ...], value) -> dict:
-    changed = copy.deepcopy(record)
-    target = changed
-    for field in path[:-1]:
-        target = target[field]
-    target[path[-1]] = value
-    return changed
+def complexity(modules: list[str] | None = None) -> dict[str, Any]:
+    value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"]["complexity_receipt"]))
+    return value | {"production_files_added": len(modules or []), "modules_added": modules or []}
 
 
-def _comment(marker: str, record: dict, comment_id: int, minute: int) -> dict:
-    stamp = _time(minute)
-    return {"id": comment_id, "created_at": stamp, "updated_at": stamp, "body": f"{marker}\n```json\n{json.dumps(record)}\n```"}
+def handoff(parent: str = IMPL) -> dict[str, Any]:
+    return cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"])) | {"implementation_head_sha": parent}
 
 
-def _review(head: str = HEAD) -> dict:
-    return {
-        "schema_version": "1.0", "review_id": "REVIEW-W00-1", "pr_url": PR_URL,
-        "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3", "base_sha": BASE,
-        "reviewed_head_sha": head, "reviewer": "ChatGPT", "disposition": "CHATGPT_REVIEW_CLEAN",
-        "summary": "Exact-head review.", "findings": [],
-        "evidence_reviewed": [f"https://github.com/abbudjoe/biblical-scholar-lab/blob/{head}/handoffs/W00/W00-fixture.json"],
-        "required_next_action": "OWNER_AUTHORIZATION", "review_timestamp": _time(-8),
-    }
+def marked(marker: str, record: dict[str, Any], identifier: int, when: datetime) -> dict[str, Any]:
+    stamp = when.isoformat().replace("+00:00", "Z")
+    return {"id": identifier, "created_at": stamp, "updated_at": stamp, "body": f"{marker}\n```json\n{json.dumps(record)}\n```"}
 
 
-def _authorization(head: str = HEAD, identifier: str = "AUTH-W00-1") -> dict:
-    return {
-        "schema_version": "1.0", "authorization_id": identifier, "repository": "abbudjoe/biblical-scholar-lab",
-        "pr_url": PR_URL, "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
-        "chatgpt_review_id": "REVIEW-W00-1", "authorized_head_sha": head, "owner_login": "abbudjoe",
-        "authorization_channel": "CHATGPT_CONVERSATION_EXPLICIT_APPROVAL",
-        "owner_approval_reference": "conversation", "approved_at": _time(-5), "merge_method": "squash",
-        "status": "AUTHORIZED",
-    }
+def metadata(path: str = "safe.txt", *, mode: str = "100644", size: int = 1) -> tuple[dict[str, Any], dict[str, Any]]:
+    tree, compare = cast(dict[str, Any], copy.deepcopy(RECORDS["tree"])), cast(dict[str, Any], copy.deepcopy(RECORDS["compare"]))
+    tree.update({"sha": TREE})
+    tree["tree"][0].update({"path": path, "mode": mode, "size": size})
+    compare["commits"][0]["commit"] = {"tree": {"sha": TREE}}
+    compare["files"][0]["filename"] = path
+    return tree, compare
 
 
-def _complexity(modules: list[str] | None = None) -> dict:
-    return {
-        "production_loc_added": 10, "production_loc_removed": 0, "test_loc_added": 10,
-        "test_loc_removed": 0, "generated_loc": 0, "production_files_added": len(modules or ["governance/x.py"]),
-        "production_files_removed": 0, "modules_added": modules or ["governance/x.py"], "modules_removed": [],
-        "tables_added": [], "migrations_added": [], "endpoints_added": [], "cli_commands_added": [],
-        "dependencies_added": [], "dependencies_removed": [], "public_contracts_changed": [],
-        "abstractions": [], "simpler_alternatives_considered": ["direct validation"],
-        "known_duplication_or_debt": [], "waivers": [], "simplicity_conformance": "PASS",
-    }
+class GitFixture(unittest.TestCase):
+    def repository(self) -> tuple[tempfile.TemporaryDirectory[str], str, str]:
+        temporary = tempfile.TemporaryDirectory()
+        directory = temporary.name
+        self.git(directory, "init", "-q")
+        self.git(directory, "config", "user.email", "fixture@example.test")
+        self.git(directory, "config", "user.name", "Fixture")
+        Path(directory, "seed").write_text("seed\n")
+        self.git(directory, "add", "seed")
+        self.git(directory, "commit", "-q", "-m", "base")
+        return temporary, directory, self.git(directory, "rev-parse", "HEAD")
 
-
-def _handoff() -> dict:
-    return {
-        "schema_version": "1.0", "project_id": "biblical-scholar-lab",
-        "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3", "task_id": "W00", "turn_id": "W00-fixture",
-        "codex_run_id": "fixture", "status": "READY_FOR_CHATGPT_REVIEW", "repository": "abbudjoe/biblical-scholar-lab",
-        "branch": "codex/w00-repository-governance", "base_sha": BASE, "implementation_head_sha": IMPL,
-        "pr_url": PR_URL, "github_actor_login": "abbudjoe", "github_auth_mode": "GH_CLI_EXISTING_AUTH",
-        "github_auth_preflight": {"hostname": "github.com", "active_login": "abbudjoe", "auth_healthy": True, "token_override_present": False, "token_exposed": False},
-        "objective": "fixture", "acceptance_criteria": ["passes"],
-        "design_conformance": {"status": "CONFORMING", "approved_design_ids": ["GOV-01-S01"], "unapproved_design_changes_executed": False},
-        "changes": [], "review_targets": [], "commands": [], "evaluations": [], "artifacts": [],
-        "delegated_operations": [], "complexity_receipt": _complexity(), "known_risks": [], "decisions_required": [],
-        "billable_actions": {"performed": False, "actual_cost_usd": 0}, "next_required_action": "CHATGPT_REVIEW",
-        "merge_performed": False, "next_task_started": False,
-    }
-
-
-def _ruleset() -> dict:
-    return {
-        "id": 20960975, "name": "main-quality-and-authorization-gates", "target": "branch",
-        "enforcement": "active", "bypass_actors": [], "current_user_can_bypass": "never",
-        "conditions": {"ref_name": {"exclude": [], "include": ["~DEFAULT_BRANCH"]}},
-        "rules": [{"type": name} for name in ("deletion", "non_fast_forward", "required_linear_history")] + [
-            {"type": "pull_request", "parameters": {"required_approving_review_count": 0, "dismiss_stale_reviews_on_push": True, "require_code_owner_review": False, "require_last_push_approval": False, "required_review_thread_resolution": True, "allowed_merge_methods": ["squash"]}},
-            {"type": "required_status_checks", "parameters": {"strict_required_status_checks_policy": True, "do_not_enforce_on_create": False, "required_status_checks": [{"context": name, "integration_id": 15368} for name in sorted(checks.CHECK_NAMES)]}},
-        ],
-    }
-
-
-def _trusted_receipt(head: str = HEAD) -> dict:
-    record = {
-        "schema_version": "1.0", "receipt_type": "TrustedGovernanceValidationReceipt",
-        "repository": "abbudjoe/biblical-scholar-lab", "pr_number": 1, "inspected_head_sha": head,
-        "base_sha": BASE, "trusted_validator_revision": BASE,
-        "workflow_path": ".github/workflows/trusted-governance-validator.yml", "workflow_run_id": 10,
-        "workflow_run_attempt": 1, "event": "pull_request_target", "validator_content_hash": "d" * 64,
-        "validation_results": {"candidate_input_safety": "PASS", "project_integrity": "PASS"},
-        "timestamp": _time(-9), "conclusion": "success",
-    }
-    record["receipt_hash"] = receipt_hash(record)
-    return record
-
-
-def _owner_receipt() -> dict:
-    record = {
-        "schema_version": "1.0", "receipt_type": "OwnerMergeAuthorizationReceipt",
-        "repository": "abbudjoe/biblical-scholar-lab", "pr_number": 1, "pr_url": PR_URL,
-        "authorized_head_sha": HEAD, "chatgpt_review_id": "REVIEW-W00-1",
-        "trusted_validator": {"workflow_path": ".github/workflows/trusted-governance-validator.yml", "run_id": 10, "receipt_hash": "e" * 64},
-        "authorization_workflow": {"workflow_path": ".github/workflows/owner-merge-authorization.yml", "run_id": 20, "run_attempt": 1, "trusted_revision": BASE},
-        "environment_name": "owner-merge-authorization", "timestamp": _time(-1), "conclusion": "success",
-    }
-    record["receipt_hash"] = receipt_hash(record)
-    return record
+    def git(self, directory: str, *arguments: str) -> str:
+        return subprocess.run(["git", "-C", directory, *arguments], check=True, text=True, capture_output=True).stdout.strip()
 
 
 class ContractTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.activation = json.loads((ROOT / checks.ACTIVATION_PATH).read_text())
+    def test_activation_auth_and_handoff_shapes(self) -> None:
+        record = activation()
+        contracts.validate_activation(record)
+        contracts.validate_auth("abbudjoe", [])
+        contracts.validate_handoff(handoff(), w00a=True)
+        mutations = [(record, ("root_turn", "model"), "other"), (record, ("root_turn", "luna_delegation_allowed"), True), (handoff(), ("branch",), "main"), (handoff(), ("design_conformance", "approved_design_ids"), ["GOV-01"]), (handoff(), ("delegated_operations",), [{"role": "luna_runner", "write_performed": False}]), (handoff(), ("billable_actions", "performed"), True)]
+        for original, path, value in mutations:
+            changed = copy.deepcopy(original)
+            target = changed
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            with self.assertRaises(ContractError):
+                (contracts.validate_activation(changed) if "root_turn" in changed else contracts.validate_handoff(changed, w00a=True))
+        for login, names in (("other", []), ("abbudjoe", ["GH_TOKEN"])):
+            with self.assertRaises(ContractError):
+                contracts.validate_auth(login, names)
 
-    def test_activation_scope_auth_and_handoff_boundaries(self) -> None:
-        validate_activation(self.activation); validate_auth_preflight("abbudjoe", set()); validate_handoff(_handoff())
-        bad = [
-            _replace(self.activation, ("status",), "SUPERSEDED"),
-            _replace(self.activation, ("root_turn", "reasoning_effort"), "high"),
-            _replace(self.activation, ("approved_design_ids",), [1]),
-        ]
-        for record in bad:
-            with self.assertRaises(ContractError): validate_activation(record)
-        with self.assertRaises(ContractError): validate_auth_preflight("other", {"GH_TOKEN"})
-        for path, value in (("acceptance_criteria", [1]), ("changes", ["bad"]), ("delegated_operations", [{"role": "luna_runner", "write_performed": False}]), ("status", "MERGE_READY")):
-            with self.assertRaises(ContractError): validate_handoff(_replace(_handoff(), (path,), value))
-        checks.validate_change_scope(["governance/w00_checks.py"], self.activation)
-        with self.assertRaises(ContractError): checks.validate_change_scope(["sources/new.json"], self.activation)
+    def test_command_fixture_and_phase_isolation(self) -> None:
+        fixture = json.loads((ROOT / "governance/fixtures/w00-command-policy.json").read_text())
+        for item in fixture:
+            for command in item["commands"]:
+                actual = contracts.assess_command(command, contracts.CommandPhase(item["phase"]))[0]
+                self.assertEqual(actual, item["allowed"], command)
+        put = f"gh api --method PUT repos/{contracts.REPOSITORY}/rulesets/{contracts.RULESET} --input .codex-tmp-ruleset-w00a.json"
+        self.assertTrue(contracts.assess_command(put, contracts.CommandPhase.W00A_GOVERNANCE)[0])
+        self.assertFalse(contracts.assess_command(put, contracts.CommandPhase.IMPLEMENTATION)[0])
 
-    def test_review_authorization_order_identity_and_append_only(self) -> None:
-        review = _comment(REVIEW_MARKER, _review(), 1, -7); authorization = _comment(AUTHORIZATION_MARKER, _authorization(), 2, -4)
-        comments = [review, authorization]
-        self.assertEqual(current_clean_review(comments, pr_url=PR_URL, activation_id=self.activation["activation_id"], base_sha=BASE, head_sha=HEAD)["review_id"], "REVIEW-W00-1")
-        self.assertEqual(current_authorization(comments, repository="abbudjoe/biblical-scholar-lab", pr_url=PR_URL, activation_id=self.activation["activation_id"], head_sha=HEAD, review_id="REVIEW-W00-1")["authorization_id"], "AUTH-W00-1")
-        edited = copy.deepcopy(review); edited["updated_at"] = _time(-6)
-        reused = comments + [_comment(AUTHORIZATION_MARKER, _authorization("c" * 40), 3, -3)]
-        replacement = [_comment(REVIEW_MARKER, _replace(_review(), ("review_id",), "REVIEW-NEW"), 3, -3)]
-        for current in ([authorization, review], [edited, authorization], reused):
-            with self.assertRaises(ContractError): current_authorization(current, repository="abbudjoe/biblical-scholar-lab", pr_url=PR_URL, activation_id=self.activation["activation_id"], head_sha=HEAD, review_id="REVIEW-W00-1")
-        for current in ([], replacement, [authorization, review]):
-            with self.assertRaises(ContractError): validate_append_only_comments([review], current)
-        validate_append_only_comments([review], comments)
-
-    def test_review_schema_evidence_and_new_commit_invalidation(self) -> None:
-        validate_review_schema(_review())
-        for record in (_replace(_review(), ("findings",), ["bad"]), _replace(_review(), ("evidence_reviewed",), ["handoff missing"]), _replace(_review(), ("required_next_action",), "STOP")):
-            comment = _comment(REVIEW_MARKER, record, 1, -7)
-            with self.assertRaises(ContractError): current_clean_review([comment], pr_url=PR_URL, activation_id="ACT-W00-REPOSITORY-GOVERNANCE-v3", base_sha=BASE, head_sha=HEAD)
-        with self.assertRaises(ContractError): current_clean_review([_comment(REVIEW_MARKER, _review(), 1, -7)], pr_url=PR_URL, activation_id="ACT-W00-REPOSITORY-GOVERNANCE-v3", base_sha=BASE, head_sha="c" * 40)
-
-    def test_receipt_hashes_and_exact_binding(self) -> None:
-        trusted_record, owner = _trusted_receipt(), _owner_receipt()
-        validate_trusted_receipt(trusted_record); validate_owner_receipt(owner)
-        validate_owner_receipt_binding(owner, pr_number=1, head_sha=HEAD, review_id="REVIEW-W00-1", trusted_run_id=10, authorization_run_id=20, authorization_revision=BASE)
-        for path, value in (("event", "pull_request"), ("workflow_path", ".github/workflows/evil.yml")):
-            changed = _replace(trusted_record, (path,), value); changed["receipt_hash"] = receipt_hash(changed)
-            with self.assertRaises(ContractError): validate_trusted_receipt(changed)
-        for kwargs in ({"pr_number": 2}, {"head_sha": "c" * 40}, {"base_sha": "c" * 40}, {"workflow_run_id": 11}):
-            expected = {"pr_number": 1, "head_sha": HEAD, "base_sha": BASE, "workflow_run_id": 10}; expected.update(kwargs)
-            with self.assertRaises(ContractError): validate_trusted_receipt_binding(trusted_record, **expected)
-        for kwargs in ({"pr_number": 2}, {"head_sha": "c" * 40}, {"review_id": "other"}, {"trusted_run_id": 11}, {"authorization_run_id": 21}):
-            expected = {"pr_number": 1, "head_sha": HEAD, "review_id": "REVIEW-W00-1", "trusted_run_id": 10, "authorization_run_id": 20, "authorization_revision": BASE}; expected.update(kwargs)
-            with self.assertRaises(ContractError): validate_owner_receipt_binding(owner, **expected)
-
-    def test_schema_and_comment_error_branches(self) -> None:
-        activation = self.activation
-        activation_cases = (("activation_id", "bad"), ("approved_design_commit", "bad"), ("owner_approval", {}), ("activated_paths", ["activations/x.json"]), ("approved_design_ids", ["DR-20", "DR-20"]))
-        for field, value in activation_cases:
-            with self.assertRaises(ContractError): validate_activation(_replace(activation, (field,), value))
-        handoff_cases = (("base_sha", "bad"), ("pr_url", "bad"), ("branch", "main"), ("github_actor_login", "other"), ("next_task_started", True), ("billable_actions", {"performed": True, "actual_cost_usd": 1}))
-        for field, value in handoff_cases:
-            with self.assertRaises(ContractError): validate_handoff(_replace(_handoff(), (field,), value))
-        for body in (REVIEW_MARKER, REVIEW_MARKER + "\n```json\n{bad}\n```", REVIEW_MARKER + "\n```json\n[]\n```"):
-            comment = {"id": 1, "created_at": _time(-7), "updated_at": _time(-7), "body": body}
-            with self.assertRaises(ContractError): current_clean_review([comment], pr_url=PR_URL, activation_id=activation["activation_id"], base_sha=BASE, head_sha=HEAD)
-        for path, value in (("workflow_run_id", 0), ("validation_results", {}), ("validator_content_hash", "bad"), ("timestamp", "bad")):
-            record = _replace(_trusted_receipt(), (path,), value); record["receipt_hash"] = receipt_hash(record)
-            with self.assertRaises(ContractError): validate_trusted_receipt(record)
-        for path, value in (("pr_number", 0), ("environment_name", "other"), ("trusted_validator", {}), ("authorization_workflow", {})):
-            record = _replace(_owner_receipt(), (path,), value); record["receipt_hash"] = receipt_hash(record)
-            with self.assertRaises(ContractError): validate_owner_receipt(record)
+    def test_completion_review_order_and_w00b_records_fail_closed(self) -> None:
+        now = datetime.now(timezone.utc)
+        expected = (contracts.ACTIVATION, "W00", "turn", IMPL, HEAD, f"https://github.com/{contracts.REPOSITORY}/blob/{HEAD}/h.md", f"https://github.com/{contracts.REPOSITORY}/blob/{HEAD}/h.json", "READY_FOR_CHATGPT_REVIEW", "CHATGPT_REVIEW")
+        completion = dict(zip(("activation_id", "task_id", "turn_id", "implementation_head_sha", "live_pr_head_sha", "handoff_markdown", "handoff_json", "status", "next_required_action"), expected, strict=True))
+        comments = [marked(contracts.COMPLETION, completion, 1, now)]
+        _, completed = contracts.current_completion(comments, expected)
+        identity, handoff_url = (PR_URL, contracts.ACTIVATION, BASE, HEAD), expected[6]
+        self.assertEqual(contracts.validate_record_order(comments, completed, identity, handoff_url), "HANDOFF")
+        review = {"schema_version": "1.0", "review_id": "r1", "pr_url": PR_URL, "activation_id": contracts.ACTIVATION, "base_sha": BASE, "reviewed_head_sha": HEAD, "reviewer": "ChatGPT", "disposition": "CHATGPT_REVIEW_CLEAN", "summary": "clean", "findings": [], "required_next_action": "OWNER_AUTHORIZATION", "review_timestamp": now.isoformat(), "evidence_reviewed": [handoff_url]}
+        comments.append(marked(contracts.REVIEW, review, 2, now + timedelta(seconds=1)))
+        self.assertEqual(contracts.validate_record_order(comments, completed, identity, handoff_url), "REVIEW")
+        comments.append(marked(contracts.INACTIVE_MARKERS[0], {"status": "AUTHORIZED"}, 3, now + timedelta(seconds=2)))
+        with self.assertRaises(ContractError):
+            contracts.validate_record_order(comments, completed, identity, handoff_url)
+        with self.assertRaises(ContractError):
+            contracts.current_completion([*comments[:1], comments[0]], expected)
 
 
-class CommandAndBudgetTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.activation = json.loads((ROOT / checks.ACTIVATION_PATH).read_text())
+class RepositoryTests(GitFixture):
+    def metrics(self, **changes: object) -> dict[str, Any]:
+        values = {"additions": 1, "deletions": 0, "production_files": sorted(checks.PRODUCTION), "test_files": ["governance/test_w00_checks.py"], "governance_files": [], "dependencies": ["actions/checkout", "actions/upload-artifact"], "public_contracts": list(checks.PUBLIC_CONTRACTS), "workflows": sorted(checks.WORKFLOWS), "migrations": []}
+        values.update(changes)
+        return values
 
-    def test_exact_command_policy_matrix(self) -> None:
-        fixtures = json.loads((GOVERNANCE / "fixtures/w00-command-policy.json").read_text())
-        for group in fixtures:
-            for command in group["commands"]:
-                with self.subTest(category=group["category"], command=command):
-                    self.assertEqual(assess_command(command, CommandPhase(group["phase"])).allowed, group["allowed"])
+    def test_stateful_diff_count_and_all_budgets(self) -> None:
+        temporary, directory, base = self.repository()
+        try:
+            Path(directory, "safe").write_text("---old\n")
+            self.git(directory, "add", "safe")
+            self.git(directory, "commit", "-q", "-m", "header base")
+            base = self.git(directory, "rev-parse", "HEAD")
+            Path(directory, "safe").write_text("+++payload\n")
+            self.git(directory, "add", "safe")
+            self.git(directory, "commit", "-q", "-m", "header content")
+            self.assertEqual(checks._diff_lines(base, self.git(directory, "rev-parse", "HEAD"), directory), (1, 1))
+        finally:
+            temporary.cleanup()
+        checks.validate_budget(self.metrics(), activation())
+        failures = (self.metrics(additions=1501), self.metrics(production_files=[str(i) for i in range(13)]), self.metrics(dependencies=["a", "b", "c"]), self.metrics(public_contracts=["a", "b", "c", "d"]), self.metrics(migrations=["x.sql"]), self.metrics(workflows=["other.yml"]))
+        for item in failures:
+            with self.assertRaises(ContractError):
+                checks.validate_budget(item, activation())
 
-    def test_all_activation_budgets_fail_closed(self) -> None:
-        valid = BudgetMetrics(100, 0, tuple(f"governance/f{i}.py" for i in range(5)), ("actions/checkout", "actions/upload-artifact"), tuple(sorted(checks.PUBLIC_CONTRACTS)), tuple(sorted(checks.WORKFLOWS)), ())
-        checks.validate_budgets(valid, self.activation)
-        mutations = [
-            valid.__class__(1501, 0, valid.production_files, valid.dependencies, valid.public_contracts, valid.workflows, ()),
-            valid.__class__(1, 0, tuple(f"f{i}.py" for i in range(13)), valid.dependencies, valid.public_contracts, valid.workflows, ()),
-            valid.__class__(1, 0, valid.production_files, ("a", "b", "c"), valid.public_contracts, valid.workflows, ()),
-            valid.__class__(1, 0, valid.production_files, (), ("a", "b", "c", "d"), valid.workflows, ()),
-            valid.__class__(1, 0, valid.production_files, (), (), valid.workflows, ("migrations/1.sql",)),
-            valid.__class__(1, 0, valid.production_files, (), (), (".github/workflows/other.yml",), ()),
-        ]
-        for metrics in mutations:
-            with self.assertRaises(ContractError): checks.validate_budgets(metrics, self.activation)
+    def test_dependency_schema_migration_and_complexity_discovery(self) -> None:
+        with mock.patch.object(checks, "_diff_lines", return_value=(1, 0)):
+            for path in ("governance/package.json", "governance/schemas/other.json"):
+                with self.assertRaises(ContractError):
+                    checks.budget(BASE, HEAD, [path])
+            self.assertEqual(checks.budget(BASE, HEAD, ["db/migrations/x.py"])["migrations"], ["db/migrations/x.py"])
+        contracts.validate_python("ok.py", "def ok():\n    return True\n")
+        with self.assertRaises(ContractError):
+            contracts.validate_python("large.py", "\n".join(f"x{i}={i}" for i in range(501)))
 
-    def test_dependency_manifests_are_counted_or_blocked(self) -> None:
-        with mock.patch.object(checks, "_diff_line_counts", return_value=(1, 0)), self.assertRaises(ContractError):
-            checks.budget_metrics(BASE, HEAD, ["governance/package.json"])
-
-    def test_complexity_and_incomplete_receipt_fail(self) -> None:
-        checks.validate_python_complexity("ok.py", "def ok():\n    return True\n")
-        with self.assertRaises(ContractError): checks.validate_python_complexity("large.py", "\n".join(f"x{i}={i}" for i in range(501)))
-        with self.assertRaises(ContractError): checks.validate_python_complexity("class.py", "class C:\n" + "\n".join(f"    x{i}={i}" for i in range(251)))
-        metrics = BudgetMetrics(1, 0, ("governance/x.py",), (), tuple(sorted(checks.PUBLIC_CONTRACTS)), tuple(sorted(checks.WORKFLOWS)), ())
-        record = _handoff(); record["complexity_receipt"] = _complexity([])
-        with self.assertRaises(ContractError): checks._validate_complexity_receipt(record, metrics)
-
-    def test_handoff_pair_append_only_stem_and_root_phase(self) -> None:
-        record = _handoff(); record["commands"] = [{"phase": "merge-only", "command": f"gh pr merge 1 --squash --match-head-commit {HEAD} --delete-branch", "exit_status": 0}]
-        with self.assertRaises(ContractError): checks._validate_handoff_commands(record, self.activation)
-        outputs = {("rev-list", "--reverse", f"{BASE}..{HEAD}", "--", "handoffs/W00/"): "1", ("diff-tree", "--no-commit-id", "--name-status", "-r", "1", "--", "handoffs/W00/"): "M\thandoffs/W00/old.json"}
-        with mock.patch.object(checks, "_git", side_effect=lambda *args: outputs[args]), self.assertRaises(ContractError): checks._validate_append_only_handoffs(BASE, HEAD, "W00")
+    def test_base_package_is_fully_bound_and_corruption_fails(self) -> None:
+        self.assertGreater(checks.validate_package(None, "3d3ebb706fe6c8779445cbbfd9fea271b86d3646")["checksum_files"], 30)
+        with mock.patch.object(checks, "blob", return_value=b"{}"), self.assertRaises(ContractError):
+            checks.validate_package(None, HEAD)
 
 
-class TrustedPathTests(unittest.TestCase):
-    def _git(self, directory: str, *arguments: str) -> str:
-        return subprocess.run(["git", *arguments], cwd=directory, check=True, text=True, capture_output=True).stdout.strip()
+class CandidateTests(GitFixture):
+    def test_metadata_bounds_modes_paths_ancestry_and_counts(self) -> None:
+        tree, compare = metadata()
+        self.assertEqual(checks.validate_metadata(tree, compare, BASE, HEAD)["changed_files"], 1)
+        changes = (("tree", "truncated", True), ("tree", "sha", IMPL), ("tree", "tree", [{"path": "../x", "type": "blob", "mode": "100644", "size": 1}]), ("tree", "tree", [{"path": "x", "type": "blob", "mode": "120000", "size": 1}]), ("compare", "total_commits", 2), ("compare", "merge_base_commit", {"sha": IMPL}), ("compare", "commits", [0]), ("compare", "files", [{"filename": "x", "status": "renamed"}]))
+        for target, key, value in changes:
+            changed_tree, changed_compare = copy.deepcopy(tree), copy.deepcopy(compare)
+            (changed_tree if target == "tree" else changed_compare)[key] = value
+            with self.assertRaises(ContractError):
+                checks.validate_metadata(changed_tree, changed_compare, BASE, HEAD)
 
-    def _repository(self) -> tuple[tempfile.TemporaryDirectory, str, str]:
-        temporary = tempfile.TemporaryDirectory(); directory = temporary.name
-        self._git(directory, "init", "-b", "main"); self._git(directory, "config", "user.email", "fixture@example.com"); self._git(directory, "config", "user.name", "Fixture")
-        for path in checks.TRUSTED_HASH_PATHS:
-            target = Path(directory, path); target.parent.mkdir(parents=True, exist_ok=True); target.write_text("trusted\n")
-        Path(directory, "safe.json").write_text('{"safe":true}\n')
-        self._git(directory, "add", "."); self._git(directory, "commit", "-m", "base")
-        return temporary, directory, self._git(directory, "rev-parse", "HEAD")
+    def test_malformed_content_depth_archives_and_controls_fail(self) -> None:
+        nested: object = 0
+        for _ in range(checks.LIMITS["json_depth"] + 2):
+            nested = [nested]
+        with self.assertRaises(ContractError):
+            checks._json_depth(nested)
+        for path in ("", "a//b", "../x", "x.zip", "bad\\path", "bad\x1bpath"):
+            with self.assertRaises(ContractError):
+                checks.safe_path(path)
+        for path, content in (("bad.json", b"{"), ("bad.yml", b"x: ["), ("bad.py", b"def:"), ("log.md", b"x\x1b[31m"), ("text.py", b"\xff")):
+            with self.assertRaises(ContractError):
+                checks._content(path, content)
 
-    def test_candidate_is_inert_and_cannot_replace_base_validator(self) -> None:
-        temporary, directory, base = self._repository()
+    def test_candidate_scripts_workflows_hooks_makefiles_and_dependencies_are_inert(self) -> None:
+        temporary, directory, base = self.repository()
         try:
             sentinel = Path(directory, "executed")
-            files = {"run.sh": f"#!/bin/sh\ntouch {sentinel}\n", "Makefile": f"all:\n\ttouch {sentinel}\n", "package.json": '{"scripts":{"postinstall":"touch executed"}}', ".github/workflows/trusted-governance-validator.yml": "name: trusted-governance-integrity\n"}
-            for path, content in files.items():
-                target = Path(directory, path); target.parent.mkdir(parents=True, exist_ok=True); target.write_text(content)
-            self._git(directory, "add", "."); self._git(directory, "commit", "-m", "candidate"); head = self._git(directory, "rev-parse", "HEAD")
-            with contextlib.chdir(directory):
-                base_hash = checks.validator_content_hash(base); result = checks.inspect_candidate(base, head)
-                self.assertEqual(result["execution"], "NONE"); self.assertFalse(sentinel.exists()); self.assertNotEqual(base_hash, checks.validator_content_hash(head))
+            files = {"run.sh": f"#!/bin/sh\ntouch {sentinel}\n", "Makefile": f"all:\n\ttouch {sentinel}\n", "package.json": '{"scripts":{"postinstall":"touch executed"}}', "hooks/pre-commit": f"#!/bin/sh\ntouch {sentinel}\n", ".github/workflows/evil.yml": "name: evil\non: push\njobs: {}\n"}
+            for name, content in files.items():
+                target = Path(directory, name)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(content)
+            self.git(directory, "add", ".")
+            self.git(directory, "commit", "-q", "-m", "candidate")
+            head = self.git(directory, "rev-parse", "HEAD")
+            paths = sorted(files)
+            entries = []
+            for path in paths:
+                mode = self.git(directory, "ls-tree", head, "--", path).split()[0]
+                entries.append({"path": path, "type": "blob", "mode": mode, "size": len(Path(directory, path).read_bytes())})
+            tree_sha = self.git(directory, "rev-parse", f"{head}^{{tree}}")
+            tree = {"sha": tree_sha, "truncated": False, "tree": entries}
+            compare = {"base_commit": {"sha": base}, "merge_base_commit": {"sha": base}, "total_commits": 1, "commits": [{"sha": head, "commit": {"tree": {"sha": tree_sha}}}], "files": [{"filename": path, "status": "added"} for path in paths]}
+            self.assertEqual(checks.inspect_candidate(directory, base, head, tree, compare)["execution"], "NONE")
+            self.assertFalse(sentinel.exists())
         finally:
             temporary.cleanup()
 
-    def test_symlink_archives_size_and_parse_depth_block(self) -> None:
-        for path in ("../escape", "bad.zip", "bad\\path"):
-            with self.assertRaises(ContractError): checks._safe_candidate_path(path)
-        nested: object = 0
-        for _ in range(checks.MAX_JSON_DEPTH + 2): nested = [nested]
-        with self.assertRaises(ContractError): checks._json_depth(nested)
-        with mock.patch.object(checks, "_run", return_value=mock.Mock(returncode=0)), mock.patch.object(checks, "changed_paths", return_value=["x"] * (checks.MAX_FILES + 1)), self.assertRaises(ContractError): checks.inspect_candidate(BASE, HEAD)
-        oversized = b"x" * (checks.MAX_TOTAL_BYTES // 2 + 1)
-        with mock.patch.object(checks, "_run", return_value=mock.Mock(returncode=0)), mock.patch.object(checks, "changed_paths", return_value=["a", "b"]), mock.patch.object(checks, "_candidate_blob", return_value=oversized), self.assertRaises(ContractError): checks.inspect_candidate(BASE, HEAD)
-        tree = {("ls-tree", HEAD, "--", "x"): "100644 blob oid\tx", ("cat-file", "-s", "oid"): str(checks.MAX_FILE_BYTES + 1)}
-        with mock.patch.object(checks, "_git", side_effect=lambda *args: tree[args]), self.assertRaises(ContractError): checks._candidate_blob(HEAD, "x")
-        temporary, directory, base = self._repository()
-        try:
-            os.symlink("safe.json", Path(directory, "link")); self._git(directory, "add", "link"); self._git(directory, "commit", "-m", "symlink"); head = self._git(directory, "rev-parse", "HEAD")
-            with contextlib.chdir(directory), self.assertRaises(ContractError): checks.inspect_candidate(base, head)
-        finally:
-            temporary.cleanup()
 
-    def test_trusted_workflow_static_security_and_owner_no_merge(self) -> None:
-        sources = {path: Path(ROOT, path).read_text() for path in checks.WORKFLOWS}
-        with mock.patch.object(checks, "_git_text", side_effect=lambda _revision, path: sources[path]): checks._validate_workflows(HEAD)
-        trusted = sources[checks.TRUSTED_WORKFLOW]
-        self.assertEqual([item.split("@", 1)[0] for item in re.findall(r"uses:\s*([^\s]+@[^\s]+)", trusted)], ["actions/checkout", "actions/upload-artifact"]); self.assertIn("ref: ${{ github.event.pull_request.base.sha }}", trusted)
-        malicious = dict(sources); malicious[checks.TRUSTED_WORKFLOW] += "\nrun: npm install\n"
-        with mock.patch.object(checks, "_git_text", side_effect=lambda _revision, path: malicious[path]), self.assertRaises(ContractError): checks._validate_workflows(HEAD)
-        self.assertNotRegex(sources[checks.OWNER_WORKFLOW], r"\bgh pr merge\b|\bgit push\b")
+class HandoffAndReceiptTests(unittest.TestCase):
+    def test_prior_handoffs_are_exact_and_history_or_mutation_fails(self) -> None:
+        live = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, text=True, capture_output=True).stdout.strip()
+        checks._prior(None, live)
+        with mock.patch.object(checks, "git", return_value="c p1 p2"), self.assertRaises(ContractError):
+            checks._history(None, BASE, HEAD)
+        for line in ("M\thandoffs/W00/x.json", "D\thandoffs/W00/x.json", "R100\thandoffs/W00/a.json\thandoffs/W00/b.json"):
+            with mock.patch.object(checks, "git", return_value=line), self.assertRaises(ContractError):
+                checks._pair(None, HEAD, IMPL)
 
-    def test_trusted_receipt_creation_binds_runtime(self) -> None:
+    def test_exact_handoff_parent_head_pair_and_complexity_binding(self) -> None:
+        record = handoff()
+        record["complexity_receipt"] = complexity(sorted(checks.PRODUCTION))
+        record["complexity_receipt"]["dependencies_added"] = ["actions/checkout", "actions/upload-artifact"]
+        record["complexity_receipt"]["public_contracts_changed"] = list(checks.PUBLIC_CONTRACTS)
+        pair = ("handoffs/W00/W00A-fixture.json", "handoffs/W00/W00A-fixture.md")
+        phrases = " ".join((contracts.TITLE, IMPL, record["status"], "Required GitHub Actions checks are defense-in-depth evidence and are not treated as proof of trusted workflow provenance.", "The trusted base-controlled validator becomes operational from main only after W00A is manually merged.", "Owner authorization, receipt consumption, and the merge-only path are not active after W00A and require W00B."))
+        metrics = RepositoryTests().metrics()
+
+        def git_side(_repo: str | None, *args: str) -> str:
+            if args[:2] == ("diff-tree", "--no-commit-id"):
+                return "\n".join(pair)
+            if args[:2] == ("rev-parse", f"{IMPL}^"):
+                return BASE
+            return ""
+
+        with mock.patch.multiple(checks, activation=mock.DEFAULT, _prior=mock.DEFAULT, _history=mock.DEFAULT, _pair=mock.DEFAULT, object_at=mock.DEFAULT, changed_paths=mock.DEFAULT, budget=mock.DEFAULT, git=mock.DEFAULT, blob=mock.DEFAULT) as patched:
+            patched["activation"].return_value = activation()
+            patched["_history"].return_value = [(HEAD, IMPL)]
+            patched["_pair"].side_effect = [pair, None]
+            patched["object_at"].return_value = record
+            patched["changed_paths"].return_value = sorted(checks.PRODUCTION)
+            patched["budget"].return_value = metrics
+            patched["git"].side_effect = git_side
+            patched["blob"].return_value = phrases.encode()
+            self.assertEqual(checks.validate_handoff(BASE, HEAD, contracts.BRANCH, PR_URL)["implementation_head_sha"], IMPL)
+            patched["_history"].return_value = [(IMPL, BASE)]
+            patched["_pair"].side_effect = [pair]
+            with self.assertRaises(ContractError):
+                checks.validate_handoff(BASE, HEAD, contracts.BRANCH, PR_URL)
+
+    def test_trusted_receipt_binds_head_base_run_workflow_hash_and_handoff(self) -> None:
+        tree, compare = metadata()
         with tempfile.TemporaryDirectory() as directory:
-            output = str(Path(directory, "receipt.json"))
-            args = checks.argparse.Namespace(repository="abbudjoe/biblical-scholar-lab", pr_number=1, base_sha=BASE, head_sha=HEAD, trusted_revision=BASE, branch="codex/x", event="pull_request_target", run_id=10, run_attempt=1, output=output)
-            with mock.patch.object(checks, "inspect_candidate", return_value={"execution": "NONE"}), mock.patch.object(checks, "validate_project", return_value={"additions": 1}), mock.patch.object(checks, "validate_turn_handoff", return_value={"turn_id": "W00-fixture"}), mock.patch.object(checks, "validator_content_hash", return_value="d" * 64):
-                record = checks.create_trusted_receipt(args)["receipt"]
-            self.assertEqual(record["inspected_head_sha"], HEAD); validate_trusted_receipt(json.loads(Path(output).read_text()))
+            tree_file, compare_file, output = (Path(directory, "tree.json"), Path(directory, "compare.json"), Path(directory, "receipt.json"))
+            tree_file.write_text(json.dumps(tree))
+            compare_file.write_text(json.dumps(compare))
+            args = argparse.Namespace(repository=contracts.REPOSITORY, event="pull_request_target", base_sha=BASE, trusted_revision=BASE, head_sha=HEAD, pr_number=2, tree_json=str(tree_file), compare_json=str(compare_file), candidate_repository="candidate", branch=contracts.BRANCH, run_id=7, run_attempt=1, output=str(output))
+            with mock.patch.multiple(checks, inspect_candidate=mock.DEFAULT, validate_project=mock.DEFAULT, validate_handoff=mock.DEFAULT, content_hash=mock.DEFAULT, blob=mock.DEFAULT) as patched:
+                cast(mock.Mock, patched["inspect_candidate"]).return_value = {"execution": "NONE"}
+                cast(mock.Mock, patched["validate_project"]).return_value = {"additions": 1}
+                cast(mock.Mock, patched["validate_handoff"]).return_value = {"json": "handoffs/W00/x.json"}
+                cast(mock.Mock, patched["content_hash"]).return_value = "d" * 64
+                cast(mock.Mock, patched["blob"]).return_value = b"handoff"
+                receipt = checks.create_receipt(args)["receipt"]
+            self.assertEqual(((receipt["inspected_head_sha"], receipt["base_sha"], receipt["workflow_run_id"]), receipt["receipt_hash"], json.loads(output.read_text())), ((HEAD, BASE, 7), checks._receipt_hash(receipt), receipt))
 
 
-class OwnerAndLiveTests(unittest.TestCase):
-    def _owner_files(self, directory: str) -> dict[str, str]:
-        pr = {"number": 1, "state": "open", "html_url": PR_URL, "base": {"ref": "main", "sha": BASE}, "head": {"ref": "codex/w00-repository-governance", "sha": HEAD}}
-        comments = [_comment(REVIEW_MARKER, _review(), 1, -7)]
-        checks_json = {"check_runs": [{"name": name, "head_sha": HEAD, "app": {"id": 15368}, "completed_at": _time(-6), "conclusion": "success"} for name in checks.CHECK_NAMES]}
-        conversations = {"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": [{"isResolved": True}], "pageInfo": {"hasNextPage": False}}}}}}
-        run = {"id": 10, "run_attempt": 1, "event": "pull_request_target", "status": "completed", "conclusion": "success", "head_sha": BASE, "path": checks.TRUSTED_WORKFLOW}
-        values = {"pr": pr, "comments": comments, "checks": checks_json, "conversations": conversations, "run": run, "trusted": _trusted_receipt()}
-        paths = {}
-        for name, value in values.items():
-            path = Path(directory, name + ".json"); path.write_text(json.dumps(value)); paths[name] = str(path)
-        paths["output"] = str(Path(directory, "owner.json")); return paths
+class WorkflowAndLiveTests(unittest.TestCase):
+    def live_records(self) -> list[dict[str, Any]]:
+        return cast(list[dict[str, Any]], copy.deepcopy(RECORDS["live"]))
 
-    def test_owner_workflow_requeries_and_emits_bound_receipt(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            paths = self._owner_files(directory)
-            args = checks.argparse.Namespace(pr_number=1, authorized_head_sha=HEAD, chatgpt_review_id="REVIEW-W00-1", trusted_run_id=10, workflow_ref="refs/heads/main", workflow_sha=BASE, run_id=20, run_attempt=1, pr_json=paths["pr"], comments_json=paths["comments"], trusted_receipt=paths["trusted"], trusted_run_json=paths["run"], checks_json=paths["checks"], conversations_json=paths["conversations"], output=paths["output"])
-            with mock.patch.object(checks, "resolve_activation", return_value={"activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3"}), mock.patch.object(checks, "validator_content_hash", return_value="d" * 64): record = checks.create_owner_receipt(args)
-            validate_owner_receipt_binding(record, pr_number=1, head_sha=HEAD, review_id="REVIEW-W00-1", trusted_run_id=10, authorization_run_id=20, authorization_revision=BASE)
-            args.authorized_head_sha = "c" * 40
-            with mock.patch.object(checks, "resolve_activation", return_value={"activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3"}), self.assertRaises(ContractError): checks.create_owner_receipt(args)
+    def test_live_queries_are_separate_and_capabilities_truthful(self) -> None:
+        now = datetime.now(timezone.utc).isoformat()
+        graph = {"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": [], "pageInfo": {"hasNextPage": False}}}}}}
+        with mock.patch.object(checks, "_api", side_effect=self.live_records()) as api, mock.patch.object(checks, "run", return_value=subprocess.CompletedProcess([], 0, json.dumps(graph), "")):
+            result = checks.validate_live(HEAD, now, now, True, True)
+        self.assertEqual(api.call_count, 6)
+        self.assertEqual((result["owner_authorization"], result["required_checks_role"]), ("INACTIVE_REQUIRES_W00B", "DEFENSE_IN_DEPTH_ONLY"))
+        with self.assertRaises(ContractError):
+            checks.validate_live(HEAD, "2000-01-01T00:00:00Z", now, True, True)
 
-    def test_quality_conversation_and_dispatch_fail_closed(self) -> None:
-        checks.validate_owner_inputs(1, HEAD, "REVIEW-W00-1", 10, "refs/heads/main")
-        for values in ((0, HEAD, "R", 10, "refs/heads/main"), (1, "bad", "R", 10, "refs/heads/main"), (1, HEAD, "bad value", 10, "refs/heads/main"), (1, HEAD, "R", 10, "refs/heads/other")):
-            with self.assertRaises(ContractError): checks.validate_owner_inputs(*values)
-        with self.assertRaises(ContractError): checks._validate_quality_checks({"check_runs": []}, HEAD)
-        with self.assertRaises(ContractError): checks._validate_conversations({"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": [{"isResolved": False}], "pageInfo": {"hasNextPage": False}}}}}})
-
-    def test_exact_live_components_and_bootstrap_state(self) -> None:
-        repository = {"default_branch": "main", "visibility": "public", "allow_squash_merge": True, "allow_merge_commit": False, "allow_rebase_merge": False, "allow_auto_merge": False, "delete_branch_on_merge": True}
-        environment = {"name": "owner-merge-authorization", "can_admins_bypass": False, "protection_rules": [{"type": "required_reviewers", "prevent_self_review": False, "reviewers": [{"reviewer": {"login": "abbudjoe"}}]}]}
-        workflows = {"workflows": [{"path": ".github/workflows/governance-integrity.yml", "state": "active"}]}
-        pr = {"state": "open", "draft": True, "base": {"ref": "main"}, "head": {"sha": HEAD}}
-        live = {f"repos/{checks.contracts.REPOSITORY}": repository, f"repos/{checks.contracts.REPOSITORY}/rulesets/20960975": _ruleset(), f"repos/{checks.contracts.REPOSITORY}/environments/{checks.contracts.ENVIRONMENT}": environment, f"repos/{checks.contracts.REPOSITORY}/actions/workflows": workflows, f"repos/{checks.contracts.REPOSITORY}/codeowners/errors": {"errors": []}, f"repos/{checks.contracts.REPOSITORY}/pulls/1": pr}
-        with mock.patch.object(checks, "_gh_json", side_effect=lambda endpoint: live[endpoint]): result = checks.validate_live_governance(HEAD, _time(0), _time(0), True, True)
-        self.assertEqual(result["expected_app_role"], "DEFENSE_IN_DEPTH_ONLY"); self.assertEqual(result["workflow_state"], "W00_BOOTSTRAP_NOT_LIVE_TRUSTED")
-        checks.validate_ruleset(_ruleset()); checks.validate_environment(environment); checks.validate_repository_settings(repository)
-        for mutation in (_replace(_ruleset(), ("conditions", "ref_name", "exclude"), ["refs/heads/main"]), _replace(_ruleset(), ("rules",), [])):
-            with self.assertRaises(ContractError): checks.validate_ruleset(mutation)
+    def test_trusted_workflow_uses_only_base_code_and_bounded_inert_input(self) -> None:
+        source = (ROOT / ".github/workflows/trusted-governance-validator.yml").read_text()
+        self.assertIn("pull_request_target", source)
+        self.assertIn("ref: ${{ github.event.pull_request.base.sha }}", source)
+        self.assertLess(source.index("candidate-metadata"), source.index("Fetch exact candidate"))
+        self.assertEqual(source.count("actions/checkout@"), 1)
+        self.assertIn("$RUNNER_TEMP/candidate", source)
+        self.assertIn("GIT_NO_LAZY_FETCH", source)
+        self.assertNotIn("owner-merge-authorization", source)
+        self.assertNotRegex(source, r"\b(?:source|make|npm|pip)\b")
+        ordinary = (ROOT / ".github/workflows/governance-integrity.yml").read_text()
+        self.assertNotIn("chatgpt-review-integrity", ordinary)
+        self.assertNotIn("owner-merge-record-integrity", ordinary)
 
 
-class AdapterTests(unittest.TestCase):
-    def test_cli_dispatch_and_failure_receipt(self) -> None:
-        parser = checks._parser(); arguments = parser.parse_args(["command-policy", "--phase", "implementation", "git status"])
-        self.assertTrue(checks._dispatch(arguments)["command_allowed"])
-        with mock.patch.object(sys, "argv", ["w00_checks.py", "command-policy", "--phase", "implementation", "gh auth token"]), contextlib.redirect_stdout(io.StringIO()): self.assertEqual(checks.main(), 1)
-        with mock.patch.object(sys, "argv", ["w00_checks.py", "command-policy", "--phase", "implementation", "git status"]), contextlib.redirect_stdout(io.StringIO()): self.assertEqual(checks.main(), 0)
-
-    def test_json_comment_and_pr_adapters(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            comments = Path(directory, "comments.json"); comments.write_text(json.dumps([[_comment(REVIEW_MARKER, _review(), 1, -7)]]))
-            self.assertEqual(len(checks._comments(str(comments))), 1)
-            pr = Path(directory, "pr.json"); pr.write_text(json.dumps({"state": "closed"}))
-            with self.assertRaises(ContractError): checks._pr_identity(str(pr))
-            comments.write_text("{}")
-            with self.assertRaises(ContractError): checks._comments(str(comments))
-
-    def test_protected_base_git_and_project_adapters(self) -> None:
+class AdapterAndCliTests(unittest.TestCase):
+    def test_base_activation_and_project_adapter(self) -> None:
         base = "3d3ebb706fe6c8779445cbbfd9fea271b86d3646"
-        activation = checks.resolve_activation(base, "codex/w00-repository-governance")
-        self.assertEqual(checks.changed_paths(base, base), []); self.assertEqual(checks._diff_line_counts(base, base), (0, 0))
-        self.assertIsInstance(checks._git_json(base, checks.ACTIVATION_PATH), dict); self.assertTrue(checks._git_bytes(base, checks.ACTIVATION_PATH))
-        paths = ["governance/w00_contracts.py", "governance/w00_checks.py", *sorted(checks.WORKFLOWS)]
-        metrics = BudgetMetrics(100, 0, tuple(paths), ("actions/checkout", "actions/upload-artifact"), tuple(sorted(checks.PUBLIC_CONTRACTS)), tuple(sorted(checks.WORKFLOWS)), ())
-        sources = {path: Path(ROOT, path).read_text() for path in paths}
-        with mock.patch.object(checks, "resolve_activation", return_value=activation), mock.patch.object(checks, "changed_paths", return_value=paths), mock.patch.object(checks, "budget_metrics", return_value=metrics), mock.patch.object(checks, "_git_text", side_effect=lambda _revision, path: sources[path]), mock.patch.object(checks, "_validate_workflows"):
-            self.assertEqual(checks.validate_project(BASE, HEAD, "codex/w00-repository-governance")["additions"], 100)
+        self.assertEqual(checks.activation(None, base, contracts.BRANCH)["activation_id"], contracts.ACTIVATION)
+        record = activation()
+        record["activated_paths"] = ["governance/", ".github/workflows/"]
+        paths = sorted(checks.PRODUCTION)
+        metrics = RepositoryTests().metrics(production_files=paths)
 
-    def test_handoff_orchestration_and_dispatch_routes(self) -> None:
-        activation = json.loads((ROOT / checks.ACTIVATION_PATH).read_text()); paths = tuple(sorted(["governance/w00_contracts.py", "governance/w00_checks.py", *checks.WORKFLOWS]))
-        metrics = BudgetMetrics(100, 0, paths, ("actions/checkout", "actions/upload-artifact"), tuple(sorted(checks.PUBLIC_CONTRACTS)), tuple(sorted(checks.WORKFLOWS)), ())
-        record = _handoff(); receipt = record["complexity_receipt"]; receipt["modules_added"] = list(paths); receipt["production_files_added"] = len(paths); receipt["dependencies_added"] = list(metrics.dependencies); receipt["public_contracts_changed"] = list(metrics.public_contracts)
-        pair = {"handoffs/W00/W00-fixture.md", "handoffs/W00/W00-fixture.json"}; final = "\n".join(sorted(pair))
-        git_values = {("rev-parse", f"{HEAD}^"): IMPL, ("diff-tree", "--no-commit-id", "--name-only", "-r", HEAD): final}
-        markdown = f"{IMPL} READY_FOR_CHATGPT_REVIEW Expected-App matching is defense in depth only and is not treated as proof of workflow provenance."
-        with mock.patch.object(checks, "resolve_activation", return_value=activation), mock.patch.object(checks, "_validate_append_only_handoffs"), mock.patch.object(checks, "_handoff_pair", return_value=tuple(sorted(pair))), mock.patch.object(checks, "_git_json", return_value=record), mock.patch.object(checks, "_git", side_effect=lambda *args: git_values[args]), mock.patch.object(checks, "budget_metrics", return_value=metrics), mock.patch.object(checks, "changed_paths", return_value=list(paths)), mock.patch.object(checks, "_git_text", return_value=markdown):
-            self.assertEqual(checks.validate_turn_handoff(BASE, HEAD, "codex/w00-repository-governance", PR_URL)["implementation_head_sha"], IMPL)
-            record["turn_id"] = "wrong"
-            with self.assertRaises(ContractError): checks.validate_turn_handoff(BASE, HEAD, "codex/w00-repository-governance", PR_URL)
-        routes = (("project-integrity", "validate_project"), ("turn-handoff-integrity", "validate_turn_handoff"), ("chatgpt-review-integrity", "validate_review_comments"), ("owner-merge-record-integrity", "validate_authorization_comments"), ("trusted-governance", "create_trusted_receipt"), ("owner-authorize", "create_owner_receipt"), ("live-governance", "validate_live_governance"))
-        for name, target in routes:
-            arguments = checks.argparse.Namespace(check=name, base_sha=BASE, head_sha=HEAD, branch="codex/x", pr_url=PR_URL, pr_json="p", comments_json="c", expected_head=HEAD, review_limit_observed_at=_time(0), environment_ui_observed_at=_time(0), review_limit_enabled=True, admin_bypass_disabled=True)
-            with mock.patch.object(checks, target, return_value={"route": name}): self.assertEqual(checks._dispatch(arguments)["route"], name)
+        def source(_repo: str | None, _head: str, path: str) -> bytes:
+            return b"def ok():\n    return True\n" if path.endswith(".py") else b"trusted\n"
 
-    def test_validator_failure_boundaries(self) -> None:
-        with self.assertRaises(ContractError): checks.scan_anti_slop("x.py", "# " + "TO" + "DO")
-        for record in ({}, {"default_branch": "other"}):
-            with self.assertRaises(ContractError): checks.validate_repository_settings(record)
-        for record in ({}, {"name": checks.contracts.ENVIRONMENT, "protection_rules": []}, {"name": checks.contracts.ENVIRONMENT, "can_admins_bypass": True, "protection_rules": [{"type": "required_reviewers", "prevent_self_review": False, "reviewers": [{"reviewer": {"login": "abbudjoe"}}]}]}):
-            with self.assertRaises(ContractError): checks.validate_environment(record)
-        with self.assertRaises(ContractError): checks.validate_codeowners("* @abbudjoe", {"errors": []})
-        with self.assertRaises(ContractError): checks.validate_codeowners((ROOT / ".github/CODEOWNERS").read_text(), {"errors": [{"line": 1}]})
-        with self.assertRaises(ContractError): checks._recent(_time(-1500))
-        with self.assertRaises(ContractError): checks._recent("bad")
-        with mock.patch.object(checks, "_run", return_value=mock.Mock(stdout="[]")), self.assertRaises(ContractError): checks._gh_json("repos/x")
-        with mock.patch.object(checks, "_git_text", return_value="[]"), self.assertRaises(ContractError): checks._git_json(BASE, "x.json")
+        hashes = {path: __import__("hashlib").sha256(b"trusted\n").hexdigest() for path in checks.WORKFLOWS}
+        with mock.patch.multiple(checks, activation=mock.DEFAULT, changed_paths=mock.DEFAULT, budget=mock.DEFAULT, validate_budget=mock.DEFAULT, validate_package=mock.DEFAULT, blob=mock.DEFAULT, git=mock.DEFAULT) as patched, mock.patch.dict(checks.WORKFLOW_HASHES, hashes):
+            cast(mock.Mock, patched["activation"]).return_value = record
+            cast(mock.Mock, patched["changed_paths"]).return_value = paths
+            cast(mock.Mock, patched["budget"]).return_value = metrics
+            cast(mock.Mock, patched["blob"]).side_effect = source
+            cast(mock.Mock, patched["git"]).return_value = ""
+            self.assertEqual(checks.validate_project(BASE, HEAD, contracts.BRANCH)["changed_paths"], paths)
+            cast(mock.Mock, patched["changed_paths"]).return_value = ["outside"]
+            with self.assertRaises(ContractError):
+                checks.validate_project(BASE, HEAD, contracts.BRANCH)
 
+    def test_completion_adapter_binds_pr_comments_and_prior_records(self) -> None:
+        now = datetime.now(timezone.utc)
+        current = {"activation_id": contracts.ACTIVATION, "task_id": "W00", "turn_id": "current", "implementation_head_sha": IMPL, "live_pr_head_sha": HEAD, "handoff_markdown": f"https://github.com/{contracts.REPOSITORY}/blob/{HEAD}/handoffs/W00/current.md", "handoff_json": f"https://github.com/{contracts.REPOSITORY}/blob/{HEAD}/handoffs/W00/current.json", "status": "READY_FOR_CHATGPT_REVIEW", "next_required_action": "CHATGPT_REVIEW"}
+        comments = []
+        for index, (turn, (identifier, live)) in enumerate(checks.PRIOR_COMPLETIONS.items()):
+            comments.append(marked(contracts.COMPLETION, {"turn_id": turn, "live_pr_head_sha": live}, identifier, now + timedelta(seconds=index)))
+        comments.append(marked(contracts.COMPLETION, current, 9, now + timedelta(seconds=3)))
+        pr = {"number": 1, "state": "open", "draft": True, "html_url": PR_URL, "base": {"ref": "main", "sha": BASE}, "head": {"ref": contracts.BRANCH, "sha": HEAD}}
+        with tempfile.TemporaryDirectory() as directory:
+            pr_file, comments_file = Path(directory, "pr.json"), Path(directory, "comments.json")
+            pr_file.write_text(json.dumps(pr))
+            comments_file.write_text(json.dumps([comments]))
+            result = {"turn_id": "current", "implementation_head_sha": IMPL, "markdown": "handoffs/W00/current.md", "json": "handoffs/W00/current.json", "status": "READY_FOR_CHATGPT_REVIEW"}
+            with mock.patch.object(checks, "validate_handoff", return_value=result):
+                self.assertEqual(checks.validate_completion(BASE, HEAD, contracts.BRANCH, str(pr_file), str(comments_file))["state"], "HANDOFF")
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    def test_parser_dispatch_and_main_routes(self) -> None:
+        common = {"base_sha": BASE, "head_sha": HEAD, "branch": contracts.BRANCH, "pr_url": PR_URL, "revision": HEAD, "tree_json": "tree", "compare_json": "compare", "pr_json": "pr", "comments_json": "comments", "expected_head": HEAD, "review_limit_observed_at": "now", "environment_ui_observed_at": "now", "review_limit_enabled": True, "admin_bypass_disabled": True}
+        routes = (("project-integrity", "validate_project"), ("turn-handoff-integrity", "validate_handoff"), ("package-integrity", "validate_package"), ("trusted-governance", "create_receipt"), ("completion-integrity", "validate_completion"), ("live-governance", "validate_live"))
+        for check, target in routes:
+            with mock.patch.object(checks, target, return_value={}):
+                self.assertEqual(checks.dispatch(argparse.Namespace(check=check, **common)), {})
+        with mock.patch.object(sys, "argv", ["w00_checks.py", "command-policy", "--phase", "implementation", "git status --short"]):
+            self.assertEqual(checks.main(), 0)
+        with mock.patch.object(sys, "argv", ["w00_checks.py", "command-policy", "--phase", "implementation", "gh auth token"]):
+            self.assertEqual(checks.main(), 1)

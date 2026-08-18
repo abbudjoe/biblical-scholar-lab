@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [project-integrity, turn-handoff-integrity, chatgpt-review-integrity, owner-merge-record-integrity]
+        check: [project-integrity, turn-handoff-integrity]
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -33,12 +33,11 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           python3 -m py_compile governance/w00_contracts.py governance/w00_checks.py
-          case "$CHECK_NAME" in
-            project-integrity) python3 governance/w00_checks.py "$CHECK_NAME" --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME" ;;
-            turn-handoff-integrity) python3 governance/w00_checks.py "$CHECK_NAME" --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME" --pr-url "$PR_URL" ;;
-            chatgpt-review-integrity) python3 -m unittest -v governance.test_w00_checks.ContractTests.test_review_schema_evidence_and_new_commit_invalidation ;;
-            owner-merge-record-integrity) python3 -m unittest -v governance.test_w00_checks.ContractTests.test_review_authorization_order_identity_and_append_only ;;
-          esac
+          if [ "$CHECK_NAME" = project-integrity ]; then
+            python3 governance/w00_checks.py project-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME"
+          else
+            python3 governance/w00_checks.py turn-handoff-integrity --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --branch "$BRANCH_NAME" --pr-url "$PR_URL"
+          fi
 
   postmerge-static:
     if: github.event_name == 'push'

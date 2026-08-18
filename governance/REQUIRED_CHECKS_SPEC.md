@@ -29,6 +29,8 @@ Validates:
 
 ## chatgpt-review-integrity
 
+This is a static future W00B contract. It is inactive and not required in W00A.
+
 A PR-controlled defense-in-depth check exercises the structured review validator against adversarial fixtures. It verifies:
 
 - Review marker and schema.
@@ -42,6 +44,8 @@ It does not accept a live review or prove workflow provenance. The protected aut
 The check must be attached to the reviewed head and become absent/stale on a new push.
 
 ## owner-merge-record-integrity
+
+This is a static future W00B contract. It is inactive and not required in W00A.
 
 A PR-controlled defense-in-depth check exercises the structured `OwnerMergeAuthorizationRecord` validator against adversarial fixtures. It verifies:
 
@@ -70,4 +74,4 @@ W00 must prove, through local and repository fixtures, that the approved Codex e
 - Permits only the exact authorized merge sequence during a merge-only turn.
 - Uses `--match-head-commit` for every Codex-executed merge.
 
-If this cannot be proven, the check reports `OWNER_MANUAL_MERGE_REQUIRED`; implementation may continue, but Codex merge execution remains disabled.
+In W00A, merge commands remain unavailable and Joseph performs the bootstrap merge. W00B must implement and prove the merge-only surface before W01.

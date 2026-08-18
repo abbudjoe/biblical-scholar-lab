@@ -1,6 +1,6 @@
 name: trusted-governance-validator
 
-on: # zizmor: ignore[dangerous-triggers] -- trusted base executes; candidate remains inert data
+on: # zizmor: ignore[dangerous-triggers] -- trusted base code inspects inert candidate data
   pull_request_target:
     branches: [main]
 
@@ -9,22 +9,43 @@ permissions:
 
 jobs:
   trusted-governance-integrity:
-    name: trusted-governance-integrity
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check out trusted base revision
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           ref: ${{ github.event.pull_request.base.sha }}
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
-      - name: Fetch exact candidate as inert Git objects
+      - name: Bound candidate metadata before Git ingestion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          umask 077
+          ulimit -f 32768
+          [[ "$GITHUB_REPOSITORY" == "abbudjoe/biblical-scholar-lab" ]]
+          [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ && "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          timeout 30s gh api "repos/$GITHUB_REPOSITORY/git/trees/$HEAD_SHA?recursive=1" > "$RUNNER_TEMP/candidate-tree.json"
+          timeout 30s gh api "repos/$GITHUB_REPOSITORY/compare/$BASE_SHA...$HEAD_SHA" > "$RUNNER_TEMP/candidate-compare.json"
+          python3 governance/w00_checks.py candidate-metadata --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --tree-json "$RUNNER_TEMP/candidate-tree.json" --compare-json "$RUNNER_TEMP/candidate-compare.json"
+      - name: Fetch exact candidate into a separate inert repository
         env:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          git fetch --no-tags --filter=blob:limit=524289 --depth=16 origin "pull/$PR_NUMBER/head"
-          test "$(git rev-parse FETCH_HEAD)" = "$HEAD_SHA"
+          ulimit -f 65536
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ && "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          mkdir "$RUNNER_TEMP/candidate"
+          git -C "$RUNNER_TEMP/candidate" init --quiet
+          git -C "$RUNNER_TEMP/candidate" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          timeout 30s git -C "$RUNNER_TEMP/candidate" -c protocol.version=2 fetch --no-tags --filter=blob:limit=524289 --depth=65 origin "pull/$PR_NUMBER/head"
+          test "$(git -C "$RUNNER_TEMP/candidate" rev-parse FETCH_HEAD)" = "$HEAD_SHA"
+          test "$(du -sk "$RUNNER_TEMP/candidate" | cut -f1)" -le 65536
       - name: Validate inert candidate with trusted base code
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -38,11 +59,14 @@ jobs:
           --base-sha "$BASE_SHA" --head-sha "$HEAD_SHA" --trusted-revision "$BASE_SHA"
           --branch "$BRANCH_NAME" --event "$GITHUB_EVENT_NAME"
           --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"
+          --candidate-repository "$RUNNER_TEMP/candidate"
+          --tree-json "$RUNNER_TEMP/candidate-tree.json"
+          --compare-json "$RUNNER_TEMP/candidate-compare.json"
           --output "$RUNNER_TEMP/trusted-governance-receipt.json"
       - name: Publish immutable trusted-validation receipt
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: trusted-governance-receipt-${{ github.run_id }}
+          name: trusted-governance-receipt-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/trusted-governance-receipt.json
           if-no-files-found: error
           retention-days: 90

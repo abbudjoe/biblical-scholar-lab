@@ -31,4 +31,6 @@ The protected validator accepts only a record:
 
 A clean ChatGPT review allows Joseph to make the exact-head owner decision. It does not approve or merge automatically.
 
-After Joseph approves, ChatGPT produces the separate merge-only authorization prompt.
+Under GOV-01-S02, W00A and W00B use Joseph's manual exact-head squash merge. Owner-receipt consumption and the Codex merge-only path remain inactive until W00B.
+
+After W00B activates the path and Joseph later approves an exact head, ChatGPT produces the separate merge-only authorization prompt.

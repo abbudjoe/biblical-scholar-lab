@@ -1,489 +1,382 @@
-"""Pure W00 governance contracts and exact command-policy decisions."""
+"""Pure W00A records and exact command-policy decisions."""
 
 from __future__ import annotations
 
-import hashlib
+import ast
 import json
 import re
 import shlex
-from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from collections.abc import Iterable
 from datetime import datetime
 from enum import Enum
 from typing import Any, cast
 from urllib.parse import urlparse
 
-SHA_RE = re.compile(r"^[0-9a-f]{40}$")
-HASH_RE = re.compile(r"^[0-9a-f]{64}$")
-REVIEW_MARKER = "<!-- BSL_CHATGPT_REVIEW_V1 -->"
-AUTHORIZATION_MARKER = "<!-- BSL_OWNER_MERGE_AUTHORIZATION_V1 -->"
 REPOSITORY = "abbudjoe/biblical-scholar-lab"
-TASK_BRANCH = "codex/w00-repository-governance"
-RULESET_ID = "20960975"
+BRANCH = "codex/w00-repository-governance"
+ACTIVATION = "ACT-W00-REPOSITORY-GOVERNANCE-v3"
+RULESET = "20960975"
 ENVIRONMENT = "owner-merge-authorization"
-TOKEN_OVERRIDE_NAMES = {"GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"}
-ALLOWED_HANDOFF_STATUSES = {
-    "READY_FOR_CHATGPT_REVIEW", "BLOCKED_MISSING_EVIDENCE", "BLOCKED_DEPENDENCY",
-    "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR", "SPLIT_REQUIRED",
-    "NO_CHANGE", "FAILED",
+TITLE = "W00A — Governance Validation Foundation"
+SHA = re.compile(r"[0-9a-f]{40}")
+DIGEST = re.compile(r"[0-9a-f]{64}")
+COMPLETION = "<!-- BSL_ROOT_TURN_COMPLETION_V1 -->"
+REVIEW = "<!-- BSL_CHATGPT_REVIEW_V1 -->"
+INACTIVE_MARKERS = ("<!-- BSL_OWNER_MERGE_AUTHORIZATION_V1 -->", "<!-- BSL_MERGE_RECEIPT_V1 -->")
+STATUSES = {"READY_FOR_CHATGPT_REVIEW", "BLOCKED_MISSING_EVIDENCE", "BLOCKED_DEPENDENCY", "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR", "SPLIT_REQUIRED", "NO_CHANGE", "FAILED"}
+TOKEN_OVERRIDES = {"GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"}
+HANDOFF_FIELDS = {
+    "schema_version",
+    "project_id",
+    "activation_id",
+    "task_id",
+    "turn_id",
+    "codex_run_id",
+    "status",
+    "repository",
+    "branch",
+    "base_sha",
+    "implementation_head_sha",
+    "pr_url",
+    "github_actor_login",
+    "github_auth_mode",
+    "github_auth_preflight",
+    "objective",
+    "acceptance_criteria",
+    "design_conformance",
+    "changes",
+    "review_targets",
+    "commands",
+    "evaluations",
+    "artifacts",
+    "delegated_operations",
+    "complexity_receipt",
+    "known_risks",
+    "decisions_required",
+    "billable_actions",
+    "next_required_action",
+    "merge_performed",
+    "next_task_started",
 }
+COMPLEXITY_FIELDS = {"production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed", "modules_added", "modules_removed", "tables_added", "migrations_added", "endpoints_added", "cli_commands_added", "dependencies_added", "dependencies_removed", "public_contracts_changed", "abstractions", "simpler_alternatives_considered", "known_duplication_or_debt", "waivers", "simplicity_conformance"}
+ACTIVATION_FIELDS = {"schema_version", "activation_id", "status", "approved_design_commit", "approved_design_ids", "root_turn", "objective", "vertical_slice_id", "activated_user_visible_capability", "activated_invariants", "activated_paths", "activated_contracts", "activated_interfaces", "activated_data_stores", "activated_adapters", "required_tests", "required_evidence", "explicit_non_goals", "prohibited_scaffolding", "budgets", "completion_criteria", "owner_approval"}
+REVIEW_FIELDS = {"schema_version", "review_id", "pr_url", "activation_id", "base_sha", "reviewed_head_sha", "reviewer", "disposition", "summary", "findings", "evidence_reviewed", "required_next_action", "review_timestamp"}
 
 
 class ContractError(ValueError):
-    """A governance record violated its explicit contract."""
+    """An explicit governance contract failed."""
 
 
-def _require(condition: bool, message: str) -> None:
+def need(condition: bool, message: str) -> None:
     if not condition:
         raise ContractError(message)
 
 
-def _fields(record: dict[str, Any], required: set[str], optional: set[str] | None = None) -> None:
+def _logical(lines: list[str]) -> int:
+    return sum(bool(line.strip()) and not line.lstrip().startswith("#") for line in lines)
+
+
+def _complexity(node: ast.AST) -> int:
+    controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.IfExp, ast.Match)
+    return 1 + sum(isinstance(item, controls) for item in ast.walk(node)) + sum(max(0, len(item.values) - 1) for item in ast.walk(node) if isinstance(item, ast.BoolOp))
+
+
+def _nesting(node: ast.AST, depth: int = 0) -> int:
+    controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.With, ast.AsyncWith, ast.Match)
+    return max([depth, *(_nesting(child, depth + int(isinstance(child, controls))) for child in ast.iter_child_nodes(node))])
+
+
+def validate_python(path: str, source: str) -> None:
+    lines, tree = source.splitlines(), ast.parse(source, filename=path)
+    need(_logical(lines) <= 500, f"production module exceeds DR-30: {path}")
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        segment = lines[node.lineno - 1 : (node.end_lineno or node.lineno)]
+        need(not isinstance(node, ast.ClassDef) or _logical(segment) <= 250, f"class exceeds DR-30: {path}:{node.lineno}")
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            need(_logical(segment) <= 60 and _complexity(node) <= 10 and _nesting(node) <= 3, f"function exceeds DR-30: {path}:{node.lineno}")
+
+
+def exact(record: dict[str, Any], required: set[str], optional: set[str] | None = None) -> None:
     optional = optional or set()
-    missing, extra = required - record.keys(), record.keys() - required - optional
-    _require(not missing and not extra, f"record fields differ: missing={sorted(missing)} extra={sorted(extra)}")
+    need(record.keys() <= required | optional and required <= record.keys(), "record fields differ")
 
 
-def _typed(record: dict[str, Any], field: str, expected: type) -> Any:
-    value = record.get(field)
-    _require(isinstance(value, expected), f"{field} must be {expected.__name__}")
-    return value
-
-
-def _strings(record: dict[str, Any], fields: Iterable[str]) -> None:
-    _require(not any(not isinstance(record.get(field), str) or not record[field] for field in fields), "required string field is empty or mistyped")
-
-
-def _array(record: dict[str, Any], field: str, item_type: type, *, nonempty: bool = False) -> list[Any]:
-    value = record.get(field)
-    _require(isinstance(value, list) and not (nonempty and not value) and all(isinstance(item, item_type) for item in value), f"{field} must be an array of {item_type.__name__}")
-    return cast(list[Any], value)
-
-
-def _sha(value: Any, field: str) -> str:
-    _require(isinstance(value, str) and bool(SHA_RE.fullmatch(value)), f"{field} must be a lowercase 40-character SHA")
-    return cast(str, value)
-
-
-def _hash(value: Any, field: str) -> str:
-    _require(isinstance(value, str) and bool(HASH_RE.fullmatch(value)), f"{field} must be a lowercase SHA-256 digest")
-    return cast(str, value)
-
-
-def _timestamp(value: Any, field: str) -> datetime:
+def timestamp(value: Any) -> datetime:
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00")) if isinstance(value, str) else None
     except ValueError as error:
-        raise ContractError(f"{field} must be an RFC3339 timestamp") from error
-    _require(parsed is not None and parsed.utcoffset() is not None, f"{field} must be an RFC3339 timestamp with timezone")
+        raise ContractError("timestamp is invalid") from error
+    need(parsed is not None and parsed.utcoffset() is not None, "timestamp requires a timezone")
     return cast(datetime, parsed)
 
 
-def _uri(value: Any, field: str) -> str:
-    parsed = urlparse(value) if isinstance(value, str) else None
-    _require(bool(parsed and parsed.scheme in {"http", "https"} and parsed.netloc), f"{field} must be an HTTP(S) URI")
-    return cast(str, value)
-
-
-ACTIVATION_FIELDS = {
-    "schema_version", "activation_id", "status", "approved_design_commit", "approved_design_ids",
-    "root_turn", "objective", "vertical_slice_id", "activated_user_visible_capability",
-    "activated_invariants", "activated_paths", "activated_contracts", "activated_interfaces",
-    "activated_data_stores", "activated_adapters", "required_tests", "required_evidence",
-    "explicit_non_goals", "prohibited_scaffolding", "budgets", "completion_criteria", "owner_approval",
-}
+def validate_auth(login: str, environment: Iterable[str]) -> None:
+    need(login == "abbudjoe", "active GitHub login differs")
+    need(not TOKEN_OVERRIDES.intersection(environment), "token override is present")
 
 
 def validate_activation(record: dict[str, Any]) -> None:
-    _fields(record, ACTIVATION_FIELDS)
-    _require((record.get("schema_version"), record.get("status")) == ("1.0", "APPROVED"), "activation must be schema 1.0 and APPROVED")
-    _sha(record.get("approved_design_commit"), "approved_design_commit")
-    _strings(record, ("activation_id", "objective", "activated_user_visible_capability"))
-    _require(bool(re.fullmatch(r"ACT-[A-Z0-9-]+-v[0-9]+", record["activation_id"])), "activation_id is invalid")
-    _validate_activation_root(_typed(record, "root_turn", dict))
-    _validate_activation_arrays(record)
-    _validate_activation_owner(_typed(record, "owner_approval", dict))
+    exact(record, ACTIVATION_FIELDS)
+    root, owner = record.get("root_turn"), record.get("owner_approval")
+    need(isinstance(root, dict) and isinstance(owner, dict), "activation ownership is malformed")
+    root, owner = cast(dict[str, Any], root), cast(dict[str, Any], owner)
+    identity = (record.get("schema_version"), record.get("status"), root.get("model"), root.get("reasoning_effort"), root.get("base_branch"))
+    need(identity == ("1.0", "APPROVED", "gpt-5.6", "max", "main"), "activation identity differs")
+    need(re.fullmatch(r"ACT-[A-Z0-9-]+-v[0-9]+", str(record.get("activation_id"))) is not None, "activation ID differs")
+    need(re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(root.get("task_branch"))) is not None, "activation branch differs")
+    need(isinstance(root.get("luna_delegation_allowed"), bool), "activation delegation boundary differs")
+    need(record.get("activation_id") != ACTIVATION or (root.get("task_branch"), root.get("luna_delegation_allowed")) == (BRANCH, False), "W00 activation boundary differs")
+    need(isinstance(record.get("approved_design_commit"), str) and SHA.fullmatch(record["approved_design_commit"]) is not None, "approved design commit differs")
+    need(isinstance(record.get("approved_design_ids"), list) and bool(record["approved_design_ids"]) and all(isinstance(item, str) for item in record["approved_design_ids"]), "approved design IDs differ")
+    need((owner.get("owner"), owner.get("status")) == ("Joseph Abbud", "APPROVED"), "activation approval differs")
+    timestamp(owner.get("approved_at"))
+    paths = record.get("activated_paths")
+    need(isinstance(paths, list) and not any(str(path).startswith("activations/") for path in paths), "activation paths are invalid")
 
 
-def _validate_activation_root(root: dict[str, Any]) -> None:
-    _fields(root, {"task_id", "title", "model", "reasoning_effort", "base_branch", "task_branch"}, {"luna_delegation_allowed"})
-    _require((root.get("model"), root.get("reasoning_effort"), root.get("base_branch")) == ("gpt-5.6", "max", "main"), "activation requires GPT-5.6 Sol at max effort on main")
-    _require(root.get("task_id") != "W00" or root.get("luna_delegation_allowed") is False, "W00 prohibits Luna delegation")
-    _require(bool(re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(root.get("task_branch", "")))), "task_branch is invalid")
+def _array(record: dict[str, Any], field: str, kind: type) -> None:
+    value = record.get(field)
+    need(isinstance(value, list) and all(isinstance(item, kind) for item in value), f"{field} has an invalid type")
 
 
-def _validate_activation_arrays(record: dict[str, Any]) -> None:
-    for field in ("approved_design_ids", "activated_paths", "required_tests", "required_evidence", "explicit_non_goals"):
-        _array(record, field, str, nonempty=True)
-    _require(len(record["approved_design_ids"]) == len(set(record["approved_design_ids"])), "approved_design_ids must be unique")
-    _require(not any(path.startswith("activations/") for path in record["activated_paths"]), "an activation manifest cannot be implementation-writable")
+def validate_handoff(record: dict[str, Any], *, w00a: bool = False) -> None:
+    exact(record, HANDOFF_FIELDS, {"compare_url"})
+    _handoff_identity(record)
+    _handoff_design(record, w00a)
+    _validate_handoff_details(record)
 
 
-def _validate_activation_owner(owner: dict[str, Any]) -> None:
-    _require((owner.get("owner"), owner.get("status")) == ("Joseph Abbud", "APPROVED"), "activation lacks Joseph Abbud approval")
-    _timestamp(owner.get("approved_at"), "owner_approval.approved_at")
+def _handoff_identity(record: dict[str, Any]) -> None:
+    identity = (record.get("schema_version"), record.get("project_id"), record.get("activation_id"), record.get("task_id"), record.get("repository"), record.get("branch"))
+    need(identity[:2] == ("1.0", "biblical-scholar-lab") and identity[4] == REPOSITORY, "handoff identity differs")
+    need(all(isinstance(item, str) and item for item in (identity[2], identity[3])) and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(identity[5])) is not None, "handoff task identity differs")
+    need(record.get("status") in STATUSES and record.get("next_required_action") == "CHATGPT_REVIEW", "handoff transition differs")
+    need(record.get("merge_performed") is False and record.get("next_task_started") is False, "handoff crossed the stop boundary")
+    for field in ("base_sha", "implementation_head_sha"):
+        need(isinstance(record.get(field), str) and SHA.fullmatch(record[field]) is not None, f"{field} differs")
+    need(_url(record.get("pr_url")), "handoff PR URL is invalid")
+    auth = record.get("github_auth_preflight")
+    observed = tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) if isinstance(auth, dict) else ()
+    need(observed == ("github.com", "abbudjoe", True, False, False), "handoff auth evidence differs")
+    need((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff actor differs")
 
 
-def validate_auth_preflight(active_login: str, environment_names: Iterable[str]) -> None:
-    _require(active_login == "abbudjoe", "active GitHub login must be abbudjoe")
-    present = TOKEN_OVERRIDE_NAMES.intersection(environment_names)
-    _require(not present, f"token override variables are present: {sorted(present)}")
+def _handoff_design(record: dict[str, Any], w00a: bool) -> None:
+    design = record.get("design_conformance")
+    need(isinstance(design, dict) and design.get("unapproved_design_changes_executed") is False, "handoff design evidence differs")
+    designs = design.get("approved_design_ids") if isinstance(design, dict) else None
+    need(isinstance(designs, list) and all(isinstance(item, str) for item in designs), "handoff design IDs differ")
+    designs = cast(list[str], designs)
+    need(not w00a or "GOV-01-S02" in designs, "W00A split decision is absent")
 
 
-HANDOFF_FIELDS = {
-    "schema_version", "project_id", "activation_id", "task_id", "turn_id", "codex_run_id",
-    "status", "repository", "branch", "base_sha", "implementation_head_sha", "pr_url",
-    "github_actor_login", "github_auth_mode", "github_auth_preflight", "objective",
-    "acceptance_criteria", "design_conformance", "changes", "review_targets", "commands",
-    "evaluations", "artifacts", "delegated_operations", "complexity_receipt", "known_risks",
-    "decisions_required", "billable_actions", "next_required_action", "merge_performed",
-    "next_task_started",
-}
-COMPLEXITY_FIELDS = {
-    "production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed",
-    "generated_loc", "production_files_added", "production_files_removed", "modules_added",
-    "modules_removed", "tables_added", "migrations_added", "endpoints_added", "cli_commands_added",
-    "dependencies_added", "dependencies_removed", "public_contracts_changed", "abstractions",
-    "simpler_alternatives_considered", "known_duplication_or_debt", "waivers", "simplicity_conformance",
-}
+def _validate_handoff_details(record: dict[str, Any]) -> None:
+    arrays = (("acceptance_criteria", str), ("changes", dict), ("review_targets", dict), ("commands", dict), ("evaluations", dict), ("artifacts", dict), ("delegated_operations", dict), ("known_risks", str), ("decisions_required", str))
+    for field, kind in arrays:
+        _array(record, field, kind)
+    need(not any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]), "delegation boundary differs")
+    _validate_complexity(record.get("complexity_receipt"), record["status"])
+    billable = record.get("billable_actions")
+    need(isinstance(billable, dict) and (billable.get("performed"), billable.get("actual_cost_usd")) == (False, 0), "billable work was reported")
 
 
-def validate_handoff(record: dict[str, Any]) -> None:
-    _fields(record, HANDOFF_FIELDS, {"compare_url"})
-    _require((record.get("schema_version"), record.get("project_id")) == ("1.0", "biblical-scholar-lab"), "handoff schema or project identity is invalid")
-    _require(record.get("status") in ALLOWED_HANDOFF_STATUSES, "handoff status is not allowed")
-    _require((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff GitHub identity is invalid")
-    _require((record.get("next_required_action"), record.get("merge_performed"), record.get("next_task_started")) == ("CHATGPT_REVIEW", False, False), "handoff violates the root-turn stop boundary")
-    _strings(record, ("activation_id", "task_id", "turn_id", "codex_run_id", "repository", "branch", "objective"))
-    _sha(record.get("base_sha"), "base_sha"); _sha(record.get("implementation_head_sha"), "implementation_head_sha")
-    _uri(record.get("pr_url"), "pr_url")
-    if record.get("compare_url") is not None:
-        _uri(record["compare_url"], "compare_url")
-    _require(record["branch"].startswith("codex/"), "handoff branch is invalid")
-    _validate_handoff_state(record)
+def _validate_complexity(value: Any, status: str) -> None:
+    need(isinstance(value, dict), "complexity receipt is absent")
+    receipt = cast(dict[str, Any], value)
+    exact(receipt, COMPLEXITY_FIELDS)
+    counts = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed")
+    need(all(isinstance(receipt.get(key), int) and receipt[key] >= 0 for key in counts), "complexity counts differ")
+    arrays = COMPLEXITY_FIELDS - set(counts) - {"simplicity_conformance"}
+    need(all(isinstance(receipt.get(key), list) for key in arrays), "complexity arrays differ")
+    expected = "BLOCKED_REQUIRES_SPLIT" if status == "SPLIT_REQUIRED" else "PASS"
+    need(receipt.get("simplicity_conformance") == expected, "complexity disposition differs")
 
 
-def _validate_handoff_state(record: dict[str, Any]) -> None:
-    auth = _typed(record, "github_auth_preflight", dict)
-    _fields(auth, {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
-    _require(tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) == ("github.com", "abbudjoe", True, False, False), "GitHub auth preflight is not compliant")
-    design = _typed(record, "design_conformance", dict)
-    _fields(design, {"status", "approved_design_ids", "unapproved_design_changes_executed"})
-    expected = "BLOCKED_REQUIRES_DESIGN_REVIEW" if record["status"] == "BLOCKED_REQUIRES_DESIGN_REVIEW" else "CONFORMING"
-    _require(design.get("status") == expected and design.get("unapproved_design_changes_executed") is False, "handoff design state does not match the disposition")
-    _array(design, "approved_design_ids", str, nonempty=True)
-    _validate_complexity(_typed(record, "complexity_receipt", dict), record["status"])
-    for field, item_type in (("acceptance_criteria", str), ("known_risks", str), ("decisions_required", str), ("changes", dict), ("review_targets", dict), ("commands", dict), ("evaluations", dict), ("artifacts", dict), ("delegated_operations", dict)):
-        _array(record, field, item_type)
-    _require(not any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]), "delegated operations violate the W00 read-only boundary")
-    billable = _typed(record, "billable_actions", dict)
-    _fields(billable, {"performed", "actual_cost_usd"}, {"campaign_ids"})
-    _require((billable.get("performed"), billable.get("actual_cost_usd")) == (False, 0), "W00 handoff must report no billable action")
+def _url(value: Any) -> bool:
+    parsed = urlparse(value) if isinstance(value, str) else None
+    return bool(parsed and parsed.scheme == "https" and parsed.netloc)
 
 
-def _validate_complexity(complexity: dict[str, Any], status: str) -> None:
-    _fields(complexity, COMPLEXITY_FIELDS)
-    expected_simple = "BLOCKED_REQUIRES_SPLIT" if status == "SPLIT_REQUIRED" else "PASS"
-    _require(complexity.get("simplicity_conformance") == expected_simple, "handoff simplicity state differs")
-    count_fields = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed")
-    _require(not any(not isinstance(complexity.get(name), int) or complexity[name] < 0 for name in count_fields), "complexity counts must be nonnegative integers")
-    for field in ("modules_added", "modules_removed", "tables_added", "migrations_added", "endpoints_added", "cli_commands_added", "dependencies_added", "dependencies_removed", "public_contracts_changed", "simpler_alternatives_considered", "known_duplication_or_debt", "waivers"):
-        _array(complexity, field, str)
-    _array(complexity, "abstractions", dict)
-
-
-REVIEW_FIELDS = {
-    "schema_version", "review_id", "pr_url", "activation_id", "base_sha", "reviewed_head_sha",
-    "reviewer", "disposition", "summary", "findings", "evidence_reviewed", "required_next_action",
-    "review_timestamp",
-}
-AUTH_FIELDS = {
-    "schema_version", "authorization_id", "repository", "pr_url", "activation_id",
-    "chatgpt_review_id", "authorized_head_sha", "owner_login", "authorization_channel",
-    "owner_approval_reference", "approved_at", "merge_method", "status",
-}
-
-
-def validate_review_schema(record: dict[str, Any]) -> None:
-    _fields(record, REVIEW_FIELDS, {"supersedes_review_id"})
-    _require((record.get("schema_version"), record.get("reviewer")) == ("1.0", "ChatGPT"), "review schema or reviewer is invalid")
-    _uri(record.get("pr_url"), "pr_url"); _sha(record.get("base_sha"), "base_sha"); _sha(record.get("reviewed_head_sha"), "reviewed_head_sha")
-    _timestamp(record.get("review_timestamp"), "review_timestamp")
-    _strings(record, ("review_id", "activation_id", "summary"))
-    _array(record, "findings", dict); _array(record, "evidence_reviewed", str, nonempty=True)
-    _require(record.get("disposition") in {"CHATGPT_REVIEW_CLEAN", "REPAIR_REQUIRED", "BLOCKED_MISSING_EVIDENCE", "NO_GO_EXPERIMENT", "SPLIT_REQUIRED"}, "review disposition is invalid")
-    _require(record.get("required_next_action") in {"OWNER_AUTHORIZATION", "SOL_REPAIR", "DESIGN_REVIEW", "STOP"}, "review next action is invalid")
-
-
-def validate_authorization_schema(record: dict[str, Any]) -> None:
-    _fields(record, AUTH_FIELDS)
-    expected = ("1.0", "abbudjoe", "CHATGPT_CONVERSATION_EXPLICIT_APPROVAL", "squash")
-    _require(tuple(record.get(key) for key in ("schema_version", "owner_login", "authorization_channel", "merge_method")) == expected, "authorization identity or method is invalid")
-    _require(record.get("status") in {"AUTHORIZED", "REJECTED", "EXPIRED", "SUPERSEDED", "USED"}, "authorization status is invalid")
-    _require(bool(re.fullmatch(r"[^/]+/[^/]+", str(record.get("repository", "")))), "authorization repository is invalid")
-    _uri(record.get("pr_url"), "pr_url"); _sha(record.get("authorized_head_sha"), "authorized_head_sha")
-    _timestamp(record.get("approved_at"), "approved_at")
-    _strings(record, ("authorization_id", "activation_id", "chatgpt_review_id", "owner_approval_reference"))
-
-
-@dataclass(frozen=True)
-class _CommentRecord:
-    record: dict[str, Any]
-    index: int
-    comment_id: int
-    created_at: datetime
-
-
-def _comment_records(comments: Iterable[dict[str, Any]], marker: str, validator: Callable[[dict[str, Any]], None]) -> list[_CommentRecord]:
-    values = list(comments)
-    dated: list[tuple[datetime, int]] = []
-    records: list[_CommentRecord] = []
-    pattern = re.compile(re.escape(marker) + r".*?```json\s*(.*?)\s*```", re.DOTALL)
-    for index, comment in enumerate(values):
-        if not isinstance(comment, dict):
-            raise ContractError("comments must be objects")
-        body = comment.get("body", "")
-        if marker not in body:
+def marked(comments: Iterable[dict[str, Any]], marker: str) -> list[tuple[dict[str, Any], int, datetime]]:
+    pattern, output = (re.compile(re.escape(marker) + r".*?```json\s*(.*?)\s*```", re.DOTALL), [])
+    for comment in comments:
+        need(isinstance(comment, dict), "comment is not an object")
+        if marker not in str(comment.get("body", "")):
             continue
-        parsed, created = _parse_comment(comment, pattern, validator)
-        timestamp_field = "review_timestamp" if marker == REVIEW_MARKER else "approved_at"
-        _require(_timestamp(parsed[timestamp_field], timestamp_field) <= created, "governance record timestamp follows its comment")
-        dated.append((created, comment["id"])); records.append(_CommentRecord(parsed, index, comment["id"], created))
-    _require(dated == sorted(dated) and len({item.comment_id for item in records}) == len(records), "governance comments were reordered or reused")
-    return records
+        created, updated = (timestamp(comment.get("created_at")), timestamp(comment.get("updated_at")))
+        matches = pattern.findall(str(comment["body"]))
+        need(created == updated and len(matches) == 1 and isinstance(comment.get("id"), int), "marked comment is edited or malformed")
+        try:
+            record = json.loads(matches[0])
+        except json.JSONDecodeError as error:
+            raise ContractError("marked comment JSON is malformed") from error
+        need(isinstance(record, dict), "marked comment record is not an object")
+        output.append((record, comment["id"], created))
+    need([item[2] for item in output] == sorted(item[2] for item in output), "marked comments were reordered")
+    return output
 
 
-def _parse_comment(comment: dict[str, Any], pattern: re.Pattern[str], validator: Callable[[dict[str, Any]], None]) -> tuple[dict[str, Any], datetime]:
-    _require(isinstance(comment.get("id"), int) and comment["id"] > 0, "marked comment identity is missing")
-    created = _timestamp(comment.get("created_at"), "comment.created_at")
-    _require(created == _timestamp(comment.get("updated_at"), "comment.updated_at"), "marked governance comments are append-only and cannot be edited")
-    matches = pattern.findall(comment["body"])
-    _require(len(matches) == 1, "marked comment must contain exactly one JSON record")
-    try:
-        parsed = json.loads(matches[0])
-    except json.JSONDecodeError as error:
-        raise ContractError("marked comment JSON is malformed") from error
-    _require(isinstance(parsed, dict), "marked comment JSON must be an object")
-    validator(parsed)
-    return parsed, created
+def current_completion(comments: Iterable[dict[str, Any]], expected: tuple[Any, ...]) -> tuple[int, datetime]:
+    entries = marked(comments, COMPLETION)
+    fields = ("activation_id", "task_id", "turn_id", "implementation_head_sha", "live_pr_head_sha", "handoff_markdown", "handoff_json", "status", "next_required_action")
+    need(len({item[0].get("turn_id") for item in entries}) == len(entries), "completion ID was reused")
+    matches = [item for item in entries if tuple(item[0].get(key) for key in fields) == expected]
+    need(len(matches) == 1, "one exact completion record is required")
+    return matches[0][1], matches[0][2]
 
 
-def validate_append_only_comments(previous: Iterable[dict[str, Any]], current: Iterable[dict[str, Any]]) -> None:
-    old_values, new_values = list(previous), list(current)
-    for marker, validator in ((REVIEW_MARKER, validate_review_schema), (AUTHORIZATION_MARKER, validate_authorization_schema)):
-        _comment_records(old_values, marker, validator)
-        _comment_records(new_values, marker, validator)
-    markers = (REVIEW_MARKER, AUTHORIZATION_MARKER)
-    old_identity = [(item.get("id"), item) for item in old_values if any(marker in item.get("body", "") for marker in markers)]
-    new_identity = [(item.get("id"), item) for item in new_values if any(marker in item.get("body", "") for marker in markers)]
-    _require(new_identity[:len(old_identity)] == old_identity, "governance comments were deleted, edited, replaced, or reordered")
+def _review_schema(record: dict[str, Any]) -> None:
+    exact(record, REVIEW_FIELDS, {"supersedes_review_id"})
+    need(isinstance(record.get("review_id"), str) and isinstance(record.get("summary"), str) and isinstance(record.get("findings"), list) and isinstance(record.get("evidence_reviewed"), list) and all(isinstance(item, str) for item in record["evidence_reviewed"]) and (record.get("supersedes_review_id") is None or isinstance(record.get("supersedes_review_id"), str)), "review schema differs")
 
 
-def current_clean_review(comments: Iterable[dict[str, Any]], *, pr_url: str, activation_id: str, base_sha: str, head_sha: str) -> dict[str, Any]:
-    entries = _comment_records(comments, REVIEW_MARKER, validate_review_schema)
-    _require(len({item.record["review_id"] for item in entries}) == len(entries), "review identifier was reused")
-    expected = (pr_url, activation_id, base_sha, head_sha)
-    matches = [item for item in entries if tuple(item.record[key] for key in ("pr_url", "activation_id", "base_sha", "reviewed_head_sha")) == expected]
-    _require(bool(matches and matches[-1].record["disposition"] == "CHATGPT_REVIEW_CLEAN"), "no current clean ChatGPT review exists for the exact head")
-    review = matches[-1].record
-    _require(review["required_next_action"] == "OWNER_AUTHORIZATION", "clean review must transition to owner authorization")
-    evidence_pattern = re.compile(rf"^https://github\.com/{re.escape(REPOSITORY)}/blob/{head_sha}/handoffs/[A-Za-z0-9-]+/[A-Za-z0-9._-]+\.json$")
-    _require(any(evidence_pattern.fullmatch(item) for item in review["evidence_reviewed"]), "clean review does not bind a completed JSON handoff")
-    return review
-
-
-def current_authorization(comments: Iterable[dict[str, Any]], *, repository: str, pr_url: str, activation_id: str, head_sha: str, review_id: str) -> dict[str, Any]:
+def validate_record_order(comments: Iterable[dict[str, Any]], completion_at: datetime, identity: tuple[str, str, str, str], handoff_url: str) -> str:
     values = list(comments)
-    reviews = _comment_records(values, REVIEW_MARKER, validate_review_schema)
-    authorizations = _comment_records(values, AUTHORIZATION_MARKER, validate_authorization_schema)
-    unique = (len({item.record["review_id"] for item in reviews}) == len(reviews), len({item.record["authorization_id"] for item in authorizations}) == len(authorizations))
-    _require(all(unique), "review or authorization identifier was reused")
-    review = next((item for item in reviews if item.record["review_id"] == review_id), None)
-    _require(review is not None and review.record["disposition"] == "CHATGPT_REVIEW_CLEAN", "referenced clean review is absent")
-    review = cast(_CommentRecord, review)
-    expected = (repository, pr_url, activation_id, head_sha, review_id)
-    matches = [item for item in authorizations if tuple(item.record[key] for key in ("repository", "pr_url", "activation_id", "authorized_head_sha", "chatgpt_review_id")) == expected]
-    authorized = [item for item in matches if item.record["status"] == "AUTHORIZED"]
-    _require(all((len(authorized) == 1, matches, matches[-1] == authorized[0] if matches and authorized else False)), "one current, unsuperseded authorization is required")
-    item = authorized[0]
-    approved = _timestamp(item.record["approved_at"], "approved_at")
-    reviewed = _timestamp(review.record["review_timestamp"], "review_timestamp")
-    _require(all((item.index > review.index, item.created_at > review.created_at, reviewed <= approved <= item.created_at)), "authorization must be approved and posted after the clean review")
-    return item.record
-
-
-TRUSTED_RECEIPT_FIELDS = {
-    "schema_version", "receipt_type", "repository", "pr_number", "inspected_head_sha", "base_sha",
-    "trusted_validator_revision", "workflow_path", "workflow_run_id", "workflow_run_attempt", "event",
-    "validator_content_hash", "validation_results", "timestamp", "conclusion", "receipt_hash",
-}
-OWNER_RECEIPT_FIELDS = {
-    "schema_version", "receipt_type", "repository", "pr_number", "pr_url", "authorized_head_sha",
-    "chatgpt_review_id", "trusted_validator", "authorization_workflow", "environment_name", "timestamp",
-    "conclusion", "receipt_hash",
-}
-
-
-def receipt_hash(record: dict[str, Any]) -> str:
-    unsigned = {key: value for key, value in record.items() if key != "receipt_hash"}
-    return hashlib.sha256(json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-
-
-def validate_trusted_receipt(record: dict[str, Any]) -> None:
-    _fields(record, TRUSTED_RECEIPT_FIELDS)
-    expected = ("1.0", "TrustedGovernanceValidationReceipt", REPOSITORY, ".github/workflows/trusted-governance-validator.yml", "pull_request_target", "success")
-    actual = tuple(record.get(key) for key in ("schema_version", "receipt_type", "repository", "workflow_path", "event", "conclusion"))
-    _require(actual == expected and record.get("receipt_hash") == receipt_hash(record), "trusted validation receipt identity or hash differs")
-    for field in ("inspected_head_sha", "base_sha", "trusted_validator_revision"):
-        _sha(record.get(field), field)
-    _hash(record.get("validator_content_hash"), "validator_content_hash")
-    _require(not any(not isinstance(record.get(field), int) or record[field] <= 0 for field in ("pr_number", "workflow_run_id", "workflow_run_attempt")), "trusted receipt numeric identity is invalid")
-    results = _typed(record, "validation_results", dict)
-    _require(bool(results) and not any(value != "PASS" for value in results.values()), "trusted validation results are incomplete")
-    _timestamp(record.get("timestamp"), "timestamp")
-
-
-def validate_trusted_receipt_binding(record: dict[str, Any], *, pr_number: int, head_sha: str, base_sha: str, workflow_run_id: int) -> None:
-    validate_trusted_receipt(record)
-    actual = (record["pr_number"], record["inspected_head_sha"], record["base_sha"], record["workflow_run_id"])
-    _require(actual == (pr_number, head_sha, base_sha, workflow_run_id), "trusted validation receipt is bound to a different PR, head, base, or run")
-
-
-def validate_owner_receipt(record: dict[str, Any]) -> None:
-    _fields(record, OWNER_RECEIPT_FIELDS)
-    expected = ("1.0", "OwnerMergeAuthorizationReceipt", REPOSITORY, ENVIRONMENT, "success")
-    actual = tuple(record.get(key) for key in ("schema_version", "receipt_type", "repository", "environment_name", "conclusion"))
-    _require(actual == expected and record.get("receipt_hash") == receipt_hash(record), "owner authorization receipt identity or hash differs")
-    _uri(record.get("pr_url"), "pr_url"); _sha(record.get("authorized_head_sha"), "authorized_head_sha")
-    _strings(record, ("chatgpt_review_id",)); _timestamp(record.get("timestamp"), "timestamp")
-    _require(isinstance(record.get("pr_number"), int) and record["pr_number"] > 0, "authorization receipt PR number is invalid")
-    trusted, workflow = _typed(record, "trusted_validator", dict), _typed(record, "authorization_workflow", dict)
-    _fields(trusted, {"workflow_path", "run_id", "receipt_hash"})
-    _fields(workflow, {"workflow_path", "run_id", "run_attempt", "trusted_revision"})
-    _require((trusted.get("workflow_path"), workflow.get("workflow_path")) == (".github/workflows/trusted-governance-validator.yml", ".github/workflows/owner-merge-authorization.yml"), "authorization receipt workflow identity differs")
-    _require(not any(not isinstance(value, int) or value <= 0 for value in (trusted.get("run_id"), workflow.get("run_id"), workflow.get("run_attempt"))), "authorization workflow run identity is invalid")
-    _hash(trusted.get("receipt_hash"), "trusted_validator.receipt_hash"); _sha(workflow.get("trusted_revision"), "trusted_revision")
-
-
-def validate_owner_receipt_binding(record: dict[str, Any], *, pr_number: int, head_sha: str, review_id: str, trusted_run_id: int, authorization_run_id: int, authorization_revision: str) -> None:
-    validate_owner_receipt(record)
-    actual = (record["pr_number"], record["authorized_head_sha"], record["chatgpt_review_id"], record["trusted_validator"]["run_id"], record["authorization_workflow"]["run_id"], record["authorization_workflow"]["trusted_revision"])
-    expected = (pr_number, head_sha, review_id, trusted_run_id, authorization_run_id, authorization_revision)
-    _require(actual == expected, "owner authorization receipt is bound to a different PR, head, review, or run")
+    need(not any(marker in str(item.get("body", "")) for marker in INACTIVE_MARKERS for item in values), "W00B authorization or merge record is inactive")
+    all_reviews = marked(values, REVIEW)
+    for record, _, _ in all_reviews:
+        _review_schema(record)
+    ids = [item[0].get("review_id") for item in all_reviews]
+    need(len(ids) == len(set(ids)), "review ID is reused")
+    reviews = [item for item in all_reviews if item[0].get("reviewed_head_sha") == identity[3]]
+    if not reviews:
+        return "HANDOFF"
+    need(reviews[-1][2] > completion_at, "review precedes completion")
+    review, _, created = reviews[-1]
+    actual = tuple(review.get(key) for key in ("pr_url", "activation_id", "base_sha", "reviewed_head_sha"))
+    valid = (review.get("schema_version"), review.get("reviewer"), review.get("disposition"), review.get("required_next_action")) == ("1.0", "ChatGPT", "CHATGPT_REVIEW_CLEAN", "OWNER_AUTHORIZATION")
+    need(actual == identity and valid and handoff_url in review.get("evidence_reviewed", []), "current review binding differs")
+    need(timestamp(review.get("review_timestamp")) <= created, "review timestamp follows its comment")
+    return "REVIEW"
 
 
 class CommandPhase(Enum):
     IMPLEMENTATION = "implementation"
-    W00_GOVERNANCE = "w00-governance"
-    MERGE_ONLY = "merge-only"
+    W00A_GOVERNANCE = "w00a-governance"
 
 
-@dataclass(frozen=True)
-class CommandDecision:
-    allowed: bool
-    reason: str
-
-
-def _decision(allowed: bool, good: str, bad: str) -> CommandDecision:
-    return CommandDecision(allowed, good if allowed else bad)
-
-
-def _gh_decision(tokens: list[str], phase: CommandPhase) -> CommandDecision:
-    if len(tokens) < 2:
-        return CommandDecision(False, "GitHub command is incomplete")
-    pair = tuple(tokens[1:3])
-    if tokens[1] == "auth":
-        exact = tokens == ["gh", "auth", "status", "--active", "--hostname", "github.com"]
-        return _decision(exact, "redacted authentication preflight", "authentication display or mutation is prohibited")
-    if pair == ("pr", "merge"):
-        exact = len(tokens) == 8 and all((tokens[3].isdigit(), tokens[4:6] == ["--squash", "--match-head-commit"], bool(SHA_RE.fullmatch(tokens[6])), tokens[7] == "--delete-branch"))
-        return _decision(all((phase is CommandPhase.MERGE_ONLY, exact)), "exact merge-only sequence", "merge is unavailable or malformed")
-    if pair == ("pr", "ready"):
-        exact = len(tokens) == 4 and tokens[3].isdigit()
-        return _decision(all((phase is CommandPhase.MERGE_ONLY, exact)), "merge-only ready transition", "ready transition is unavailable")
-    if pair == ("repo", "edit"):
-        expected = {"--enable-squash-merge=true", "--enable-merge-commit=false", "--enable-rebase-merge=false", "--enable-auto-merge=false", "--delete-branch-on-merge=true"}
-        exact = len(tokens) == 9 and all((tokens[3] == REPOSITORY, set(tokens[4:]) == expected))
-        return _decision(all((phase is CommandPhase.W00_GOVERNANCE, exact)), "exact W00 merge-settings operation", "repository mutation is prohibited")
-    if tokens[1] == "api":
-        return _api_decision(tokens, phase)
-    return _ordinary_gh(tokens)
-
-def _ordinary_gh(tokens: list[str]) -> CommandDecision:
-    pair = tuple(tokens[:3])
-    reads = {("gh", "repo", "view"), ("gh", "pr", "view"), ("gh", "pr", "status"), ("gh", "pr", "checks"), ("gh", "pr", "diff"), ("gh", "run", "list"), ("gh", "run", "view"), ("gh", "run", "watch")}
-    if {"--hostname", "-H", "--header"}.intersection(tokens):
-        return CommandDecision(False, "GitHub host or header override is prohibited")
-    if pair in reads:
-        return CommandDecision(True, "allowlisted read-only GitHub operation")
-    if pair == ("gh", "pr", "comment"):
-        valid = len(tokens) == 6 and tokens[3].isdigit() and tokens[4] == "--body-file" and not tokens[5].startswith("-")
-        return _decision(valid, "bounded PR comment", "PR comment structure differs")
-    if pair == ("gh", "pr", "create"):
-        exact = tokens == ["gh", "pr", "create", "--draft", "--base", "main", "--head", TASK_BRANCH]
-        return _decision(exact, "bounded draft PR creation", "PR creation structure differs")
-    return CommandDecision(False, "GitHub operation is not allowlisted")
-
-
-def _api_decision(tokens: list[str], phase: CommandPhase) -> CommandDecision:
-    environment = ["gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/environments/{ENVIRONMENT}", "--input", ".codex-tmp-owner-env.json"]
-    ruleset = ["gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/rulesets/{RULESET_ID}", "--input", ".codex-tmp-ruleset.json"]
-    if tokens in (environment, ruleset):
-        return _decision(phase is CommandPhase.W00_GOVERNANCE, "exact W00 governance operation", "governance mutation is unavailable")
-    method_flags = [index for index, token in enumerate(tokens) if token in {"-X", "--method"}]
-    method = "GET"
-    if method_flags:
-        index = method_flags[0]
-        method = tokens[index + 1].upper() if index + 1 < len(tokens) else ""
-    body_flags = {"-f", "-F", "--field", "--raw-field", "--input", "-H", "--header", "--hostname"}
-    smuggled = any((token.startswith(("-X", "-f", "-F", "-H")) and token not in {"-X", "-f", "-F", "-H"}) or token.startswith(("--method=", "--field=", "--raw-field=", "--input=", "--header=", "--hostname=")) for token in tokens)
-    endpoint = next((token.lstrip("/") for token in tokens[2:] if token.startswith(("repos/", "/repos/", "users/"))), "")
-    endpoint = endpoint.split("?", 1)[0]
-    pattern = rf"(?:repos/{re.escape(REPOSITORY)}/(?:pulls/1|issues/1/comments|actions/(?:workflows|runs/[0-9]+)|commits/[0-9a-f]{{40}}/check-runs|rulesets(?:/{RULESET_ID})?|codeowners/errors|environments/{ENVIRONMENT})|users/abbudjoe)"
-    allowed = len(method_flags) <= 1 and method in {"GET", "HEAD"} and not smuggled and not body_flags.intersection(tokens) and bool(re.fullmatch(pattern, endpoint))
-    return _decision(allowed, "bounded read-only GitHub API", "mutating or unbounded GitHub API is prohibited")
-
-
-def _git_decision(tokens: list[str]) -> CommandDecision:
-    if len(tokens) < 2 or tokens[1].startswith("-"):
-        return CommandDecision(False, "Git command is incomplete or configured dynamically")
-    if tokens[1] == "push":
-        allowed = tokens in (["git", "push", "origin", TASK_BRANCH], ["git", "push", "-u", "origin", TASK_BRANCH])
-        return _decision(allowed, "exact task-branch push", "direct, refspec, multi-ref, or force push is prohibited")
-    if tokens[1] == "commit":
-        allowed = len(tokens) == 4 and tokens[2] == "-m" and bool(tokens[3])
-        return _decision(allowed, "new commit", "commit rewriting or argument smuggling is prohibited")
-    if tokens[1] == "add":
-        allowed = len(tokens) > 2 and all(re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*", item) and not {".", ".."}.intersection(item.split("/")) for item in tokens[2:])
-        return _decision(allowed, "explicit-path staging", "broad or option-based staging is prohibited")
-    reads = {"status", "diff", "log", "show", "rev-parse", "branch", "fetch", "ls-remote", "ls-tree", "diff-tree", "merge-base"}
-    return _decision(tokens[1] in reads, "allowlisted Git read", "Git operation is not allowlisted")
-
-
-def assess_command(command: str, phase: CommandPhase) -> CommandDecision:
-    tokens = _parse_command(command)
-    if isinstance(tokens, CommandDecision):
-        return tokens
-    if tokens[0] == "gh":
-        return _gh_decision(tokens, phase)
-    if tokens[0] == "git":
-        return _git_decision(tokens)
-    return _local_decision(tokens)
-
-
-def _parse_command(command: str) -> list[str] | CommandDecision:
-    if re.search(r"[\n\r;&|`<>]|\$\(|\\\n", command):
-        return CommandDecision(False, "shell composition or expansion is prohibited")
+def assess_command(command: str, phase: CommandPhase, *, branch: str = BRANCH, pr_number: int = 1) -> tuple[bool, str]:
+    if re.search(r"[\n\r;&|`<>$\\*?\[\]{}()~#!]", command):
+        return False, "shell composition or expansion is prohibited"
     try:
         tokens = shlex.split(command)
     except ValueError:
-        return CommandDecision(False, "command cannot be parsed")
-    if not tokens or tokens[0] == "env" or "=" in tokens[0]:
-        return CommandDecision(False, "empty or environment-prefixed command is prohibited")
-    return tokens
+        return False, "command cannot be parsed"
+    if not tokens or tokens[0] in {"env", "command", "sudo", "xargs", "bash", "sh", "zsh"} or "=" in tokens[0]:
+        return (False, "prefix, alias, nested shell, or environment smuggling is prohibited")
+    if phase is CommandPhase.W00A_GOVERNANCE:
+        exact_put = ["gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/rulesets/{RULESET}", "--input", ".codex-tmp-ruleset-w00a.json"]
+        return (tokens == exact_put, "exact W00A ruleset adjustment" if tokens == exact_put else "governance mutation differs")
+    return _implementation(tokens, branch, pr_number)
 
 
-def _local_decision(tokens: list[str]) -> CommandDecision:
-    uvx_tool = tokens[3] if len(tokens) > 3 and tokens[1:3] == ["--from", "coverage"] else (tokens[1] if len(tokens) > 1 else "")
-    local = tokens[:3] in (["python3", "-m", "unittest"], ["python3", "-m", "py_compile"]) or (tokens[0] == "python3" and len(tokens) > 1 and tokens[1] == "governance/w00_checks.py") or (tokens[0] == "uvx" and uvx_tool in {"coverage", "ruff", "mypy", "detect-secrets"})
-    return _decision(local, "allowlisted deterministic local tool", "wrapper, alias, or local command is not allowlisted")
+def _implementation(tokens: list[str], branch: str, pr_number: int) -> tuple[bool, str]:
+    github = _github_operation(tokens, pr_number)
+    if github is not None:
+        return github
+    if tokens and tokens[0] == "git":
+        return _git(tokens, branch)
+    return _local(tokens)
+
+
+def _github_operation(tokens: list[str], pr_number: int) -> tuple[bool, str] | None:
+    if tokens[:2] == ["gh", "auth"]:
+        allowed = tokens == ["gh", "auth", "status", "--active", "--hostname", "github.com"]
+        return (allowed, "redacted auth preflight" if allowed else "authentication display or mutation is prohibited")
+    if tokens[:2] == ["gh", "api"]:
+        endpoint = tokens[2].lstrip("/").split("?", 1)[0] if len(tokens) == 3 else ""
+        patterns = (r"user", rf"repos/{REPOSITORY}", rf"repos/{REPOSITORY}/pulls/1", rf"repos/{REPOSITORY}/issues/1/comments", rf"repos/{REPOSITORY}/actions/(?:workflows|runs/[0-9]+)", rf"repos/{REPOSITORY}/rulesets/{RULESET}", rf"repos/{REPOSITORY}/codeowners/errors", rf"repos/{REPOSITORY}/environments/{ENVIRONMENT}")
+        allowed = any(re.fullmatch(pattern, endpoint) for pattern in patterns)
+        return (allowed, "bounded API read" if allowed else "mutating or unbounded API is prohibited")
+    return _pr_operation(tokens, pr_number)
+
+
+def _pr_operation(tokens: list[str], pr_number: int) -> tuple[bool, str] | None:
+    number = str(pr_number)
+    exact_gh = (["gh", "pr", "view", number, "--repo", REPOSITORY], ["gh", "pr", "checks", number, "--repo", REPOSITORY], ["gh", "pr", "comment", number, "--repo", REPOSITORY, "--body-file", ".codex-tmp-pr-completion.md"])
+    edit = len(tokens) == 10 and tokens[:4] == ["gh", "pr", "edit", number] and tokens[4:8] == ["--repo", REPOSITORY, "--title", TITLE] and tokens[8:] == ["--body-file", ".codex-tmp-pr-body.md"]
+    if tokens in exact_gh or edit:
+        return True, "exact PR operation"
+    return None
+
+
+def _git(tokens: list[str], branch: str) -> tuple[bool, str]:
+    if tokens == ["git", "push", "origin", branch] and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", branch):
+        return True, "exact task-branch push"
+    if len(tokens) == 4 and tokens[1:3] == ["commit", "-m"] and tokens[3]:
+        return True, "new commit"
+    if len(tokens) > 2 and tokens[1] == "add":
+        safe = all(_staging_path(item) for item in tokens[2:])
+        return bool(safe), "explicit staging" if safe else "broad or unsafe staging is prohibited"
+    return _git_read(tokens)
+
+
+def _staging_path(path: str) -> bool:
+    return bool(re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*", path)) and ".." not in path.split("/") and (path == "AGENTS.md" or path.startswith((".github/workflows/", "governance/", "handoffs/W00/")))
+
+
+def _git_read(tokens: list[str]) -> tuple[bool, str]:
+    fixed = (["git", "status", "--short"], ["git", "diff", "--check"], ["git", "fsck", "--full"])
+    revision = len(tokens) == 3 and tokens[:2] == ["git", "rev-parse"] and bool(re.fullmatch(r"HEAD\^?|main|origin/main|[0-9a-f]{40}", tokens[2]))
+    return ((tokens in fixed or revision), "exact Git read" if tokens in fixed or revision else "Git operation is prohibited")
+
+
+def _local(tokens: list[str]) -> tuple[bool, str]:
+    files = ["governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py"]
+    ruff = ["--config", "governance/ruff.toml"]
+    exact_commands = (
+        ["python3", "-m", "unittest", "-v", files[-1]],
+        ["python3", "-m", "py_compile", *files[:-1]],
+        ["uvx", "--from", "coverage", "coverage", "run", "--branch", "-m", "unittest", files[-1]],
+        ["uvx", "--from", "coverage", "coverage", "report", "--show-missing", "--fail-under=90"],
+        ["uvx", "ruff", "check", *ruff, *files],
+        ["uvx", "ruff", "format", *ruff, *files],
+        ["uvx", "ruff", "format", "--check", *ruff, *files],
+        ["uvx", "mypy", "--strict", *files[:-1]],
+        ["uvx", "detect-secrets", "scan", "--all-files"],
+        ["uvx", "zizmor", ".github/workflows/governance-integrity.yml", ".github/workflows/trusted-governance-validator.yml"],
+        ["shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"],
+    )
+    if tokens in exact_commands:
+        return True, "exact validation command"
+    allowed = _validator_command(tokens)
+    return (allowed, "governance validator" if allowed else "local command is not allowlisted")
+
+
+def _validator_command(tokens: list[str]) -> bool:
+    if len(tokens) < 3 or tokens[:2] != ["python3", "governance/w00_checks.py"]:
+        return False
+    specs = {
+        "package-integrity": (["--revision"], []),
+        "project-integrity": (["--base-sha", "--head-sha", "--branch"], []),
+        "turn-handoff-integrity": (["--base-sha", "--head-sha", "--branch", "--pr-url"], []),
+        "candidate-metadata": (["--base-sha", "--head-sha", "--tree-json", "--compare-json"], []),
+        "trusted-governance": (["--repository", "--pr-number", "--base-sha", "--head-sha", "--trusted-revision", "--branch", "--event", "--run-id", "--run-attempt", "--candidate-repository", "--tree-json", "--compare-json", "--output"], []),
+        "completion-integrity": (["--base-sha", "--head-sha", "--branch", "--pr-json", "--comments-json"], []),
+        "live-governance": (["--expected-head", "--review-limit-observed-at", "--environment-ui-observed-at"], ["--review-limit-enabled", "--admin-bypass-disabled"]),
+    }
+    value_flags, boolean_flags = specs.get(tokens[2], ([], []))
+    count, arguments = len(value_flags) * 2, tokens[3:]
+    valid_pairs = arguments[:count:2] == value_flags and all(not value.startswith("-") for value in arguments[1:count:2])
+    values = dict(zip(value_flags, arguments[1:count:2], strict=True)) if valid_pairs else {}
+    return bool(value_flags) and valid_pairs and all(_cli_value(flag, value) for flag, value in values.items()) and arguments[count:] == boolean_flags
+
+
+def _cli_value(flag: str, value: str) -> bool:
+    if flag in {"--base-sha", "--head-sha", "--trusted-revision", "--revision", "--expected-head"}:
+        return value == "HEAD" or SHA.fullmatch(value) is not None
+    if flag == "--repository":
+        return value == REPOSITORY
+    if flag == "--branch":
+        return re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", value) is not None
+    if flag == "--pr-url":
+        return re.fullmatch(rf"https://github\.com/{REPOSITORY}/pull/[1-9][0-9]*", value) is not None
+    if flag in {"--pr-number", "--run-id", "--run-attempt"}:
+        return value.isdigit() and int(value) > 0
+    if flag == "--event":
+        return value == "pull_request_target"
+    if flag.endswith("observed-at"):
+        return re.fullmatch(r"[0-9T:+.Z-]+", value) is not None
+    return re.fullmatch(r"\.codex-tmp-[A-Za-z0-9.-]+", value) is not None

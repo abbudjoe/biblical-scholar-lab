@@ -38,35 +38,26 @@ Require:
 - Force-push protection.
 - Branch-deletion protection.
 
-Required defense-in-depth checks after W00:
+Required defense-in-depth checks for the W00A bootstrap:
 
 ```text
 project-integrity
 turn-handoff-integrity
-chatgpt-review-integrity
-owner-merge-record-integrity
 ```
 
-Expected-App matching for these contexts is defense in depth; it does not prove which workflow, event, branch, or revision produced a same-named check. Project-level trusted evidence comes only from the base-controlled `trusted-governance-validator` receipt, which binds the inspected head, base revision, workflow/run identity, and validator hash without executing candidate code.
+Expected-App matching is defense in depth, not workflow provenance. The base-controlled validator becomes operational only after W00A is on `main`. W00B later activates authorization-chain checks and receipt consumption.
 
 Only squash merging is enabled. Auto-merge is disabled.
 
 ## Merge sequence
 
 ```text
-Sol draft PR + handoff
-→ four ordinary defense-in-depth checks
-→ base-controlled trusted-governance-validator receipt succeeds for that head
-→ ChatGPT exact-head review
-→ Joseph explicitly approves exact head in ChatGPT
-→ protected owner-merge-authorization environment is approved and emits its exact-head receipt
-→ ChatGPT emits separate merge-only prompt and authorization record
-→ Sol merge-only turn posts exact-head authorization record
-→ exact-head squash merge
-→ post-merge validation and receipt
+W00A → exact-head review/approval → Joseph manual squash merge
+W00B → trusted W00A validation → exact-head review/approval → Joseph manual squash merge
+W01 → first live proof of trusted validation, owner receipt consumption, and merge-only execution
 ```
 
-The approved Codex merge command is:
+After W00B activates the merge-only path, the approved Codex merge command is:
 
 ```bash
 gh pr merge <PR> --squash --match-head-commit <AUTHORIZED_HEAD_SHA> --delete-branch
