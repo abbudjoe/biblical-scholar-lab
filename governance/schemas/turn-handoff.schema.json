@@ -63,7 +63,6 @@
         "BLOCKED_DEPENDENCY",
         "BLOCKED_REQUIRES_DESIGN_REVIEW",
         "BLOCKED_REQUIRES_SOL_REPAIR",
-        "SPLIT_REQUIRED",
         "NO_CHANGE",
         "FAILED"
       ]
@@ -170,6 +169,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "substantive_lines_total",
         "production_loc_added",
         "production_loc_removed",
         "test_loc_added",
@@ -190,9 +190,14 @@
         "simpler_alternatives_considered",
         "known_duplication_or_debt",
         "waivers",
+        "workflow_files",
         "simplicity_conformance"
       ],
       "properties": {
+        "substantive_lines_total": {
+          "type": "integer",
+          "minimum": 0
+        },
         "production_loc_added": {
           "type": "integer",
           "minimum": 0
@@ -294,6 +299,12 @@
           }
         },
         "waivers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workflow_files": {
           "type": "array",
           "items": {
             "type": "string"

@@ -1,7 +1,7 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": "3 + ERRATA-01 + ERRATA-02",
+  "approved_revision": "3 + ERRATA-01 + ERRATA-02 + W00-SPLIT-01",
   "proposal_date": "2026-08-17",
   "approval_date": "2026-08-17",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
@@ -68,23 +68,23 @@
     },
     {
       "path": "governance/BRANCH_AND_RULESET_SPEC.md",
-      "sha256": "0dee7a06faaf25a99b7196b9c5aaeb8fe94a6c53c3ce36a9cc15355ec0fb07be",
-      "bytes": 2471
+      "sha256": "e0be27823917836717e3aa0b1d8c8823a82c012675d4987abe34d0286242931c",
+      "bytes": 2465
     },
     {
       "path": "governance/CHATGPT_REVIEW_SPEC.md",
-      "sha256": "5a2cbb579cb285bee53e1cb7329775613e3c257a60019f5117ee67096202e53d",
-      "bytes": 1436
+      "sha256": "9ed87b8b815c5002f913883047d7c7852d2c906f04f236a3aa7d337767f66f70",
+      "bytes": 1061
     },
     {
       "path": "governance/GITHUB_CLI_OPERATION_POLICY.md",
-      "sha256": "5b125e49c7ef696aa72813724fbb6542037f5438a5134c405114e549e9a9d896",
-      "bytes": 5173
+      "sha256": "70205a69839635bd1fd8c1a0520ddaa88d52b150ce5a905b8ff2dd844fbe7420",
+      "bytes": 4891
     },
     {
       "path": "governance/GITHUB_OWNER_SETUP.md",
-      "sha256": "d2c4a006624844b7419fe5bf28125300bc7a52235601a8428f28032936edc6f5",
-      "bytes": 4719
+      "sha256": "35d674b6a3af660a8f454b8d494e06b4dfc28046c07be90e28b1958b9f26d05c",
+      "bytes": 4400
     },
     {
       "path": "governance/MODEL_ROLE_POLICY.md",
@@ -93,13 +93,13 @@
     },
     {
       "path": "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md",
-      "sha256": "d6ea0c6628f0b08f63853264febb96a6782dbcf43ca6dc3cd9224e7fcdc62063",
-      "bytes": 3750
+      "sha256": "c663f0c148890ecb453ac8cf190e8ac7d9959137b4163e49a60c15473fb6062c",
+      "bytes": 3095
     },
     {
       "path": "governance/REQUIRED_CHECKS_SPEC.md",
-      "sha256": "3cee2cbc1cf9a95509b2a7472d11c1a05bbae0ab9e3193ecac925e2451bbbed6",
-      "bytes": 3473
+      "sha256": "f3715de8bef718722ef83debc13f44da61068f556f290bec0f4c0f4cae2da3dd",
+      "bytes": 3239
     },
     {
       "path": "governance/ROOT_TURN_HANDOFF_SPEC.md",
@@ -108,8 +108,8 @@
     },
     {
       "path": "governance/W00_ACCEPTANCE.md",
-      "sha256": "75292930bd04c86fa7545409061f55972e1c5a828c681cee044d72f76369f441",
-      "bytes": 3177
+      "sha256": "4cda7b9550e63454251fb4b2c0c388a2a87ff5f1c1436c29bc982d9f5afad43b",
+      "bytes": 3147
     },
     {
       "path": "governance/schemas/chatgpt-review.schema.json",
@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "f2aafc0d616b3b552035f3dcba81e05cc330c17efc59a3ee6e687941ca4dc2e0",
-      "bytes": 8533
+      "sha256": "a14c310e60df48ac30d1cb444e633aa2bf6f897c7dfbb163eca5c617a3db97d3",
+      "bytes": 8796
     },
     {
       "path": "governance/templates/chatgpt-review.md",
@@ -180,9 +180,39 @@
       "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
       "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
       "bytes": 6697
+    },
+    {
+      "path": ".github/workflows/governance-integrity.yml",
+      "sha256": "37ebad699538dbf5077a1fb8e8793499020e0423ff7f148db54636ffd33caad4",
+      "bytes": 1258
+    },
+    {
+      "path": "governance/ruff.toml",
+      "sha256": "e8d259c70778e0c00474ebbc943df93d1ac96fa0ff7b7a19e36d46e1a3ea5e00",
+      "bytes": 68
+    },
+    {
+      "path": "governance/test_w00_checks.py",
+      "sha256": "cf047a7a64ffaf345987a8dfc943fae5c68123267de62334f52e5bc9a89daf94",
+      "bytes": 11547
+    },
+    {
+      "path": "governance/w00_checks.py",
+      "sha256": "13d0ad8ca410f64ad2d59d9b0d0441763270c1de817e1fb7222ec0b5eef5ca74",
+      "bytes": 19508
+    },
+    {
+      "path": "governance/w00_contracts.py",
+      "sha256": "690a993278af4011d6293e512a704dbd1a677475ffdf20b60be02ef864b1c84b",
+      "bytes": 21223
+    },
+    {
+      "path": "governance/w00_yaml.rb",
+      "sha256": "08ddc82f545e00146a140553c2ec59bcb02946ed5e7808694d5cf187433982e5",
+      "bytes": 2540
     }
   ],
-  "file_count": 34,
+  "file_count": 40,
   "activation": {
     "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
     "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",

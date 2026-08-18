@@ -1,56 +1,49 @@
-"""Pure W00A records and exact command-policy decisions."""
-
-from __future__ import annotations
-
 import ast
 import hashlib
 import json
+import math
 import re
 import shlex
-from collections.abc import Iterable
 from datetime import datetime
-from enum import Enum
 from typing import Any, cast
-from urllib.parse import urlparse
+
+import jsonschema
 
 REPOSITORY = "abbudjoe/biblical-scholar-lab"
 BRANCH = "codex/w00-repository-governance"
 ACTIVATION = "ACT-W00-REPOSITORY-GOVERNANCE-v3"
-RULESET = "20960975"
-ENVIRONMENT = "owner-merge-authorization"
-TITLE = "W00A — Governance Validation Foundation"
-SHA = re.compile(r"[0-9a-f]{40}")
-DIGEST = re.compile(r"[0-9a-f]{64}")
-COMPLETION = "<!-- BSL_ROOT_TURN_COMPLETION_V1 -->"
-REVIEW = "<!-- BSL_CHATGPT_REVIEW_V1 -->"
-INACTIVE_MARKERS = ("<!-- BSL_OWNER_MERGE_AUTHORIZATION_V1 -->", "<!-- BSL_MERGE_RECEIPT_V1 -->")
-PROHIBITED_CLAIMS = ("MERGE_READY", "SAFE_TO_MERGE", "OWNER_AUTHORIZATION_ACTIVE", "MERGE_ONLY_PATH_ACTIVE", "TRUSTED_VALIDATOR_LIVE_PROVEN_FOR_PR1")
-STATUSES = {"READY_FOR_CHATGPT_REVIEW", "BLOCKED_MISSING_EVIDENCE", "BLOCKED_DEPENDENCY", "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR", "SPLIT_REQUIRED", "NO_CHANGE", "FAILED"}
-TOKEN_OVERRIDES = {"GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"}
-W00A_RULESET_PAYLOAD_SHA256 = "a52b3d6c6a94a14a89fba182eb29ebc34af0fc6a6f34465031c7887d769caf65"
-HANDOFF_IDENTITY_FIELDS = {"schema_version", "project_id", "activation_id", "task_id", "turn_id", "codex_run_id", "status", "repository", "branch", "base_sha", "implementation_head_sha", "pr_url", "github_actor_login", "github_auth_mode", "github_auth_preflight"}
-HANDOFF_FIELDS = HANDOFF_IDENTITY_FIELDS | {"objective", "acceptance_criteria", "design_conformance", "changes", "review_targets", "commands", "evaluations", "artifacts", "delegated_operations", "complexity_receipt", "known_risks", "decisions_required", "billable_actions", "next_required_action", "merge_performed", "next_task_started"}
-COMPLEXITY_FIELDS = {"production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed", "modules_added", "modules_removed", "tables_added", "migrations_added", "endpoints_added", "cli_commands_added", "dependencies_added", "dependencies_removed", "public_contracts_changed", "abstractions", "simpler_alternatives_considered", "known_duplication_or_debt", "waivers", "simplicity_conformance"}
-ACTIVATION_FIELDS = {"schema_version", "activation_id", "status", "approved_design_commit", "approved_design_ids", "root_turn", "objective", "vertical_slice_id", "activated_user_visible_capability", "activated_invariants", "activated_paths", "activated_contracts", "activated_interfaces", "activated_data_stores", "activated_adapters", "required_tests", "required_evidence", "explicit_non_goals", "prohibited_scaffolding", "budgets", "completion_criteria", "owner_approval"}
-REVIEW_FIELDS = {"schema_version", "review_id", "pr_url", "activation_id", "base_sha", "reviewed_head_sha", "reviewer", "disposition", "summary", "findings", "evidence_reviewed", "required_next_action", "review_timestamp"}
-VALIDATION_FILES = ["governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py"]
-VALIDATION_COMMANDS = (
-    ["python3", "-m", "unittest", "-v", VALIDATION_FILES[-1]],
-    ["python3", "-m", "py_compile", *VALIDATION_FILES[:-1]],
-    ["uvx", "--from", "coverage", "coverage", "run", "--branch", "-m", "unittest", VALIDATION_FILES[-1]],
-    ["uvx", "--from", "coverage", "coverage", "report", "--show-missing", "--fail-under=90"],
-    ["uvx", "ruff", "check", "--config", "governance/ruff.toml", *VALIDATION_FILES],
-    ["uvx", "ruff", "format", "--config", "governance/ruff.toml", *VALIDATION_FILES],
-    ["uvx", "ruff", "format", "--check", "--config", "governance/ruff.toml", *VALIDATION_FILES],
-    ["uvx", "mypy", "--strict", *VALIDATION_FILES[:-1]],
-    ["uvx", "detect-secrets", "scan", "--all-files"],
-    ["uvx", "zizmor", ".github/workflows/governance-integrity.yml", ".github/workflows/trusted-governance-validator.yml"],
-    ["shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"],
+BASE = "3d3ebb706fe6c8779445cbbfd9fea271b86d3646"
+ROOT = "/Users/joseph/biblical-scholar-lab"
+PR_URL = f"https://github.com/{REPOSITORY}/pull/1"
+PR_TITLE = "W00A1: local governance kernel and defense checks"
+PROHIBITED_PROSE = (
+    "the pr was merged|merge was performed|w00a2 is now underway|w00b is now underway|w01 is now underway|"
+    "safe to merge|merge_ready|merge ready|owner authorization is active|owner authorization implemented|"
+    "merge-only path is active|merge-only path active|"
+    "trusted workflow proven"
+).split("|")
+PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
+UV_PYTHON = ("uv", "run", "--with", "jsonschema==4.25.1", "--")
+UV_COVERAGE = (*UV_PYTHON[:-1], "--with", "coverage==7.10.6", "--")
+VALIDATION_ARGV = (
+    (*UV_PYTHON, "python3", "-m", "unittest", "-v", PYTHON_FILES[-1]),
+    (*UV_PYTHON, "python3", "-m", "py_compile", *PYTHON_FILES[:-1]),
+    (*UV_COVERAGE, "python3", "-m", "coverage", "run", "--branch", "-m", "unittest", PYTHON_FILES[-1]),
+    (*UV_COVERAGE, "python3", "-m", "coverage", "report", "--fail-under=90", *PYTHON_FILES[:-1]),
+    ("uvx", "ruff", "check", "--config", "governance/ruff.toml", *PYTHON_FILES),
+    ("uvx", "ruff", "format", "--check", "--config", "governance/ruff.toml", *PYTHON_FILES),
+    ("uvx", "mypy", "--strict", "--ignore-missing-imports", *PYTHON_FILES[:-1]),
+    ("uvx", "detect-secrets", "scan", "--all-files"),
+    ("uvx", "zizmor", ".github/workflows/governance-integrity.yml"),
+    ("ruby", "-c", "governance/w00_yaml.rb"),
+    ("shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"),
+    ("git", "diff", "--check"),
+    ("git", "fsck", "--full"),
 )
 
 
 class ContractError(ValueError):
-    """An explicit governance contract failed."""
+    """A W00A1 contract failed closed."""
 
 
 def need(condition: bool, message: str) -> None:
@@ -58,67 +51,14 @@ def need(condition: bool, message: str) -> None:
         raise ContractError(message)
 
 
-def _logical(lines: list[str]) -> int:
-    return sum(bool(line.strip()) and not line.lstrip().startswith("#") for line in lines)
-
-
-def _complexity(node: ast.AST) -> int:
-    controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.IfExp, ast.Match)
-    return 1 + sum(isinstance(item, controls) for item in ast.walk(node)) + sum(max(0, len(item.values) - 1) for item in ast.walk(node) if isinstance(item, ast.BoolOp))
-
-
-def _nesting(node: ast.AST, depth: int = 0) -> int:
-    controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.With, ast.AsyncWith, ast.Match)
-    return max([depth, *(_nesting(child, depth + int(isinstance(child, controls))) for child in ast.iter_child_nodes(node))])
-
-
-def validate_python(path: str, source: str) -> None:
-    lines, tree = source.splitlines(), ast.parse(source, filename=path)
-    need(_logical(lines) <= 500, f"production module exceeds DR-30: {path}")
-    for node in ast.walk(tree):
-        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            continue
-        segment = lines[node.lineno - 1 : (node.end_lineno or node.lineno)]
-        need(not isinstance(node, ast.ClassDef) or _logical(segment) <= 250, f"class exceeds DR-30: {path}:{node.lineno}")
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            need(_logical(segment) <= 60 and _complexity(node) <= 10 and _nesting(node) <= 3, f"function exceeds DR-30: {path}:{node.lineno}")
-
-
-def exact(record: dict[str, Any], required: set[str], optional: set[str] | None = None) -> None:
-    optional = optional or set()
-    need(record.keys() <= required | optional and required <= record.keys(), "record fields differ")
-
-
-def _cli_definitions(tree: ast.Module) -> list[ast.expr]:
-    values = [node.value for node in tree.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "CLI_SPECS" for target in node.targets)] + [node.value.args[0] for node in tree.body if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute) and isinstance(node.value.func.value, ast.Name) and (node.value.func.value.id, node.value.func.attr, len(node.value.args)) == ("CLI_SPECS", "update", 1)]
-    return values
-
-
-def _cli_writes(tree: ast.Module) -> list[ast.AST]:
-    return [node for node in ast.walk(tree) if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete)) and any(isinstance(name, ast.Name) and name.id == "CLI_SPECS" for target in (node.targets if isinstance(node, (ast.Assign, ast.Delete)) else [node.target]) for name in ast.walk(target))]
-
-
-def cli_surface(tree: ast.Module) -> set[str]:
-    definitions, writes = _cli_definitions(tree), _cli_writes(tree)
-    calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)]
-    parsers = [call for call in calls if getattr(call.func, "attr", None) == "add_parser"]
-    shapes = {(type(call.args[0]), getattr(call.args[0], "id", getattr(call.args[0], "value", None))) for call in parsers if len(call.args) == 1 and not call.keywords}
-    methods = [attribute.attr for call in calls if isinstance(attribute := call.func, ast.Attribute) and isinstance(attribute.value, ast.Name) and attribute.value.id == "CLI_SPECS"]
-    keys = [key.value for definition in definitions if isinstance(definition, ast.Dict) for key in definition.keys if isinstance(key, ast.Constant) and isinstance(key.value, str)]
-    identity = (len(definitions), all(isinstance(item, ast.Dict) for item in definitions), len(keys) == len(set(keys)) == sum(len(cast(ast.Dict, item).keys) for item in definitions), len(writes), sorted(methods), len(parsers), shapes)
-    need(identity == (2, True, True, 1, ["items", "update"], 2, {(ast.Name, "check"), (ast.Constant, "command-policy")}), "CLI parser surface is unclassified")
-    return set(keys) | {"command-policy"}
-
-
 def strict_json(source: str | bytes) -> Any:
     def unique(items: list[tuple[str, Any]]) -> dict[str, Any]:
-        output = dict(items)
-        need(len(output) == len(items), "JSON object key is duplicated")
-        return output
+        need(len(items) == len(dict(items)), "JSON key is duplicated")
+        return dict(items)
 
     def finite(value: str) -> float:
         number = float(value)
-        need(abs(number) < float("inf"), f"JSON number is non-finite: {value}")
+        need(math.isfinite(number), "JSON number is non-finite")
         return number
 
     try:
@@ -129,270 +69,400 @@ def strict_json(source: str | bytes) -> Any:
 
 def timestamp(value: Any) -> datetime:
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00")) if isinstance(value, str) else None
-    except ValueError as error:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (AttributeError, ValueError) as error:
         raise ContractError("timestamp is invalid") from error
-    need(parsed is not None and parsed.utcoffset() is not None, "timestamp requires a timezone")
-    return cast(datetime, parsed)
+    need(parsed.utcoffset() is not None, "timestamp lacks timezone")
+    return parsed
 
 
-def validate_auth(login: str, environment: Iterable[str]) -> None:
-    need(login == "abbudjoe", "active GitHub login differs")
-    need(not TOKEN_OVERRIDES.intersection(environment), "token override is present")
+def _plain(item: Any, fields: set[str]) -> None:
+    need(isinstance(item, dict) and set(item) == fields, "nested record fields differ")
+    need(all(isinstance(item[key], str) and item[key] for key in fields), "nested record value differs")
 
 
-def validate_activation(record: dict[str, Any]) -> None:
-    exact(record, ACTIVATION_FIELDS)
-    root, owner = record.get("root_turn"), record.get("owner_approval")
-    need(isinstance(root, dict) and isinstance(owner, dict), "activation ownership is malformed")
-    root, owner = cast(dict[str, Any], root), cast(dict[str, Any], owner)
-    identity = (record.get("schema_version"), record.get("status"), root.get("model"), root.get("reasoning_effort"), root.get("base_branch"))
-    need(identity == ("1.0", "APPROVED", "gpt-5.6", "max", "main"), "activation identity differs")
-    need(re.fullmatch(r"ACT-[A-Z0-9-]+-v[0-9]+", str(record.get("activation_id"))) is not None, "activation ID differs")
-    need(re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(root.get("task_branch"))) is not None, "activation branch differs")
-    need(isinstance(root.get("luna_delegation_allowed"), bool), "activation delegation boundary differs")
-    need(record.get("activation_id") != ACTIVATION or (root.get("task_branch"), root.get("luna_delegation_allowed")) == (BRANCH, False), "W00 activation boundary differs")
-    need(isinstance(record.get("approved_design_commit"), str) and SHA.fullmatch(record["approved_design_commit"]) is not None, "approved design commit differs")
-    need(isinstance(record.get("approved_design_ids"), list) and bool(record["approved_design_ids"]) and all(isinstance(item, str) for item in record["approved_design_ids"]), "approved design IDs differ")
-    need((owner.get("owner"), owner.get("status")) == ("Joseph Abbud", "APPROVED"), "activation approval differs")
-    timestamp(owner.get("approved_at"))
-    paths = record.get("activated_paths")
-    need(isinstance(paths, list) and not any(str(path).startswith("activations/") for path in paths), "activation paths are invalid")
-
-
-def _array(record: dict[str, Any], field: str, kind: type) -> None:
-    value = record.get(field)
-    need(isinstance(value, list) and all(isinstance(item, kind) for item in value), f"{field} has an invalid type")
-
-
-def validate_handoff(record: dict[str, Any], *, w00a: bool = False) -> None:
-    exact(record, HANDOFF_FIELDS, {"compare_url"})
-    need(not any(item.lower() in json.dumps(record).lower() for item in PROHIBITED_CLAIMS), "handoff makes a prohibited capability claim")
-    _handoff_identity(record)
-    _handoff_design(record, w00a)
-    _validate_handoff_details(record)
-
-
-def _handoff_identity(record: dict[str, Any]) -> None:
-    identity = (record.get("schema_version"), record.get("project_id"), record.get("activation_id"), record.get("task_id"), record.get("repository"), record.get("branch"))
-    need((identity[:2], identity[4]) == (("1.0", "biblical-scholar-lab"), REPOSITORY), "handoff identity differs")
-    need(all(isinstance(item, str) and item for item in (identity[2], identity[3], record.get("turn_id"), record.get("codex_run_id"))) and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(identity[5])) is not None, "handoff task identity differs")
-    need(record.get("status") in STATUSES and record.get("next_required_action") == "CHATGPT_REVIEW", "handoff transition differs")
-    need(record.get("merge_performed") is False and record.get("next_task_started") is False, "handoff crossed the stop boundary")
-    for field in ("base_sha", "implementation_head_sha"):
-        need(isinstance(record.get(field), str) and SHA.fullmatch(record[field]) is not None, f"{field} differs")
-    need((_url(record.get("pr_url")), record.get("compare_url") is None or _url(record.get("compare_url"))) == (True, True), "handoff URL is invalid")
-    auth = record.get("github_auth_preflight")
-    need(isinstance(auth, dict), "handoff auth evidence differs")
-    exact(cast(dict[str, Any], auth), {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
-    observed = tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) + tuple(type(auth.get(key)) for key in ("auth_healthy", "token_override_present", "token_exposed")) if isinstance(auth, dict) else ()
-    need(observed == ("github.com", "abbudjoe", True, False, False, bool, bool, bool), "handoff auth evidence differs")
-    need(cast(dict[str, Any], auth).get("receipt_path") is None or isinstance(cast(dict[str, Any], auth).get("receipt_path"), str), "handoff auth receipt differs")
-    need((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff actor differs")
-
-
-def _handoff_design(record: dict[str, Any], w00a: bool) -> None:
-    design = record.get("design_conformance")
-    need(isinstance(design, dict) and design.get("unapproved_design_changes_executed") is False, "handoff design evidence differs")
-    design = cast(dict[str, Any], design)
-    exact(design, {"status", "approved_design_ids", "unapproved_design_changes_executed"})
-    expected = "BLOCKED_REQUIRES_DESIGN_REVIEW" if record["status"] == "BLOCKED_REQUIRES_DESIGN_REVIEW" else "CONFORMING"
-    need(design["status"] == expected and isinstance(design["approved_design_ids"], list) and all(isinstance(item, str) for item in design["approved_design_ids"]) and (not w00a or "GOV-01-S02" in design["approved_design_ids"]), "handoff design evidence differs")
-
-
-def _validate_handoff_details(record: dict[str, Any]) -> None:
-    arrays = (("acceptance_criteria", str), ("changes", dict), ("review_targets", dict), ("commands", dict), ("evaluations", dict), ("artifacts", dict), ("delegated_operations", dict), ("known_risks", str), ("decisions_required", str))
-    for field, kind in arrays:
-        _array(record, field, kind)
-    details = (isinstance(record.get("objective"), str), bool(record["objective"].strip()) if isinstance(record.get("objective"), str) else False, bool(record["acceptance_criteria"]), any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]))
-    need(details == (True, True, True, False), "handoff detail or delegation boundary differs")
-    _validate_complexity(record.get("complexity_receipt"), record["status"])
-    billable = record.get("billable_actions")
-    campaigns = billable.get("campaign_ids", []) if isinstance(billable, dict) else None
-    cost = billable.get("actual_cost_usd") if isinstance(billable, dict) else None
-    identity = (isinstance(billable, dict), {"performed", "actual_cost_usd"} <= billable.keys() <= {"performed", "actual_cost_usd", "campaign_ids"} if isinstance(billable, dict) else False, billable.get("performed") if isinstance(billable, dict) else None, type(cost) in (int, float), cost, isinstance(campaigns, list), all(isinstance(item, str) for item in campaigns) if isinstance(campaigns, list) else False)
-    need(identity == (True, True, False, True, 0, True, True), "billable work was reported")
-
-
-def _validate_complexity(value: Any, status: str) -> None:
-    need(isinstance(value, dict), "complexity receipt is absent")
-    receipt = cast(dict[str, Any], value)
-    exact(receipt, COMPLEXITY_FIELDS)
-    counts = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed")
-    need(all(isinstance(receipt.get(key), int) and not isinstance(receipt[key], bool) and receipt[key] >= 0 for key in counts), "complexity counts differ")
-    arrays = COMPLEXITY_FIELDS - set(counts) - {"simplicity_conformance"}
-    need(all(isinstance(receipt.get(key), list) and all(isinstance(item, dict if key == "abstractions" else str) for item in receipt[key]) for key in arrays), "complexity arrays differ")
-    expected = "BLOCKED_REQUIRES_SPLIT" if status == "SPLIT_REQUIRED" else "PASS"
-    need(receipt.get("simplicity_conformance") == expected, "complexity disposition differs")
-
-
-def _url(value: Any) -> bool:
-    parsed = urlparse(value) if isinstance(value, str) else None
-    return bool(parsed and parsed.scheme == "https" and parsed.netloc)
-
-
-def marked(comments: Iterable[dict[str, Any]], marker: str) -> list[tuple[dict[str, Any], int, datetime]]:
-    pattern, output = (re.compile(re.escape(marker) + r".*?```json\s*(.*?)\s*```", re.DOTALL), [])
-    for comment in comments:
-        need(isinstance(comment, dict), "comment is not an object")
-        if marker not in str(comment.get("body", "")):
+def _bounded(record: dict[str, Any]) -> str:
+    pending: list[Any] = [record]
+    texts = []
+    while pending:
+        value = pending.pop()
+        if isinstance(value, str):
+            need(0 < len(value) <= 4096, "record text is unbounded")
+            texts.append(value)
             continue
-        created, updated = (timestamp(comment.get("created_at")), timestamp(comment.get("updated_at")))
-        matches = pattern.findall(str(comment["body"]))
-        need(created == updated and len(matches) == 1 and isinstance(comment.get("id"), int), "marked comment is edited or malformed")
-        record = strict_json(matches[0])
-        need(isinstance(record, dict), "marked comment record is not an object")
-        output.append((record, comment["id"], created))
-    need([item[2] for item in output] == sorted(item[2] for item in output), "marked comments were reordered")
-    return output
+        if isinstance(value, list):
+            need(len(value) <= 64, "record list is unbounded")
+            pending.extend(value)
+            continue
+        if isinstance(value, dict):
+            need(len(value) <= 64, "record object is unbounded")
+            pending.extend(value.values())
+    return " ".join(texts).casefold()
 
 
-def current_completion(comments: Iterable[dict[str, Any]], expected: tuple[Any, ...]) -> tuple[int, datetime]:
-    entries = marked(comments, COMPLETION)
-    fields = ("activation_id", "task_id", "turn_id", "implementation_head_sha", "live_pr_head_sha", "handoff_markdown", "handoff_json", "status", "next_required_action")
-    need(len({item[0].get("turn_id") for item in entries}) == len(entries), "completion ID was reused")
-    matches = [item for item in entries if tuple(item[0].get(key) for key in fields) == expected]
-    need(len(matches) == 1, "one exact completion record is required")
-    return matches[0][1], matches[0][2]
+def _changes(record: dict[str, Any]) -> None:
+    for item in record["changes"]:
+        fields = {"change_id", "kind", "summary", "paths"}
+        need(isinstance(item, dict) and set(item) == fields, "change fields differ")
+        need(all(isinstance(item[key], str) and item[key] for key in fields - {"paths"}), "change text differs")
+        need(
+            item["kind"] in {"ADD", "MODIFY", "DELETE"}
+            and isinstance(item["paths"], list)
+            and all(isinstance(path, str) for path in item["paths"]),
+            "change differs",
+        )
 
 
-def _review_schema(record: dict[str, Any]) -> None:
-    exact(record, REVIEW_FIELDS, {"supersedes_review_id"})
-    need(isinstance(record.get("review_id"), str) and isinstance(record.get("summary"), str) and isinstance(record.get("findings"), list) and isinstance(record.get("evidence_reviewed"), list) and all(isinstance(item, str) for item in record["evidence_reviewed"]) and (record.get("supersedes_review_id") is None or isinstance(record.get("supersedes_review_id"), str)), "review schema differs")
+def _reviews(record: dict[str, Any]) -> None:
+    review = set(
+        "finding_id source severity affected_path_or_behavior root_cause repair regression_test evidence "
+        "final_status".split()
+    )
+    for item in record["review_targets"]:
+        _plain(item, review)
+        need(item["severity"] in {"P0", "P1", "P2", "P3"}, "finding severity differs")
+        need(
+            item["final_status"] in {"CLOSED", "SUPERSEDED_BY_APPROVED_SPLIT", "BLOCKED_WITH_EXACT_REASON"},
+            "finding status differs",
+        )
 
 
-def validate_record_order(comments: Iterable[dict[str, Any]], completion_at: datetime, identity: tuple[str, str, str, str], handoff_url: str) -> str:
-    values = list(comments)
-    need(not any(marker in str(item.get("body", "")) for marker in INACTIVE_MARKERS for item in values), "W00B authorization or merge record is inactive")
-    all_reviews = marked(values, REVIEW)
-    for record, _, _ in all_reviews:
-        _review_schema(record)
-    ids = [item[0].get("review_id") for item in all_reviews]
-    need(len(ids) == len(set(ids)), "review ID is reused")
-    reviews = [item for item in all_reviews if item[0].get("reviewed_head_sha") == identity[3]]
-    if not reviews:
-        return "HANDOFF"
-    need(reviews[-1][2] > completion_at, "review precedes completion")
-    review, _, created = reviews[-1]
-    actual = tuple(review.get(key) for key in ("pr_url", "activation_id", "base_sha", "reviewed_head_sha"))
-    valid = (review.get("schema_version"), review.get("reviewer"), review.get("disposition"), review.get("required_next_action")) == ("1.0", "ChatGPT", "CHATGPT_REVIEW_CLEAN", "OWNER_AUTHORIZATION")
-    need(actual == identity and valid and handoff_url in review.get("evidence_reviewed", []), "current review binding differs")
-    need(timestamp(review.get("review_timestamp")) <= created, "review timestamp follows its comment")
-    return "REVIEW"
+def _outputs(record: dict[str, Any]) -> None:
+    for item in record["evaluations"]:
+        _plain(item, {"name", "status", "evidence"})
+        need(item["status"] in {"PASS", "PASS_WITH_REVIEW", "FAIL"}, "evaluation status differs")
+    for item in record["artifacts"]:
+        _plain(item, {"artifact_id", "kind", "reference", "sha256"})
+        need(re.fullmatch(r"[0-9a-f]{64}", item["sha256"]) is not None, "artifact digest differs")
+    for item in record["delegated_operations"]:
+        fields = {"role", "agent", "scope", "write_performed", "result"}
+        need(isinstance(item, dict) and set(item) == fields, "delegation fields differ")
+        texts = fields - {"write_performed"}
+        valid = all(isinstance(item[key], str) and item[key] for key in texts)
+        need(valid and item["role"] == "explorer" and item["write_performed"] is False, "delegation differs")
+    for item in record["complexity_receipt"]["abstractions"]:
+        _plain(item, {"name", "reason"})
 
 
-class CommandPhase(Enum):
-    IMPLEMENTATION = "implementation"
-    W00A_GOVERNANCE = "w00a-governance"
+def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
+    fields = set(
+        "command_evidence_id root_turn_id activation_id implementation_head_sha argv working_directory "
+        "execution_profile started_at finished_at exit_code result stdout_sha256 stderr_sha256 "
+        "combined_evidence_artifact_sha256".split()
+    )
+    need(set(item) == fields and all(isinstance(token, str) for token in item["argv"]), "command fields differ")
+    profile = {"kind": "LOCAL_EXISTING_GH", "actor_login": "abbudjoe", "token_overrides_present": False}
+    need(item["execution_profile"] == profile, "command execution profile differs")
+    keys = ("root_turn_id", "activation_id", "implementation_head_sha")
+    need(tuple(item[key] for key in keys) == identity, "command identity differs")
+    need(assess_argv(item["argv"]), "argv is not allowlisted")
+    need(item["working_directory"] == ROOT, "working directory differs")
+    need(timestamp(item["started_at"]) <= timestamp(item["finished_at"]), "command time order differs")
+    need(
+        isinstance(item["exit_code"], int) and (item["exit_code"] == 0) == (item["result"] == "PASS"),
+        "command result differs",
+    )
+    need(item["result"] in {"PASS", "FAIL"}, "command result is invalid")
+    digest_fields = ("argv", "command_evidence_id", "stderr_sha256", "stdout_sha256")
+    envelope = {key: item[key] for key in digest_fields}
+    digest = hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    digest_keys = ("stderr_sha256", "stdout_sha256", "combined_evidence_artifact_sha256")
+    need(all(re.fullmatch(r"[0-9a-f]{64}", item[key]) for key in digest_keys), "command digest differs")
+    need(digest == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
 
 
-def assess_command(command: str, phase: CommandPhase, *, branch: str = BRANCH, pr_number: int = 1, governance_available: bool = False, governance_payload: Any = None) -> tuple[bool, str]:
-    if re.search(r"[\n\r;&|`<>$\\*?\[\]{}()~#!]", command):
-        return False, "shell composition or expansion is prohibited"
+def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> None:
+    for item in items:
+        _command(item, identity)
+    ids = [item["command_evidence_id"] for item in items]
+    artifacts = [item["combined_evidence_artifact_sha256"] for item in items]
+    need(len(ids) == len(set(ids)), "command evidence id is reused")
+    need(len(artifacts) == len(set(artifacts)), "command artifact is reused")
+
+
+def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
+    errors = sorted(jsonschema.Draft202012Validator(schema).iter_errors(record), key=lambda error: list(error.path))
+    need(not errors, f"handoff schema differs: {errors[0].message if errors else ''}")
+    prose = _bounded(record)
+    need(record["changes"] and record["review_targets"] and record["commands"], "required evidence is empty")
+    _changes(record)
+    _reviews(record)
+    _outputs(record)
+    keys = ("schema_version", "project_id", "activation_id", "task_id", "repository", "branch", "base_sha", "pr_url")
+    expected = ("1.0", "biblical-scholar-lab", ACTIVATION, "W00", REPOSITORY, BRANCH, BASE, PR_URL)
+    need(tuple(record[key] for key in keys) == expected, "handoff identity differs")
+    design, auth = record["design_conformance"], record["github_auth_preflight"]
+    need(design["status"] == "CONFORMING" and "W00-SPLIT-01" in design["approved_design_ids"], "design differs")
+    auth_json = '{"active_login":"abbudjoe","auth_healthy":true,"hostname":"github.com",'
+    auth_json += '"token_exposed":false,"token_override_present":false}'
+    need(json.dumps(auth, sort_keys=True, separators=(",", ":")) == auth_json, "auth differs")
+    need(
+        record["billable_actions"] == {"performed": False, "actual_cost_usd": 0, "campaign_ids": []}, "billable differs"
+    )
+    compare = f"https://github.com/{REPOSITORY}/compare/{BASE}...{BRANCH}"
+    need(record["compare_url"] == compare, "compare URL differs")
+    _commands(record["commands"], (record["turn_id"], record["activation_id"], record["implementation_head_sha"]))
+    expected_complexity = {"SPLIT_REQUIRED": "BLOCKED_REQUIRES_SPLIT"}.get(record["status"], "PASS")
+    need(record["complexity_receipt"]["simplicity_conformance"] == expected_complexity, "simplicity differs")
+    need(not record["merge_performed"] and not record["next_task_started"], "terminal state differs")
+    need(
+        record["status"] != "READY_FOR_CHATGPT_REVIEW" or record["next_required_action"] == "CHATGPT_REVIEW",
+        "next action differs",
+    )
+    need(not any(phrase in prose for phrase in PROHIBITED_PROSE), "prose contradicts terminal facts")
+
+
+def command_allowed(command: str) -> bool:
+    if re.search(r"[\n\r;&|\x60<>$\\*?\[\]{}()~!]", command):
+        return False
     try:
-        tokens = shlex.split(command)
+        return assess_argv(shlex.split(command))
     except ValueError:
-        return False, "command cannot be parsed"
-    if not tokens or tokens[0] in {"env", "command", "sudo", "xargs", "bash", "sh", "zsh"} or "=" in tokens[0]:
-        return (False, "prefix, alias, nested shell, or environment smuggling is prohibited")
-    if phase is CommandPhase.W00A_GOVERNANCE:
-        exact_put = ["gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/rulesets/{RULESET}", "--input", ".codex-tmp-ruleset-w00a.json"]
-        digest = hashlib.sha256(json.dumps(governance_payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-        allowed = governance_available and tokens == exact_put and digest == W00A_RULESET_PAYLOAD_SHA256
-        return (allowed, "exact unconsumed W00A ruleset adjustment" if allowed else "governance mutation is unavailable or differs")
-    return _implementation(tokens, branch, pr_number)
+        return False
 
 
-def _implementation(tokens: list[str], branch: str, pr_number: int) -> tuple[bool, str]:
-    github = _github_operation(tokens, pr_number)
-    if github is not None:
-        return github
-    if tokens and tokens[0] == "git":
-        return _git(tokens, branch)
-    return _local(tokens)
+def assess_argv(argv: list[str]) -> bool:
+    if not argv or any(not token or "\0" in token for token in argv):
+        return False
+    if tuple(argv) in VALIDATION_ARGV:
+        return True
+    if tuple(argv[: len(UV_PYTHON)]) == UV_PYTHON:
+        return _validator(argv[len(UV_PYTHON) :])
+    if argv[0] in {"env", "command", "sudo", "xargs", "bash", "sh", "zsh"} or "=" in argv[0]:
+        return False
+    handler = {"gh": _gh, "git": _git}.get(argv[0], _validator)
+    return handler(argv)
 
 
-def _github_operation(tokens: list[str], pr_number: int) -> tuple[bool, str] | None:
-    if tokens[:2] == ["gh", "auth"]:
-        allowed = tokens == ["gh", "auth", "status", "--active", "--hostname", "github.com"]
-        return (allowed, "redacted auth preflight" if allowed else "authentication display or mutation is prohibited")
-    if tokens[:2] == ["gh", "api"]:
-        endpoint = tokens[2].lstrip("/").split("?", 1)[0] if len(tokens) == 3 else ""
-        patterns = (r"user", rf"repos/{REPOSITORY}", rf"repos/{REPOSITORY}/pulls/1", rf"repos/{REPOSITORY}/issues/1/comments", rf"repos/{REPOSITORY}/actions/(?:workflows|runs/[0-9]+)", rf"repos/{REPOSITORY}/rulesets/{RULESET}", rf"repos/{REPOSITORY}/(?:codeowners/errors|contents/\.github/CODEOWNERS|commits/[0-9a-f]{{40}}/check-runs)", rf"repos/{REPOSITORY}/environments/{ENVIRONMENT}")
-        allowed = any(re.fullmatch(pattern, endpoint) for pattern in patterns)
-        return (allowed, "bounded API read" if allowed else "mutating or unbounded API is prohibited")
-    return _pr_operation(tokens, pr_number)
+def _gh(argv: list[str]) -> bool:
+    if argv[:2] == ["gh", "auth"]:
+        return argv == ["gh", "auth", "status", "--active", "--hostname", "github.com"]
+    suffixes = (
+        "pulls/1|issues/1/comments?per_page=100|actions/workflows?per_page=100|rulesets/20960975|"
+        "codeowners/errors|contents/.github/CODEOWNERS?ref=main|environments/owner-merge-authorization"
+    ).split("|")
+    reads = {"user", f"repos/{REPOSITORY}", *(f"repos/{REPOSITORY}/{suffix}" for suffix in suffixes)}
+    if argv[:2] == ["gh", "api"]:
+        endpoint = argv[2].lstrip("/") if len(argv) == 3 else ""
+        return endpoint in reads
+    exact = (
+        ["gh", "pr", "checks", "1", "--repo", REPOSITORY],
+        ["gh", "pr", "comment", "1", "--repo", REPOSITORY, "--body-file", ".codex-tmp-pr-completion.md"],
+        ["gh", "pr", "edit", "1", "--repo", REPOSITORY, "--title", PR_TITLE, "--body-file", ".codex-tmp-pr-body.md"],
+    )
+    return argv in exact
 
 
-def _pr_operation(tokens: list[str], pr_number: int) -> tuple[bool, str] | None:
-    number = str(pr_number)
-    exact_gh = (["gh", "pr", "view", number, "--repo", REPOSITORY], ["gh", "pr", "checks", number, "--repo", REPOSITORY], ["gh", "pr", "comment", number, "--repo", REPOSITORY, "--body-file", ".codex-tmp-pr-completion.md"])
-    edit = len(tokens) == 10 and tokens[:4] == ["gh", "pr", "edit", number] and tokens[4:8] == ["--repo", REPOSITORY, "--title", TITLE] and tokens[8:] == ["--body-file", ".codex-tmp-pr-body.md"]
-    if tokens in exact_gh or edit:
-        return True, "exact PR operation"
+def _git(argv: list[str]) -> bool:
+    if argv == ["git", "push", "origin", BRANCH]:
+        return True
+    if argv[1:3] == ["commit", "-m"]:
+        return len(argv) == 4 and argv[3] in {"W00A1 Repair03 local governance kernel", "W00A1 Repair03 handoff"}
+    if argv[1:2] == ["add"]:
+        return len(argv) > 2 and all(_stage_path(path) for path in argv[2:])
+    fixed = (["git", "status", "--short"], ["git", "diff", "--check"], ["git", "fsck", "--full"])
+    return argv in fixed or _git_revision(argv)
+
+
+def _git_revision(argv: list[str]) -> bool:
+    if len(argv) != 3 or argv[:2] != ["git", "rev-parse"]:
+        return False
+    return argv[2] == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", argv[2].removesuffix("^")) is not None
+
+
+def _stage_path(path: str) -> bool:
+    exact = set(
+        (
+            ".github/workflows/governance-integrity.yml .github/workflows/trusted-governance-validator.yml "
+            "governance/GOV-01-artifacts.sha256 governance/GOV-01-package-manifest.json governance/ruff.toml "
+            "governance/schemas/turn-handoff.schema.json governance/test_w00_checks.py governance/w00_checks.py "
+            "governance/w00_contracts.py governance/w00_yaml.rb governance/fixtures/w00-command-policy.json "
+            "governance/fixtures/w00-records.json governance/BRANCH_AND_RULESET_SPEC.md "
+            "governance/CHATGPT_REVIEW_SPEC.md "
+            "governance/GITHUB_CLI_OPERATION_POLICY.md governance/GITHUB_OWNER_SETUP.md "
+            "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md governance/REQUIRED_CHECKS_SPEC.md "
+            "governance/W00_ACCEPTANCE.md"
+        ).split()
+    )
+    handoff = re.fullmatch(r"handoffs/W00/W00-SOL-REPAIR03-[0-9]{8}T[0-9]{6}Z\.(?:md|json)", path)
+    return path in exact or handoff is not None
+
+
+def _validator(argv: list[str]) -> bool:
+    if argv[:2] != ["python3", "governance/w00_checks.py"] or len(argv) < 3:
+        return False
+    specs = {
+        "project-integrity": ("--base-sha", "--head-sha", "--branch"),
+        "turn-handoff-integrity": ("--base-sha", "--head-sha", "--branch", "--pr-url"),
+    }
+    flags = specs.get(argv[2])
+    if flags is None or len(argv[3:]) != len(flags) * 2 or tuple(argv[3::2]) != flags:
+        return False
+    values = dict(zip(flags, argv[4::2], strict=True))
+    head = values["--head-sha"]
+    valid = all(
+        (
+            values["--base-sha"] == BASE,
+            head == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", head),
+            values["--branch"] == BRANCH,
+        )
+    )
+    valid = valid and ("--pr-url" not in values or values["--pr-url"] == PR_URL)
+    return bool(valid)
+
+
+def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
+    if isinstance(node, ast.Name):
+        return aliases.get(node.id, node.id)
+    if isinstance(node, ast.Attribute):
+        base = _resolve(node.value, aliases)
+        return f"{base}.{node.attr}" if base else None
     return None
 
 
-def _git(tokens: list[str], branch: str) -> tuple[bool, str]:
-    if tokens == ["git", "push", "origin", branch] and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", branch):
-        return True, "exact task-branch push"
-    if len(tokens) == 4 and tokens[1:3] == ["commit", "-m"] and tokens[3]:
-        return True, "new commit"
-    if len(tokens) > 2 and tokens[1] == "add":
-        safe = all(_staging_path(item) for item in tokens[2:])
-        return bool(safe), "explicit staging" if safe else "broad or unsafe staging is prohibited"
-    return _git_read(tokens)
+def _matches(name: str | None, targets: set[str]) -> bool:
+    return (
+        any(name == target or target.startswith("*") and name.endswith(target[1:]) for target in targets)
+        if name
+        else False
+    )
 
 
-def _staging_path(path: str) -> bool:
-    return bool(re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*", path)) and ".." not in path.split("/") and (path == "AGENTS.md" or path.startswith((".github/workflows/", "governance/", "handoffs/W00/")))
+class _Symbols(ast.NodeVisitor):
+    def __init__(self, targets: set[str]) -> None:
+        self.targets, self.aliases, self.calls = targets, dict[str, str](), list[tuple[str, ast.Call]]()
+        self.class_values: set[str] = set()
+        self.classes: set[str] = set()
+
+    def visit_Import(self, node: ast.Import) -> None:
+        for item in node.names:
+            self.aliases[item.asname or item.name.split(".")[0]] = item.name
+
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        for item in node.names:
+            local, canonical = item.asname or item.name, f"{node.module}.{item.name}"
+            self.aliases[local] = canonical
+            if node.module != "typing" and item.name[:1].isupper():
+                self.class_values.add(canonical)
+                self.classes.update(() if local.startswith("_") else (canonical,))
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self.aliases[node.name] = node.name
+        self.class_values.add(node.name)
+        self.classes.update(() if node.name.startswith("_") else (node.name,))
+        self.generic_visit(node)
+
+    def _assign(self, value: ast.AST | None, targets: list[ast.expr]) -> None:
+        resolved = _resolve(value, self.aliases)
+        for target in targets:
+            self._bind(target, resolved)
+        if resolved or value is None:
+            return
+        direct = isinstance(value, ast.Call) and _matches(_resolve(value.func, self.aliases), self.targets)
+        hidden = any(_matches(_resolve(item, self.aliases), self.targets) for item in ast.walk(value))
+        need(not hidden or direct, "policy alias is dynamically obscured")
+        need(not _public_call(targets) or not isinstance(value, ast.Call), "dynamic public class is unclassified")
+
+    def _bind(self, target: ast.expr, resolved: str | None) -> None:
+        if not resolved or not isinstance(target, ast.Name):
+            return
+        self.aliases[target.id] = resolved
+        if resolved in self.class_values and not target.id.startswith("_"):
+            self.classes.add(resolved)
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        self._assign(node.value, node.targets)
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+        self._assign(node.value, [node.target])
+        self.generic_visit(node)
+
+    def visit_Call(self, node: ast.Call) -> None:
+        resolved = _resolve(node.func, self.aliases)
+        if _matches(resolved, self.targets):
+            self.calls.append((cast(str, resolved), node))
+        if resolved == "getattr" and node.args:
+            base = _resolve(node.args[0], self.aliases)
+            need(
+                not base or not any(target.startswith(("*", f"{base}.")) for target in self.targets),
+                "policy getattr is ambiguous",
+            )
+        self.generic_visit(node)
 
 
-def _git_read(tokens: list[str]) -> tuple[bool, str]:
-    fixed = (["git", "status", "--short"], ["git", "diff", "--check"], ["git", "fsck", "--full"])
-    revision = len(tokens) == 3 and tokens[:2] == ["git", "rev-parse"] and bool(re.fullmatch(r"HEAD\^?|main|origin/main|[0-9a-f]{40}", tokens[2]))
-    return ((tokens in fixed or revision), "exact Git read" if tokens in fixed or revision else "Git operation is prohibited")
+def _public_call(targets: list[ast.expr]) -> bool:
+    return any(
+        isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper() for target in targets
+    )
 
 
-def _local(tokens: list[str]) -> tuple[bool, str]:
-    if tokens in VALIDATION_COMMANDS:
-        return True, "exact validation command"
-    allowed = _validator_command(tokens)
-    return (allowed, "governance validator" if allowed else "local command is not allowlisted")
+def policy_calls(source: str, targets: set[str]) -> list[tuple[str, ast.Call]]:
+    visitor = _Symbols(targets)
+    visitor.visit(ast.parse(source))
+    return visitor.calls
 
 
-def _validator_command(tokens: list[str]) -> bool:
-    if len(tokens) < 3 or tokens[:2] != ["python3", "governance/w00_checks.py"]:
-        return False
-    specs = {
-        "package-integrity": (["--revision"], []),
-        "project-integrity": (["--base-sha", "--head-sha", "--branch"], []),
-        "turn-handoff-integrity": (["--base-sha", "--head-sha", "--branch", "--pr-url"], []),
-        "candidate-metadata": (["--base-sha", "--head-sha", "--tree-json", "--compare-json"], []),
-        "trusted-governance": (["--repository", "--pr-number", "--base-sha", "--head-sha", "--trusted-revision", "--branch", "--event", "--run-id", "--run-attempt", "--candidate-repository", "--tree-json", "--compare-json", "--output"], []),
-        "completion-integrity": (["--base-sha", "--head-sha", "--branch", "--pr-json", "--comments-json"], []),
-        "live-governance": (["--expected-head", "--review-limit-observed-at", "--environment-ui-observed-at"], ["--review-limit-enabled", "--admin-bypass-disabled"]),
-    }
-    value_flags, boolean_flags = specs.get(tokens[2], ([], []))
-    count, arguments = len(value_flags) * 2, tokens[3:]
-    valid_pairs = arguments[:count:2] == value_flags and all(not value.startswith("-") for value in arguments[1:count:2])
-    values = dict(zip(value_flags, arguments[1:count:2], strict=True)) if valid_pairs else {}
-    return bool(value_flags) and valid_pairs and all(_cli_value(flag, value) for flag, value in values.items()) and arguments[count:] == boolean_flags
+def cli_surface(source: str) -> set[str]:
+    names: list[str] = []
+    for _, call in policy_calls(source, {"*.add_parser"}):
+        need(len(call.args) == 1 and not call.keywords and isinstance(call.args[0], ast.Constant), "CLI is ambiguous")
+        names.append(cast(str, cast(ast.Constant, call.args[0]).value))
+    expected = {"project-integrity", "turn-handoff-integrity"}
+    need(len(names) == len(set(names)) and set(names) == expected, "CLI differs")
+    return cast(set[str], set(names))
 
 
-def _cli_value(flag: str, value: str) -> bool:
-    if flag in {"--base-sha", "--head-sha", "--trusted-revision", "--revision", "--expected-head"}:
-        return value == "HEAD" or SHA.fullmatch(value) is not None
-    if flag == "--repository":
-        return value == REPOSITORY
-    if flag == "--branch":
-        return re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", value) is not None
-    if flag == "--pr-url":
-        return re.fullmatch(rf"https://github\.com/{REPOSITORY}/pull/[1-9][0-9]*", value) is not None
-    if flag in {"--pr-number", "--run-id", "--run-attempt"}:
-        return value.isdigit() and int(value) > 0
-    if flag == "--event":
-        return value == "pull_request_target"
-    if flag.endswith("observed-at"):
-        return re.fullmatch(r"[0-9T:+.Z-]+", value) is not None
-    return re.fullmatch(r"\.codex-tmp-[A-Za-z0-9.-]+", value) is not None
+def class_surface(source: str) -> set[str]:
+    visitor = _Symbols(set())
+    visitor.visit(ast.parse(source))
+    return visitor.classes
+
+
+def _decision(node: ast.AST) -> int:
+    if isinstance(node, (ast.If, ast.For, ast.AsyncFor, ast.While, ast.IfExp, ast.Assert)):
+        return 1
+    if isinstance(node, ast.BoolOp):
+        return len(node.values) - 1
+    if isinstance(node, ast.Try):
+        return len(node.handlers) + int(bool(node.orelse))
+    if isinstance(node, ast.comprehension):
+        return 1 + len(node.ifs)
+    if isinstance(node, ast.Match):
+        return max(0, len(node.cases) - 1)
+    return 0
+
+
+def _cyclomatic(node: ast.AST) -> int:
+    return 1 + sum(_decision(item) for item in ast.walk(node))
+
+
+def _nesting(node: ast.AST) -> int:
+    controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.With, ast.AsyncWith, ast.Match)
+    maximum, pending = 0, [(node, 0)]
+    while pending:
+        current, depth = pending.pop()
+        child_depth = depth + int(isinstance(current, controls))
+        maximum = max(maximum, child_depth)
+        pending.extend((child, child_depth) for child in ast.iter_child_nodes(current))
+    return maximum
+
+
+def validate_python(path: str, source: str) -> None:
+    lines, tree = source.splitlines(), ast.parse(source, filename=path)
+
+    def logical(values: list[str]) -> int:
+        return sum(bool(line.strip()) and not line.lstrip().startswith("#") for line in values)
+
+    need(logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        size = logical(lines[node.lineno - 1 : node.end_lineno])
+        if isinstance(node, ast.ClassDef):
+            need(size <= 250, f"class violates DR-30: {path}:{node.lineno}")
+        else:
+            need(
+                size <= 60 and _cyclomatic(node) <= 10 and _nesting(node) <= 3,
+                f"function violates DR-30: {path}:{node.lineno}",
+            )

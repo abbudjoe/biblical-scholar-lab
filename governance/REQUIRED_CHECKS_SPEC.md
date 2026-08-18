@@ -10,7 +10,7 @@ Validates, at minimum:
 - Namespace and model-role rules.
 - Dependency and size budgets.
 - Source and benchmark content remain unchanged unless the activation explicitly authorizes a project-designed update.
-- `turn-handoff-integrity` requires exact, nonempty, zero-exit unit/test/lint/type/contract command evidence; `project-integrity` validates the activation, candidate code, budgets, package, and audited workflow hashes.
+- Unit/test/lint/type/contract commands required by the activation pass.
 
 ## turn-handoff-integrity
 
@@ -29,9 +29,7 @@ Validates:
 
 ## chatgpt-review-integrity
 
-This is a static future W00B contract. It is inactive and not required in W00A.
-
-A PR-controlled defense-in-depth check exercises the structured review validator against adversarial fixtures. It verifies:
+A trusted default-branch workflow/check parses the structured review record without checking out or executing PR code. It verifies:
 
 - Review marker and schema.
 - PR and activation match.
@@ -39,15 +37,13 @@ A PR-controlled defense-in-depth check exercises the structured review validator
 - Disposition is `CHATGPT_REVIEW_CLEAN`.
 - Review references the completed handoff and evidence set.
 
-It does not accept a live review or prove workflow provenance. The protected authorization workflow later requeries and validates the actual clean review from trusted base code.
+Because the PR author and owner share `@abbudjoe`, comment authorship is not treated as human-approval proof. Human approval is represented separately by an exact-head owner authorization record created only after Joseph explicitly approves in the current ChatGPT conversation.
 
 The check must be attached to the reviewed head and become absent/stale on a new push.
 
 ## owner-merge-record-integrity
 
-This is a static future W00B contract. It is inactive and not required in W00A.
-
-A PR-controlled defense-in-depth check exercises the structured `OwnerMergeAuthorizationRecord` validator against adversarial fixtures. It verifies:
+A trusted default-branch workflow/check parses the structured `OwnerMergeAuthorizationRecord` without checking out or executing PR code. It verifies:
 
 - Authorization marker and schema.
 - Repository, PR, activation, and ChatGPT review identity.
@@ -57,7 +53,7 @@ A PR-controlled defense-in-depth check exercises the structured `OwnerMergeAutho
 - Status is `AUTHORIZED`.
 - The record has not expired, been superseded, or been reused.
 
-It is quality evidence only. The protected environment and base-controlled authorization workflow provide the live owner receipt; neither check-name nor expected-App matching proves provenance.
+This check validates exact-head consistency. It does not claim independent authentication of the human origin of the record under the shared GitHub credential.
 
 A new push makes the check stale.
 
@@ -74,4 +70,4 @@ W00 must prove, through local and repository fixtures, that the approved Codex e
 - Permits only the exact authorized merge sequence during a merge-only turn.
 - Uses `--match-head-commit` for every Codex-executed merge.
 
-In W00A, merge commands remain unavailable and Joseph performs the bootstrap merge. W00B must implement and prove the merge-only surface before W01.
+If this cannot be proven, the check reports `OWNER_MANUAL_MERGE_REQUIRED`; implementation may continue, but Codex merge execution remains disabled.

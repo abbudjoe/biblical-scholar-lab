@@ -155,11 +155,9 @@ The wrapper must:
 
 Raw unrestricted `gh api` is not part of the ordinary Codex tool surface.
 
-GOV-01-S02 gives W00A one non-reusable exception: the exact allowlisted `PUT` may change only ruleset `20960975` to require `project-integrity` and `turn-handoff-integrity`. Owner-environment mutation and every other mutation remain prohibited. Class B stays inactive until W00B.
-
 ## Enforcement and fallback
 
-W00B must prove that:
+W00 must prove that:
 
 - The implementation prompt and validator prohibit Class B and Class C operations during root turns.
 - The merge-only prompt permits only the exact authorized merge sequence.

@@ -60,8 +60,7 @@ The existing `gh` credential belongs to the owner account and may have broad rep
 The approved controls are therefore:
 
 - Protected `main` rules.
-- Exact-head defense-in-depth checks plus the base-controlled trusted-validator receipt.
-- Protected `owner-merge-authorization` environment approval and receipt.
+- Exact-head trusted checks.
 - `governance/GITHUB_CLI_OPERATION_POLICY.md`.
 - Implementation-root-turn stop before merge.
 - Explicit owner approval of exact head in ChatGPT.
@@ -91,20 +90,20 @@ Before W00 exists, create a no-bypass ruleset on the default branch with:
 - Block force pushes.
 - Block deletion.
 
-W00A and W00B are manually merged by Joseph after exact-head ChatGPT review and approval. The owner environment remains an observed future dependency during W00A.
+W00 is merged manually by Joseph after exact-head ChatGPT review because the trusted checks do not yet exist on `main`.
 
-## 6. W00A bootstrap checks
+## 6. Strengthen the ruleset after W00
 
-W00A requires only these defense-in-depth contexts:
+After W00 merges, require:
 
 ```text
 project-integrity
 turn-handoff-integrity
+chatgpt-review-integrity
+owner-merge-record-integrity
 ```
 
 Use strict/current-head checks. Keep the bypass list empty.
-
-Expected GitHub Actions App identity does not establish workflow provenance. W00B activates the authorization-chain checks and receipt path; W01 is the first live end-to-end proof.
 
 ## 7. Protect CODEOWNERS and governance
 
