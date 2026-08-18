@@ -3,7 +3,6 @@ import hashlib
 import json
 import math
 import re
-import shlex
 from datetime import datetime
 from typing import Any, cast
 
@@ -25,20 +24,25 @@ REQUIRED_FINDINGS = set(
     "R0-P1-TRUST-PROVENANCE R1-F2 R2-F4 R3-F3 R4-F1 R5-F1 R6-F7 R7-F5 R8-F6 "
     "R02-P2-STRICT-CONTENT R02-P2-HANDOFF-EVIDENCE R02-P2-CLAIMS R02-P2-CODEOWNERS "
     "R02-P2-QUALITY-SPEC R02-P1-ABSTRACTIONS R02-P2-DR30 P2-01 P2-02 P2-03 P2-04 P2-05 P2-06 "
-    "R03-P2-WORKFLOW R03-P2-CHRONOLOGY R03-P2-PROTOCOL R03-P2-DISPOSITION".split()
+    "R03-P2-WORKFLOW R03-P2-CHRONOLOGY R03-P2-PROTOCOL R03-P2-DISPOSITION "
+    "R03R2-P2-SCHEMA R03R2-P2-ALIAS R03R2-P2-LEDGER R03R2-P2-STUB "
+    "R03R2-P3-PROTOCOL-COVERAGE R03R2-P3-TOOL-INVENTORY".split()
 )
-EXTERNAL_TOOLS = "detect-secrets==1.5.0 mypy==2.3.1 radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
+P1_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R1-F2", "R2-F4", "R3-F3", "R02-P1-ABSTRACTIONS"}
+P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
+SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
+EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1".split()
+EXTERNAL_TOOLS += "radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
+GETTERS = set("getattr builtins.getattr inspect.getattr_static object.__getattribute__ type.__getattribute__".split())
 PROSE_FIELDS = (
     "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt".split()
 )
-STAGE_PATHS = set(
-    (
-        ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
-        "governance/GOV-01-package-manifest.json "
-        "governance/ruff.toml governance/schemas/turn-handoff.schema.json governance/test_w00_checks.py "
-        "governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb"
-    ).split()
+_STAGED = (
+    ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
+    "governance/GOV-01-package-manifest.json governance/ruff.toml governance/schemas/turn-handoff.schema.json "
+    "governance/test_w00_checks.py governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb"
 )
+STAGE_PATHS = set(_STAGED.split())
 PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
 UV_PYTHON = ("uv", "run", "--with", "jsonschema==4.25.1", "--")
 UV_COVERAGE = (*UV_PYTHON[:-1], "--with", "coverage==7.10.6", "--")
@@ -60,13 +64,9 @@ VALIDATION_ARGV = (
 )
 
 
-class ContractError(ValueError):
-    """A W00A1 contract failed closed."""
-
-
 def need(condition: bool, message: str) -> None:
     if not condition:
-        raise ContractError(message)
+        raise ValueError(message)
 
 
 def strict_json(source: str | bytes) -> Any:
@@ -82,16 +82,7 @@ def strict_json(source: str | bytes) -> Any:
     try:
         return json.loads(source, object_pairs_hook=unique, parse_constant=finite, parse_float=finite)
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
-        raise ContractError("JSON is malformed") from error
-
-
-def timestamp(value: Any) -> datetime:
-    try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    except (AttributeError, ValueError) as error:
-        raise ContractError("timestamp is invalid") from error
-    need(parsed.utcoffset() is not None, "timestamp lacks timezone")
-    return parsed
+        raise ValueError("JSON is malformed") from error
 
 
 def _command_digest(item: dict[str, Any]) -> str:
@@ -104,11 +95,10 @@ def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
     need(tuple(item[key] for key in keys) == identity, "command identity differs")
     need(assess_argv(item["argv"]), "argv is not allowlisted")
     need(item["working_directory"] == ROOT, "working directory differs")
-    need(timestamp(item["started_at"]) <= timestamp(item["finished_at"]), "command time order differs")
-    need(
-        (item["exit_code"] == 0) == (item["result"] == "PASS"),
-        "command result differs",
-    )
+    started = datetime.fromisoformat(item["started_at"].replace("Z", "+00:00"))
+    finished = datetime.fromisoformat(item["finished_at"].replace("Z", "+00:00"))
+    need(started <= finished, "command time order differs")
+    need((item["exit_code"] == 0) == (item["result"] == "PASS"), "command result differs")
     need(_command_digest(item) == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
 
 
@@ -119,20 +109,35 @@ def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> No
     need(all(len(values) == len(items) for values in identities), "command evidence is reused")
 
 
+def finding_state(finding: str) -> tuple[str, str]:
+    severity = "P1" if finding in P1_FINDINGS else "P3" if finding in P3_FINDINGS else "P2"
+    status = "SUPERSEDED_BY_APPROVED_SPLIT" if finding in SPLIT_FINDINGS else "CLOSED"
+    return severity, status
+
+
 def _review_state(record: dict[str, Any]) -> None:
     findings = {item["finding_id"]: item for item in record["review_targets"]}
     need(len(findings) == len(record["review_targets"]), "finding is duplicated")
-    blocked = any(
-        item["severity"] in {"P0", "P1", "P2"} and item["final_status"] == "BLOCKED_WITH_EXACT_REASON"
-        for item in findings.values()
+    ready = set(findings) == REQUIRED_FINDINGS and all(
+        (item["severity"], item["final_status"]) == finding_state(finding) for finding, item in findings.items()
     )
-    ready = REQUIRED_FINDINGS <= set(findings) and not blocked
     need(record["status"] != "READY_FOR_CHATGPT_REVIEW" or ready, "READY finding closure differs")
 
 
+def _evidence(record: dict[str, Any]) -> None:
+    artifacts = {item["artifact_id"] for item in record["artifacts"]}
+    references = [item["evidence"] for item in record["evaluations"]]
+    need(len(artifacts) == len(record["artifacts"]), "artifact is duplicated")
+    need(set(references) == artifacts, "artifact reference differs")
+    if record["status"] == "READY_FOR_CHATGPT_REVIEW":
+        need(all(item["status"] == "PASS" for item in record["evaluations"]), "evaluation is not passing")
+        need(all(item["result"] == "CLEAN" for item in record["delegated_operations"]), "review is not clean")
+
+
 def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
-    errors = sorted(jsonschema.Draft202012Validator(schema).iter_errors(record), key=lambda error: list(error.path))
-    need(not errors, f"handoff schema differs: {errors[0].message if errors else ''}")
+    validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
+    error = next(validator.iter_errors(record), None)
+    need(error is None, f"handoff schema differs: {error.message if error else ''}")
     need(record["changes"] and record["review_targets"] and record["commands"], "required evidence is empty")
     keys = ("schema_version", "project_id", "activation_id", "task_id", "repository", "branch", "base_sha", "pr_url")
     expected = ("1.0", "biblical-scholar-lab", ACTIVATION, "W00", REPOSITORY, BRANCH, BASE, PR_URL)
@@ -142,24 +147,15 @@ def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
     need(
         record["billable_actions"] == {"performed": False, "actual_cost_usd": 0, "campaign_ids": []}, "billable differs"
     )
-    compare = f"https://github.com/{REPOSITORY}/compare/{BASE}...{BRANCH}"
-    need(record["compare_url"] == compare, "compare URL differs")
+    need(record["compare_url"] == f"https://github.com/{REPOSITORY}/compare/{BASE}...{BRANCH}", "compare URL differs")
     _commands(record["commands"], (record["turn_id"], record["activation_id"], record["implementation_head_sha"]))
     _review_state(record)
+    _evidence(record)
     expected_complexity = {"SPLIT_REQUIRED": "BLOCKED_REQUIRES_SPLIT"}.get(record["status"], "PASS")
     need(record["complexity_receipt"]["simplicity_conformance"] == expected_complexity, "simplicity differs")
     prose = json.dumps({key: record[key] for key in PROSE_FIELDS}, sort_keys=True, separators=(",", ":")).casefold()
     need(len(prose) <= 262_144, "record prose is unbounded")
     need(PROHIBITED_JSON.search(prose) is None, "JSON prose restates terminal facts")
-
-
-def command_allowed(command: str) -> bool:
-    if re.search(r"[\n\r;&|\x60<>$\\*?\[\]{}()~!]", command):
-        return False
-    try:
-        return assess_argv(shlex.split(command))
-    except ValueError:
-        return False
 
 
 def assess_argv(argv: list[str]) -> bool:
@@ -194,25 +190,21 @@ def _gh(argv: list[str]) -> bool:
     return argv in exact
 
 
+def _stage_paths(paths: list[str]) -> bool:
+    handoff = r"handoffs/W00/W00-SOL-REPAIR03-[0-9]{8}T[0-9]{6}Z\.(?:md|json)"
+    return bool(paths) and all(path in STAGE_PATHS or re.fullmatch(handoff, path) for path in paths)
+
+
 def _git(argv: list[str]) -> bool:
     if argv == ["git", "push", "origin", BRANCH]:
         return True
     if argv[1:3] == ["commit", "-m"]:
         return len(argv) == 4 and argv[3] in {"W00A1 Repair03 local governance kernel", "W00A1 Repair03 handoff"}
     if argv[1:2] == ["add"]:
-        return len(argv) > 2 and all(_stage_path(path) for path in argv[2:])
+        return _stage_paths(argv[2:])
     fixed = (["git", "status", "--short"], ["git", "diff", "--check"], ["git", "fsck", "--full"])
-    return argv in fixed or _git_revision(argv)
-
-
-def _git_revision(argv: list[str]) -> bool:
     revision = argv[2] if len(argv) == 3 and argv[:2] == ["git", "rev-parse"] else ""
-    return revision == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", revision.removesuffix("^")) is not None
-
-
-def _stage_path(path: str) -> bool:
-    handoff = re.fullmatch(r"handoffs/W00/W00-SOL-REPAIR03-[0-9]{8}T[0-9]{6}Z\.(?:md|json)", path)
-    return path in STAGE_PATHS or handoff is not None
+    return argv in fixed or revision == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", revision.removesuffix("^")) is not None
 
 
 def _validator(argv: list[str]) -> bool:
@@ -245,6 +237,23 @@ def _matches(name: str | None, targets: set[str]) -> bool:
     return bool(
         name and any(name == target or target.startswith("*") and name.endswith(target[1:]) for target in targets)
     )
+
+
+def _reflects_target(name: str | None, node: ast.Call, targets: set[str]) -> bool:
+    if name is None:
+        return False
+    if name == "operator.attrgetter":
+        arguments = node.args
+    elif name == "operator.methodcaller":
+        arguments = node.args[:1]
+    elif name in GETTERS:
+        arguments = node.args[1:2]
+    elif name.endswith((".__getattr__", ".__getattribute__")):
+        arguments = node.args[:1]
+    else:
+        return False
+    leaves = {target.rsplit(".", 1)[-1] for target in targets}
+    return not arguments or any(not isinstance(item, ast.Constant) or item.value in leaves for item in arguments)
 
 
 class _Symbols(ast.NodeVisitor):
@@ -280,7 +289,7 @@ class _Symbols(ast.NodeVisitor):
         direct = isinstance(value, ast.Call) and _matches(_resolve(value.func, self.aliases), self.targets)
         hidden = any(_matches(_resolve(item, self.aliases), self.targets) for item in ast.walk(value))
         need(not hidden or direct, "policy alias is dynamically obscured")
-        need(not _public_call(targets) or not isinstance(value, ast.Call), "dynamic public class is unclassified")
+        need(not _public_assignment(targets) or not isinstance(value, ast.Call), "dynamic public class is unclassified")
 
     def _bind(self, target: ast.expr, resolved: str | None) -> None:
         controlled = resolved in self.class_values or _matches(resolved, self.targets)
@@ -302,18 +311,13 @@ class _Symbols(ast.NodeVisitor):
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
         need(resolved not in {"eval", "exec", "globals", "locals", "setattr", "vars"}, "dynamic policy code differs")
+        need(not _reflects_target(resolved, node, self.targets), "policy attribute access is ambiguous")
         if _matches(resolved, self.targets):
             self.calls.append((cast(str, resolved), node))
-        if resolved == "getattr" and node.args:
-            base = _resolve(node.args[0], self.aliases)
-            need(
-                not base or not any(target.startswith(("*", f"{base}.")) for target in self.targets),
-                "policy getattr is ambiguous",
-            )
         self.generic_visit(node)
 
 
-def _public_call(targets: list[ast.expr]) -> bool:
+def _public_assignment(targets: list[ast.expr]) -> bool:
     return any(
         isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper() for target in targets
     )
@@ -378,6 +382,7 @@ def validate_python(path: str, source: str) -> None:
 
     need(logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
     for node in ast.walk(tree):
+        need(not isinstance(node, ast.Pass), f"production stub: {path}")
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             continue
         size = logical(lines[node.lineno - 1 : node.end_lineno])

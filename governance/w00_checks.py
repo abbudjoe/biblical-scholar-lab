@@ -32,10 +32,8 @@ e5a7fb3ff3c20d7eebdcf73af1ba9c0b18084cab 80e52f0c4f91b3b0dc9314e73e7c270e3447592
 PRIOR_HANDOFFS = tuple(tuple(row.split()) for row in _PRIOR.strip().splitlines())
 
 
-def run(
-    arguments: list[str], *, text: bool = True, input_data: str | bytes | None = None
-) -> subprocess.CompletedProcess[Any]:
-    return subprocess.run(arguments, check=True, text=text, capture_output=True, input=input_data, timeout=30)
+def run(arguments: list[str], *, text: bool = True) -> subprocess.CompletedProcess[Any]:
+    return subprocess.run(arguments, check=True, text=text, capture_output=True, timeout=30)
 
 
 def git(*arguments: str) -> str:
@@ -56,9 +54,8 @@ def object_at(revision: str, path: str) -> dict[str, Any]:
 
 def activation(base: str, branch: str) -> None:
     contracts.need((base, branch) == (BASE_SHA, contracts.BRANCH), "base or branch differs")
-    contracts.need(
-        hashlib.sha256(blob(base, ACTIVATION_PATH)).hexdigest() == ACTIVATION_HASH, "activation hash differs"
-    )
+    digest = hashlib.sha256(blob(base, ACTIVATION_PATH)).hexdigest()
+    contracts.need(digest == ACTIVATION_HASH, "activation hash differs")
 
 
 def safe_path(path: str) -> None:
@@ -268,12 +265,9 @@ def validate_project(base: str, head: str, branch: str) -> dict[str, Any]:
 
 
 def _history(base: str, head: str) -> list[tuple[str, str]]:
-    output = []
-    for line in git("rev-list", "--reverse", "--parents", f"{base}..{head}").splitlines():
-        fields = line.split()
-        contracts.need(len(fields) == 2, "candidate history contains a merge")
-        output.append((fields[0], fields[1]))
-    return output
+    rows = [line.split() for line in git("rev-list", "--reverse", "--parents", f"{base}..{head}").splitlines()]
+    contracts.need(all(len(row) == 2 for row in rows), "candidate history contains a merge")
+    return [(row[0], row[1]) for row in rows]
 
 
 def _final_commit(head: str, pairs: list[tuple[str, str, tuple[str, str]]]) -> tuple[str, str, tuple[str, str]]:
@@ -298,10 +292,8 @@ def _pair(commit: str, parent: str) -> tuple[str, str] | None:
         return None
     contracts.need(all(line.startswith("A\t") for line in lines), "handoff was edited, deleted, renamed, or replaced")
     paths = [line.split("\t", 1)[1] for line in lines]
-    stems, suffixes = (
-        {str(_PurePosixPath(path).with_suffix("")) for path in paths},
-        {_PurePosixPath(path).suffix for path in paths},
-    )
+    stems = {str(_PurePosixPath(path).with_suffix("")) for path in paths}
+    suffixes = {_PurePosixPath(path).suffix for path in paths}
     contracts.need((len(paths), len(stems), suffixes) == (2, 1, {".md", ".json"}), "handoff pair differs")
     return next(path for path in paths if path.endswith(".json")), next(path for path in paths if path.endswith(".md"))
 
@@ -344,9 +336,8 @@ def _markdown(revision: str, path: str, record: dict[str, Any], parent: str) -> 
         "are absent and remain unauthorized."
     ).split("|") + [parent, record["status"]]
     contracts.need(all(item in source for item in required), "Markdown declaration differs")
-    contracts.need(
-        contracts.CONTRADICTORY_MARKDOWN.search(source.casefold()) is None, "Markdown prose contradicts facts"
-    )
+    contradiction = contracts.CONTRADICTORY_MARKDOWN.search(source.casefold())
+    contracts.need(contradiction is None, "Markdown prose contradicts facts")
 
 
 def _required_commands(record: dict[str, Any], parent: str) -> None:
@@ -372,9 +363,8 @@ def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> dict[str
     record = object_at(head, pair[0])
     contracts.validate_handoff(record, object_at(head, SCHEMA))
     stem = _PurePosixPath(pair[0]).stem
-    contracts.need(
-        record["turn_id"] == stem and record["implementation_head_sha"] == parent, "handoff parent or name differs"
-    )
+    bound = record["turn_id"] == stem and record["implementation_head_sha"] == parent
+    contracts.need(bound, "handoff parent or name differs")
     metrics = budget(base, head, changed_paths(base, head))
     validate_budget(metrics)
     _required_commands(record, parent)

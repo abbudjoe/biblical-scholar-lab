@@ -59,6 +59,29 @@
       "type": "object", "additionalProperties": false,
       "required": ["name", "reason"],
       "properties": { "name": { "$ref": "#/$defs/text" }, "reason": { "$ref": "#/$defs/text" } }
+    },
+    "evaluation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "status", "evidence"],
+      "properties": {
+        "name": { "$ref": "#/$defs/text" }, "evidence": { "$ref": "#/$defs/text" }, "status": { "enum": ["PASS", "FAIL"] }
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "kind", "reference", "sha256"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/text" }, "reference": { "$ref": "#/$defs/text" },
+        "kind": { "enum": ["VALIDATION_REPORT", "LIVE_RECEIPT", "REVIEW_REPORT"] }, "sha256": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "delegation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "agent", "scope", "write_performed", "result"],
+      "properties": {
+        "role": { "const": "READ_ONLY_REVIEWER" }, "agent": { "$ref": "#/$defs/text" },
+        "scope": { "$ref": "#/$defs/text" }, "write_performed": { "const": false }, "result": { "enum": ["CLEAN", "REPAIR_REQUIRED"] }
+      }
     }
   },
   "type": "object",
@@ -216,24 +239,18 @@
     },
     "evaluations": {
       "type": "array",
-      "maxItems": 0,
-      "items": {
-        "type": "object"
-      }
+      "minItems": 1, "maxItems": 64,
+      "items": { "$ref": "#/$defs/evaluation" }
     },
     "artifacts": {
       "type": "array",
-      "maxItems": 0,
-      "items": {
-        "type": "object"
-      }
+      "minItems": 1, "maxItems": 64,
+      "items": { "$ref": "#/$defs/artifact" }
     },
     "delegated_operations": {
       "type": "array",
-      "maxItems": 0,
-      "items": {
-        "type": "object"
-      }
+      "minItems": 1, "maxItems": 64,
+      "items": { "$ref": "#/$defs/delegation" }
     },
     "complexity_receipt": {
       "type": "object",
@@ -265,10 +282,7 @@
         "simplicity_conformance"
       ],
       "properties": {
-        "substantive_lines_total": {
-          "type": "integer",
-          "minimum": 0
-        },
+        "substantive_lines_total": { "type": "integer", "minimum": 0 },
         "production_loc_added": {
           "type": "integer",
           "minimum": 0
@@ -377,12 +391,7 @@
             "type": "string"
           }
         },
-        "workflow_files": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
+        "workflow_files": { "$ref": "#/$defs/texts" },
         "external_validation_tools": { "$ref": "#/$defs/texts" },
         "simplicity_conformance": {
           "enum": [
@@ -411,7 +420,8 @@
       "additionalProperties": false,
       "required": [
         "performed",
-        "actual_cost_usd"
+        "actual_cost_usd",
+        "campaign_ids"
       ],
       "properties": {
         "performed": {
@@ -447,7 +457,6 @@
     "github_auth_preflight": {
       "type": "object",
       "additionalProperties": false,
-      "maxProperties": 5,
       "required": [
         "hostname",
         "active_login",
