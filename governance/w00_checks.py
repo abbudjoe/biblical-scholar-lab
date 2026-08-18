@@ -1,9 +1,11 @@
 import argparse
+import ast
 import hashlib
 import json
 import re
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import PurePosixPath as _PurePosixPath
 from typing import Any, cast
 
@@ -119,14 +121,30 @@ def _public(head: str, production: set[str], schemas: set[str], statuses: dict[s
     return output
 
 
+def _imports(node: ast.AST) -> set[str]:
+    if isinstance(node, ast.Import):
+        return {item.name.split(".")[0] for item in node.names}
+    if isinstance(node, ast.ImportFrom) and node.module:
+        return {node.module.split(".")[0]}
+    return set()
+
+
+def _dependencies(head: str, paths: list[str], workflows: set[str]) -> set[str]:
+    modules = {_PurePosixPath(path).stem for path in paths if path.endswith(".py")}
+    nodes = (node for path in paths if path.endswith(".py") for node in ast.walk(ast.parse(blob(head, path))))
+    imported = set().union(*(_imports(node) for node in nodes))
+    external = imported - set(sys.stdlib_module_names) - modules
+    return {f"pypi:{name}" for name in external} | ({"actions/checkout"} if workflows else set())
+
+
 def budget(base: str, head: str, paths: list[str]) -> dict[str, Any]:
     production, tests, schemas, migrations = _classify(paths)
     contracts.need(schemas <= {SCHEMA}, "schema change is unclassified")
     statuses, workflows = _statuses(base, head), {path for path in paths if path.startswith(".github/workflows/")}
     added, removed = _diff_lines(base, head)
     production_lines, test_lines = _diff_lines(base, head, sorted(production)), _diff_lines(base, head, sorted(tests))
-    public = _public(head, production, schemas, statuses)
     modules = {status: sorted(path for path in production if statuses[path] == status) for status in ("A", "D")}
+    empty: dict[str, list[str]] = {"tables_added": [], "endpoints_added": [], "dependencies_removed": []}
     return {
         "substantive_lines_total": added + removed,
         "production_loc_added": production_lines[0],
@@ -139,12 +157,10 @@ def budget(base: str, head: str, paths: list[str]) -> dict[str, Any]:
         "production_files_removed": len(modules["D"]),
         "modules_added": modules["A"],
         "modules_removed": modules["D"],
-        "tables_added": [],
-        "endpoints_added": [],
-        "dependencies_added": sorted(DEPENDENCIES if workflows else set()),
-        "dependencies_removed": [],
+        **empty,
+        "dependencies_added": sorted(_dependencies(head, paths, workflows)),
         "external_validation_tools": contracts.EXTERNAL_TOOLS,
-        "public_contracts_changed": sorted(public),
+        "public_contracts_changed": sorted(_public(head, production, schemas, statuses)),
         "workflow_files": sorted(workflows),
         "migrations_added": sorted(migrations),
         "cli_commands_added": sorted(contracts.cli_surface(blob(head, "governance/w00_checks.py").decode())),
@@ -156,8 +172,9 @@ def validate_budget(metrics: dict[str, Any]) -> None:
     actual = (metrics["substantive_lines_total"], *(len(metrics[key]) for key in keys))
     limits = (1200, 12, 2, 3, 0)
     contracts.need(all(value <= limit for value, limit in zip(actual, limits, strict=True)), "W00A1 budget exceeded")
-    expected = (PRODUCTION, {WORKFLOW}, {"project-integrity", "turn-handoff-integrity"})
-    surface = (set(metrics["production_files"]), set(metrics["workflow_files"]), set(metrics["cli_commands_added"]))
+    expected = (PRODUCTION, {WORKFLOW}, {"project-integrity", "turn-handoff-integrity"}, DEPENDENCIES)
+    names = "production_files workflow_files cli_commands_added dependencies_added".split()
+    surface = tuple(set(metrics[key]) for key in names)
     contracts.need(surface == expected, "W00A1 surface differs")
 
 
@@ -173,15 +190,23 @@ def _checksums(source: str) -> dict[str, str]:
     return output
 
 
+def _package_metadata(manifest: dict[str, Any], baseline: dict[str, Any], runtime: set[str]) -> None:
+    mutable = {"approved_revision", "file_count", "files"}
+    same = all(manifest.get(key) == value for key, value in baseline.items() if key not in mutable)
+    revision = baseline["approved_revision"] + (" + W00-SPLIT-01" if runtime else "")
+    valid = set(manifest) == set(baseline) and same and manifest["approved_revision"] == revision
+    contracts.need(valid, "package metadata differs")
+
+
 def validate_package(revision: str) -> None:
     manifest, entries = object_at(revision, PACKAGE), _checksums(blob(revision, CHECKSUMS).decode())
-    files = manifest.get("files")
+    baseline_manifest = object_at(BASE_SHA, PACKAGE)
+    files = cast(list[Any], manifest.get("files"))
+    contracts.need(isinstance(files, list), "package files differ")
     identity = manifest.get("artifact_id"), manifest.get("status"), manifest.get("file_count")
-    contracts.need(
-        isinstance(files, list) and identity == ("GOV-01", "APPROVED", len(files)), "package identity differs"
-    )
+    contracts.need(identity == ("GOV-01", "APPROVED", len(files)), "package identity differs")
     seen = set()
-    for item in cast(list[Any], files):
+    for item in files:
         contracts.need(isinstance(item, dict) and set(item) == {"path", "sha256", "bytes"}, "package entry differs")
         content, path = blob(revision, item["path"]), item["path"]
         digest = hashlib.sha256(content).hexdigest()
@@ -193,11 +218,12 @@ def validate_package(revision: str) -> None:
         seen.add(path)
     for path, digest in entries.items():
         contracts.need(hashlib.sha256(blob(revision, path)).hexdigest() == digest, f"checksum mismatch: {path}")
-    contracts.need(seen | {PACKAGE} <= set(entries), "checksum membership differs")
     contracts.need(entries[PACKAGE] == hashlib.sha256(blob(revision, PACKAGE)).hexdigest(), "manifest checksum differs")
-    baseline = {item["path"] for item in object_at(BASE_SHA, PACKAGE)["files"]}
-    required = baseline | (RUNTIME_PACKAGE if revision != BASE_SHA else set())
-    contracts.need(required <= seen, "package membership differs")
+    runtime = RUNTIME_PACKAGE if revision != BASE_SHA else set()
+    _package_metadata(manifest, baseline_manifest, runtime)
+    baseline = {item["path"] for item in baseline_manifest["files"]}
+    sidecars = set(_checksums(blob(BASE_SHA, CHECKSUMS).decode())) | runtime
+    contracts.need(seen == baseline | runtime and set(entries) == sidecars, "package membership differs")
 
 
 def validate_yaml(source: bytes) -> None:
@@ -226,9 +252,9 @@ def _validate_sources(head: str, metrics: dict[str, Any]) -> None:
 def validate_project(base: str, head: str, branch: str) -> dict[str, Any]:
     activation(base, branch)
     paths = changed_paths(base, head)
-    allowed = RUNTIME_PACKAGE | {PACKAGE, CHECKSUMS}
     contracts.need(
-        all(path in allowed or path.startswith("handoffs/W00/") for path in paths), "change is outside W00A1"
+        all(path in RUNTIME_PACKAGE | {PACKAGE, CHECKSUMS} or path.startswith("handoffs/W00/") for path in paths),
+        "change is outside W00A1",
     )
     metrics = budget(base, head, paths)
     validate_budget(metrics)
@@ -254,6 +280,10 @@ def _final_commit(head: str, pairs: list[tuple[str, str, tuple[str, str]]]) -> t
     contracts.need(not prior, "implementation head is a handoff commit")
     changed = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", parent, commit).splitlines())
     contracts.need(changed == set(pair), "final commit contains implementation changes")
+    timestamp = datetime.strptime(times[-1], "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC)
+    contracts.need(
+        timestamp <= datetime.fromisoformat(git("show", "-s", "--format=%cI", commit)), "Git chronology differs"
+    )
     return commit, parent, pair
 
 
@@ -283,11 +313,9 @@ def _prior(head: str) -> None:
 
 def _receipt(record: dict[str, Any], metrics: dict[str, Any]) -> None:
     receipt = record["complexity_receipt"]
-    prose = set(
-        "abstractions simpler_alternatives_considered known_duplication_or_debt waivers simplicity_conformance".split()
-    )
-    measured = set(receipt) - prose
-    matches = measured <= set(metrics) and all(receipt[key] == metrics[key] for key in measured)
+    prose = set("abstractions waivers simplicity_conformance".split())
+    prose.update(("simpler_alternatives_considered", "known_duplication_or_debt"))
+    matches = all(receipt[key] == metrics[key] for key in set(receipt) - prose)
     contracts.need(matches, "complexity receipt differs")
 
 

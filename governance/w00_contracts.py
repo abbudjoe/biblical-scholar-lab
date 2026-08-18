@@ -3,7 +3,7 @@ import hashlib
 import json
 import math
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, cast
 
 import jsonschema
@@ -15,7 +15,7 @@ BASE = "3d3ebb706fe6c8779445cbbfd9fea271b86d3646"
 ROOT = "/Users/joseph/biblical-scholar-lab"
 PR_URL = f"https://github.com/{REPOSITORY}/pull/1"
 PR_TITLE = "W00A1: local governance kernel and defense checks"
-PROHIBITED_JSON = re.compile(r"\b(?:approv\w*|authoriz\w*|billable\w*|merg\w*|ready|safe|w00a2|w00b|w01)\b")
+NON_NORMATIVE_TOKEN = re.compile(r"[A-Za-z0-9_./:@=-]+")
 REQUIRED_FINDINGS = set(
     "R0-P1-TRUST-PROVENANCE R1-F2 R2-F4 R3-F3 R4-F1 R5-F1 R6-F7 R7-F5 R8-F6 "
     "R02-P2-STRICT-CONTENT R02-P2-HANDOFF-EVIDENCE R02-P2-CLAIMS R02-P2-CODEOWNERS "
@@ -27,21 +27,25 @@ REQUIRED_FINDINGS = set(
 P1_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R1-F2", "R2-F4", "R3-F3", "R02-P1-ABSTRACTIONS"}
 P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
 SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
-EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1 radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
-EXTERNAL_TOOLS.append("pip-audit==2.10.1")
-CONTROLLED, LITERAL, SELECTOR, UNKNOWN = "<controlled>", "<literal>:", "<selector>:", "<unknown>"
-GETTERS = {"getattr", "builtins.getattr", "inspect.getattr_static", "object.__getattribute__", "type.__getattribute__"}
-FACTORIES = {"dict.get", "operator.attrgetter", "operator.methodcaller", "type", "builtins.type"}
-BUILTINS = set("__import__ dict eval exec getattr globals locals object setattr type vars".split())
-DYNAMIC = BUILTINS - {"dict", "getattr", "object", "type"} | {"builtins.__import__", "importlib.import_module"}
+EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1 pip-audit==2.10.1".split()
+EXTERNAL_TOOLS += "radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
+CONTROLLED, UNKNOWN, LITERAL, DERIVED, ITEM = "<controlled>", "<unknown>", "<literal>:", "<derived>:", "<item>:"
+MAPPING, GETTER, SELECTOR, METHOD, CALLED = "<mapping>:", "<getter>:", "<selector>:", "<method>:", "<called>:"
+PARSER, SUBPARSERS = "<argparse-parser>", "<argparse-subparsers>"
+GETTERS = {"builtins.getattr", "inspect.getattr_static"}
+GETTERS.update(f"builtins.{name}.__getattribute__" for name in ("object", "type"))
+SAFE_CALLS = GETTERS | {"operator.attrgetter", "operator.methodcaller"}
+DYNAMIC_IMPORTS = {"builtins.__import__", "importlib.import_module"}
+DYNAMIC = DYNAMIC_IMPORTS | {"builtins.eval", "builtins.exec", "builtins.globals", "builtins.locals", "builtins.vars"}
+BUILTINS = DYNAMIC | {f"builtins.{name}" for name in "dict getattr len object print setattr type".split()}
 PROSE_FIELDS = "objective acceptance_criteria changes review_targets known_risks decisions_required".split()
 PROSE_FIELDS += "complexity_receipt evaluations artifacts delegated_operations".split()
-STAGE_PATHS = set(
+PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
+STAGE_PATHS = set(PYTHON_FILES) | set(
     ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
     "governance/GOV-01-package-manifest.json governance/ruff.toml governance/schemas/turn-handoff.schema.json "
-    "governance/test_w00_checks.py governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb".split()
+    "governance/w00_yaml.rb".split()
 )
-PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
 UV_PYTHON = ("uv", "run", "--with", "jsonschema==4.25.1", "--")
 UV_COVERAGE = (*UV_PYTHON[:-1], "--with", "coverage==7.10.6", "--")
 UV_AUDIT = (*UV_PYTHON[:-1], "--with", "pip-audit==2.10.1", "--")
@@ -90,7 +94,7 @@ def _command_digest(item: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
+def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> datetime:
     keys = ("root_turn_id", "activation_id", "implementation_head_sha")
     need(tuple(item[key] for key in keys) == identity, "command identity differs")
     need(assess_argv(item["argv"]), "argv is not allowlisted")
@@ -99,11 +103,13 @@ def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
     need(times[0] <= times[1], "command time order differs")
     need((item["exit_code"] == 0) == (item["result"] == "PASS"), "command result differs")
     need(_command_digest(item) == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
+    return times[1]
 
 
 def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> None:
-    for item in items:
-        _command(item, identity)
+    finished = [_command(item, identity) for item in items]
+    turn = datetime.strptime(identity[0].rsplit("-", 1)[-1], "%Y%m%dT%H%M%SZ").replace(tzinfo=UTC)
+    need(max(finished) <= turn, "command chronology differs")
     identities = [{item[key] for item in items} for key in ("command_evidence_id", "combined_evidence_artifact_sha256")]
     need(all(len(values) == len(items) for values in identities), "command evidence is reused")
 
@@ -111,6 +117,8 @@ def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> No
 def finding_state(finding: str) -> tuple[str, str]:
     severity = "P1" if finding in P1_FINDINGS else "P3" if finding in P3_FINDINGS else "P2"
     status = "SUPERSEDED_BY_APPROVED_SPLIT" if finding in SPLIT_FINDINGS else "CLOSED"
+    if finding == "R03R2-P3-TOOL-INVENTORY":
+        status = "BLOCKED_WITH_EXACT_REASON"
     return severity, status
 
 
@@ -141,7 +149,7 @@ def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
     validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
     error = next(validator.iter_errors(record), None)
     need(error is None, f"handoff schema differs: {error.message if error else ''}")
-    need(record["changes"] and record["review_targets"] and record["commands"], "required evidence is empty")
+    need(all((record["changes"], record["review_targets"], record["commands"])), "required evidence is empty")
     keys = ("schema_version", "project_id", "activation_id", "task_id", "repository", "branch", "base_sha", "pr_url")
     expected = ("1.0", "biblical-scholar-lab", ACTIVATION, "W00", REPOSITORY, BRANCH, BASE, PR_URL)
     need(tuple(record[key] for key in keys) == expected, "handoff identity differs")
@@ -155,9 +163,13 @@ def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
     _evidence(record)
     expected_complexity = {"SPLIT_REQUIRED": "BLOCKED_REQUIRES_SPLIT"}.get(record["status"], "PASS")
     need(record["complexity_receipt"]["simplicity_conformance"] == expected_complexity, "simplicity differs")
-    prose = json.dumps({key: record[key] for key in PROSE_FIELDS}, sort_keys=True, separators=(",", ":")).casefold()
-    need(len(prose) <= 262_144, "record prose is unbounded")
-    need(PROHIBITED_JSON.search(prose) is None, "JSON prose restates terminal facts")
+    pending = [record[key] for key in PROSE_FIELDS]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, str):
+            need(NON_NORMATIVE_TOKEN.fullmatch(item) is not None, "free-form JSON prose is prohibited")
+        elif isinstance(item, (dict, list)):
+            pending.extend(item.values() if isinstance(item, dict) else item)
 
 
 def assess_argv(argv: list[str]) -> bool:
@@ -221,233 +233,257 @@ def _validator(argv: list[str]) -> bool:
     return bool(valid_head and identity == (BASE, BRANCH, PR_URL))
 
 
-def _literal(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
-    if isinstance(node, ast.Constant):
-        return node.value if isinstance(node.value, str) else None
-    if isinstance(node, ast.Name):
-        value = aliases.get(node.id, "")
-        return value[len(LITERAL) :] if value.startswith(LITERAL) else None
-    if not isinstance(node, ast.BinOp) or not isinstance(node.op, ast.Add):
-        return None
-    left, right = _literal(node.left, aliases), _literal(node.right, aliases)
-    return left + right if left is not None and right is not None else None
-
-
-def _carrier(symbol: str) -> bool:
-    known = symbol.removeprefix("builtins.") in GETTERS | FACTORIES | DYNAMIC or symbol.startswith(SELECTOR)
-    return not symbol.startswith(LITERAL) and (known or ".__dict__" in symbol or symbol.endswith(".__getattribute__"))
-
-
-def _access_symbol(access: tuple[str | None, str | None] | None) -> str | None:
-    base, key = access or ("", "")
-    return f"{base}.{key[len(LITERAL) :]}" if base and key and key.startswith(LITERAL) else None
-
-
-def _indirect(node: ast.AST, aliases: dict[str, str]) -> str | None:
-    if not isinstance(node, ast.Call):
-        return None
-    if literal := _access_symbol(_access(node, aliases, set())):
-        return literal
-    function = _access_symbol(_access(node.func, aliases, set())) or _abstract(node.func, aliases, set())
-    if function.endswith(".add_subparsers"):
-        return "*"
-    if not node.args:
-        return None
-    if function in {"operator.attrgetter", "operator.methodcaller"}:
-        return SELECTOR + (_literal(node.args[0], aliases) or "")
-    if function in {"type", "builtins.type"}:
-        return _resolve(node.args[0], aliases)
-    return function if function.removeprefix("builtins.") in DYNAMIC else None
-
-
-def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
-    if isinstance(node, ast.Name):
-        return aliases.get(node.id, node.id if node.id in BUILTINS else UNKNOWN)
-    if isinstance(node, ast.Attribute):
-        base = _resolve(node.value, aliases)
-        if base in {None, CONTROLLED}:
-            return base
-        qualified = f"{base}.{node.attr}"
-        return aliases.get(qualified, qualified)
-    literal = _literal(node, aliases)
-    return LITERAL + literal if literal is not None else _indirect(node, aliases) if node is not None else None
-
-
-def _matches(name: str | None, values: set[str]) -> bool:
-    return name is not None and any(name == item or item.startswith("*") and name.endswith(item[1:]) for item in values)
-
-
-def _abstract(node: ast.AST, aliases: dict[str, str], values: set[str]) -> str:
-    return _resolve(node, aliases) or _choice(_symbols(node, aliases), values)
-
-
-def _positional_access(
-    function: str, node: ast.Call, aliases: dict[str, str], values: set[str]
-) -> tuple[str | None, str | None] | None:
-    if function not in GETTERS | {"dict.get"} or len(node.args) < 2:
-        return None
-    base = _abstract(node.args[0], aliases, values)
-    base = base.removesuffix(".__dict__") if base else base
-    return base, _abstract(node.args[1], aliases, values)
-
-
-def _access(node: ast.AST, aliases: dict[str, str], values: set[str]) -> tuple[str | None, str | None] | None:
-    if isinstance(node, ast.Subscript):
-        base = _abstract(node.value, aliases, values)
-        return (base.rpartition(".")[0], _abstract(node.slice, aliases, values)) if base.endswith(".__dict__") else None
-    if not isinstance(node, ast.Call):
-        return None
-    function = _abstract(node.func, aliases, values)
-    if access := _positional_access(function, node, aliases, values):
-        return access
-    if not node.args:
-        return None
-    if function.endswith((".__dict__.get", ".__dict__.__getitem__")):
-        return function.rsplit(".__dict__.", 1)[0], _abstract(node.args[0], aliases, values)
-    if function.endswith(".__getattribute__"):
-        return function.removesuffix(".__getattribute__"), _abstract(node.args[0], aliases, values)
-    if function.startswith(SELECTOR):
-        key = LITERAL + function[len(SELECTOR) :] if len(function) > len(SELECTOR) else UNKNOWN
-        return _abstract(node.args[0], aliases, values), key
-    return None
-
-
-def _governed(access: tuple[str | None, str | None], values: set[str]) -> bool:
-    base, key = access
-    prefixes = {value.rpartition(".")[0] for value in values}
-    if base not in prefixes:
-        return False
-    if key is None or key == UNKNOWN or key.startswith(f"{UNKNOWN}."):
-        return True
-    literal = key[len(LITERAL) :] if key.startswith(LITERAL) else None
-    return literal is not None and _matches(f"{base}.{literal}", values)
-
-
-def _controlled(node: ast.AST, aliases: dict[str, str], values: set[str]) -> bool:
-    for item in ast.walk(node):
-        resolved = _resolve(item, aliases)
-        if resolved == CONTROLLED or _matches(resolved, values):
-            return True
-        if (access := _access(item, aliases, values)) and _governed(access, values):
-            return True
-    return False
-
-
-def _symbols(node: ast.AST, aliases: dict[str, str]) -> set[str]:
-    nested = {id(item.value) for item in ast.walk(node) if isinstance(item, ast.Attribute)}
-    return {symbol for item in ast.walk(node) if id(item) not in nested and (symbol := _resolve(item, aliases))}
-
-
-def _choice(symbols: set[str], values: set[str]) -> str:
-    carriers = {symbol for symbol in symbols if _carrier(symbol)}
-    selectors = {symbol for symbol in carriers if symbol.startswith(SELECTOR)}
-    carriers = selectors if len(selectors) == 1 else carriers
-    choices = carriers or symbols & {value.rpartition(".")[0] for value in values}
-    return next(iter(choices)) if len(choices) == 1 else CONTROLLED if choices else UNKNOWN
-
-
-def _taint(node: ast.AST, aliases: dict[str, str], values: set[str]) -> str:
-    if isinstance(node, ast.Call) and _matches(_resolve(node.func, aliases), values):
-        return UNKNOWN
-    return CONTROLLED if _controlled(node, aliases, values) else _choice(_symbols(node, aliases), values)
-
-
-def _risky(resolved: str | None, values: set[str]) -> bool:
-    prefixes = {value.rpartition(".")[0] for value in values}
-    return _matches(resolved, values) or resolved in prefixes or bool(resolved and _carrier(resolved))
-
-
-def _ambiguous_call(
-    node: ast.Call, resolved: str | None, state: str, values: set[str], aliases: dict[str, str], strict: bool
-) -> bool:
-    if (access := _access(node, aliases, values)) and _governed(access, values):
-        return True
-    prefixes = {value.rpartition(".")[0] for value in values}
-    return bool(strict and (resolved == CONTROLLED or resolved is None and state in prefixes | {CONTROLLED}))
-
-
-def _public_alias(target: ast.expr) -> bool:
-    return isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper()
+def _plain(symbol: str) -> str:
+    return _plain(symbol.split(":", 1)[1]) if symbol.startswith((DERIVED, ITEM)) else symbol
 
 
 class _Symbols(ast.NodeVisitor):
     def __init__(self, targets: set[str]) -> None:
-        self.targets = targets
-        self.aliases: dict[str, str] = {"__builtins__": "builtins.__dict__"}
+        self.targets, self.prefixes = targets, {item.rpartition(".")[0] for item in targets}
+        self.aliases: dict[str, set[str]] = {"__builtins__": {MAPPING + "builtins"}}
         self.calls: list[tuple[str, ast.Call]] = []
         self.scope = ""
-        self.class_values, self.classes = cast(tuple[set[str], set[str]], (set(), set()))
+        self.class_values: set[str] = set()
+        self.classes: set[str] = set()
+
+    def _literal(self, node: ast.AST | str | None) -> str | None:
+        if isinstance(node, ast.Name):
+            values = {item[len(LITERAL) :] for item in self._value(node) if item.startswith(LITERAL)}
+            return next(iter(values)) if len(values) == 1 else None
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+            left, right = self._literal(node.left), self._literal(node.right)
+            return left + right if left is not None and right is not None else None
+        value = getattr(node, "value", None)
+        return value if isinstance(value, str) else None
+
+    def _member(self, bases: set[str], key: ast.AST | str | None) -> set[str]:
+        literal = key if isinstance(key, str) and key != UNKNOWN else self._literal(key)
+        output = set()
+        for raw in bases:
+            derived, base = raw.startswith(DERIVED), _plain(raw).removeprefix(MAPPING)
+            if literal is not None:
+                qualified = f"{base}.{literal}"
+                values = self.aliases.get(qualified, {qualified})
+                output.update({DERIVED + value if derived else value for value in values})
+            elif base in self.prefixes | {"builtins", "importlib", SUBPARSERS}:
+                output.add(CONTROLLED)
+            else:
+                output.add(UNKNOWN)
+        return output or {UNKNOWN}
+
+    def _attribute_value(self, raw: str, name: str) -> set[str]:
+        derived, value = raw.startswith(DERIVED), _plain(raw)
+        if value in {UNKNOWN, CONTROLLED}:
+            return {value}
+        if name == "__dict__":
+            return {MAPPING + value}
+        if name == "__getattribute__" or value.startswith(MAPPING) and name in {"get", "__getitem__"}:
+            return {GETTER + value.removeprefix(MAPPING)}
+        qualified = f"{value}.{name}"
+        found = self.aliases.get(qualified, {qualified})
+        return {DERIVED + item if derived else item for item in found}
+
+    def _attribute(self, values: set[str], name: str) -> set[str]:
+        return set().union(*(self._attribute_value(raw, name) for raw in values))
+
+    def _container_items(self, values: set[str]) -> set[str]:
+        items = {_plain(item[len(ITEM) :]) for item in values if item.startswith(ITEM)}
+        return {DERIVED + item for item in items} or {UNKNOWN}
+
+    def _get(self, function: str, node: ast.Call) -> set[str] | None:
+        if function in GETTERS | {"builtins.dict.get"}:
+            return self._member(self._value(node.args[0]), node.args[1]) if len(node.args) >= 2 else {UNKNOWN}
+        if function.startswith(GETTER):
+            return self._member({function[len(GETTER) :]}, node.args[0]) if node.args else {UNKNOWN}
+        return None
+
+    def _select(self, function: str, node: ast.Call) -> set[str] | None:
+        if function in {"operator.attrgetter", "operator.methodcaller"}:
+            marker = SELECTOR if function.endswith("attrgetter") else METHOD
+            return {marker + (self._literal(node.args[0]) or UNKNOWN)} if node.args else {UNKNOWN}
+        if not function.startswith((SELECTOR, METHOD)):
+            return None
+        if not node.args:
+            return {UNKNOWN}
+        marker = SELECTOR if function.startswith(SELECTOR) else METHOD
+        key = function[len(marker) :]
+        members = self._member(self._value(node.args[0]), key)
+        return members if marker == SELECTOR else {CALLED + item for item in members}
+
+    def _produce(self, function: str, node: ast.Call) -> set[str]:
+        for handler in (self._get, self._select):
+            if (value := handler(function, node)) is not None:
+                return value
+        if function == "builtins.type":
+            return self._value(node.args[0]) if node.args else {UNKNOWN}
+        special = {"argparse.ArgumentParser": PARSER, f"{PARSER}.add_subparsers": SUBPARSERS}
+        return {CONTROLLED if function in DYNAMIC else special.get(function, UNKNOWN)}
+
+    def _call_value(self, node: ast.Call) -> set[str]:
+        if isinstance(node.func, ast.Attribute) and node.func.attr in {"get", "__getitem__"}:
+            values = self._value(node.func.value)
+            if any(item.startswith(ITEM) for item in values):
+                return self._container_items(values)
+        functions, output = self._value(node.func), set()
+        for raw in functions:
+            derived, function = raw.startswith(DERIVED), _plain(raw)
+            result = self._produce(function, node)
+            output.update({DERIVED + item if derived and item != CONTROLLED else item for item in result})
+        return output or {UNKNOWN}
+
+    def _collect(self, nodes: Any, tag: str) -> set[str]:
+        return {tag + (_plain(x) if tag == DERIVED else x) for node in nodes for x in self._value(node)} or {UNKNOWN}
+
+    def _compound(self, node: ast.AST) -> set[str]:
+        if isinstance(node, (ast.List, ast.Tuple, ast.Set, ast.Dict)):
+            nodes = node.values if isinstance(node, ast.Dict) else node.elts
+            return self._collect(nodes, ITEM)
+        if isinstance(node, ast.Subscript):
+            symbols = self._value(node.value)
+            mappings = {item for item in symbols if _plain(item).startswith(MAPPING)}
+            return self._member(mappings, node.slice) if mappings else self._container_items(symbols)
+        if isinstance(node, (ast.IfExp, ast.BoolOp)):
+            choices = [node.body, node.orelse] if isinstance(node, ast.IfExp) else node.values
+            return self._collect(choices, DERIVED)
+        return self._collect(ast.iter_child_nodes(node), "")
+
+    def _value(self, node: ast.AST | None) -> set[str]:
+        if node is None:
+            return {UNKNOWN}
+        if isinstance(node, ast.Name):
+            builtin = f"builtins.{node.id}"
+            return self.aliases.get(node.id, {builtin} if builtin in BUILTINS else {UNKNOWN})
+        if literal := self._literal(node):
+            return {LITERAL + literal}
+        if isinstance(node, ast.Attribute):
+            return self._attribute(self._value(node.value), node.attr)
+        if isinstance(node, ast.NamedExpr):
+            values = {DERIVED + _plain(item) for item in self._value(node.value)}
+            self._bind(node.target, values)
+            return values
+        if isinstance(node, ast.Call):
+            return self._call_value(node)
+        return self._compound(node)
+
+    def _risky(self, values: set[str]) -> bool:
+        governed = self.targets or self.class_values
+        prefixes = {item.rpartition(".")[0] for item in governed}
+        subjects = {_plain(item).removeprefix(CALLED).removeprefix(MAPPING).removeprefix(GETTER) for item in values}
+        return CONTROLLED in values or bool(subjects & (governed | prefixes | DYNAMIC))
+
+    def _bind(self, target: ast.expr, values: set[str]) -> None:
+        need(isinstance(target, ast.Name) or not self._risky(values), "policy alias target is dynamic")
+        if not isinstance(target, ast.Name):
+            return
+        public = target.id[:1].isupper() and not target.id.isupper()
+        clean = {_plain(item) for item in values}
+        need(not public or values == clean and clean <= self.class_values, "public class is unclassified")
+        self.aliases[target.id] = values
+        if self.scope:
+            self.aliases[f"{self.scope}.{target.id}"] = values
+        self.classes.update(clean & self.class_values if public else set())
+
+    def _assign(self, value: ast.AST | None, targets: list[ast.expr]) -> None:
+        for target in targets:
+            if isinstance(target, (ast.List, ast.Tuple)) and isinstance(value, (ast.List, ast.Tuple)):
+                need(len(target.elts) == len(value.elts), "assignment shape differs")
+                for left, right in zip(target.elts, value.elts, strict=True):
+                    self._bind(left, {DERIVED + _plain(item) for item in self._value(right)})
+            else:
+                self._bind(target, self._value(value))
+
+    def _branches(self, branches: list[list[ast.stmt]]) -> None:
+        prior, states = self.aliases.copy(), []
+        for branch in branches:
+            self.aliases = prior.copy()
+            for item in branch:
+                self.visit(item)
+            states.append(self.aliases)
+        keys = set(prior).union(*(set(state) for state in states))
+        self.aliases = {
+            key: set().union(*(state.get(key, prior.get(key, {UNKNOWN})) for state in states)) for key in keys
+        }
 
     def visit_Import(self, node: ast.Import) -> None:
         for item in node.names:
-            self.aliases[item.asname or item.name.split(".")[0]] = item.name
+            self.aliases[item.asname or item.name.split(".")[0]] = {item.name}
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        governed = self.prefixes | {"argparse", "builtins", "importlib"}
         for item in node.names:
+            need(item.name != "*" or node.module not in governed, "governed wildcard import differs")
+            if item.name == "*":
+                continue
             local, canonical = item.asname or item.name, f"{node.module}.{item.name}"
-            self.aliases[local] = canonical
-            if node.module != "typing" and item.name[:1].isupper():
+            self.aliases[local] = {canonical}
+            if node.module != "typing" and item.name[:1].isupper() and not local.isupper():
                 self.class_values.add(canonical)
                 self.classes.update(() if local.startswith("_") else (canonical,))
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        prior, qualified = self.aliases.copy(), f"{self.scope}.{node.name}" if self.scope else node.name
-        self.aliases[node.name], self.scope = qualified, qualified
+        for header in [*node.bases, *node.decorator_list]:
+            self.visit(header)
+        prior, outer = self.aliases.copy(), self.scope
+        qualified = f"{outer}.{node.name}" if outer else node.name
+        self.aliases[node.name], self.scope = {qualified}, qualified
         self.class_values.add(qualified)
         self.classes.update(() if node.name.startswith("_") else (qualified,))
-        self.generic_visit(node)
+        for item in node.body:
+            self.visit(item)
         scoped = {key: value for key, value in self.aliases.items() if key.startswith(f"{qualified}.")}
-        self.aliases, self.scope = prior | {node.name: qualified} | scoped, qualified.rpartition(".")[0]
+        self.aliases, self.scope = prior | {node.name: {qualified}} | scoped, outer
 
-    def _assign(self, value: ast.AST | None, targets: list[ast.expr]) -> None:
-        resolved = _resolve(value, self.aliases)
-        if resolved is None and value is not None:
-            resolved = _taint(value, self.aliases, self.targets or self.class_values)
-        for target in targets:
-            self._bind(target, resolved)
+    def visit_Assign(self, node: ast.Assign | ast.AnnAssign | ast.NamedExpr) -> None:
+        self._assign(node.value, node.targets if isinstance(node, ast.Assign) else [node.target])
+        if node.value:
+            self.visit(node.value)
 
-    def _bind(self, target: ast.expr, resolved: str | None) -> None:
-        controlled = resolved in self.class_values or _risky(resolved, self.targets or self.class_values)
-        public = _public_alias(target)
-        need(not controlled or isinstance(target, ast.Name), "policy alias target is dynamic")
-        need(not public or resolved in self.class_values, "public class is unclassified")
-        if not resolved or not isinstance(target, ast.Name):
-            return
-        self.aliases[target.id] = resolved
-        if self.scope:
-            self.aliases[f"{self.scope}.{target.id}"] = resolved
-        self.classes.update((resolved,) if resolved in self.class_values and not target.id.startswith("_") else ())
-
-    def visit_Assign(self, node: ast.Assign) -> None:
-        self._assign(node.value, node.targets)
-        self.generic_visit(node)
-
-    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
-        self._assign(node.value, [node.target])
-        self.generic_visit(node)
+    visit_NamedExpr = visit_AnnAssign = visit_Assign
 
     def visit_FunctionDef(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        defaults = [*node.args.defaults, *(item for item in node.args.kw_defaults if item), *node.decorator_list]
+        need(not any(self._risky(self._value(item)) for item in defaults), "parameter default differs")
+        self.visit(node.args)
         prior = self.aliases.copy()
-        self.aliases.update({item.arg: UNKNOWN for item in ast.walk(node.args) if isinstance(item, ast.arg)})
-        self.generic_visit(node)
-        receivers = {name: value for name, value in self.aliases.items() if value == "*"}
-        self.aliases = prior | receivers | {node.name: UNKNOWN}
+        for item in ast.walk(node.args):
+            if isinstance(item, ast.arg):
+                self.aliases[item.arg] = {UNKNOWN}
+        for item in node.body:
+            self.visit(item)
+        receivers = {key: value for key, value in self.aliases.items() if SUBPARSERS in value}
+        self.aliases = prior | receivers
+        self._bind(ast.Name(id=node.name), {UNKNOWN})
 
     visit_AsyncFunctionDef = visit_FunctionDef
 
+    def visit_If(self, node: ast.If) -> None:
+        self.visit(node.test)
+        self._branches([node.body, node.orelse])
+
+    def visit_For(self, node: ast.For | ast.AsyncFor | ast.While) -> None:
+        self.visit(node.test if isinstance(node, ast.While) else node.iter)
+        self._branches([node.body + node.orelse, node.orelse])
+
+    visit_AsyncFor = visit_While = visit_For
+
+    def visit_Try(self, node: ast.Try) -> None:
+        self._branches([node.body + node.orelse, *(item.body for item in node.handlers), []])
+        for item in node.finalbody:
+            self.visit(item)
+
+    def visit_Match(self, node: ast.Match) -> None:
+        self.visit(node.subject)
+        self._branches([*(item.body for item in node.cases), []])
+
     def visit_Call(self, node: ast.Call) -> None:
-        resolved = _resolve(node.func, self.aliases)
-        values = self.targets or self.class_values
-        state = _taint(node.func, self.aliases, values)
-        ambiguous = _ambiguous_call(node, resolved, state, values, self.aliases, bool(self.targets))
-        need(not ambiguous, "computed call target is unclassified")
-        produced = _resolve(node, self.aliases)
-        need(
-            all((item or "").removeprefix("builtins.") not in DYNAMIC for item in (resolved, produced)),
-            "dynamic policy code differs",
-        )
-        if _matches(resolved, self.targets):
-            self.calls.append((cast(str, resolved), node))
+        functions, result = self._value(node.func), self._call_value(node)
+        hits = {_plain(item) for item in functions if _plain(item) in self.targets}
+        hits.update(_plain(item)[len(CALLED) :] for item in result if _plain(item).startswith(CALLED))
+        self.calls.extend((item, node) for item in hits if item in self.targets)
+        need(CONTROLLED not in functions | result, "controlled call is ambiguous")
+        passed = any(self._risky(self._value(item)) for item in node.args)
+        safe = {_plain(item) for item in functions} <= BUILTINS | SAFE_CALLS | self.targets
+        need(not passed or safe, "controlled argument differs")
         self.generic_visit(node)
 
 
@@ -458,9 +494,11 @@ def policy_calls(source: str, targets: set[str]) -> list[tuple[str, ast.Call]]:
 
 
 def cli_surface(source: str) -> set[str]:
-    calls = [call for _, call in policy_calls(source, {"*.add_parser"})]
-    need(all(len(call.args) == 1 and not call.keywords for call in calls), "CLI is ambiguous")
-    need(all(isinstance(call.args[0], ast.Constant) for call in calls), "CLI is ambiguous")
+    calls = [call for _, call in policy_calls(source, {f"{SUBPARSERS}.add_parser"})]
+    need(
+        all(len(call.args) == 1 and not call.keywords and isinstance(call.args[0], ast.Constant) for call in calls),
+        "CLI is ambiguous",
+    )
     names = [cast(str, cast(ast.Constant, call.args[0]).value) for call in calls]
     need(len(names) == len(set(names)) and set(names) == {"project-integrity", "turn-handoff-integrity"}, "CLI differs")
     return cast(set[str], set(names))
@@ -486,10 +524,6 @@ def _decision(node: ast.AST) -> int:
     return 0
 
 
-def _cyclomatic(node: ast.AST) -> int:
-    return 1 + sum(_decision(item) for item in ast.walk(node))
-
-
 def _nesting(node: ast.AST) -> int:
     controls = (ast.If, ast.For, ast.AsyncFor, ast.While, ast.Try, ast.With, ast.AsyncWith, ast.Match)
     maximum, pending = 0, [(node, 0)]
@@ -506,22 +540,23 @@ def _stub(node: ast.AST) -> bool:
     return isinstance(node, ast.Pass) or ellipsis
 
 
+def _logical(values: list[str]) -> int:
+    return sum(bool(line.strip()) and not line.lstrip().startswith("#") for line in values)
+
+
 def validate_python(path: str, source: str) -> None:
     lines, tree = source.splitlines(), ast.parse(source, filename=path)
-
-    def logical(values: list[str]) -> int:
-        return sum(bool(line.strip()) and not line.lstrip().startswith("#") for line in values)
-
-    need(logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
+    need(_logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
     for node in ast.walk(tree):
         need(not _stub(node), f"production stub: {path}")
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             continue
-        size = logical(lines[node.lineno - 1 : node.end_lineno])
+        size = _logical(lines[node.lineno - 1 : node.end_lineno])
         if isinstance(node, ast.ClassDef):
             need(size <= 250, f"class violates DR-30: {path}:{node.lineno}")
         else:
+            complexity = 1 + sum(_decision(item) for item in ast.walk(node))
             need(
-                size <= 60 and _cyclomatic(node) <= 10 and _nesting(node) <= 3,
+                size <= 60 and complexity <= 10 and _nesting(node) <= 3,
                 f"function violates DR-30: {path}:{node.lineno}",
             )
