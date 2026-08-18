@@ -303,7 +303,7 @@ class _Symbols(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
-        computed = isinstance(node.func, (ast.Call, ast.Subscript))
+        computed = not isinstance(node.func, (ast.Name, ast.Attribute))
         leaf = node.func.attr if isinstance(node.func, ast.Attribute) else ""
         ambiguous = self.targets and (
             resolved == DYNAMIC_ALIAS

@@ -140,7 +140,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertRaises(ValueError, contracts.policy_calls, dynamic, {"subprocess.run"})
 
         source = (ROOT / "governance/w00_checks.py").read_text()
-        hidden = ('[sub.add_parser][0]("rogue")|hidden=sub.__dict__["add_parser"]\nhidden("rogue")').split("|")
+        hidden = ("(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()").split("|")
         for call in hidden:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
         public = "from package import PublicClass as RenamedClass\nreexport=RenamedClass\n"
