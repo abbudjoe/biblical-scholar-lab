@@ -221,7 +221,7 @@ def _validate_complexity(value: Any, status: str) -> None:
     counts = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed")
     need(all(isinstance(receipt.get(key), int) and not isinstance(receipt[key], bool) and receipt[key] >= 0 for key in counts), "complexity counts differ")
     arrays = COMPLEXITY_FIELDS - set(counts) - {"simplicity_conformance"}
-    need(all(isinstance(receipt.get(key), list) and all(isinstance(item, str) for item in receipt[key]) for key in arrays), "complexity arrays differ")
+    need(all(isinstance(receipt.get(key), list) and all(isinstance(item, dict if key == "abstractions" else str) for item in receipt[key]) for key in arrays), "complexity arrays differ")
     expected = "BLOCKED_REQUIRES_SPLIT" if status == "SPLIT_REQUIRED" else "PASS"
     need(receipt.get("simplicity_conformance") == expected, "complexity disposition differs")
 

@@ -222,7 +222,7 @@ class CandidateTests(GitFixture):
 class HandoffAndReceiptTests(unittest.TestCase):
     def test_prior_handoffs_are_exact_and_history_or_mutation_fails(self) -> None:
         live = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, text=True, capture_output=True).stdout.strip()
-        checks._prior(None, live)
+        self.assertEqual((checks._prior(None, live), tuple(contracts.validate_handoff(json.loads((ROOT / path).read_text())) for path in ("handoffs/W00/W00-SOL-20260817T234806Z.json", "handoffs/W00/W00-SOL-REPAIR01-20260818T021301Z.json"))), (None, (None, None)))
         with mock.patch.object(checks, "git", return_value="c p1 p2"), self.assertRaises(ContractError):
             checks._history(None, BASE, HEAD)
         for line in ("M\thandoffs/W00/x.json", "D\thandoffs/W00/x.json", "R100\thandoffs/W00/a.json\thandoffs/W00/b.json"):
