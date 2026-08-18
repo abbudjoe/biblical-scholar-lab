@@ -203,8 +203,8 @@
     },
     {
       "path": "governance/w00_contracts.py",
-      "sha256": "ebc804b0bcbe5e58e660d34a4d10d67716d761a6111fc2d772be654884c786a1",
-      "bytes": 19212
+      "sha256": "f721a20aa67035748f27fb475c040b1513ce8befc7c53836163c602e6975bdb9",
+      "bytes": 19220
     },
     {
       "path": "governance/w00_yaml.rb",

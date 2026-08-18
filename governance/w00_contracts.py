@@ -117,8 +117,7 @@ def finding_state(finding: str) -> tuple[str, str]:
 
 
 def _finding_allowed(finding: str, item: dict[str, Any], blocked: bool) -> bool:
-    expected = finding_state(finding)
-    actual = item["severity"], item["final_status"]
+    expected, actual = finding_state(finding), (item["severity"], item["final_status"])
     return actual == expected or blocked and actual == (expected[0], "BLOCKED_WITH_EXACT_REASON")
 
 
@@ -252,8 +251,7 @@ class _Symbols(ast.NodeVisitor):
         self.targets = targets
         self.aliases: dict[str, str] = {}
         self.calls: list[tuple[str, ast.Call]] = []
-        self.class_values: set[str] = set()
-        self.classes: set[str] = set()
+        self.class_values, self.classes = cast(tuple[set[str], set[str]], (set(), set()))
 
     def visit_Import(self, node: ast.Import) -> None:
         for item in node.names:
@@ -370,8 +368,10 @@ def _nesting(node: ast.AST) -> int:
     return maximum
 
 
-def _ellipsis(node: ast.AST) -> bool:
-    return isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and node.value.value is Ellipsis
+def _stub(node: ast.AST) -> bool:
+    return isinstance(node, ast.Pass) or (
+        isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and node.value.value is Ellipsis
+    )
 
 
 def validate_python(path: str, source: str) -> None:
@@ -382,7 +382,7 @@ def validate_python(path: str, source: str) -> None:
 
     need(logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
     for node in ast.walk(tree):
-        need(not isinstance(node, ast.Pass) and not _ellipsis(node), f"production stub: {path}")
+        need(not _stub(node), f"production stub: {path}")
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             continue
         size = logical(lines[node.lineno - 1 : node.end_lineno])
