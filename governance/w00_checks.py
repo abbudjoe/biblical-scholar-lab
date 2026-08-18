@@ -19,16 +19,12 @@ WORKFLOW = ".github/workflows/governance-integrity.yml"
 WORKFLOW_HASH = "406f36d7102ac87da134a9ed817683344e89a12d2a50662504d7b716dd68dbdd"
 SCHEMA = "governance/schemas/turn-handoff.schema.json"
 DEPENDENCIES = {"actions/checkout", "pypi:jsonschema"}
-PRODUCTION = {
-    WORKFLOW,
-    *(f"governance/{name}" for name in "ruff.toml w00_checks.py w00_contracts.py w00_yaml.rb".split()),
-}
+PRODUCTION_NAMES = "ruff.toml w00_checks.py w00_contracts.py w00_yaml.rb".split()
+PRODUCTION = {WORKFLOW, *(f"governance/{name}" for name in PRODUCTION_NAMES)}
 RUNTIME_PACKAGE = PRODUCTION | {"governance/test_w00_checks.py", SCHEMA}
-_PRIOR = """
-03e20dfb4692bad3f76710824e7535a4e6a59446 516254fff643371f4315376a4a2ee0f5aaaaad64 W00-SOL-20260817T234806Z
+_PRIOR = """03e20dfb4692bad3f76710824e7535a4e6a59446 516254fff643371f4315376a4a2ee0f5aaaaad64 W00-SOL-20260817T234806Z
 e5a7fb3ff3c20d7eebdcf73af1ba9c0b18084cab 80e52f0c4f91b3b0dc9314e73e7c270e34475927 W00-SOL-REPAIR01-20260818T021301Z
-33ebbfdc07b8429e6b1f7a19132e118a476f4fb6 0adb60bd8daa307655b20ec87d11f35fa2590ce9 W00-SOL-REPAIR02-20260818T141853Z
-"""
+33ebbfdc07b8429e6b1f7a19132e118a476f4fb6 0adb60bd8daa307655b20ec87d11f35fa2590ce9 W00-SOL-REPAIR02-20260818T141853Z"""
 PRIOR_HANDOFFS = tuple(tuple(row.split()) for row in _PRIOR.strip().splitlines())
 
 
@@ -205,8 +201,7 @@ def validate_package(revision: str) -> None:
 
 
 def validate_yaml(source: bytes) -> None:
-    controls = re.search(rb"[\x00-\x08\x0b-\x1f\x7f]", source)
-    contracts.need(len(source) <= 262_144 and not controls, "YAML bytes differ")
+    contracts.need(len(source) <= 262_144 and not re.search(rb"[\x00-\x08\x0b-\x1f\x7f]", source), "YAML bytes differ")
     result = subprocess.run(["ruby", "governance/w00_yaml.rb"], input=source, capture_output=True, timeout=5)
     contracts.need(result.returncode == 0, "YAML semantics are invalid")
 
@@ -221,8 +216,7 @@ def _validate_sources(head: str, metrics: dict[str, Any]) -> None:
         if path in metrics["modules_removed"]:
             continue
         source = blob(head, path)
-        parts = "TO|DO FIX|ME NotImplemented|Error place|holder".split()
-        markers = (part.replace("|", "").encode() for part in parts)
+        markers = (part.replace("|", "").encode() for part in "TO|DO FIX|ME NotImplemented|Error place|holder".split())
         unfinished = re.search(rb"\b(?:" + b"|".join(markers) + rb")\b", source, re.IGNORECASE)
         contracts.need(not unfinished, f"unfinished marker: {path}")
         if path.endswith(".py"):

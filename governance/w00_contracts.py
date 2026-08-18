@@ -33,16 +33,15 @@ P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
 SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
 EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1 radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
 CONTROLLED, LITERAL, SELECTOR, UNKNOWN = "<controlled>", "<literal>:", "<selector>:", "<unknown>"
-PROSE_FIELDS = (
-    "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt".split()
-)
-PROSE_FIELDS += "evaluations artifacts delegated_operations".split()
+GETTERS = {"getattr", "builtins.getattr", "inspect.getattr_static", "object.__getattribute__", "type.__getattribute__"}
+FACTORIES = {"dict.get", "operator.attrgetter", "operator.methodcaller", "type", "builtins.type"}
+BUILTINS = set("__import__ dict eval exec getattr globals locals object setattr type vars".split())
+PROSE_FIELDS = "objective acceptance_criteria changes review_targets known_risks decisions_required".split()
+PROSE_FIELDS += "complexity_receipt evaluations artifacts delegated_operations".split()
 STAGE_PATHS = set(
-    (
-        ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
-        "governance/GOV-01-package-manifest.json governance/ruff.toml governance/schemas/turn-handoff.schema.json "
-        "governance/test_w00_checks.py governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb"
-    ).split()
+    ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
+    "governance/GOV-01-package-manifest.json governance/ruff.toml governance/schemas/turn-handoff.schema.json "
+    "governance/test_w00_checks.py governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb".split()
 )
 PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
 UV_PYTHON = ("uv", "run", "--with", "jsonschema==4.25.1", "--")
@@ -96,9 +95,8 @@ def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
     need(tuple(item[key] for key in keys) == identity, "command identity differs")
     need(assess_argv(item["argv"]), "argv is not allowlisted")
     need(item["working_directory"] == ROOT, "working directory differs")
-    started = datetime.fromisoformat(item["started_at"].replace("Z", "+00:00"))
-    finished = datetime.fromisoformat(item["finished_at"].replace("Z", "+00:00"))
-    need(started <= finished, "command time order differs")
+    times = [datetime.fromisoformat(item[key].replace("Z", "+00:00")) for key in ("started_at", "finished_at")]
+    need(times[0] <= times[1], "command time order differs")
     need((item["exit_code"] == 0) == (item["result"] == "PASS"), "command result differs")
     need(_command_digest(item) == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
 
@@ -132,9 +130,8 @@ def _review_state(record: dict[str, Any]) -> None:
 
 def _evidence(record: dict[str, Any]) -> None:
     artifacts = {item["artifact_id"] for item in record["artifacts"]}
-    references = [item["evidence"] for item in record["evaluations"]]
     need(len(artifacts) == len(record["artifacts"]), "artifact is duplicated")
-    need(set(references) == artifacts, "artifact reference differs")
+    need({item["evidence"] for item in record["evaluations"]} == artifacts, "artifact reference differs")
     if record["status"] == "READY_FOR_CHATGPT_REVIEW":
         need(all(item["status"] == "PASS" for item in record["evaluations"]), "evaluation is not passing")
         need(all(item["result"] == "CLEAN" for item in record["delegated_operations"]), "review is not clean")
@@ -172,8 +169,7 @@ def assess_argv(argv: list[str]) -> bool:
         return _validator(argv[len(UV_PYTHON) :])
     if argv[0] in {"env", "command", "sudo", "xargs", "bash", "sh", "zsh"} or "=" in argv[0]:
         return False
-    handler = {"gh": _gh, "git": _git}.get(argv[0], _validator)
-    return handler(argv)
+    return {"gh": _gh, "git": _git}.get(argv[0], _validator)(argv)
 
 
 def _gh(argv: list[str]) -> bool:
@@ -185,8 +181,7 @@ def _gh(argv: list[str]) -> bool:
     ).split("|")
     reads = {"user", f"repos/{REPOSITORY}", *(f"repos/{REPOSITORY}/{suffix}" for suffix in suffixes)}
     if argv[:2] == ["gh", "api"]:
-        endpoint = argv[2].lstrip("/") if len(argv) == 3 else ""
-        return endpoint in reads
+        return len(argv) == 3 and argv[2].lstrip("/") in reads
     exact = (
         ["gh", "pr", "checks", "1", "--repo", REPOSITORY],
         ["gh", "pr", "comment", "1", "--repo", REPOSITORY, "--body-file", ".codex-tmp-pr-completion.md"],
@@ -239,20 +234,35 @@ def _literal(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
     return left + right if left is not None and right is not None else None
 
 
+def _carrier(symbol: str) -> bool:
+    known = symbol in GETTERS | FACTORIES or symbol.startswith(SELECTOR)
+    return known or symbol.endswith((".__dict__", ".__getattribute__")) or ".__dict__." in symbol
+
+
+def _text(symbol: str | None) -> str:
+    return symbol if symbol is not None else ""
+
+
 def _indirect(node: ast.AST, aliases: dict[str, str]) -> str | None:
-    if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute) and node.value.attr == "__dict__":
-        base, key = _resolve(node.value.value, aliases), _literal(node.slice, aliases)
-        return f"{base}.{key}" if base and key is not None else None
-    if not isinstance(node, ast.Call) or not node.args:
+    if isinstance(node, ast.Subscript):
+        base, key = _text(_resolve(node.value, aliases)), _literal(node.slice, aliases)
+        if base.endswith(".__dict__") and key is not None:
+            return f"{base.rpartition('.')[0]}.{key}"
+    if not isinstance(node, ast.Call):
         return None
-    function, key = _resolve(node.func, aliases), _literal(node.args[0], aliases)
-    return SELECTOR + (key or "") if function == "operator.attrgetter" else None
+    function = _text(_resolve(node.func, aliases))
+    if function.endswith(".add_subparsers"):
+        return "*"
+    if not node.args:
+        return None
+    if function in {"operator.attrgetter", "operator.methodcaller"}:
+        return SELECTOR + _text(_literal(node.args[0], aliases))
+    return _resolve(node.args[0], aliases) if function in {"type", "builtins.type"} else None
 
 
 def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
     if isinstance(node, ast.Name):
-        known = {"eval", "exec", "getattr", "globals", "locals", "setattr", "type", "vars"}
-        return aliases.get(node.id, node.id if node.id in known else UNKNOWN)
+        return aliases.get(node.id, node.id if node.id in BUILTINS else UNKNOWN)
     if isinstance(node, ast.Attribute):
         base = _resolve(node.value, aliases)
         return base if base in {None, CONTROLLED} else f"{base}.{node.attr}"
@@ -264,31 +274,39 @@ def _matches(name: str | None, values: set[str]) -> bool:
     return name is not None and any(name == item or item.startswith("*") and name.endswith(item[1:]) for item in values)
 
 
-def _call_access(node: ast.Call, aliases: dict[str, str]) -> tuple[ast.AST, ast.AST] | None:
-    function = _resolve(node.func, aliases)
-    if function in {"getattr", "builtins.getattr"} and len(node.args) >= 2:
-        return node.args[0], node.args[1]
-    if isinstance(node.func, ast.Attribute) and node.func.attr == "__getattribute__" and node.args:
-        return node.func.value, node.args[0]
-    if function and function.startswith(SELECTOR) and node.args:
-        key = ast.Constant(function[len(SELECTOR) :]) if len(function) > len(SELECTOR) else ast.Name(id="unknown")
-        return node.args[0], key
+def _positional_access(function: str, node: ast.Call, aliases: dict[str, str]) -> tuple[str | None, str | None] | None:
+    if function not in GETTERS | {"dict.get"} or len(node.args) < 2:
+        return None
+    base = _resolve(node.args[0], aliases)
+    base = base.removesuffix(".__dict__") if function == "dict.get" and base else base
+    return base, _resolve(node.args[1], aliases)
+
+
+def _access(node: ast.AST, aliases: dict[str, str]) -> tuple[str | None, str | None] | None:
+    if isinstance(node, ast.Subscript):
+        base = _text(_resolve(node.value, aliases))
+        return (base.rpartition(".")[0], _resolve(node.slice, aliases)) if base.endswith(".__dict__") else None
+    if not isinstance(node, ast.Call):
+        return None
+    function = _text(_resolve(node.func, aliases))
+    if access := _positional_access(function, node, aliases):
+        return access
+    if not node.args:
+        return None
+    if function.endswith(".__dict__.get"):
+        return function.removesuffix(".__dict__.get"), _resolve(node.args[0], aliases)
+    if function.endswith(".__getattribute__"):
+        return function.removesuffix(".__getattribute__"), _resolve(node.args[0], aliases)
+    if function.startswith(SELECTOR):
+        key = LITERAL + function[len(SELECTOR) :] if len(function) > len(SELECTOR) else UNKNOWN
+        return _resolve(node.args[0], aliases), key
     return None
 
 
-def _member_access(node: ast.AST, aliases: dict[str, str]) -> tuple[ast.AST, ast.AST] | None:
-    if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute) and node.value.attr == "__dict__":
-        return node.value.value, node.slice
-    if not isinstance(node, ast.Attribute) or not isinstance(node.value, ast.Call) or not node.value.args:
-        return None
-    function = _resolve(node.value.func, aliases)
-    return (node.value.args[0], ast.Constant(node.attr)) if function in {"type", "builtins.type"} else None
-
-
-def _governed(access: tuple[ast.AST, ast.AST], aliases: dict[str, str], values: set[str]) -> bool:
-    base, key = _resolve(access[0], aliases), _resolve(access[1], aliases)
+def _governed(access: tuple[str | None, str | None], values: set[str]) -> bool:
+    base, key = access
     prefixes = {value.rpartition(".")[0] for value in values}
-    if prefixes.isdisjoint({base, "*"}):
+    if base not in prefixes:
         return False
     if key is None or key == UNKNOWN or key.startswith(f"{UNKNOWN}."):
         return True
@@ -301,16 +319,51 @@ def _controlled(node: ast.AST, aliases: dict[str, str], values: set[str]) -> boo
         resolved = _resolve(item, aliases)
         if resolved == CONTROLLED or _matches(resolved, values):
             return True
-        access = _call_access(item, aliases) if isinstance(item, ast.Call) else _member_access(item, aliases)
-        if access and _governed(access, aliases, values):
+        if (access := _access(item, aliases)) and _governed(access, values):
             return True
     return False
+
+
+def _symbols(node: ast.AST, aliases: dict[str, str]) -> set[str]:
+    nested = {id(item.value) for item in ast.walk(node) if isinstance(item, ast.Attribute)}
+    return {symbol for item in ast.walk(node) if id(item) not in nested and (symbol := _resolve(item, aliases))}
+
+
+def _choice(symbols: set[str], values: set[str]) -> str:
+    carriers = {symbol for symbol in symbols if _carrier(symbol)}
+    choices = carriers or symbols & {value.rpartition(".")[0] for value in values}
+    return next(iter(choices)) if len(choices) == 1 else CONTROLLED if choices else UNKNOWN
 
 
 def _taint(node: ast.AST, aliases: dict[str, str], values: set[str]) -> str:
     if isinstance(node, ast.Call) and _matches(_resolve(node.func, aliases), values):
         return UNKNOWN
-    return CONTROLLED if _controlled(node, aliases, values) else UNKNOWN
+    return CONTROLLED if _controlled(node, aliases, values) else _choice(_symbols(node, aliases), values)
+
+
+def _risky(resolved: str | None, values: set[str]) -> bool:
+    prefixes = {value.rpartition(".")[0] for value in values}
+    return _matches(resolved, values) or resolved in prefixes or bool(resolved and _carrier(resolved))
+
+
+def _ambiguous_call(
+    node: ast.Call, resolved: str | None, state: str, values: set[str], aliases: dict[str, str], strict: bool
+) -> bool:
+    computed = not isinstance(node.func, (ast.Name, ast.Attribute))
+    hidden = not isinstance(node.func, ast.Call) and (_matches(resolved, values) or _carrier(state))
+    if strict:
+        if resolved == CONTROLLED:
+            return True
+        if resolved is None and state == CONTROLLED:
+            return True
+        if computed and hidden:
+            return True
+    access = _access(node, aliases)
+    return bool(access and _governed(access, values))
+
+
+def _public_alias(target: ast.expr) -> bool:
+    return isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper()
 
 
 class _Symbols(ast.NodeVisitor):
@@ -346,8 +399,8 @@ class _Symbols(ast.NodeVisitor):
             self._bind(target, resolved)
 
     def _bind(self, target: ast.expr, resolved: str | None) -> None:
-        controlled = resolved in self.class_values or _matches(resolved, self.targets)
-        public = isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper()
+        controlled = resolved in self.class_values or _risky(resolved, self.targets or self.class_values)
+        public = _public_alias(target)
         need(not controlled or isinstance(target, ast.Name), "policy alias target is dynamic")
         need(not public or resolved in self.class_values, "public class is unclassified")
         if not resolved or not isinstance(target, ast.Name):
@@ -367,18 +420,18 @@ class _Symbols(ast.NodeVisitor):
         prior = self.aliases.copy()
         self.aliases.update({item.arg: UNKNOWN for item in ast.walk(node.args) if isinstance(item, ast.arg)})
         self.generic_visit(node)
-        self.aliases = prior | {node.name: UNKNOWN}
+        receivers = {name: value for name, value in self.aliases.items() if value == "*"}
+        self.aliases = prior | receivers | {node.name: UNKNOWN}
 
     visit_AsyncFunctionDef = visit_FunctionDef
 
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
-        state = _taint(node.func, self.aliases, self.targets or self.class_values)
-        computed = not isinstance(node.func, (ast.Name, ast.Attribute))
-        ambiguous = resolved == CONTROLLED or resolved is None and state == CONTROLLED
-        ambiguous = bool(self.targets) and (ambiguous or computed and _matches(resolved, self.targets))
+        values = self.targets or self.class_values
+        state = _taint(node.func, self.aliases, values)
+        ambiguous = _ambiguous_call(node, resolved, state, values, self.aliases, bool(self.targets))
         need(not ambiguous, "computed call target is unclassified")
-        dynamic = {"eval", "exec", "globals", "locals", "setattr", "vars"}
+        dynamic = {"__import__", "eval", "exec", "globals", "importlib.import_module", "locals", "setattr", "vars"}
         need((resolved or "").removeprefix("builtins.") not in dynamic, "dynamic policy code differs")
         if _matches(resolved, self.targets):
             self.calls.append((cast(str, resolved), node))
@@ -396,8 +449,7 @@ def cli_surface(source: str) -> set[str]:
     need(all(len(call.args) == 1 and not call.keywords for call in calls), "CLI is ambiguous")
     need(all(isinstance(call.args[0], ast.Constant) for call in calls), "CLI is ambiguous")
     names = [cast(str, cast(ast.Constant, call.args[0]).value) for call in calls]
-    expected = {"project-integrity", "turn-handoff-integrity"}
-    need(len(names) == len(set(names)) and set(names) == expected, "CLI differs")
+    need(len(names) == len(set(names)) and set(names) == {"project-integrity", "turn-handoff-integrity"}, "CLI differs")
     return cast(set[str], set(names))
 
 

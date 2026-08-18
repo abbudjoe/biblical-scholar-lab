@@ -71,9 +71,8 @@ def record() -> dict[str, object]:
 
 class GovernanceTests(unittest.TestCase):
     def reject(self, path: tuple[object, ...], value: object = None, status: str | None = None) -> None:
-        item, target = record(), None
+        item = target = record()
         item["status"] = status or item["status"]
-        target = item
         for key in path[:-1]:
             target = target[key]
         target.pop(path[-1]) if value is None else target.__setitem__(path[-1], value)
@@ -126,22 +125,29 @@ class GovernanceTests(unittest.TestCase):
     def test_alias_discovery(self) -> None:
         sources = (
             "import subprocess as sp\nsp.run([])\n|from subprocess import run as execute\nexecute([])\n|"
-            "from subprocess import run as execute\nalias=execute\nalias([])\n"
+            "from subprocess import run as execute\nalias=execute\nalias([])\n|import subprocess as sp\nt=type(sp)\nt.run([])"
         ).split("|")
         for source in sources:
             self.assertEqual(contracts.policy_calls(source, {"subprocess.run"})[0][0], "subprocess.run")
         dynamic = (
             "import subprocess as sp\nname='run'\ngetattr(sp,name)([])\n|"
             "import subprocess as sp,sys\nname=sys.argv[1]\ngetattr(sp,name)([])\n|"
-            "import subprocess as sp\ndef f(name):\n getattr(sp,name)([])\n"
+            "import subprocess as sp\ndef f(name):\n getattr(sp,name)([])\n|"
+            "import subprocess as sp\ng=sp.__getattribute__\ng(input())([])|import subprocess as sp\nd=sp.__dict__\nd[input()]([])|"
+            "import subprocess as sp\n[getattr][0](sp,'run')([])|import subprocess as sp,operator\noperator.methodcaller('run',[])(sp)|"
+            "import subprocess as sp\nobject.__getattribute__(sp,'run')([])|import subprocess as sp\nsp.__dict__.get(input())([])|"
+            "getattr(__import__('subprocess'),input())([])|import importlib\nimportlib.import_module('subprocess').run([])"
         ).split("|")
+        forms = "[sp]|(sp,)|{'m':sp}|sp if flag else other|sp or other|(x:=sp)".split("|")
+        dynamic += tuple(f"import subprocess as sp\nbox={form}\ngetattr(box,input())([])" for form in forms)
         for source_code in dynamic:
             self.assertRaises(ValueError, contracts.policy_calls, source_code, {"subprocess.run"})
 
         source = (ROOT / "governance/w00_checks.py").read_text()
         hidden = (
             "(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()|"
-            "name=input();getattr(sub,name)('rogue')|getattr(sub,'add_'+'parser')('rogue')"
+            "name=input();getattr(sub,name)('rogue')|getattr(sub,'add_'+'parser')('rogue')|"
+            "__import__('operator').attrgetter('add_parser')(sub)('rogue')"
         ).split("|")
         for call in hidden:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
@@ -149,7 +155,7 @@ class GovernanceTests(unittest.TestCase):
             self.assertFalse(contracts.policy_calls(call, {"*.add_parser"}) or contracts.class_surface(call))
         unrelated = (
             "{'run':print}['run']()|class Helper:\n def run(self): ...\nHelper.run(None)|"
-            "import subprocess as sp\n[sp.Popen][0]([])|import subprocess as sp\n(sp.Popen if x else print)([])|"
+            "import subprocess as sp\nf=[sp.Popen][0]\nf.run([])|import subprocess as sp\n(sp.Popen if x else print)([])|"
             "import subprocess as sp\ngetattr(sp,'other')([])"
         ).split("|")
         self.assertTrue(all(not contracts.policy_calls(item, {"subprocess.run"}) for item in unrelated))
@@ -164,16 +170,10 @@ class GovernanceTests(unittest.TestCase):
         for body in ("pass", "..."):
             self.assertRaises(ValueError, contracts.validate_python, "stub.py", f"def f():\n    {body}\n")
 
-    def metrics(self, **changes: object) -> dict[str, object]:
-        return {**record()["complexity_receipt"], "production_files": sorted(checks.PRODUCTION), **changes}
-
     def test_yaml_budget_and_history_contracts(self) -> None:
         checks.validate_yaml(b"base: &b {x: 1}\none: *b\ntwo: *b\n")
-        invalid = [
-            item.encode()
-            for item in "x: 1\nx: 2|1: a\n01: b|true: a\nTRUE: b|null: a\n~: b|"
-            "0xA: a\n10: b|base: &b {x: 1}\nitem: {<<: *b, x: 2}|a: &a {self: *a}|x: [".split("|")
-        ]
+        source = "x: 1\nx: 2|1: a\n01: b|true: a\nTRUE: b|null: a\n~: b|0xA: a\n10: b|base: &b {x: 1}\nitem: {<<: *b, x: 2}|a: &a {self: *a}|x: ["
+        invalid = [item.encode() for item in source.split("|")]
         invalid.append(("base: &b {x: 1}\n" + "\n".join(f"x{i}: *b" for i in range(33))).encode())
         for source in invalid:
             self.assertRaises(ValueError, checks.validate_yaml, source)
@@ -195,12 +195,12 @@ class GovernanceTests(unittest.TestCase):
             {"migrations_added": ["x.sql"]},
             {"workflow_files": ["other"]},
         )
+        baseline = {**record()["complexity_receipt"], "production_files": sorted(checks.PRODUCTION)}
         for change in failures:
-            self.assertRaises(ValueError, checks.validate_budget, self.metrics(**change))
-        production, _, _, migrations = checks._classify(
-            ["governance/run.sh", "governance/runtime.json", "governance/alembic/x.py"]
-        )
-        self.assertEqual(production, {"governance/run.sh", "governance/runtime.json", "governance/alembic/x.py"})
+            self.assertRaises(ValueError, checks.validate_budget, {**baseline, **change})
+        paths = "governance/run.sh governance/runtime.json governance/alembic/x.py".split()
+        prod, _, _, migrations = checks._classify(paths)
+        self.assertEqual(prod, {"governance/run.sh", "governance/runtime.json", "governance/alembic/x.py"})
         self.assertEqual(migrations, {"governance/alembic/x.py"})
 
         for line in ("M\thandoffs/W00/x.json", "D\thandoffs/W00/x.json", "R100\ta\tb"):
@@ -215,8 +215,7 @@ class GovernanceTests(unittest.TestCase):
         stale = tuple(path.replace("150000Z", "140000Z") for path in pair)
         self.assertRaises(ValueError, checks._final_commit, HEAD, [(IMPL, HEAD, pair), (HEAD, IMPL, stale)])
         item = record()
-        keys = ("billable_actions", "merge_performed", "next_task_started", "status")
-        facts = {key: item[key] for key in keys}
+        facts = {key: item[key] for key in ("billable_actions", "merge_performed", "next_task_started", "status")}
         source = f"<!-- BSL_TERMINAL_FACTS_V1 -->\n```json\n{json.dumps(facts)}\n```"
         with mock.patch.object(checks, "blob", return_value=source.encode()):
             self.assertRaises(ValueError, checks._markdown, HEAD, "x.md", item, IMPL)
