@@ -239,6 +239,10 @@ def _matches(name: str | None, targets: set[str]) -> bool:
     )
 
 
+def _ambiguous(arguments: list[ast.expr], leaves: set[str]) -> bool:
+    return not arguments or any(not isinstance(item, ast.Constant) or item.value in leaves for item in arguments)
+
+
 def _reflects_target(name: str | None, node: ast.Call, targets: set[str]) -> bool:
     if name is None:
         return False
@@ -252,8 +256,8 @@ def _reflects_target(name: str | None, node: ast.Call, targets: set[str]) -> boo
         arguments = node.args[:1]
     else:
         return False
-    leaves = {target.rsplit(".", 1)[-1] for target in targets}
-    return not arguments or any(not isinstance(item, ast.Constant) or item.value in leaves for item in arguments)
+    leaves = set(map(lambda target: target.rsplit(".", 1)[-1], targets))
+    return _ambiguous(arguments, leaves)
 
 
 class _Symbols(ast.NodeVisitor):
