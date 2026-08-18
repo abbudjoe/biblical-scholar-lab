@@ -18,12 +18,8 @@ EMPTY = hashlib.sha256(b"").hexdigest()
 
 
 def evidence(argv: tuple[str, ...], index: int = 0) -> dict[str, object]:
-    envelope = {
-        "argv": list(argv),
-        "command_evidence_id": f"cmd-{index:02d}",
-        "stderr_sha256": EMPTY,
-        "stdout_sha256": hashlib.sha256(f"stdout-cmd-{index:02d}".encode()).hexdigest(),
-    }
+    stdout = hashlib.sha256(f"stdout-cmd-{index:02d}".encode()).hexdigest()
+    envelope = dict(argv=list(argv), command_evidence_id=f"cmd-{index:02d}", stderr_sha256=EMPTY, stdout_sha256=stdout)
     keys = "root_turn_id activation_id implementation_head_sha working_directory execution_profile started_at finished_at exit_code result combined_evidence_artifact_sha256".split()
     profile = {"kind": "LOCAL_EXISTING_GH", "actor_login": "abbudjoe", "token_overrides_present": False}
     values = (TURN, contracts.ACTIVATION, IMPL, contracts.ROOT, profile)
@@ -66,13 +62,10 @@ def record() -> dict[str, object]:
     output["design_conformance"]["approved_design_ids"].append("W00-SPLIT-01")
     output["review_targets"] = [finding(item) for item in sorted(contracts.REQUIRED_FINDINGS)]
     receipt = output["complexity_receipt"]
-    receipt["substantive_lines_total"] = 1
-    receipt["dependencies_added"] = sorted(checks.DEPENDENCIES)
-    receipt["public_contracts_changed"] = [f"schema:{checks.SCHEMA}"]
-    receipt["cli_commands_added"] = ["project-integrity", "turn-handoff-integrity"]
-    receipt["workflow_files"] = [checks.WORKFLOW]
-    receipt["external_validation_tools"] = contracts.EXTERNAL_TOOLS
-    receipt["simplicity_conformance"] = "PASS"
+    receipt.update(substantive_lines_total=1, dependencies_added=sorted(checks.DEPENDENCIES))
+    receipt.update(public_contracts_changed=[f"schema:{checks.SCHEMA}"], workflow_files=[checks.WORKFLOW])
+    receipt.update(cli_commands_added=["project-integrity", "turn-handoff-integrity"])
+    receipt.update(external_validation_tools=contracts.EXTERNAL_TOOLS, simplicity_conformance="PASS")
     return output
 
 
@@ -130,21 +123,36 @@ class GovernanceTests(unittest.TestCase):
         self.assertTrue(all(contracts.assess_argv(command.split()) for command in allowed))
         self.assertTrue(all(not contracts.assess_argv(command.split()) for command in denied))
 
+    def test_alias_discovery(self) -> None:
         sources = (
             "import subprocess as sp\nsp.run([])\n|from subprocess import run as execute\nexecute([])\n|"
             "from subprocess import run as execute\nalias=execute\nalias([])\n"
         ).split("|")
         for source in sources:
             self.assertEqual(contracts.policy_calls(source, {"subprocess.run"})[0][0], "subprocess.run")
-        dynamic = "import subprocess as sp\nname='run'\nalias=getattr(sp,name)\nalias([])\n"
-        self.assertRaises(ValueError, contracts.policy_calls, dynamic, {"subprocess.run"})
+        dynamic = (
+            "import subprocess as sp\nname='run'\ngetattr(sp,name)([])\n|"
+            "import subprocess as sp,sys\nname=sys.argv[1]\ngetattr(sp,name)([])\n|"
+            "import subprocess as sp\ndef f(name):\n getattr(sp,name)([])\n"
+        ).split("|")
+        for source_code in dynamic:
+            self.assertRaises(ValueError, contracts.policy_calls, source_code, {"subprocess.run"})
 
         source = (ROOT / "governance/w00_checks.py").read_text()
-        hidden = ("(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()").split("|")
+        hidden = (
+            "(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()|"
+            "name=input();getattr(sub,name)('rogue')|getattr(sub,'add_'+'parser')('rogue')"
+        ).split("|")
         for call in hidden:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
         for call in ("[print][0]()|(print if x else len)()|(print or len)()|(fn := print)()").split("|"):
             self.assertFalse(contracts.policy_calls(call, {"*.add_parser"}) or contracts.class_surface(call))
+        unrelated = (
+            "{'run':print}['run']()|class Helper:\n def run(self): ...\nHelper.run(None)|"
+            "import subprocess as sp\n[sp.Popen][0]([])|import subprocess as sp\n(sp.Popen if x else print)([])|"
+            "import subprocess as sp\ngetattr(sp,'other')([])"
+        ).split("|")
+        self.assertTrue(all(not contracts.policy_calls(item, {"subprocess.run"}) for item in unrelated))
         public = "from package import PublicClass as RenamedClass\nreexport=RenamedClass\n"
         self.assertEqual(contracts.class_surface(public), {"package.PublicClass"})
         hidden_classes = (
