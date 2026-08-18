@@ -235,7 +235,7 @@ def _literal(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
 
 def _carrier(symbol: str) -> bool:
     known = symbol.removeprefix("builtins.") in GETTERS | FACTORIES | DYNAMIC or symbol.startswith(SELECTOR)
-    return known or symbol.endswith((".__dict__", ".__getattribute__")) or ".__dict__." in symbol
+    return not symbol.startswith(LITERAL) and (known or ".__dict__" in symbol or symbol.endswith(".__getattribute__"))
 
 
 def _access_symbol(access: tuple[str | None, str | None] | None) -> str | None:
