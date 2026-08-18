@@ -22,7 +22,7 @@ REQUIRED_FINDINGS = set(
     "R02-P2-QUALITY-SPEC R02-P1-ABSTRACTIONS R02-P2-DR30 P2-01 P2-02 P2-03 P2-04 P2-05 P2-06 "
     "R03-P2-WORKFLOW R03-P2-CHRONOLOGY R03-P2-PROTOCOL R03-P2-DISPOSITION "
     "R03R2-P2-SCHEMA R03R2-P2-ALIAS R03R2-P2-LEDGER R03R2-P2-STUB "
-    "R03R2-P3-PROTOCOL-COVERAGE R03R2-P3-TOOL-INVENTORY".split()
+    "R03R2-P3-PROTOCOL-COVERAGE R03R2-P3-TOOL-INVENTORY R03R3-P2-DEPENDENCY-SCAN".split()
 )
 P1_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R1-F2", "R2-F4", "R3-F3", "R02-P1-ABSTRACTIONS"}
 P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
@@ -33,6 +33,7 @@ CONTROLLED, LITERAL, SELECTOR, UNKNOWN = "<controlled>", "<literal>:", "<selecto
 GETTERS = {"getattr", "builtins.getattr", "inspect.getattr_static", "object.__getattribute__", "type.__getattribute__"}
 FACTORIES = {"dict.get", "operator.attrgetter", "operator.methodcaller", "type", "builtins.type"}
 BUILTINS = set("__import__ dict eval exec getattr globals locals object setattr type vars".split())
+DYNAMIC = BUILTINS - {"dict", "getattr", "object", "type"} | {"builtins.__import__", "importlib.import_module"}
 PROSE_FIELDS = "objective acceptance_criteria changes review_targets known_risks decisions_required".split()
 PROSE_FIELDS += "complexity_receipt evaluations artifacts delegated_operations".split()
 STAGE_PATHS = set(
@@ -233,7 +234,7 @@ def _literal(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
 
 
 def _carrier(symbol: str) -> bool:
-    known = symbol in GETTERS | FACTORIES or symbol.startswith(SELECTOR)
+    known = symbol.removeprefix("builtins.") in GETTERS | FACTORIES | DYNAMIC or symbol.startswith(SELECTOR)
     return known or symbol.endswith((".__dict__", ".__getattribute__")) or ".__dict__." in symbol
 
 
@@ -247,7 +248,7 @@ def _indirect(node: ast.AST, aliases: dict[str, str]) -> str | None:
         return None
     if literal := _access_symbol(_access(node, aliases, set())):
         return literal
-    function = _resolve(node.func, aliases) or ""
+    function = _access_symbol(_access(node.func, aliases, set())) or _abstract(node.func, aliases, set())
     if function.endswith(".add_subparsers"):
         return "*"
     if not node.args:
@@ -256,7 +257,7 @@ def _indirect(node: ast.AST, aliases: dict[str, str]) -> str | None:
         return SELECTOR + (_literal(node.args[0], aliases) or "")
     if function in {"type", "builtins.type"}:
         return _resolve(node.args[0], aliases)
-    return None
+    return function if function.removeprefix("builtins.") in DYNAMIC else None
 
 
 def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
@@ -286,7 +287,7 @@ def _positional_access(
     if function not in GETTERS | {"dict.get"} or len(node.args) < 2:
         return None
     base = _abstract(node.args[0], aliases, values)
-    base = base.removesuffix(".__dict__") if function == "dict.get" and base else base
+    base = base.removesuffix(".__dict__") if base else base
     return base, _abstract(node.args[1], aliases, values)
 
 
@@ -372,7 +373,7 @@ def _public_alias(target: ast.expr) -> bool:
 class _Symbols(ast.NodeVisitor):
     def __init__(self, targets: set[str]) -> None:
         self.targets = targets
-        self.aliases: dict[str, str] = {}
+        self.aliases: dict[str, str] = {"__builtins__": "builtins.__dict__"}
         self.calls: list[tuple[str, ast.Call]] = []
         self.scope = ""
         self.class_values, self.classes = cast(tuple[set[str], set[str]], (set(), set()))
@@ -440,10 +441,9 @@ class _Symbols(ast.NodeVisitor):
         state = _taint(node.func, self.aliases, values)
         ambiguous = _ambiguous_call(node, resolved, state, values, self.aliases, bool(self.targets))
         need(not ambiguous, "computed call target is unclassified")
-        dynamic = {"__import__", "eval", "exec", "globals", "importlib.import_module", "locals", "setattr", "vars"}
         produced = _resolve(node, self.aliases)
         need(
-            all((item or "").removeprefix("builtins.") not in dynamic for item in (resolved, produced)),
+            all((item or "").removeprefix("builtins.") not in DYNAMIC for item in (resolved, produced)),
             "dynamic policy code differs",
         )
         if _matches(resolved, self.targets):

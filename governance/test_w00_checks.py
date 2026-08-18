@@ -117,20 +117,20 @@ class GovernanceTests(unittest.TestCase):
 
     def test_alias_discovery(self) -> None:
         direct = (
-            "import subprocess as sp\nsp.run([])\n|import subprocess as sp\nt=type(sp)\nt.run([])|"
+            "import subprocess as sp\n[type][0](sp).run([])|import subprocess as sp\n(type if flag else type)(sp).run([])|"
             "from subprocess import run as execute\nalias=execute\nalias([])\n|"
             "import subprocess as sp\nclass Box: execute=sp.run\nBox.execute([])"
         ).split("|")
         for source in direct:
             self.assertEqual(contracts.policy_calls(source, {"subprocess.run"})[0][0], "subprocess.run")
         hidden = (
-            "import subprocess as sp\nname='run'\ngetattr(sp,name)([])\n|"
-            "import subprocess as sp,sys\nname=sys.argv[1]\ngetattr(sp,name)([])\n|"
+            "import subprocess as sp,operator\n[operator.attrgetter][0]('run')(sp)([])|"
+            "import subprocess as sp,operator\n[operator.methodcaller][0]('run',[])(sp)|"
             "import subprocess as sp\ndef f(name):\n getattr(sp,name)([])\n|"
             "import subprocess as sp\ng=sp.__dict__.__getitem__\ng(input())([])|"
             "import subprocess as sp\nclass Box: mod=sp; g=getattr\nBox.g(Box.mod,input())([])|"
-            "import builtins\ngetattr(builtins,'__import__')('subprocess').run([])|"
-            "import importlib\ngetattr(importlib,'import_module')('subprocess').run([])"
+            "[__import__][0]('subprocess').run([])|(__import__ if flag else print)('subprocess').run([])|"
+            "getattr(__builtins__,'__import__')('subprocess').run([])|__builtins__['__import__']('subprocess').run([])"
         ).split("|")
         carriers = "[sp]|(sp,)|{'m':sp}|sp if flag else other|sp or other|(x:=sp)".split("|")
         receivers = "[sp][0]|(sp,)[0]|{'m':sp}['m']|sp if flag else other|sp or other|(x:=sp)".split("|")
