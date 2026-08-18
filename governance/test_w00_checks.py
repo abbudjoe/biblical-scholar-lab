@@ -21,19 +21,25 @@ EMPTY = hashlib.sha256(b"").hexdigest()
 
 def evidence(argv: tuple[str, ...], index: int = 0) -> dict[str, object]:
     identifier = f"cmd-{index:02d}"
-    stdout = hashlib.sha256(f"stdout-{identifier}".encode()).hexdigest()
     envelope = {
         "argv": list(argv),
         "command_evidence_id": identifier,
         "stderr_sha256": EMPTY,
-        "stdout_sha256": stdout,
+        "stdout_sha256": hashlib.sha256(f"stdout-{identifier}".encode()).hexdigest(),
     }
-    combined = hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     keys = "root_turn_id activation_id implementation_head_sha working_directory execution_profile started_at finished_at exit_code result combined_evidence_artifact_sha256".split()
     profile = {"kind": "LOCAL_EXISTING_GH", "actor_login": "abbudjoe", "token_overrides_present": False}
     values = (TURN, contracts.ACTIVATION, IMPL, contracts.ROOT, profile)
-    values += ("2026-08-18T12:00:00Z", "2026-08-18T12:00:01Z", 0, "PASS", combined)
-    return {**envelope, **dict(zip(keys, values, strict=True))}
+    values += ("2026-08-18T12:00:00Z", "2026-08-18T12:00:01Z", 0, "PASS", "")
+    item = {**envelope, **dict(zip(keys, values, strict=True))}
+    item["combined_evidence_artifact_sha256"] = hashlib.sha256(
+        json.dumps(
+            {key: item[key] for key in sorted(item) if key != "combined_evidence_artifact_sha256"},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    return item
 
 
 def record() -> dict[str, object]:
@@ -99,7 +105,9 @@ class GovernanceTests(unittest.TestCase):
         changed["commands"][1] = copy.deepcopy(changed["commands"][0])
         self.assertRaises(contracts.ContractError, contracts.validate_handoff, changed, SCHEMA)
         changed = copy.deepcopy(record())
-        changed["commands"][0]["stdout_sha256"] = changed["commands"][1]["stdout_sha256"]
+        changed["implementation_head_sha"] = "e" * 40
+        for item in changed["commands"]:
+            item["implementation_head_sha"] = "e" * 40
         self.assertRaises(contracts.ContractError, contracts.validate_handoff, changed, SCHEMA)
 
         claims = "The PR was merged.|W01 is now underway.|Safe to merge.|Owner authorization is active.|Merge-only path active."

@@ -163,7 +163,7 @@ def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
         "command result differs",
     )
     need(item["result"] in {"PASS", "FAIL"}, "command result is invalid")
-    digest_fields = ("argv", "command_evidence_id", "stderr_sha256", "stdout_sha256")
+    digest_fields = sorted(fields - {"combined_evidence_artifact_sha256"})
     envelope = {key: item[key] for key in digest_fields}
     digest = hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     digest_keys = ("stderr_sha256", "stdout_sha256", "combined_evidence_artifact_sha256")
