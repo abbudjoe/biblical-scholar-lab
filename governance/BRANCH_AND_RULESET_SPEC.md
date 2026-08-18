@@ -38,7 +38,7 @@ Require:
 - Force-push protection.
 - Branch-deletion protection.
 
-Required trusted checks after W00:
+Required defense-in-depth checks after W00:
 
 ```text
 project-integrity
@@ -47,7 +47,7 @@ chatgpt-review-integrity
 owner-merge-record-integrity
 ```
 
-Untrusted PR code must not be able to forge a successful trusted check.
+Expected-App matching for these contexts is defense in depth; it does not prove which workflow, event, branch, or revision produced a same-named check. Project-level trusted evidence comes only from the base-controlled `trusted-governance-validator` receipt, which binds the inspected head, base revision, workflow/run identity, and validator hash without executing candidate code.
 
 Only squash merging is enabled. Auto-merge is disabled.
 
@@ -55,13 +55,13 @@ Only squash merging is enabled. Auto-merge is disabled.
 
 ```text
 Sol draft PR + handoff
-→ project and handoff checks
+→ four ordinary defense-in-depth checks
+→ base-controlled trusted-governance-validator receipt succeeds for that head
 → ChatGPT exact-head review
-→ chatgpt-review-integrity succeeds
 → Joseph explicitly approves exact head in ChatGPT
+→ protected owner-merge-authorization environment is approved and emits its exact-head receipt
 → ChatGPT emits separate merge-only prompt and authorization record
 → Sol merge-only turn posts exact-head authorization record
-→ owner-merge-record-integrity succeeds
 → exact-head squash merge
 → post-merge validation and receipt
 ```

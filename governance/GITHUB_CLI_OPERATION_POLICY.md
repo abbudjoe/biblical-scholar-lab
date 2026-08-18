@@ -155,6 +155,8 @@ The wrapper must:
 
 Raw unrestricted `gh api` is not part of the ordinary Codex tool surface.
 
+The owner-approved W00 Repair01 turn has one non-reusable exception: an exact `PUT` may create or update `owner-merge-authorization`, and an exact `PUT` may repair ruleset `20960975`. The executable command policy binds both repository endpoints and request-file names; environment-approval endpoints and every other mutation remain prohibited.
+
 ## Enforcement and fallback
 
 W00 must prove that:

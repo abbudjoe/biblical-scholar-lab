@@ -29,7 +29,7 @@ Validates:
 
 ## chatgpt-review-integrity
 
-A trusted default-branch workflow/check parses the structured review record without checking out or executing PR code. It verifies:
+A PR-controlled defense-in-depth check exercises the structured review validator against adversarial fixtures. It verifies:
 
 - Review marker and schema.
 - PR and activation match.
@@ -37,13 +37,13 @@ A trusted default-branch workflow/check parses the structured review record with
 - Disposition is `CHATGPT_REVIEW_CLEAN`.
 - Review references the completed handoff and evidence set.
 
-Because the PR author and owner share `@abbudjoe`, comment authorship is not treated as human-approval proof. Human approval is represented separately by an exact-head owner authorization record created only after Joseph explicitly approves in the current ChatGPT conversation.
+It does not accept a live review or prove workflow provenance. The protected authorization workflow later requeries and validates the actual clean review from trusted base code.
 
 The check must be attached to the reviewed head and become absent/stale on a new push.
 
 ## owner-merge-record-integrity
 
-A trusted default-branch workflow/check parses the structured `OwnerMergeAuthorizationRecord` without checking out or executing PR code. It verifies:
+A PR-controlled defense-in-depth check exercises the structured `OwnerMergeAuthorizationRecord` validator against adversarial fixtures. It verifies:
 
 - Authorization marker and schema.
 - Repository, PR, activation, and ChatGPT review identity.
@@ -53,7 +53,7 @@ A trusted default-branch workflow/check parses the structured `OwnerMergeAuthori
 - Status is `AUTHORIZED`.
 - The record has not expired, been superseded, or been reused.
 
-This check validates exact-head consistency. It does not claim independent authentication of the human origin of the record under the shared GitHub credential.
+It is quality evidence only. The protected environment and base-controlled authorization workflow provide the live owner receipt; neither check-name nor expected-App matching proves provenance.
 
 A new push makes the check stale.
 

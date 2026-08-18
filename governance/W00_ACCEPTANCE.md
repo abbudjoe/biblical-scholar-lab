@@ -12,7 +12,7 @@ The sequence is:
 2. ChatGPT reviews the exact live PR head.
 3. Joseph explicitly approves that exact head.
 4. Joseph manually squash-merges W00.
-5. Post-merge validation proves the trusted checks are active from `main`.
+5. Post-merge validation proves the base-controlled validator and protected authorization workflow are active from `main`.
 6. W01 becomes the first live Codex merge-only proof.
 
 W02 and later work remain blocked until W01 proves the ordinary merge-only path.
@@ -25,7 +25,8 @@ W02 and later work remain blocked until W01 proves the ordinary merge-only path.
 - No token override environment variable is present.
 - Valid ChatGPT clean review for the current head accepted.
 - W00 owner-manual exact-head squash merge completed after ChatGPT review and Joseph approval.
-- The four trusted checks are operational from reviewed workflow definitions on `main` after W00 merge.
+- The four defense-in-depth checks are operational after W00 merge; expected-App matching is not claimed as workflow provenance.
+- W01 proves the first live base-controlled trusted-validator and protected-environment authorization receipts.
 - Local and fixture validation proves schema-valid current-head owner authorization is accepted and stale/mismatched authorization is rejected.
 - Post-merge validation succeeds.
 
@@ -62,7 +63,7 @@ W02 and later work remain blocked until W01 proves the ordinary merge-only path.
 - ChatGPT review record.
 - Joseph exact-head approval reference.
 - Owner-manual W00 squash-merge receipt.
-- Post-merge validation showing trusted checks on `main`.
+- Post-merge validation showing the trusted validator and authorization workflow on `main`.
 - Explicit statement that the live Codex merge-only proof is deferred to W01 and blocks W02.
 
 The evidence bundle must state clearly that GitHub did not independently authenticate human versus agent under the shared credential.

@@ -63,6 +63,7 @@
         "BLOCKED_DEPENDENCY",
         "BLOCKED_REQUIRES_DESIGN_REVIEW",
         "BLOCKED_REQUIRES_SOL_REPAIR",
+        "SPLIT_REQUIRED",
         "NO_CHANGE",
         "FAILED"
       ]

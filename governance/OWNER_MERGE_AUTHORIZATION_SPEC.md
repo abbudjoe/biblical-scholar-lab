@@ -58,7 +58,9 @@ status
 
 The merge-only Sol turn posts the record as a machine-readable PR comment. It is not committed to the PR branch because doing so would change the authorized head.
 
-The trusted `owner-merge-record-integrity` check validates exact-head consistency and schema. It does not independently authenticate that the GitHub actor was physically Joseph.
+The defense-in-depth `owner-merge-record-integrity` check exercises the exact-head schema and ordering contract; it does not validate a live approval, establish provenance, or authenticate that the GitHub actor was physically Joseph.
+
+For W01 and later, the separate `owner-merge-authorization` workflow pauses on its protected environment, revalidates the live head, clean review, trusted-validator receipt, ordinary checks, and conversations, then emits an immutable exact-head authorization receipt. It never merges or changes repository content.
 
 ## Invalidation
 
@@ -80,7 +82,7 @@ The merge-only Sol turn must:
 2. Verify the referenced ChatGPT review remains current and clean.
 3. Post the authorization record as a PR comment.
 4. Wait for `owner-merge-record-integrity` to pass.
-5. Verify every required check and conversation is clear.
+5. Verify the protected-environment authorization receipt, every required check, and every conversation are current and clear.
 6. Mark the PR ready if necessary.
 7. Execute exactly:
 
