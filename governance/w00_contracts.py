@@ -175,7 +175,7 @@ def validate_handoff(record: dict[str, Any], *, w00a: bool = False) -> None:
 
 def _handoff_identity(record: dict[str, Any]) -> None:
     identity = (record.get("schema_version"), record.get("project_id"), record.get("activation_id"), record.get("task_id"), record.get("repository"), record.get("branch"))
-    need(identity[:2] == ("1.0", "biblical-scholar-lab") and identity[4] == REPOSITORY, "handoff identity differs")
+    need((identity[:2], identity[4]) == (("1.0", "biblical-scholar-lab"), REPOSITORY), "handoff identity differs")
     need(all(isinstance(item, str) and item for item in (identity[2], identity[3], record.get("turn_id"), record.get("codex_run_id"))) and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(identity[5])) is not None, "handoff task identity differs")
     need(record.get("status") in STATUSES and record.get("next_required_action") == "CHATGPT_REVIEW", "handoff transition differs")
     need(record.get("merge_performed") is False and record.get("next_task_started") is False, "handoff crossed the stop boundary")
