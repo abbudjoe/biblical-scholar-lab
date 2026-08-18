@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "3f022d713e84ced5cd4321826fc202bfcbd62fc4090b2d6e08c6193704326321",
-      "bytes": 13480
+      "sha256": "4357ba5e94f77037d9e92eb754755a36eb49b5332d33f523a884f4448a45746b",
+      "bytes": 13358
     },
     {
       "path": "governance/templates/chatgpt-review.md",
@@ -193,8 +193,8 @@
     },
     {
       "path": "governance/test_w00_checks.py",
-      "sha256": "75df07119d56216ee98efb05ed177232a9ea93ded21a52e727ce7c59bb9c7870",
-      "bytes": 11822
+      "sha256": "0d4d5af720d75ad16f2036c6daafe116c0ea9ca237bd757c7722b1997f24a908",
+      "bytes": 12778
     },
     {
       "path": "governance/w00_checks.py",
@@ -203,8 +203,8 @@
     },
     {
       "path": "governance/w00_contracts.py",
-      "sha256": "5b2ef041a743fe36e51e8028525fc34638f23037aecb54688eb147a1c5d9b708",
-      "bytes": 19256
+      "sha256": "ebc804b0bcbe5e58e660d34a4d10d67716d761a6111fc2d772be654884c786a1",
+      "bytes": 19212
     },
     {
       "path": "governance/w00_yaml.rb",

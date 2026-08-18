@@ -98,7 +98,7 @@
     "branch",
     "base_sha",
     "implementation_head_sha",
-    "pr_url",
+    "pr_url", "compare_url",
     "github_actor_login",
     "github_auth_mode",
     "github_auth_preflight",
@@ -141,14 +141,9 @@
     },
     "status": {
       "enum": [
-        "READY_FOR_CHATGPT_REVIEW",
-        "BLOCKED_MISSING_EVIDENCE",
-        "BLOCKED_DEPENDENCY",
-        "BLOCKED_REQUIRES_DESIGN_REVIEW",
-        "BLOCKED_REQUIRES_SOL_REPAIR",
-        "SPLIT_REQUIRED",
-        "NO_CHANGE",
-        "FAILED"
+        "READY_FOR_CHATGPT_REVIEW", "BLOCKED_DEPENDENCY",
+        "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR",
+        "SPLIT_REQUIRED", "FAILED"
       ]
     },
     "repository": {
@@ -166,17 +161,8 @@
       "type": "string",
       "pattern": "^[0-9a-f]{40}$"
     },
-    "pr_url": {
-      "type": "string",
-      "format": "uri"
-    },
-    "compare_url": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "format": "uri"
-    },
+    "pr_url": { "type": "string", "format": "uri" },
+    "compare_url": { "type": ["string", "null"], "format": "uri" },
     "objective": {
       "type": "string"
     },

@@ -33,9 +33,10 @@ P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
 SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
 EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1".split()
 EXTERNAL_TOOLS += "radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
-GETTERS = set("getattr builtins.getattr inspect.getattr_static object.__getattribute__ type.__getattribute__".split())
+DYNAMIC_ALIAS = "<dynamic>"
 PROSE_FIELDS = (
-    "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt".split()
+    "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt "
+    "evaluations artifacts delegated_operations".split()
 )
 _STAGED = (
     ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
@@ -115,13 +116,20 @@ def finding_state(finding: str) -> tuple[str, str]:
     return severity, status
 
 
+def _finding_allowed(finding: str, item: dict[str, Any], blocked: bool) -> bool:
+    expected = finding_state(finding)
+    actual = item["severity"], item["final_status"]
+    return actual == expected or blocked and actual == (expected[0], "BLOCKED_WITH_EXACT_REASON")
+
+
 def _review_state(record: dict[str, Any]) -> None:
     findings = {item["finding_id"]: item for item in record["review_targets"]}
     need(len(findings) == len(record["review_targets"]), "finding is duplicated")
-    ready = set(findings) == REQUIRED_FINDINGS and all(
-        (item["severity"], item["final_status"]) == finding_state(finding) for finding, item in findings.items()
+    blocked = record["status"] != "READY_FOR_CHATGPT_REVIEW"
+    complete = set(findings) == REQUIRED_FINDINGS and all(
+        _finding_allowed(finding, item, blocked) for finding, item in findings.items()
     )
-    need(record["status"] != "READY_FOR_CHATGPT_REVIEW" or ready, "READY finding closure differs")
+    need(complete, "finding ledger differs")
 
 
 def _evidence(record: dict[str, Any]) -> None:
@@ -239,28 +247,11 @@ def _matches(name: str | None, targets: set[str]) -> bool:
     )
 
 
-def _ambiguous(arguments: list[ast.expr], leaves: set[str]) -> bool:
-    return not arguments or any(not isinstance(item, ast.Constant) or item.value in leaves for item in arguments)
-
-
-def _reflects_target(name: str | None, node: ast.Call, targets: set[str]) -> bool:
-    if name is None:
-        return False
-    leaves = set(map(lambda target: target.rsplit(".", 1)[-1], targets))
-    if name == "operator.attrgetter":
-        return _ambiguous(node.args, leaves)
-    if name == "operator.methodcaller":
-        return _ambiguous(node.args[:1], leaves)
-    if name in GETTERS:
-        return _ambiguous(node.args[1:2], leaves)
-    if name.endswith((".__getattr__", ".__getattribute__")):
-        return _ambiguous(node.args[:1], leaves)
-    return False
-
-
 class _Symbols(ast.NodeVisitor):
     def __init__(self, targets: set[str]) -> None:
-        self.targets, self.aliases, self.calls = targets, dict[str, str](), list[tuple[str, ast.Call]]()
+        self.targets = targets
+        self.aliases: dict[str, str] = {}
+        self.calls: list[tuple[str, ast.Call]] = []
         self.class_values: set[str] = set()
         self.classes: set[str] = set()
 
@@ -284,18 +275,20 @@ class _Symbols(ast.NodeVisitor):
 
     def _assign(self, value: ast.AST | None, targets: list[ast.expr]) -> None:
         resolved = _resolve(value, self.aliases)
+        dynamic = resolved is None and value is not None
         for target in targets:
-            self._bind(target, resolved)
-        if resolved or value is None:
+            self._bind(target, DYNAMIC_ALIAS if dynamic else resolved)
+        if not dynamic:
             return
         direct = isinstance(value, ast.Call) and _matches(_resolve(value.func, self.aliases), self.targets)
-        hidden = any(_matches(_resolve(item, self.aliases), self.targets) for item in ast.walk(value))
+        hidden = any(_matches(_resolve(item, self.aliases), self.targets) for item in ast.walk(cast(ast.AST, value)))
         need(not hidden or direct, "policy alias is dynamically obscured")
-        need(not _public_assignment(targets) or not isinstance(value, ast.Call), "dynamic public class is unclassified")
 
     def _bind(self, target: ast.expr, resolved: str | None) -> None:
         controlled = resolved in self.class_values or _matches(resolved, self.targets)
+        public = isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper()
         need(not controlled or isinstance(target, ast.Name), "policy alias target is dynamic")
+        need(not public or resolved in self.class_values, "public class is unclassified")
         if not resolved or not isinstance(target, ast.Name):
             return
         self.aliases[target.id] = resolved
@@ -312,17 +305,18 @@ class _Symbols(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
+        computed = isinstance(node.func, (ast.Call, ast.Subscript))
+        leaf = node.func.attr if isinstance(node.func, ast.Attribute) else ""
+        ambiguous = self.targets and (
+            resolved == DYNAMIC_ALIAS
+            or not _matches(resolved, self.targets)
+            and any(target.endswith(f".{leaf}") for target in self.targets)
+        )
+        need(not computed and not ambiguous, "computed call target is unclassified")
         need(resolved not in {"eval", "exec", "globals", "locals", "setattr", "vars"}, "dynamic policy code differs")
-        need(not _reflects_target(resolved, node, self.targets), "policy attribute access is ambiguous")
         if _matches(resolved, self.targets):
             self.calls.append((cast(str, resolved), node))
         self.generic_visit(node)
-
-
-def _public_assignment(targets: list[ast.expr]) -> bool:
-    return any(
-        isinstance(target, ast.Name) and target.id[:1].isupper() and not target.id.isupper() for target in targets
-    )
 
 
 def policy_calls(source: str, targets: set[str]) -> list[tuple[str, ast.Call]]:
@@ -376,6 +370,10 @@ def _nesting(node: ast.AST) -> int:
     return maximum
 
 
+def _ellipsis(node: ast.AST) -> bool:
+    return isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and node.value.value is Ellipsis
+
+
 def validate_python(path: str, source: str) -> None:
     lines, tree = source.splitlines(), ast.parse(source, filename=path)
 
@@ -384,7 +382,7 @@ def validate_python(path: str, source: str) -> None:
 
     need(logical(lines) <= 500 and all(len(line) <= 120 for line in lines), f"module violates DR-30: {path}")
     for node in ast.walk(tree):
-        need(not isinstance(node, ast.Pass), f"production stub: {path}")
+        need(not isinstance(node, ast.Pass) and not _ellipsis(node), f"production stub: {path}")
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             continue
         size = logical(lines[node.lineno - 1 : node.end_lineno])

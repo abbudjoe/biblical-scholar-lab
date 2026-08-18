@@ -82,8 +82,9 @@ def record() -> dict[str, object]:
 
 
 class GovernanceTests(unittest.TestCase):
-    def reject(self, path: tuple[object, ...], value: object = None) -> None:
+    def reject(self, path: tuple[object, ...], value: object = None, status: str | None = None) -> None:
         item, target = record(), None
+        item["status"] = status or item["status"]
         target = item
         for key in path[:-1]:
             target = target[key]
@@ -104,14 +105,23 @@ class GovernanceTests(unittest.TestCase):
             self.reject(("commands", 0, field), value)
         self.reject(("commands", 1), record()["commands"][0])
         self.reject(("review_targets", -1))
+        self.reject(("review_targets", -1), status="SPLIT_REQUIRED")
+        self.reject(("review_targets", 0, "severity"), "P3", status="SPLIT_REQUIRED")
         self.reject(("review_targets", 0, "final_status"), "SUPERSEDED_BY_APPROVED_SPLIT")
+        self.reject(("status",), "NO_CHANGE")
+        self.reject(("status",), "BLOCKED_MISSING_EVIDENCE")
         self.reject(("evaluations", 0, "status"), "FAIL")
         self.reject(("delegated_operations", 0, "result"), "REPAIR_REQUIRED")
         self.reject(("evaluations", 0, "evidence"), "absent")
 
-        claims = "The pull request has already been merged.|W01 started today.|This head can be merged without another review."
-        for prose in claims.split("|"):
-            self.reject(("known_risks",), [prose])
+        claims = (
+            (("known_risks",), ["The pull request has already been merged."]),
+            (("evaluations", 0, "name"), "W01 started today."),
+            (("artifacts", 0, "reference"), "This head can be merged without another review."),
+            (("delegated_operations", 0, "scope"), "Safe to merge without review."),
+        )
+        for path, prose in claims:
+            self.reject(path, prose)
 
         allowed = (
             "gh auth status --active --hostname github.com|gh api repos/abbudjoe/biblical-scholar-lab/rulesets/20960975|"
@@ -129,10 +139,9 @@ class GovernanceTests(unittest.TestCase):
         self.assertTrue(all(not contracts.assess_argv(command.split()) for command in denied))
 
         sources = (
-            "import subprocess as sp\nsp.run([])\n",
-            "from subprocess import run as execute\nexecute([])\n",
-            "from subprocess import run as execute\nalias=execute\nalias([])\n",
-        )
+            "import subprocess as sp\nsp.run([])\n|from subprocess import run as execute\nexecute([])\n|"
+            "from subprocess import run as execute\nalias=execute\nalias([])\n"
+        ).split("|")
         for source in sources:
             self.assertEqual(contracts.policy_calls(source, {"subprocess.run"})[0][0], "subprocess.run")
         dynamic = "import subprocess as sp\nname='run'\nalias=getattr(sp,name)\nalias([])\n"
@@ -140,20 +149,26 @@ class GovernanceTests(unittest.TestCase):
 
         source = (ROOT / "governance/w00_checks.py").read_text()
         hidden = (
-            'alias=sub.add_parser\nalias("rogue")',
-            'vars(sub)["add_parser"]("rogue")',
-            'sub.__getattribute__("add_parser")("rogue")',
-            'import operator\noperator.attrgetter("add_parser")(sub)("rogue")',
-            'from builtins import getattr as pick\npick(sub,"add_parser")("rogue")',
-        )
+            'alias=sub.add_parser\nalias("rogue")|vars(sub)["add_parser"]("rogue")|'
+            'import operator\noperator.attrgetter("add_parser")(sub)("rogue")|'
+            '[sub.add_parser][0]("rogue")|hidden=sub.__dict__["add_parser"]\nhidden("rogue")'
+        ).split("|")
         for call in hidden:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
         public = "from package import PublicClass as RenamedClass\nreexport=RenamedClass\n"
         self.assertEqual(contracts.class_surface(public), {"package.PublicClass"})
-        hidden_class = 'from package import PublicClass as _Imported\nglobals()["Rogue"]=_Imported\n'
-        self.assertRaises(ValueError, contracts.class_surface, hidden_class)
+        hidden_classes = (
+            'from package import PublicClass as _Imported\nglobals()["Rogue"]=_Imported\n|'
+            "from package import PublicClass as _Imported\nhidden=[_Imported][0]\nRogue=hidden\n|"
+            'import package\nhidden=getattr(package,"PublicClass")\nRogue=hidden\n'
+        ).split("|")
+        for hidden_class in hidden_classes:
+            self.assertRaises(ValueError, contracts.class_surface, hidden_class)
+        unrelated = "import logging as log\nalias=log.info\nalias('ok')\n"
+        self.assertEqual(contracts.policy_calls(unrelated, {"*.add_parser"}), [])
 
-        self.assertRaises(ValueError, contracts.validate_python, "stub.py", "def f():\n    pass\n")
+        for body in ("pass", "..."):
+            self.assertRaises(ValueError, contracts.validate_python, "stub.py", f"def f():\n    {body}\n")
 
     def metrics(self, **changes: object) -> dict[str, object]:
         values = {**record()["complexity_receipt"], "production_files": sorted(checks.PRODUCTION)}
