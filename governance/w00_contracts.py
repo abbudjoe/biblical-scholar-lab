@@ -174,10 +174,9 @@ def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
 def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> None:
     for item in items:
         _command(item, identity)
-    ids = [item["command_evidence_id"] for item in items]
-    artifacts = [item["combined_evidence_artifact_sha256"] for item in items]
-    need(len(ids) == len(set(ids)), "command evidence id is reused")
-    need(len(artifacts) == len(set(artifacts)), "command artifact is reused")
+    for field in ("command_evidence_id", "combined_evidence_artifact_sha256"):
+        values = [item[field] for item in items]
+        need(len(values) == len(set(values)), "command evidence is reused")
 
 
 def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
@@ -273,15 +272,10 @@ def _git_revision(argv: list[str]) -> bool:
 def _stage_path(path: str) -> bool:
     exact = set(
         (
-            ".github/workflows/governance-integrity.yml .github/workflows/trusted-governance-validator.yml "
+            ".github/workflows/governance-integrity.yml "
             "governance/GOV-01-artifacts.sha256 governance/GOV-01-package-manifest.json governance/ruff.toml "
             "governance/schemas/turn-handoff.schema.json governance/test_w00_checks.py governance/w00_checks.py "
-            "governance/w00_contracts.py governance/w00_yaml.rb governance/fixtures/w00-command-policy.json "
-            "governance/fixtures/w00-records.json governance/BRANCH_AND_RULESET_SPEC.md "
-            "governance/CHATGPT_REVIEW_SPEC.md "
-            "governance/GITHUB_CLI_OPERATION_POLICY.md governance/GITHUB_OWNER_SETUP.md "
-            "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md governance/REQUIRED_CHECKS_SPEC.md "
-            "governance/W00_ACCEPTANCE.md"
+            "governance/w00_contracts.py governance/w00_yaml.rb"
         ).split()
     )
     handoff = re.fullmatch(r"handoffs/W00/W00-SOL-REPAIR03-[0-9]{8}T[0-9]{6}Z\.(?:md|json)", path)

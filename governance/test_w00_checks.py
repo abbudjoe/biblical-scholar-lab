@@ -68,8 +68,8 @@ def record() -> dict[str, object]:
     return output
 
 
-class RecordTests(unittest.TestCase):
-    def test_record_strictness_command_binding_and_canonical_truth(self) -> None:
+class GovernanceTests(unittest.TestCase):
+    def test_record_command_static_and_canonical_contracts(self) -> None:
         contracts.validate_handoff(record(), SCHEMA)
         for field in "changes review_targets commands artifacts".split():
             changed = copy.deepcopy(record())
@@ -108,9 +108,6 @@ class RecordTests(unittest.TestCase):
             changed["known_risks"] = [prose]
             self.assertRaises(contracts.ContractError, contracts.validate_handoff, changed, SCHEMA)
 
-
-class CommandAndStaticTests(unittest.TestCase):
-    def test_command_policy_alias_discovery_and_complexity(self) -> None:
         allowed = (
             "gh auth status --active --hostname github.com|gh api repos/abbudjoe/biblical-scholar-lab/rulesets/20960975|"
             "git status --short|git add governance/w00_checks.py|git commit -m 'W00A1 Repair03 local governance kernel'|"
@@ -154,21 +151,6 @@ class CommandAndStaticTests(unittest.TestCase):
         self.assertRaises(contracts.ContractError, contracts.validate_python, "complex.py", complex_source)
         self.assertRaises(contracts.ContractError, contracts.validate_python, "long.py", "x = '" + "x" * 121 + "'\n")
 
-
-class YamlBudgetAndHistoryTests(unittest.TestCase):
-    def test_yaml_budget_and_history_contracts(self) -> None:
-        checks.validate_yaml(b"base: &b {x: 1}\none: *b\ntwo: *b\n")
-        invalid = [
-            item.encode()
-            for item in "x: 1\nx: 2|1: a\n01: b|true: a\nTRUE: b|null: a\n~: b|"
-            "0xA: a\n10: b|base: &b {x: 1}\nitem: {<<: *b, x: 2}|a: &a {self: *a}|x: [".split("|")
-        ]
-        invalid.append(("base: &b {x: 1}\n" + "\n".join(f"x{i}: *b" for i in range(33))).encode())
-        for source in invalid:
-            self.assertRaises(contracts.ContractError, checks.validate_yaml, source)
-        duplicate_names = b"jobs:\n  a: {name: Project Integrity}\n  b: {name: ' project   integrity '}\n"
-        self.assertRaises(contracts.ContractError, checks.validate_yaml, duplicate_names, workflow=True)
-
     def metrics(self, **changes: object) -> dict[str, object]:
         values = {
             "additions": 1,
@@ -183,9 +165,27 @@ class YamlBudgetAndHistoryTests(unittest.TestCase):
         values.update(changes)
         return values
 
-    def test_scope_budget_and_prior_history(self) -> None:
-        actual = checks.validate_project(checks.BASE_SHA, checks.git("rev-parse", "HEAD"), contracts.BRANCH)
+    def test_yaml_budget_and_history_contracts(self) -> None:
+        checks.validate_yaml(b"base: &b {x: 1}\none: *b\ntwo: *b\n")
+        invalid = [
+            item.encode()
+            for item in "x: 1\nx: 2|1: a\n01: b|true: a\nTRUE: b|null: a\n~: b|"
+            "0xA: a\n10: b|base: &b {x: 1}\nitem: {<<: *b, x: 2}|a: &a {self: *a}|x: [".split("|")
+        ]
+        invalid.append(("base: &b {x: 1}\n" + "\n".join(f"x{i}: *b" for i in range(33))).encode())
+        for source in invalid:
+            self.assertRaises(contracts.ContractError, checks.validate_yaml, source)
+        duplicate_names = b"jobs:\n  a: {name: Project Integrity}\n  b: {name: ' project   integrity '}\n"
+        self.assertRaises(contracts.ContractError, checks.validate_yaml, duplicate_names, workflow=True)
+
+        head = checks.git("rev-parse", "HEAD")
+        actual = checks.validate_project(checks.BASE_SHA, head, contracts.BRANCH)
         self.assertEqual(actual["workflows"], [checks.WORKFLOW])
+        checks._prior(head)
+        argv = record()["commands"][-2]["argv"][1:]
+        argv[5] = head
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(checks.main(), 0)
         checks.validate_budget(self.metrics())
         failures = (
             {"additions": 1201},
@@ -208,3 +208,9 @@ class YamlBudgetAndHistoryTests(unittest.TestCase):
         for line in ("M\thandoffs/W00/x.json", "D\thandoffs/W00/x.json", "R100\ta\tb"):
             with mock.patch.object(checks, "git", return_value=line):
                 self.assertRaises(contracts.ContractError, checks._pair, HEAD, IMPL)
+        item = record()
+        keys = ("billable_actions", "merge_performed", "next_task_started", "status")
+        facts = {key: item[key] for key in keys}
+        source = f"<!-- BSL_TERMINAL_FACTS_V1 -->\n```json\n{json.dumps(facts)}\n```"
+        with mock.patch.object(checks, "blob", return_value=source.encode()):
+            self.assertRaises(contracts.ContractError, checks._markdown, HEAD, "x.md", item, IMPL)

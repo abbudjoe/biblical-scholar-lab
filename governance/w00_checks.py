@@ -4,7 +4,7 @@ import json
 import re
 import subprocess
 import sys
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath as _PurePosixPath
 from typing import Any, cast
 
 import jsonschema
@@ -59,7 +59,7 @@ def activation(base: str, branch: str) -> None:
 
 
 def safe_path(path: str) -> None:
-    pure = PurePosixPath(path)
+    pure = _PurePosixPath(path)
     control = any(ord(character) < 32 or ord(character) == 127 for character in path)
     unsafe = (
         not path or pure.is_absolute() or str(pure) != path or ".." in pure.parts or "\\" in path or len(path) > 240
@@ -102,7 +102,7 @@ def _statuses(base: str, head: str) -> dict[str, str]:
 
 
 def _is_migration(path: str) -> bool:
-    parts = PurePosixPath(path).parts
+    parts = _PurePosixPath(path).parts
     return path.endswith(".sql") or "migrations" in parts or "alembic" in parts
 
 
@@ -121,7 +121,7 @@ def _classify(paths: list[str]) -> tuple[set[str], set[str], set[str], set[str]]
 
 
 def _manifest(path: str) -> bool:
-    name = PurePosixPath(path).name
+    name = _PurePosixPath(path).name
     fixed = {"pyproject.toml", "setup.py", "setup.cfg", "package.json", "Cargo.toml", "go.mod", "Pipfile"}
     return name in fixed or name.startswith("requirements") or name.endswith((".lock", "-lock.json"))
 
@@ -295,8 +295,8 @@ def _pair(commit: str, parent: str) -> tuple[str, str] | None:
     contracts.need(all(line.startswith("A\t") for line in lines), "handoff was edited, deleted, renamed, or replaced")
     paths = [line.split("\t", 1)[1] for line in lines]
     stems, suffixes = (
-        {str(PurePosixPath(path).with_suffix("")) for path in paths},
-        {PurePosixPath(path).suffix for path in paths},
+        {str(_PurePosixPath(path).with_suffix("")) for path in paths},
+        {_PurePosixPath(path).suffix for path in paths},
     )
     contracts.need((len(paths), len(stems), suffixes) == (2, 1, {".md", ".json"}), "handoff pair differs")
     return next(path for path in paths if path.endswith(".json")), next(path for path in paths if path.endswith(".md"))
@@ -394,7 +394,7 @@ def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> dict[str
     contracts.need(changed == set(pair), "final commit contains implementation changes")
     record = object_at(head, pair[0])
     contracts.validate_handoff(record, object_at(head, SCHEMA))
-    stem = PurePosixPath(pair[0]).stem
+    stem = _PurePosixPath(pair[0]).stem
     contracts.need(
         record["turn_id"] == stem and record["implementation_head_sha"] == parent, "handoff parent or name differs"
     )
