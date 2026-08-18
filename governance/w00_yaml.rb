@@ -28,12 +28,6 @@ acyclic = lambda do |node, stack|
 end
 acyclic.call(root, [])
 
-key_id = lambda do |node|
-  raise "mapping keys must be scalars" unless node.is_a?(Psych::Nodes::Scalar)
-  value = Psych::Visitors::ToRuby.create.accept(node)
-  [value.class.name, value.inspect]
-end
-
 effective = nil
 effective = lambda do |mapping, stack|
   raise "invalid YAML merge target" unless mapping.is_a?(Psych::Nodes::Mapping) && !stack.include?(mapping.object_id)
@@ -46,7 +40,9 @@ effective = lambda do |mapping, stack|
         keys.concat(effective.call(target, [*stack, mapping.object_id]))
       end
     else
-      keys << key_id.call(key)
+      raise "mapping keys must be scalars" unless key.is_a?(Psych::Nodes::Scalar)
+      parsed = Psych::Visitors::ToRuby.create.accept(key)
+      keys << [parsed.class.name, parsed.inspect]
     end
   end
   raise "duplicate effective YAML key" unless keys.uniq.length == keys.length
@@ -54,13 +50,4 @@ effective = lambda do |mapping, stack|
 end
 mappings.each { |mapping| effective.call(mapping, []) }
 
-document = Psych.safe_load(stream.to_yaml, permitted_classes: [], permitted_symbols: [], aliases: true)
-if ARGV == ["workflow"]
-  jobs = document["jobs"] if document.is_a?(Hash)
-  raise "workflow must define exactly two jobs" unless jobs.is_a?(Hash) && jobs.length == 2
-  names = jobs.map do |identifier, job|
-    raise "workflow job must be a mapping" unless job.is_a?(Hash)
-    (job["name"] || identifier).to_s.strip.downcase.gsub(/\s+/, " ")
-  end
-  raise "workflow check names differ" unless names.uniq.length == 2 && names.sort == ["project-integrity", "turn-handoff-integrity"]
-end
+Psych.safe_load(stream.to_yaml, permitted_classes: [], permitted_symbols: [], aliases: true)

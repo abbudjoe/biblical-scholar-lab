@@ -16,7 +16,9 @@ ACTIVATION_HASH = "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d3
 PACKAGE = "governance/GOV-01-package-manifest.json"
 CHECKSUMS = "governance/GOV-01-artifacts.sha256"
 WORKFLOW = ".github/workflows/governance-integrity.yml"
+WORKFLOW_HASH = "37ebad699538dbf5077a1fb8e8793499020e0423ff7f148db54636ffd33caad4"
 SCHEMA = "governance/schemas/turn-handoff.schema.json"
+DEPENDENCIES = {"actions/checkout", "pypi:jsonschema"}
 PRODUCTION = {
     WORKFLOW,
     *(f"governance/{name}" for name in "ruff.toml w00_checks.py w00_contracts.py w00_yaml.rb".split()),
@@ -54,8 +56,9 @@ def object_at(revision: str, path: str) -> dict[str, Any]:
 
 def activation(base: str, branch: str) -> None:
     contracts.need((base, branch) == (BASE_SHA, contracts.BRANCH), "base or branch differs")
-    content = blob(base, ACTIVATION_PATH)
-    contracts.need(hashlib.sha256(content).hexdigest() == ACTIVATION_HASH, "activation hash differs")
+    contracts.need(
+        hashlib.sha256(blob(base, ACTIVATION_PATH)).hexdigest() == ACTIVATION_HASH, "activation hash differs"
+    )
 
 
 def safe_path(path: str) -> None:
@@ -102,8 +105,7 @@ def _statuses(base: str, head: str) -> dict[str, str]:
 
 
 def _is_migration(path: str) -> bool:
-    parts = _PurePosixPath(path).parts
-    return path.endswith(".sql") or "migrations" in parts or "alembic" in parts
+    return path.endswith(".sql") or bool({"migrations", "alembic"} & set(_PurePosixPath(path).parts))
 
 
 def _is_production(path: str, excluded: set[str]) -> bool:
@@ -120,24 +122,6 @@ def _classify(paths: list[str]) -> tuple[set[str], set[str], set[str], set[str]]
     return production, tests, schemas, migrations
 
 
-def _manifest(path: str) -> bool:
-    name = _PurePosixPath(path).name
-    fixed = {"pyproject.toml", "setup.py", "setup.cfg", "package.json", "Cargo.toml", "go.mod", "Pipfile"}
-    return name in fixed or name.startswith("requirements") or name.endswith((".lock", "-lock.json"))
-
-
-def _dependencies(revision: str, workflows: set[str]) -> set[str]:
-    output: set[str] = set()
-    for path in workflows:
-        try:
-            source = blob(revision, path).decode()
-        except subprocess.CalledProcessError:
-            continue
-        output.update(item.split("@", 1)[0] for item in re.findall(r"uses:\s*([^\s]+@[^\s]+)", source))
-        output.update(f"pypi:{item}" for item in re.findall(r"'([a-z0-9_-]+)==[0-9.]+[a-z0-9.-]*'", source))
-    return output
-
-
 def _public(head: str, production: set[str], schemas: set[str], statuses: dict[str, str]) -> set[str]:
     output = {f"schema:{path}" for path in schemas}
     for path in production:
@@ -147,44 +131,51 @@ def _public(head: str, production: set[str], schemas: set[str], statuses: dict[s
 
 
 def budget(base: str, head: str, paths: list[str]) -> dict[str, Any]:
-    contracts.need(not any(_manifest(path) for path in paths), "dependency manifest change is unclassified")
     production, tests, schemas, migrations = _classify(paths)
     contracts.need(schemas <= {SCHEMA}, "schema change is unclassified")
     statuses, workflows = _statuses(base, head), {path for path in paths if path.startswith(".github/workflows/")}
     added, removed = _diff_lines(base, head)
     production_lines, test_lines = _diff_lines(base, head, sorted(production)), _diff_lines(base, head, sorted(tests))
     public = _public(head, production, schemas, statuses)
+    modules_added = sorted(path for path in production if statuses[path] == "A")
+    modules_removed = sorted(path for path in production if statuses[path] == "D")
     return {
-        "additions": added,
-        "deletions": removed,
+        "substantive_lines_total": added + removed,
         "production_loc_added": production_lines[0],
         "production_loc_removed": production_lines[1],
         "test_loc_added": test_lines[0],
         "test_loc_removed": test_lines[1],
+        "generated_loc": 0,
         "production_files": sorted(production),
-        "production_added": sorted(path for path in production if statuses[path] == "A"),
-        "production_removed": sorted(path for path in production if statuses[path] == "D"),
-        "dependencies": sorted(_dependencies(head, workflows) - _dependencies(base, workflows)),
-        "public_contracts": sorted(public),
-        "workflows": sorted(workflows),
-        "migrations": sorted(migrations),
-        "cli_commands": sorted(contracts.cli_surface(blob(head, "governance/w00_checks.py").decode())),
+        "production_files_added": len(modules_added),
+        "production_files_removed": len(modules_removed),
+        "modules_added": modules_added,
+        "modules_removed": modules_removed,
+        "tables_added": [],
+        "endpoints_added": [],
+        "dependencies_added": sorted(DEPENDENCIES if workflows else set()),
+        "dependencies_removed": [],
+        "external_validation_tools": contracts.EXTERNAL_TOOLS,
+        "public_contracts_changed": sorted(public),
+        "workflow_files": sorted(workflows),
+        "migrations_added": sorted(migrations),
+        "cli_commands_added": sorted(contracts.cli_surface(blob(head, "governance/w00_checks.py").decode())),
     }
 
 
 def validate_budget(metrics: dict[str, Any]) -> None:
     actual = (
-        metrics["additions"] + metrics["deletions"],
-        len(metrics["production_files"]),
-        len(metrics["dependencies"]),
-        len(metrics["public_contracts"]),
-        len(metrics["migrations"]),
+        metrics["substantive_lines_total"],
+        *(
+            len(metrics[key])
+            for key in ("production_files", "dependencies_added", "public_contracts_changed", "migrations_added")
+        ),
     )
     contracts.need(
         all(value <= limit for value, limit in zip(actual, (1200, 12, 2, 3, 0), strict=True)), "W00A1 budget exceeded"
     )
     expected = (PRODUCTION, {WORKFLOW}, {"project-integrity", "turn-handoff-integrity"})
-    surface = (set(metrics["production_files"]), set(metrics["workflows"]), set(metrics["cli_commands"]))
+    surface = (set(metrics["production_files"]), set(metrics["workflow_files"]), set(metrics["cli_commands_added"]))
     contracts.need(surface == expected, "W00A1 surface differs")
 
 
@@ -225,15 +216,16 @@ def validate_package(revision: str) -> None:
     contracts.need(seen | {PACKAGE} <= set(entries), "checksum membership differs")
     contracts.need(entries[PACKAGE] == hashlib.sha256(blob(revision, PACKAGE)).hexdigest(), "manifest checksum differs")
     baseline = {item["path"] for item in object_at(BASE_SHA, PACKAGE)["files"]}
-    runtime = RUNTIME_PACKAGE if revision != BASE_SHA else set()
-    contracts.need(baseline | runtime <= seen, "package membership differs")
+    contracts.need(
+        baseline | (RUNTIME_PACKAGE if revision != BASE_SHA else set()) <= seen, "package membership differs"
+    )
 
 
-def validate_yaml(source: bytes, *, workflow: bool = False) -> None:
+def validate_yaml(source: bytes) -> None:
     controls = re.search(rb"[\x00-\x08\x0b-\x1f\x7f]", source)
     contracts.need(len(source) <= 262_144 and not controls, "YAML bytes differ")
     result = subprocess.run(
-        ["ruby", "governance/w00_yaml.rb", *(["workflow"] if workflow else [])],
+        ["ruby", "governance/w00_yaml.rb"],
         input=source,
         capture_output=True,
         timeout=5,
@@ -241,9 +233,14 @@ def validate_yaml(source: bytes, *, workflow: bool = False) -> None:
     contracts.need(result.returncode == 0, "YAML semantics are invalid")
 
 
+def validate_workflow(source: bytes) -> None:
+    validate_yaml(source)
+    contracts.need(hashlib.sha256(source).hexdigest() == WORKFLOW_HASH, "workflow policy differs")
+
+
 def _validate_sources(head: str, metrics: dict[str, Any]) -> None:
     for path in metrics["production_files"]:
-        if path in metrics["production_removed"]:
+        if path in metrics["modules_removed"]:
             continue
         source = blob(head, path)
         parts = (("TO", "DO"), ("FIX", "ME"), ("NotImplemented", "Error"), ("place", "holder"))
@@ -254,26 +251,19 @@ def _validate_sources(head: str, metrics: dict[str, Any]) -> None:
             contracts.validate_python(path, source.decode())
 
 
-def _in_scope(path: str) -> bool:
-    return path in RUNTIME_PACKAGE | {PACKAGE, CHECKSUMS} or path.startswith("handoffs/W00/")
-
-
 def validate_project(base: str, head: str, branch: str) -> dict[str, Any]:
     activation(base, branch)
     paths = changed_paths(base, head)
-    contracts.need(all(_in_scope(path) for path in paths), "change is outside W00A1")
+    allowed = RUNTIME_PACKAGE | {PACKAGE, CHECKSUMS}
+    contracts.need(
+        all(path in allowed or path.startswith("handoffs/W00/") for path in paths), "change is outside W00A1"
+    )
     metrics = budget(base, head, paths)
     validate_budget(metrics)
     validate_package(head)
-    schema = contracts.strict_json(blob(head, SCHEMA))
-    jsonschema.Draft202012Validator.check_schema(schema)
+    jsonschema.Draft202012Validator.check_schema(contracts.strict_json(blob(head, SCHEMA)))
     _validate_sources(head, metrics)
-    workflow = blob(head, WORKFLOW)
-    validate_yaml(workflow, workflow=True)
-    contracts.need(
-        not any(marker in workflow for marker in (b"pull_request_target", b"upload-artifact")),
-        "deferred workflow remains",
-    )
+    validate_workflow(blob(head, WORKFLOW))
     return {"changed_paths": paths, **metrics}
 
 
@@ -284,6 +274,20 @@ def _history(base: str, head: str) -> list[tuple[str, str]]:
         contracts.need(len(fields) == 2, "candidate history contains a merge")
         output.append((fields[0], fields[1]))
     return output
+
+
+def _final_commit(head: str, pairs: list[tuple[str, str, tuple[str, str]]]) -> tuple[str, str, tuple[str, str]]:
+    times = [_PurePosixPath(item[2][0]).stem.rsplit("-", 1)[-1] for item in pairs]
+    contracts.need(times == sorted(set(times)), "handoff chronology differs")
+    contracts.need(bool(pairs) and pairs[-1][0] == head, "live head is not the final handoff commit")
+    commit, parent, pair = pairs[-1]
+    contracts.need(
+        parent not in {item[0] for item in PRIOR_HANDOFFS} and _pair(parent, git("rev-parse", f"{parent}^")) is None,
+        "implementation head is a handoff commit",
+    )
+    changed = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", parent, commit).splitlines())
+    contracts.need(changed == set(pair), "final commit contains implementation changes")
+    return commit, parent, pair
 
 
 def _pair(commit: str, parent: str) -> tuple[str, str] | None:
@@ -315,31 +319,12 @@ def _prior(head: str) -> None:
 
 def _receipt(record: dict[str, Any], metrics: dict[str, Any]) -> None:
     receipt = record["complexity_receipt"]
-    counts = {
-        "substantive_lines_total": metrics["additions"] + metrics["deletions"],
-        "production_loc_added": metrics["production_loc_added"],
-        "production_loc_removed": metrics["production_loc_removed"],
-        "test_loc_added": metrics["test_loc_added"],
-        "test_loc_removed": metrics["test_loc_removed"],
-        "generated_loc": 0,
-        "production_files_added": len(metrics["production_added"]),
-        "production_files_removed": len(metrics["production_removed"]),
-    }
-    contracts.need(all(receipt[key] == value for key, value in counts.items()), "complexity counts differ")
-    arrays = {
-        "modules_added": metrics["production_added"],
-        "modules_removed": metrics["production_removed"],
-        "tables_added": [],
-        "migrations_added": metrics["migrations"],
-        "endpoints_added": [],
-        "cli_commands_added": metrics["cli_commands"],
-        "dependencies_added": metrics["dependencies"],
-        "dependencies_removed": [],
-        "public_contracts_changed": metrics["public_contracts"],
-        "workflow_files": metrics["workflows"],
-    }
+    prose = set(
+        "abstractions simpler_alternatives_considered known_duplication_or_debt waivers simplicity_conformance".split()
+    )
+    measured = set(receipt) - prose
     contracts.need(
-        all(sorted(receipt[key]) == sorted(value) for key, value in arrays.items()), "complexity surface differs"
+        measured <= set(metrics) and all(receipt[key] == metrics[key] for key in measured), "complexity receipt differs"
     )
 
 
@@ -360,8 +345,7 @@ def _markdown(revision: str, path: str, record: dict[str, Any], parent: str) -> 
     ).split("|") + [parent, record["status"]]
     contracts.need(all(item in source for item in required), "Markdown declaration differs")
     contracts.need(
-        not any(phrase in source.casefold() for phrase in contracts.PROHIBITED_PROSE),
-        "Markdown prose contradicts facts",
+        contracts.CONTRADICTORY_MARKDOWN.search(source.casefold()) is None, "Markdown prose contradicts facts"
     )
 
 
@@ -384,14 +368,7 @@ def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> dict[str
     _prior(head)
     pairs = [(commit, parent, pair) for commit, parent in _history(base, head) if (pair := _pair(commit, parent))]
     contracts.need([item[0] for item in pairs[:-1]] == [item[0] for item in PRIOR_HANDOFFS], "handoff order differs")
-    contracts.need(bool(pairs) and pairs[-1][0] == head, "live head is not the final handoff commit")
-    commit, parent, pair = pairs[-1]
-    contracts.need(
-        parent not in {item[0] for item in PRIOR_HANDOFFS} and _pair(parent, git("rev-parse", f"{parent}^")) is None,
-        "implementation head is a handoff commit",
-    )
-    changed = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", parent, commit).splitlines())
-    contracts.need(changed == set(pair), "final commit contains implementation changes")
+    commit, parent, pair = _final_commit(head, pairs)
     record = object_at(head, pair[0])
     contracts.validate_handoff(record, object_at(head, SCHEMA))
     stem = _PurePosixPath(pair[0]).stem

@@ -16,12 +16,29 @@ BASE = "3d3ebb706fe6c8779445cbbfd9fea271b86d3646"
 ROOT = "/Users/joseph/biblical-scholar-lab"
 PR_URL = f"https://github.com/{REPOSITORY}/pull/1"
 PR_TITLE = "W00A1: local governance kernel and defense checks"
-PROHIBITED_PROSE = (
-    "the pr was merged|merge was performed|w00a2 is now underway|w00b is now underway|w01 is now underway|"
-    "safe to merge|merge_ready|merge ready|owner authorization is active|owner authorization implemented|"
-    "merge-only path is active|merge-only path active|"
-    "trusted workflow proven"
-).split("|")
+PROHIBITED_JSON = re.compile(r"\b(?:approv\w*|authoriz\w*|billable\w*|merg\w*|ready|safe|w00a2|w00b|w01)\b")
+CONTRADICTORY_MARKDOWN = re.compile(
+    r"\b(?:(?:pr|pull request).{0,40}(?:already|has|was).{0,20}merged|w01.{0,20}(?:started|underway)|"
+    r"(?:safe|can|may|ready).{0,30}merg\w*|owner authorization.{0,20}(?:active|implemented))\b"
+)
+REQUIRED_FINDINGS = set(
+    "R0-P1-TRUST-PROVENANCE R1-F2 R2-F4 R3-F3 R4-F1 R5-F1 R6-F7 R7-F5 R8-F6 "
+    "R02-P2-STRICT-CONTENT R02-P2-HANDOFF-EVIDENCE R02-P2-CLAIMS R02-P2-CODEOWNERS "
+    "R02-P2-QUALITY-SPEC R02-P1-ABSTRACTIONS R02-P2-DR30 P2-01 P2-02 P2-03 P2-04 P2-05 P2-06 "
+    "R03-P2-WORKFLOW R03-P2-CHRONOLOGY R03-P2-PROTOCOL R03-P2-DISPOSITION".split()
+)
+EXTERNAL_TOOLS = "detect-secrets==1.5.0 mypy==2.3.1 radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
+PROSE_FIELDS = (
+    "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt".split()
+)
+STAGE_PATHS = set(
+    (
+        ".github/workflows/governance-integrity.yml governance/GOV-01-artifacts.sha256 "
+        "governance/GOV-01-package-manifest.json "
+        "governance/ruff.toml governance/schemas/turn-handoff.schema.json governance/test_w00_checks.py "
+        "governance/w00_checks.py governance/w00_contracts.py governance/w00_yaml.rb"
+    ).split()
+)
 PYTHON_FILES = ("governance/w00_contracts.py", "governance/w00_checks.py", "governance/test_w00_checks.py")
 UV_PYTHON = ("uv", "run", "--with", "jsonschema==4.25.1", "--")
 UV_COVERAGE = (*UV_PYTHON[:-1], "--with", "coverage==7.10.6", "--")
@@ -30,11 +47,12 @@ VALIDATION_ARGV = (
     (*UV_PYTHON, "python3", "-m", "py_compile", *PYTHON_FILES[:-1]),
     (*UV_COVERAGE, "python3", "-m", "coverage", "run", "--branch", "-m", "unittest", PYTHON_FILES[-1]),
     (*UV_COVERAGE, "python3", "-m", "coverage", "report", "--fail-under=90", *PYTHON_FILES[:-1]),
-    ("uvx", "ruff", "check", "--config", "governance/ruff.toml", *PYTHON_FILES),
-    ("uvx", "ruff", "format", "--check", "--config", "governance/ruff.toml", *PYTHON_FILES),
-    ("uvx", "mypy", "--strict", "--ignore-missing-imports", *PYTHON_FILES[:-1]),
-    ("uvx", "detect-secrets", "scan", "--all-files"),
-    ("uvx", "zizmor", ".github/workflows/governance-integrity.yml"),
+    ("uvx", "ruff@0.16.3", "check", "--config", "governance/ruff.toml", *PYTHON_FILES),
+    ("uvx", "ruff@0.16.3", "format", "--check", "--config", "governance/ruff.toml", *PYTHON_FILES),
+    ("uvx", "mypy@2.3.1", "--strict", "--ignore-missing-imports", *PYTHON_FILES[:-1]),
+    ("uvx", "detect-secrets@1.5.0", "scan", "--all-files"),
+    ("uvx", "zizmor@1.29.0", ".github/workflows/governance-integrity.yml"),
+    ("uvx", "radon@6.0.1", "cc", "-s", "-a", *PYTHON_FILES[:-1]),
     ("ruby", "-c", "governance/w00_yaml.rb"),
     ("shasum", "-a", "256", "-c", "governance/GOV-01-artifacts.sha256"),
     ("git", "diff", "--check"),
@@ -76,139 +94,63 @@ def timestamp(value: Any) -> datetime:
     return parsed
 
 
-def _plain(item: Any, fields: set[str]) -> None:
-    need(isinstance(item, dict) and set(item) == fields, "nested record fields differ")
-    need(all(isinstance(item[key], str) and item[key] for key in fields), "nested record value differs")
-
-
-def _bounded(record: dict[str, Any]) -> str:
-    pending: list[Any] = [record]
-    texts = []
-    while pending:
-        value = pending.pop()
-        if isinstance(value, str):
-            need(0 < len(value) <= 4096, "record text is unbounded")
-            texts.append(value)
-            continue
-        if isinstance(value, list):
-            need(len(value) <= 64, "record list is unbounded")
-            pending.extend(value)
-            continue
-        if isinstance(value, dict):
-            need(len(value) <= 64, "record object is unbounded")
-            pending.extend(value.values())
-    return " ".join(texts).casefold()
-
-
-def _changes(record: dict[str, Any]) -> None:
-    for item in record["changes"]:
-        fields = {"change_id", "kind", "summary", "paths"}
-        need(isinstance(item, dict) and set(item) == fields, "change fields differ")
-        need(all(isinstance(item[key], str) and item[key] for key in fields - {"paths"}), "change text differs")
-        need(
-            item["kind"] in {"ADD", "MODIFY", "DELETE"}
-            and isinstance(item["paths"], list)
-            and all(isinstance(path, str) for path in item["paths"]),
-            "change differs",
-        )
-
-
-def _reviews(record: dict[str, Any]) -> None:
-    review = set(
-        "finding_id source severity affected_path_or_behavior root_cause repair regression_test evidence "
-        "final_status".split()
-    )
-    for item in record["review_targets"]:
-        _plain(item, review)
-        need(item["severity"] in {"P0", "P1", "P2", "P3"}, "finding severity differs")
-        need(
-            item["final_status"] in {"CLOSED", "SUPERSEDED_BY_APPROVED_SPLIT", "BLOCKED_WITH_EXACT_REASON"},
-            "finding status differs",
-        )
-
-
-def _outputs(record: dict[str, Any]) -> None:
-    for item in record["evaluations"]:
-        _plain(item, {"name", "status", "evidence"})
-        need(item["status"] in {"PASS", "PASS_WITH_REVIEW", "FAIL"}, "evaluation status differs")
-    for item in record["artifacts"]:
-        _plain(item, {"artifact_id", "kind", "reference", "sha256"})
-        need(re.fullmatch(r"[0-9a-f]{64}", item["sha256"]) is not None, "artifact digest differs")
-    for item in record["delegated_operations"]:
-        fields = {"role", "agent", "scope", "write_performed", "result"}
-        need(isinstance(item, dict) and set(item) == fields, "delegation fields differ")
-        texts = fields - {"write_performed"}
-        valid = all(isinstance(item[key], str) and item[key] for key in texts)
-        need(valid and item["role"] == "explorer" and item["write_performed"] is False, "delegation differs")
-    for item in record["complexity_receipt"]["abstractions"]:
-        _plain(item, {"name", "reason"})
+def _command_digest(item: dict[str, Any]) -> str:
+    envelope = {key: item[key] for key in sorted(item) if key != "combined_evidence_artifact_sha256"}
+    return hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def _command(item: dict[str, Any], identity: tuple[str, str, str]) -> None:
-    fields = set(
-        "command_evidence_id root_turn_id activation_id implementation_head_sha argv working_directory "
-        "execution_profile started_at finished_at exit_code result stdout_sha256 stderr_sha256 "
-        "combined_evidence_artifact_sha256".split()
-    )
-    need(set(item) == fields and all(isinstance(token, str) for token in item["argv"]), "command fields differ")
-    profile = {"kind": "LOCAL_EXISTING_GH", "actor_login": "abbudjoe", "token_overrides_present": False}
-    need(item["execution_profile"] == profile, "command execution profile differs")
     keys = ("root_turn_id", "activation_id", "implementation_head_sha")
     need(tuple(item[key] for key in keys) == identity, "command identity differs")
     need(assess_argv(item["argv"]), "argv is not allowlisted")
     need(item["working_directory"] == ROOT, "working directory differs")
     need(timestamp(item["started_at"]) <= timestamp(item["finished_at"]), "command time order differs")
     need(
-        isinstance(item["exit_code"], int) and (item["exit_code"] == 0) == (item["result"] == "PASS"),
+        (item["exit_code"] == 0) == (item["result"] == "PASS"),
         "command result differs",
     )
-    need(item["result"] in {"PASS", "FAIL"}, "command result is invalid")
-    digest_fields = sorted(fields - {"combined_evidence_artifact_sha256"})
-    envelope = {key: item[key] for key in digest_fields}
-    digest = hashlib.sha256(json.dumps(envelope, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-    digest_keys = ("stderr_sha256", "stdout_sha256", "combined_evidence_artifact_sha256")
-    need(all(re.fullmatch(r"[0-9a-f]{64}", item[key]) for key in digest_keys), "command digest differs")
-    need(digest == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
+    need(_command_digest(item) == item["combined_evidence_artifact_sha256"], "command artifact binding differs")
 
 
 def _commands(items: list[dict[str, Any]], identity: tuple[str, str, str]) -> None:
     for item in items:
         _command(item, identity)
-    for field in ("command_evidence_id", "combined_evidence_artifact_sha256"):
-        values = [item[field] for item in items]
-        need(len(values) == len(set(values)), "command evidence is reused")
+    identities = [{item[key] for item in items} for key in ("command_evidence_id", "combined_evidence_artifact_sha256")]
+    need(all(len(values) == len(items) for values in identities), "command evidence is reused")
+
+
+def _review_state(record: dict[str, Any]) -> None:
+    findings = {item["finding_id"]: item for item in record["review_targets"]}
+    need(len(findings) == len(record["review_targets"]), "finding is duplicated")
+    blocked = any(
+        item["severity"] in {"P0", "P1", "P2"} and item["final_status"] == "BLOCKED_WITH_EXACT_REASON"
+        for item in findings.values()
+    )
+    ready = REQUIRED_FINDINGS <= set(findings) and not blocked
+    need(record["status"] != "READY_FOR_CHATGPT_REVIEW" or ready, "READY finding closure differs")
 
 
 def validate_handoff(record: dict[str, Any], schema: dict[str, Any]) -> None:
     errors = sorted(jsonschema.Draft202012Validator(schema).iter_errors(record), key=lambda error: list(error.path))
     need(not errors, f"handoff schema differs: {errors[0].message if errors else ''}")
-    prose = _bounded(record)
     need(record["changes"] and record["review_targets"] and record["commands"], "required evidence is empty")
-    _changes(record)
-    _reviews(record)
-    _outputs(record)
     keys = ("schema_version", "project_id", "activation_id", "task_id", "repository", "branch", "base_sha", "pr_url")
     expected = ("1.0", "biblical-scholar-lab", ACTIVATION, "W00", REPOSITORY, BRANCH, BASE, PR_URL)
     need(tuple(record[key] for key in keys) == expected, "handoff identity differs")
-    design, auth = record["design_conformance"], record["github_auth_preflight"]
+    design = record["design_conformance"]
     need(design["status"] == "CONFORMING" and "W00-SPLIT-01" in design["approved_design_ids"], "design differs")
-    auth_json = '{"active_login":"abbudjoe","auth_healthy":true,"hostname":"github.com",'
-    auth_json += '"token_exposed":false,"token_override_present":false}'
-    need(json.dumps(auth, sort_keys=True, separators=(",", ":")) == auth_json, "auth differs")
     need(
         record["billable_actions"] == {"performed": False, "actual_cost_usd": 0, "campaign_ids": []}, "billable differs"
     )
     compare = f"https://github.com/{REPOSITORY}/compare/{BASE}...{BRANCH}"
     need(record["compare_url"] == compare, "compare URL differs")
     _commands(record["commands"], (record["turn_id"], record["activation_id"], record["implementation_head_sha"]))
+    _review_state(record)
     expected_complexity = {"SPLIT_REQUIRED": "BLOCKED_REQUIRES_SPLIT"}.get(record["status"], "PASS")
     need(record["complexity_receipt"]["simplicity_conformance"] == expected_complexity, "simplicity differs")
-    need(not record["merge_performed"] and not record["next_task_started"], "terminal state differs")
-    need(
-        record["status"] != "READY_FOR_CHATGPT_REVIEW" or record["next_required_action"] == "CHATGPT_REVIEW",
-        "next action differs",
-    )
-    need(not any(phrase in prose for phrase in PROHIBITED_PROSE), "prose contradicts terminal facts")
+    prose = json.dumps({key: record[key] for key in PROSE_FIELDS}, sort_keys=True, separators=(",", ":")).casefold()
+    need(len(prose) <= 262_144, "record prose is unbounded")
+    need(PROHIBITED_JSON.search(prose) is None, "JSON prose restates terminal facts")
 
 
 def command_allowed(command: str) -> bool:
@@ -264,22 +206,13 @@ def _git(argv: list[str]) -> bool:
 
 
 def _git_revision(argv: list[str]) -> bool:
-    if len(argv) != 3 or argv[:2] != ["git", "rev-parse"]:
-        return False
-    return argv[2] == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", argv[2].removesuffix("^")) is not None
+    revision = argv[2] if len(argv) == 3 and argv[:2] == ["git", "rev-parse"] else ""
+    return revision == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", revision.removesuffix("^")) is not None
 
 
 def _stage_path(path: str) -> bool:
-    exact = set(
-        (
-            ".github/workflows/governance-integrity.yml "
-            "governance/GOV-01-artifacts.sha256 governance/GOV-01-package-manifest.json governance/ruff.toml "
-            "governance/schemas/turn-handoff.schema.json governance/test_w00_checks.py governance/w00_checks.py "
-            "governance/w00_contracts.py governance/w00_yaml.rb"
-        ).split()
-    )
     handoff = re.fullmatch(r"handoffs/W00/W00-SOL-REPAIR03-[0-9]{8}T[0-9]{6}Z\.(?:md|json)", path)
-    return path in exact or handoff is not None
+    return path in STAGE_PATHS or handoff is not None
 
 
 def _validator(argv: list[str]) -> bool:
@@ -294,15 +227,9 @@ def _validator(argv: list[str]) -> bool:
         return False
     values = dict(zip(flags, argv[4::2], strict=True))
     head = values["--head-sha"]
-    valid = all(
-        (
-            values["--base-sha"] == BASE,
-            head == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", head),
-            values["--branch"] == BRANCH,
-        )
-    )
-    valid = valid and ("--pr-url" not in values or values["--pr-url"] == PR_URL)
-    return bool(valid)
+    valid_head = head == "HEAD" or re.fullmatch(r"[0-9a-f]{40}", head)
+    identity = values["--base-sha"], values["--branch"], values.get("--pr-url", PR_URL)
+    return bool(valid_head and identity == (BASE, BRANCH, PR_URL))
 
 
 def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
@@ -315,10 +242,8 @@ def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
 
 
 def _matches(name: str | None, targets: set[str]) -> bool:
-    return (
-        any(name == target or target.startswith("*") and name.endswith(target[1:]) for target in targets)
-        if name
-        else False
+    return bool(
+        name and any(name == target or target.startswith("*") and name.endswith(target[1:]) for target in targets)
     )
 
 
@@ -358,6 +283,8 @@ class _Symbols(ast.NodeVisitor):
         need(not _public_call(targets) or not isinstance(value, ast.Call), "dynamic public class is unclassified")
 
     def _bind(self, target: ast.expr, resolved: str | None) -> None:
+        controlled = resolved in self.class_values or _matches(resolved, self.targets)
+        need(not controlled or isinstance(target, ast.Name), "policy alias target is dynamic")
         if not resolved or not isinstance(target, ast.Name):
             return
         self.aliases[target.id] = resolved
@@ -374,6 +301,7 @@ class _Symbols(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
+        need(resolved not in {"eval", "exec", "globals", "locals", "setattr", "vars"}, "dynamic policy code differs")
         if _matches(resolved, self.targets):
             self.calls.append((cast(str, resolved), node))
         if resolved == "getattr" and node.args:
