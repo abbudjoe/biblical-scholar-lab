@@ -143,6 +143,8 @@ class GovernanceTests(unittest.TestCase):
         hidden = ("(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()").split("|")
         for call in hidden:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
+        for call in ("[print][0]()|(print if x else len)()|(print or len)()|(fn := print)()").split("|"):
+            self.assertFalse(contracts.policy_calls(call, {"*.add_parser"}) or contracts.class_surface(call))
         public = "from package import PublicClass as RenamedClass\nreexport=RenamedClass\n"
         self.assertEqual(contracts.class_surface(public), {"package.PublicClass"})
         hidden_classes = (
@@ -151,9 +153,6 @@ class GovernanceTests(unittest.TestCase):
         ).split("|")
         for hidden_class in hidden_classes:
             self.assertRaises(ValueError, contracts.class_surface, hidden_class)
-        unrelated = "import logging as log\nalias=log.info\nalias('ok')\n"
-        self.assertEqual(contracts.policy_calls(unrelated, {"*.add_parser"}), [])
-
         for body in ("pass", "..."):
             self.assertRaises(ValueError, contracts.validate_python, "stub.py", f"def f():\n    {body}\n")
 

@@ -33,7 +33,7 @@ P3_FINDINGS = {"R03R2-P3-PROTOCOL-COVERAGE", "R03R2-P3-TOOL-INVENTORY"}
 SPLIT_FINDINGS = {"R0-P1-TRUST-PROVENANCE", "R2-F4", "R5-F1", "R6-F7", "R02-P2-CODEOWNERS"}
 EXTERNAL_TOOLS = "coverage==7.10.6 detect-secrets==1.5.0 mypy==2.3.1".split()
 EXTERNAL_TOOLS += "radon==6.0.1 ruff==0.16.3 zizmor==1.29.0".split()
-DYNAMIC_ALIAS = "<dynamic>"
+CONTROLLED, SAFE = "<controlled>", "<safe>"
 PROSE_FIELDS = (
     "objective acceptance_criteria changes review_targets known_risks decisions_required complexity_receipt "
     "evaluations artifacts delegated_operations".split()
@@ -240,10 +240,22 @@ def _resolve(node: ast.AST | None, aliases: dict[str, str]) -> str | None:
     return None
 
 
-def _matches(name: str | None, targets: set[str]) -> bool:
-    return bool(
-        name and any(name == target or target.startswith("*") and name.endswith(target[1:]) for target in targets)
-    )
+def _matches(name: str | None, values: set[str]) -> bool:
+    return name is not None and any(name == item or item.startswith("*") and name.endswith(item[1:]) for item in values)
+
+
+def _controlled(node: ast.AST, aliases: dict[str, str], values: set[str]) -> bool:
+    leaves = {value.rsplit(".", 1)[-1] for value in values}
+    prefixes = {value.rpartition(".")[0] for value in values if not value.startswith("*")}
+    for item in ast.walk(node):
+        name, label = _resolve(item, aliases), getattr(item, "attr", getattr(item, "value", None))
+        if name == CONTROLLED or _matches(name, values) or name in prefixes or label in leaves:
+            return True
+    return False
+
+
+def _taint(node: ast.AST, aliases: dict[str, str], values: set[str]) -> str:
+    return CONTROLLED if _controlled(node, aliases, values) else SAFE
 
 
 class _Symbols(ast.NodeVisitor):
@@ -273,14 +285,10 @@ class _Symbols(ast.NodeVisitor):
 
     def _assign(self, value: ast.AST | None, targets: list[ast.expr]) -> None:
         resolved = _resolve(value, self.aliases)
-        dynamic = resolved is None and value is not None
+        if resolved is None and value is not None:
+            resolved = _taint(value, self.aliases, self.targets or self.class_values)
         for target in targets:
-            self._bind(target, DYNAMIC_ALIAS if dynamic else resolved)
-        if not dynamic:
-            return
-        direct = isinstance(value, ast.Call) and _matches(_resolve(value.func, self.aliases), self.targets)
-        hidden = any(_matches(_resolve(item, self.aliases), self.targets) for item in ast.walk(cast(ast.AST, value)))
-        need(not hidden or direct, "policy alias is dynamically obscured")
+            self._bind(target, resolved)
 
     def _bind(self, target: ast.expr, resolved: str | None) -> None:
         controlled = resolved in self.class_values or _matches(resolved, self.targets)
@@ -290,8 +298,7 @@ class _Symbols(ast.NodeVisitor):
         if not resolved or not isinstance(target, ast.Name):
             return
         self.aliases[target.id] = resolved
-        if resolved in self.class_values and not target.id.startswith("_"):
-            self.classes.add(resolved)
+        self.classes.update((resolved,) if resolved in self.class_values and not target.id.startswith("_") else ())
 
     def visit_Assign(self, node: ast.Assign) -> None:
         self._assign(node.value, node.targets)
@@ -303,14 +310,9 @@ class _Symbols(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:
         resolved = _resolve(node.func, self.aliases)
-        computed = not isinstance(node.func, (ast.Name, ast.Attribute))
-        leaf = node.func.attr if isinstance(node.func, ast.Attribute) else ""
-        ambiguous = self.targets and (
-            resolved == DYNAMIC_ALIAS
-            or not _matches(resolved, self.targets)
-            and any(target.endswith(f".{leaf}") for target in self.targets)
-        )
-        need(not computed and not ambiguous, "computed call target is unclassified")
+        state = _taint(node.func, self.aliases, self.targets or self.class_values)
+        ambiguous = bool(self.targets) and (resolved == CONTROLLED or resolved is None and state == CONTROLLED)
+        need(not ambiguous, "computed call target is unclassified")
         need(resolved not in {"eval", "exec", "globals", "locals", "setattr", "vars"}, "dynamic policy code differs")
         if _matches(resolved, self.targets):
             self.calls.append((cast(str, resolved), node))
