@@ -193,18 +193,18 @@
     },
     {
       "path": "governance/test_w00_checks.py",
-      "sha256": "d412f862c401b155ed0f50bc55c2b0092e5da379a036526d32da27c226c27fef",
-      "bytes": 13804
+      "sha256": "bc88bd8d9b01a38d4d793dfea269e99bc22f90c5c5bfc5057ec291fc0d191a59",
+      "bytes": 13887
     },
     {
       "path": "governance/w00_checks.py",
-      "sha256": "1fc471d16b8339e363fb4acc6acff91a427f125e45325b74fd0e3c29c73949d2",
-      "bytes": 18233
+      "sha256": "5c455eb709599bbf4c335432da1aa3eabfd5d7ac961cbf9d9020dd1959c8046b",
+      "bytes": 17981
     },
     {
       "path": "governance/w00_contracts.py",
-      "sha256": "6b6d00f2ffceedbf0b752cdc78963753759433718478b6750b38ad7b11a113df",
-      "bytes": 25403
+      "sha256": "41095418dc69aa726494c7f08380ecfff43620676f7ec88bfdc91936d3a31574",
+      "bytes": 26244
     },
     {
       "path": "governance/w00_yaml.rb",

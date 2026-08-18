@@ -291,24 +291,17 @@ def _receipt(record: dict[str, Any], metrics: dict[str, Any]) -> None:
     contracts.need(matches, "complexity receipt differs")
 
 
+def _render_markdown(record: dict[str, Any], parent: str) -> str:
+    facts = {key: record[key] for key in ("billable_actions", "merge_performed", "next_task_started", "status")}
+    declaration = "W00A1 implements only the local governance kernel and the project-integrity / "
+    declaration += "turn-handoff-integrity defense checks. W00A2 trusted candidate validation, W00B owner "
+    declaration += "authorization, and W01 merge-only proof are absent and remain unauthorized."
+    prefix = f"{declaration} Parent: {parent}. Status: {record['status']}. <!-- BSL_TERMINAL_FACTS_V1 -->"
+    return f"{prefix}\n```json\n{json.dumps(facts, sort_keys=True, separators=(',', ':'))}\n```\n"
+
+
 def _markdown(revision: str, path: str, record: dict[str, Any], parent: str) -> None:
-    source, fence = blob(revision, path).decode(), chr(96) * 3
-    pattern = re.compile(r"<!-- BSL_TERMINAL_FACTS_V1 -->" + rf"\s*{fence}json\s*(.*?)\s*{fence}", re.DOTALL)
-    matches = pattern.findall(source)
-    contracts.need(
-        len(matches) == 1
-        and contracts.strict_json(matches[0])
-        == {key: record[key] for key in ("billable_actions", "merge_performed", "next_task_started", "status")},
-        "Markdown terminal facts differ",
-    )
-    required = (
-        "W00A1 implements only the local governance kernel and the|project-integrity / turn-handoff-integrity "
-        "defense checks.|W00A2 trusted candidate validation, W00B owner authorization,|and W01 merge-only proof "
-        "are absent and remain unauthorized."
-    ).split("|") + [parent, record["status"]]
-    contracts.need(all(item in source for item in required), "Markdown declaration differs")
-    contradiction = contracts.CONTRADICTORY_MARKDOWN.search(source.casefold())
-    contracts.need(contradiction is None, "Markdown prose contradicts facts")
+    contracts.need(blob(revision, path).decode() == _render_markdown(record, parent), "Markdown differs")
 
 
 def _required_commands(record: dict[str, Any], parent: str) -> None:

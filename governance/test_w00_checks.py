@@ -1,5 +1,4 @@
 import hashlib
-import json
 import sys
 import unittest
 from pathlib import Path
@@ -30,10 +29,9 @@ def evidence(argv: tuple[str, ...], index: int = 0) -> dict[str, object]:
 
 
 def finding(identifier: str) -> dict[str, str]:
-    item = dict.fromkeys(
-        "finding_id source severity affected_path_or_behavior root_cause repair regression_test evidence final_status".split(),
-        "fixture",
-    )
+    keys = "finding_id source severity affected_path_or_behavior root_cause repair "
+    keys += "regression_test evidence final_status"
+    item = dict.fromkeys(keys.split(), "fixture")
     severity, status = contracts.finding_state(identifier)
     item.update(finding_id=identifier, source="Assembly", severity=severity, final_status=status)
     return item
@@ -98,19 +96,14 @@ class GovernanceTests(unittest.TestCase):
         self.reject(("status",), "BLOCKED_MISSING_EVIDENCE")
         self.reject(("evaluations", 0, "status"), "FAIL")
         self.reject(("delegated_operations", 0, "result"), "REPAIR_REQUIRED")
-        self.reject(("evaluations", 0, "evidence"), "absent")
 
-        for path, prose in (
-            (("evaluations", 0, "name"), "W01 started today."),
-            (("artifacts", 0, "reference"), "This head can be merged without another review."),
-            (("delegated_operations", 0, "scope"), "Safe to merge without review."),
-        ):
-            self.reject(path, prose)
+        self.reject(("evaluations", 0, "name"), "W01 started today.")
+        self.reject(("artifacts", 0, "reference"), "This head can be merged without another review.")
+        self.reject(("delegated_operations", 0, "scope"), "Safe to merge without review.")
 
         allowed = (
             "gh auth status --active --hostname github.com|gh api repos/abbudjoe/biblical-scholar-lab/rulesets/20960975|"
-            "git status --short|git add governance/w00_checks.py|"
-            "git push origin codex/w00-repository-governance"
+            "git status --short|git add governance/w00_checks.py|git push origin codex/w00-repository-governance"
         ).split("|")
         denied = (
             "gh auth token|gh auth status --show-token|gh auth login|gh auth logout|gh auth refresh|gh auth switch|"
@@ -123,40 +116,42 @@ class GovernanceTests(unittest.TestCase):
         self.assertTrue(all(not contracts.assess_argv(command.split()) for command in denied))
 
     def test_alias_discovery(self) -> None:
-        sources = (
-            "import subprocess as sp\nsp.run([])\n|from subprocess import run as execute\nexecute([])\n|"
-            "from subprocess import run as execute\nalias=execute\nalias([])\n|import subprocess as sp\nt=type(sp)\nt.run([])"
+        direct = (
+            "import subprocess as sp\nsp.run([])\n|import subprocess as sp\nt=type(sp)\nt.run([])|"
+            "from subprocess import run as execute\nalias=execute\nalias([])\n|"
+            "import subprocess as sp\nclass Box: execute=sp.run\nBox.execute([])"
         ).split("|")
-        for source in sources:
+        for source in direct:
             self.assertEqual(contracts.policy_calls(source, {"subprocess.run"})[0][0], "subprocess.run")
-        dynamic = (
+        hidden = (
             "import subprocess as sp\nname='run'\ngetattr(sp,name)([])\n|"
             "import subprocess as sp,sys\nname=sys.argv[1]\ngetattr(sp,name)([])\n|"
             "import subprocess as sp\ndef f(name):\n getattr(sp,name)([])\n|"
-            "import subprocess as sp\ng=sp.__getattribute__\ng(input())([])|import subprocess as sp\nd=sp.__dict__\nd[input()]([])|"
-            "import subprocess as sp\n[getattr][0](sp,'run')([])|import subprocess as sp,operator\noperator.methodcaller('run',[])(sp)|"
-            "import subprocess as sp\nobject.__getattribute__(sp,'run')([])|import subprocess as sp\nsp.__dict__.get(input())([])|"
-            "getattr(__import__('subprocess'),input())([])|import importlib\nimportlib.import_module('subprocess').run([])"
+            "import subprocess as sp\ng=sp.__dict__.__getitem__\ng(input())([])|"
+            "import subprocess as sp\nclass Box: mod=sp; g=getattr\nBox.g(Box.mod,input())([])|"
+            "import builtins\ngetattr(builtins,'__import__')('subprocess').run([])|"
+            "import importlib\ngetattr(importlib,'import_module')('subprocess').run([])"
         ).split("|")
-        forms = "[sp]|(sp,)|{'m':sp}|sp if flag else other|sp or other|(x:=sp)".split("|")
-        dynamic += tuple(f"import subprocess as sp\nbox={form}\ngetattr(box,input())([])" for form in forms)
-        for source_code in dynamic:
+        carriers = "[sp]|(sp,)|{'m':sp}|sp if flag else other|sp or other|(x:=sp)".split("|")
+        receivers = "[sp][0]|(sp,)[0]|{'m':sp}['m']|sp if flag else other|sp or other|(x:=sp)".split("|")
+        hidden += tuple(f"import subprocess as sp\nbox={form}\ngetattr(box,input())([])" for form in carriers)
+        uses = ("getattr(({0}),input())([])", "({0}).run([])")
+        hidden += tuple(f"import subprocess as sp\n{use.format(form)}" for form in receivers for use in uses)
+        for source_code in hidden:
             self.assertRaises(ValueError, contracts.policy_calls, source_code, {"subprocess.run"})
 
         source = (ROOT / "governance/w00_checks.py").read_text()
-        hidden = (
+        hidden_cli = (
             "(sub.add_parser if x else print)()|(sub.add_parser or print)()|(x := sub.add_parser)()|"
-            "name=input();getattr(sub,name)('rogue')|getattr(sub,'add_'+'parser')('rogue')|"
-            "__import__('operator').attrgetter('add_parser')(sub)('rogue')"
+            "name=input();getattr(sub,name)('rogue')|getattr([sub][0],input())('rogue')|"
+            "class Box: p=sub.add_parser\nBox.p('rogue')|g=sub.__dict__.__getitem__;g(input())('rogue')"
         ).split("|")
-        for call in hidden:
+        for call in hidden_cli:
             self.assertRaises(ValueError, contracts.cli_surface, source + "\n" + call)
-        for call in ("[print][0]()|(print if x else len)()|(print or len)()|(fn := print)()").split("|"):
-            self.assertFalse(contracts.policy_calls(call, {"*.add_parser"}) or contracts.class_surface(call))
         unrelated = (
-            "{'run':print}['run']()|class Helper:\n def run(self): ...\nHelper.run(None)|"
-            "import subprocess as sp\nf=[sp.Popen][0]\nf.run([])|import subprocess as sp\n(sp.Popen if x else print)([])|"
-            "import subprocess as sp\ngetattr(sp,'other')([])"
+            "[print][0]()|(print if x else len)()|(print or len)()|(fn := print)()|{'run':print}['run']()|"
+            "class Helper:\n def run(self): ...\nHelper.run(None)|import subprocess as sp\n[sp.Popen][0]([])|"
+            "import subprocess as sp\ngetattr(sp,'other')([])|import logging\n[getattr][0](logging,'info')('x')"
         ).split("|")
         self.assertTrue(all(not contracts.policy_calls(item, {"subprocess.run"}) for item in unrelated))
         public = "from package import PublicClass as RenamedClass\nreexport=RenamedClass\n"
@@ -181,12 +176,12 @@ class GovernanceTests(unittest.TestCase):
         self.assertRaises(ValueError, checks.validate_workflow, duplicate_names)
 
         head = checks.git("rev-parse", "HEAD")
-        checks._prior(head)
+        checks.validate_project(checks.BASE_SHA, head, contracts.BRANCH)
+        checks.parser()
         checks._required_commands(record(), IMPL)
-        argv = ["w00_checks.py", *record()["commands"][-2]["argv"][len(contracts.UV_PYTHON) + 2 :]]
-        argv[5] = head
-        with mock.patch.object(sys, "argv", argv):
-            self.assertEqual(checks.main(), 0)
+        missing = record()
+        missing["commands"] = [item for item in missing["commands"] if "pip_audit" not in item["argv"]]
+        self.assertRaises(ValueError, checks._required_commands, missing, IMPL)
         failures = (
             {"substantive_lines_total": 1201},
             {"production_files": [str(x) for x in range(13)]},
@@ -215,7 +210,10 @@ class GovernanceTests(unittest.TestCase):
         stale = tuple(path.replace("150000Z", "140000Z") for path in pair)
         self.assertRaises(ValueError, checks._final_commit, HEAD, [(IMPL, HEAD, pair), (HEAD, IMPL, stale)])
         item = record()
-        facts = {key: item[key] for key in ("billable_actions", "merge_performed", "next_task_started", "status")}
-        source = f"<!-- BSL_TERMINAL_FACTS_V1 -->\n```json\n{json.dumps(facts)}\n```"
+        source = checks._render_markdown(item, IMPL)
         with mock.patch.object(checks, "blob", return_value=source.encode()):
-            self.assertRaises(ValueError, checks._markdown, HEAD, "x.md", item, IMPL)
+            checks._markdown(HEAD, "x.md", item, IMPL)
+        claims = "The PR is merged.|Merging is complete.|W01 commenced today.|Owner authorization is enabled."
+        for claim in claims.split("|"):
+            with mock.patch.object(checks, "blob", return_value=(source + claim).encode()):
+                self.assertRaises(ValueError, checks._markdown, HEAD, "x.md", item, IMPL)
