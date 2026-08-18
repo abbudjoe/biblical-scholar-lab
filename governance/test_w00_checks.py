@@ -183,6 +183,7 @@ class YamlBudgetAndHistoryTests(unittest.TestCase):
         values.update(changes)
         return values
 
+    def test_scope_budget_and_prior_history(self) -> None:
         actual = checks.validate_project(checks.BASE_SHA, checks.git("rev-parse", "HEAD"), contracts.BRANCH)
         self.assertEqual(actual["workflows"], [checks.WORKFLOW])
         checks.validate_budget(self.metrics())
