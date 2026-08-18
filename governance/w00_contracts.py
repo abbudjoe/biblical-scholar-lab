@@ -246,18 +246,16 @@ def _ambiguous(arguments: list[ast.expr], leaves: set[str]) -> bool:
 def _reflects_target(name: str | None, node: ast.Call, targets: set[str]) -> bool:
     if name is None:
         return False
-    if name == "operator.attrgetter":
-        arguments = node.args
-    elif name == "operator.methodcaller":
-        arguments = node.args[:1]
-    elif name in GETTERS:
-        arguments = node.args[1:2]
-    elif name.endswith((".__getattr__", ".__getattribute__")):
-        arguments = node.args[:1]
-    else:
-        return False
     leaves = set(map(lambda target: target.rsplit(".", 1)[-1], targets))
-    return _ambiguous(arguments, leaves)
+    if name == "operator.attrgetter":
+        return _ambiguous(node.args, leaves)
+    if name == "operator.methodcaller":
+        return _ambiguous(node.args[:1], leaves)
+    if name in GETTERS:
+        return _ambiguous(node.args[1:2], leaves)
+    if name.endswith((".__getattr__", ".__getattribute__")):
+        return _ambiguous(node.args[:1], leaves)
+    return False
 
 
 class _Symbols(ast.NodeVisitor):
