@@ -185,8 +185,8 @@ def _handoff_identity(record: dict[str, Any]) -> None:
     auth = record.get("github_auth_preflight")
     need(isinstance(auth, dict), "handoff auth evidence differs")
     exact(cast(dict[str, Any], auth), {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
-    observed = tuple(auth.get(key) for key in ("hostname", "active_login")) if isinstance(auth, dict) else ()
-    need(observed == ("github.com", "abbudjoe") and cast(dict[str, Any], auth).get("auth_healthy") is True and cast(dict[str, Any], auth).get("token_override_present") is False and cast(dict[str, Any], auth).get("token_exposed") is False, "handoff auth evidence differs")
+    observed = tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) + tuple(type(auth.get(key)) for key in ("auth_healthy", "token_override_present", "token_exposed")) if isinstance(auth, dict) else ()
+    need(observed == ("github.com", "abbudjoe", True, False, False, bool, bool, bool), "handoff auth evidence differs")
     need(cast(dict[str, Any], auth).get("receipt_path") is None or isinstance(cast(dict[str, Any], auth).get("receipt_path"), str), "handoff auth receipt differs")
     need((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff actor differs")
 
@@ -204,10 +204,14 @@ def _validate_handoff_details(record: dict[str, Any]) -> None:
     arrays = (("acceptance_criteria", str), ("changes", dict), ("review_targets", dict), ("commands", dict), ("evaluations", dict), ("artifacts", dict), ("delegated_operations", dict), ("known_risks", str), ("decisions_required", str))
     for field, kind in arrays:
         _array(record, field, kind)
-    need(isinstance(record.get("objective"), str) and bool(record["objective"].strip()) and bool(record["acceptance_criteria"]) and not any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]), "handoff detail or delegation boundary differs")
+    details = (isinstance(record.get("objective"), str), bool(record["objective"].strip()) if isinstance(record.get("objective"), str) else False, bool(record["acceptance_criteria"]), any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]))
+    need(details == (True, True, True, False), "handoff detail or delegation boundary differs")
     _validate_complexity(record.get("complexity_receipt"), record["status"])
     billable = record.get("billable_actions")
-    need(isinstance(billable, dict) and {"performed", "actual_cost_usd"} <= billable.keys() <= {"performed", "actual_cost_usd", "campaign_ids"} and billable.get("performed") is False and isinstance(cost := billable.get("actual_cost_usd"), (int, float)) and not isinstance(cost, bool) and cost == 0 and ("campaign_ids" not in billable or isinstance(billable["campaign_ids"], list) and all(isinstance(item, str) for item in billable["campaign_ids"])), "billable work was reported")
+    campaigns = billable.get("campaign_ids", []) if isinstance(billable, dict) else None
+    cost = billable.get("actual_cost_usd") if isinstance(billable, dict) else None
+    identity = (isinstance(billable, dict), {"performed", "actual_cost_usd"} <= billable.keys() <= {"performed", "actual_cost_usd", "campaign_ids"} if isinstance(billable, dict) else False, billable.get("performed") if isinstance(billable, dict) else None, type(cost) in (int, float), cost, isinstance(campaigns, list), all(isinstance(item, str) for item in campaigns) if isinstance(campaigns, list) else False)
+    need(identity == (True, True, False, True, 0, True, True), "billable work was reported")
 
 
 def _validate_complexity(value: Any, status: str) -> None:

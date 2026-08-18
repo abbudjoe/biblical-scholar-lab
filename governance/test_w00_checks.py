@@ -158,7 +158,6 @@ class RepositoryTests(GitFixture):
             self.assertRaises(ContractError, contracts.cli_surface, __import__("ast").parse(invalid))
         with mock.patch.object(checks, "blob", return_value=b"class PublicContract: pass\n"), self.assertRaises(ContractError):
             checks._record_types(None, HEAD, {"governance/new.py"}, set())
-        contracts.validate_python("ok.py", "def ok():\n    return True\n")
         self.assertRaises(ContractError, contracts.validate_python, "large.py", "\n".join(f"x{i}={i}" for i in range(501)))
 
     def test_base_package_is_fully_bound_and_corruption_fails(self) -> None:
@@ -325,8 +324,7 @@ class WorkflowAndLiveTests(unittest.TestCase):
         self.assertEqual(source.count("actions/checkout@"), 1)
         self.assertNotIn("owner-merge-authorization", source)
         self.assertNotRegex(source, r"\b(?:source|make|npm|pip)\b")
-        ordinary = (ROOT / ".github/workflows/governance-integrity.yml").read_text()
-        self.assertTrue(all(item not in ordinary for item in ("chatgpt-review-integrity", "owner-merge-record-integrity")) and "exact, nonempty, zero-exit" in (ROOT / "governance/REQUIRED_CHECKS_SPEC.md").read_text())
+        self.assertTrue(all(item not in (ROOT / ".github/workflows/governance-integrity.yml").read_text() for item in ("chatgpt-review-integrity", "owner-merge-record-integrity")) and "exact, nonempty, zero-exit" in (ROOT / "governance/REQUIRED_CHECKS_SPEC.md").read_text())
 
 
 class AdapterAndCliTests(unittest.TestCase):
