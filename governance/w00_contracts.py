@@ -24,6 +24,7 @@ DIGEST = re.compile(r"[0-9a-f]{64}")
 COMPLETION = "<!-- BSL_ROOT_TURN_COMPLETION_V1 -->"
 REVIEW = "<!-- BSL_CHATGPT_REVIEW_V1 -->"
 INACTIVE_MARKERS = ("<!-- BSL_OWNER_MERGE_AUTHORIZATION_V1 -->", "<!-- BSL_MERGE_RECEIPT_V1 -->")
+PROHIBITED_CLAIMS = ("MERGE_READY", "SAFE_TO_MERGE", "OWNER_AUTHORIZATION_ACTIVE", "MERGE_ONLY_PATH_ACTIVE", "TRUSTED_VALIDATOR_LIVE_PROVEN_FOR_PR1")
 STATUSES = {"READY_FOR_CHATGPT_REVIEW", "BLOCKED_MISSING_EVIDENCE", "BLOCKED_DEPENDENCY", "BLOCKED_REQUIRES_DESIGN_REVIEW", "BLOCKED_REQUIRES_SOL_REPAIR", "SPLIT_REQUIRED", "NO_CHANGE", "FAILED"}
 TOKEN_OVERRIDES = {"GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"}
 W00A_RULESET_PAYLOAD_SHA256 = "a52b3d6c6a94a14a89fba182eb29ebc34af0fc6a6f34465031c7887d769caf65"
@@ -88,17 +89,31 @@ def exact(record: dict[str, Any], required: set[str], optional: set[str] | None 
     need(record.keys() <= required | optional and required <= record.keys(), "record fields differ")
 
 
+def cli_surface(tree: ast.Module) -> set[str]:
+    definitions = [node.value for node in tree.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "CLI_SPECS" for target in node.targets)] + [node.value.args[0] for node in tree.body if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute) and isinstance(node.value.func.value, ast.Name) and (node.value.func.value.id, node.value.func.attr, len(node.value.args)) == ("CLI_SPECS", "update", 1)]
+    calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)]
+    parsers = [call for call in calls if getattr(call.func, "attr", None) == "add_parser"]
+    shapes = {(type(call.args[0]), getattr(call.args[0], "id", getattr(call.args[0], "value", None))) for call in parsers if len(call.args) == 1 and not call.keywords}
+    writes = [node for node in ast.walk(tree) if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete)) and any(isinstance(name, ast.Name) and name.id == "CLI_SPECS" for target in (node.targets if isinstance(node, (ast.Assign, ast.Delete)) else [node.target]) for name in ast.walk(target))]
+    methods = [attribute.attr for call in calls if isinstance(attribute := call.func, ast.Attribute) and isinstance(attribute.value, ast.Name) and attribute.value.id == "CLI_SPECS"]
+    keys = [key.value for definition in definitions if isinstance(definition, ast.Dict) for key in definition.keys if isinstance(key, ast.Constant) and isinstance(key.value, str)]
+    need(len(definitions) == 2 and all(isinstance(item, ast.Dict) for item in definitions) and len(keys) == len(set(keys)) == sum(len(cast(ast.Dict, item).keys) for item in definitions) and len(writes) == 1 and sorted(methods) == ["items", "update"] and len(parsers) == 2 and shapes == {(ast.Name, "check"), (ast.Constant, "command-policy")}, "CLI parser surface is unclassified")
+    return set(keys) | {"command-policy"}
+
+
 def strict_json(source: str | bytes) -> Any:
     def unique(items: list[tuple[str, Any]]) -> dict[str, Any]:
         output = dict(items)
         need(len(output) == len(items), "JSON object key is duplicated")
         return output
 
-    def finite(value: str) -> Any:
-        raise ContractError(f"JSON number is non-finite: {value}")
+    def finite(value: str) -> float:
+        number = float(value)
+        need(abs(number) < float("inf"), f"JSON number is non-finite: {value}")
+        return number
 
     try:
-        return json.loads(source, object_pairs_hook=unique, parse_constant=finite)
+        return json.loads(source, object_pairs_hook=unique, parse_constant=finite, parse_float=finite)
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise ContractError("JSON is malformed") from error
 
@@ -143,6 +158,7 @@ def _array(record: dict[str, Any], field: str, kind: type) -> None:
 
 def validate_handoff(record: dict[str, Any], *, w00a: bool = False) -> None:
     exact(record, HANDOFF_FIELDS, {"compare_url"})
+    need(not any(item.lower() in json.dumps(record).lower() for item in PROHIBITED_CLAIMS), "handoff makes a prohibited capability claim")
     _handoff_identity(record)
     _handoff_design(record, w00a)
     _validate_handoff_details(record)
@@ -151,17 +167,17 @@ def validate_handoff(record: dict[str, Any], *, w00a: bool = False) -> None:
 def _handoff_identity(record: dict[str, Any]) -> None:
     identity = (record.get("schema_version"), record.get("project_id"), record.get("activation_id"), record.get("task_id"), record.get("repository"), record.get("branch"))
     need(identity[:2] == ("1.0", "biblical-scholar-lab") and identity[4] == REPOSITORY, "handoff identity differs")
-    need(all(isinstance(item, str) and item for item in (identity[2], identity[3])) and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(identity[5])) is not None, "handoff task identity differs")
+    need(all(isinstance(item, str) and item for item in (identity[2], identity[3], record.get("turn_id"), record.get("codex_run_id"))) and re.fullmatch(r"codex/[a-z0-9][a-z0-9-]*", str(identity[5])) is not None, "handoff task identity differs")
     need(record.get("status") in STATUSES and record.get("next_required_action") == "CHATGPT_REVIEW", "handoff transition differs")
     need(record.get("merge_performed") is False and record.get("next_task_started") is False, "handoff crossed the stop boundary")
     for field in ("base_sha", "implementation_head_sha"):
         need(isinstance(record.get(field), str) and SHA.fullmatch(record[field]) is not None, f"{field} differs")
-    need(_url(record.get("pr_url")), "handoff PR URL is invalid")
+    need(_url(record.get("pr_url")) and (record.get("compare_url") is None or _url(record.get("compare_url"))), "handoff URL is invalid")
     auth = record.get("github_auth_preflight")
     need(isinstance(auth, dict), "handoff auth evidence differs")
     exact(cast(dict[str, Any], auth), {"hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed"}, {"receipt_path"})
-    observed = tuple(auth.get(key) for key in ("hostname", "active_login", "auth_healthy", "token_override_present", "token_exposed")) if isinstance(auth, dict) else ()
-    need(observed == ("github.com", "abbudjoe", True, False, False), "handoff auth evidence differs")
+    observed = tuple(auth.get(key) for key in ("hostname", "active_login")) if isinstance(auth, dict) else ()
+    need(observed == ("github.com", "abbudjoe") and cast(dict[str, Any], auth).get("auth_healthy") is True and cast(dict[str, Any], auth).get("token_override_present") is False and cast(dict[str, Any], auth).get("token_exposed") is False, "handoff auth evidence differs")
     need(cast(dict[str, Any], auth).get("receipt_path") is None or isinstance(cast(dict[str, Any], auth).get("receipt_path"), str), "handoff auth receipt differs")
     need((record.get("github_actor_login"), record.get("github_auth_mode")) == ("abbudjoe", "GH_CLI_EXISTING_AUTH"), "handoff actor differs")
 
@@ -169,20 +185,20 @@ def _handoff_identity(record: dict[str, Any]) -> None:
 def _handoff_design(record: dict[str, Any], w00a: bool) -> None:
     design = record.get("design_conformance")
     need(isinstance(design, dict) and design.get("unapproved_design_changes_executed") is False, "handoff design evidence differs")
-    designs = design.get("approved_design_ids") if isinstance(design, dict) else None
-    need(isinstance(designs, list) and all(isinstance(item, str) for item in designs), "handoff design IDs differ")
-    designs = cast(list[str], designs)
-    need(not w00a or "GOV-01-S02" in designs, "W00A split decision is absent")
+    design = cast(dict[str, Any], design)
+    exact(design, {"status", "approved_design_ids", "unapproved_design_changes_executed"})
+    expected = "BLOCKED_REQUIRES_DESIGN_REVIEW" if record["status"] == "BLOCKED_REQUIRES_DESIGN_REVIEW" else "CONFORMING"
+    need(design["status"] == expected and isinstance(design["approved_design_ids"], list) and all(isinstance(item, str) for item in design["approved_design_ids"]) and (not w00a or "GOV-01-S02" in design["approved_design_ids"]), "handoff design evidence differs")
 
 
 def _validate_handoff_details(record: dict[str, Any]) -> None:
     arrays = (("acceptance_criteria", str), ("changes", dict), ("review_targets", dict), ("commands", dict), ("evaluations", dict), ("artifacts", dict), ("delegated_operations", dict), ("known_risks", str), ("decisions_required", str))
     for field, kind in arrays:
         _array(record, field, kind)
-    need(not any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]), "delegation boundary differs")
+    need(isinstance(record.get("objective"), str) and bool(record["objective"].strip()) and bool(record["acceptance_criteria"]) and not any(item.get("write_performed") is not False or item.get("role") == "luna_runner" for item in record["delegated_operations"]), "handoff detail or delegation boundary differs")
     _validate_complexity(record.get("complexity_receipt"), record["status"])
     billable = record.get("billable_actions")
-    need(isinstance(billable, dict) and (billable.get("performed"), billable.get("actual_cost_usd")) == (False, 0), "billable work was reported")
+    need(isinstance(billable, dict) and {"performed", "actual_cost_usd"} <= billable.keys() <= {"performed", "actual_cost_usd", "campaign_ids"} and billable.get("performed") is False and isinstance(cost := billable.get("actual_cost_usd"), (int, float)) and not isinstance(cost, bool) and cost == 0 and ("campaign_ids" not in billable or isinstance(billable["campaign_ids"], list) and all(isinstance(item, str) for item in billable["campaign_ids"])), "billable work was reported")
 
 
 def _validate_complexity(value: Any, status: str) -> None:
@@ -190,9 +206,9 @@ def _validate_complexity(value: Any, status: str) -> None:
     receipt = cast(dict[str, Any], value)
     exact(receipt, COMPLEXITY_FIELDS)
     counts = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed", "generated_loc", "production_files_added", "production_files_removed")
-    need(all(isinstance(receipt.get(key), int) and receipt[key] >= 0 for key in counts), "complexity counts differ")
+    need(all(isinstance(receipt.get(key), int) and not isinstance(receipt[key], bool) and receipt[key] >= 0 for key in counts), "complexity counts differ")
     arrays = COMPLEXITY_FIELDS - set(counts) - {"simplicity_conformance"}
-    need(all(isinstance(receipt.get(key), list) for key in arrays), "complexity arrays differ")
+    need(all(isinstance(receipt.get(key), list) and all(isinstance(item, str) for item in receipt[key]) for key in arrays), "complexity arrays differ")
     expected = "BLOCKED_REQUIRES_SPLIT" if status == "SPLIT_REQUIRED" else "PASS"
     need(receipt.get("simplicity_conformance") == expected, "complexity disposition differs")
 

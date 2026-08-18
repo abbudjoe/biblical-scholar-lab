@@ -98,8 +98,8 @@
     },
     {
       "path": "governance/REQUIRED_CHECKS_SPEC.md",
-      "sha256": "2369e81ed8162c4cd6a9ebeeff0fa871e8668946762376941287961bc9d60b91",
-      "bytes": 3327
+      "sha256": "3cee2cbc1cf9a95509b2a7472d11c1a05bbae0ab9e3193ecac925e2451bbbed6",
+      "bytes": 3473
     },
     {
       "path": "governance/ROOT_TURN_HANDOFF_SPEC.md",

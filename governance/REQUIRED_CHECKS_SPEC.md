@@ -10,7 +10,7 @@ Validates, at minimum:
 - Namespace and model-role rules.
 - Dependency and size budgets.
 - Source and benchmark content remain unchanged unless the activation explicitly authorizes a project-designed update.
-- Unit/test/lint/type/contract commands required by the activation pass.
+- `turn-handoff-integrity` requires exact, nonempty, zero-exit unit/test/lint/type/contract command evidence; `project-integrity` validates the activation, candidate code, budgets, package, and audited workflow hashes.
 
 ## turn-handoff-integrity
 

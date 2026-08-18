@@ -31,12 +31,14 @@ def activation() -> dict[str, Any]:
 
 def complexity(modules: list[str] | None = None) -> dict[str, Any]:
     value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"]["complexity_receipt"]))
-    return value | {"production_files_added": len(modules or []), "modules_added": modules or [], "cli_commands_added": sorted(checks.CLI_COMMANDS)}
+    return value | {"production_files_added": len(modules or []), "modules_added": modules or [], "cli_commands_added": sorted({*checks.CLI_SPECS, "command-policy"})}
 
 
 def handoff(parent: str = IMPL) -> dict[str, Any]:
-    value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"])) | {"implementation_head_sha": parent}
-    value["commands"] = [{"phase": "implementation", "command": command, "exit_status": 0, "result": "pass"} for command in sorted(checks.REQUIRED_HANDOFF_COMMANDS)]
+    value = cast(dict[str, Any], copy.deepcopy(RECORDS["handoff"])) | {"implementation_head_sha": parent, "acceptance_criteria": ["fixture"]}
+    validators = (f"project-integrity --base-sha {checks.BASE_SHA} --head-sha HEAD --branch {contracts.BRANCH}", f"turn-handoff-integrity --base-sha {checks.BASE_SHA} --head-sha HEAD --branch {contracts.BRANCH} --pr-url {PR_URL}", "package-integrity --revision HEAD", "live-governance --expected-head HEAD --review-limit-observed-at Z --environment-ui-observed-at Z --review-limit-enabled --admin-bypass-disabled")
+    commands = checks.REQUIRED_HANDOFF_COMMANDS | {"gh auth status --active --hostname github.com", *(f"python3 governance/w00_checks.py {item}" for item in validators)}
+    value["commands"] = [{"phase": "implementation", "command": command, "exit_status": 0, "result": "pass"} for command in sorted(commands)]
     value["evaluations"] = [{"name": name, "status": "PASS", "evidence": "fixture"} for name in checks.REQUIRED_EVALUATIONS]
     return value
 
@@ -77,18 +79,17 @@ class ContractTests(unittest.TestCase):
         contracts.validate_activation(record)
         contracts.validate_auth("abbudjoe", [])
         contracts.validate_handoff(handoff(), w00a=True)
-        mutations = [(record, ("root_turn", "model"), "other"), (record, ("root_turn", "luna_delegation_allowed"), True), (handoff(), ("branch",), "main"), (handoff(), ("design_conformance", "approved_design_ids"), ["GOV-01"]), (handoff(), ("delegated_operations",), [{"role": "luna_runner", "write_performed": False}]), (handoff(), ("billable_actions", "performed"), True), (handoff(), ("github_auth_preflight", "token"), "secret")]
+        mutations = [(record, ("root_turn", "model"), "other"), (record, ("root_turn", "luna_delegation_allowed"), True), (handoff(), ("branch",), "main"), (handoff(), ("objective",), 1), (handoff(), ("acceptance_criteria",), []), (handoff(), ("known_risks",), ["SAFE_TO_MERGE"])]
+        mutations += [(handoff(), ("design_conformance", "approved_design_ids"), ["GOV-01"]), (handoff(), ("design_conformance", "secret"), "x"), (handoff(), ("delegated_operations",), [{"role": "luna_runner", "write_performed": False}]), (handoff(), ("billable_actions", "secret"), "x"), (handoff(), ("billable_actions", "performed"), True), (handoff(), ("github_auth_preflight", "token"), "secret")]
         for original, path, value in mutations:
             changed = copy.deepcopy(original)
             target = changed
             for key in path[:-1]:
                 target = target[key]
             target[path[-1]] = value
-            with self.assertRaises(ContractError):
-                (contracts.validate_activation(changed) if "root_turn" in changed else contracts.validate_handoff(changed, w00a=True))
+            self.assertRaises(ContractError, lambda changed=changed: contracts.validate_activation(changed) if "root_turn" in changed else contracts.validate_handoff(changed, w00a=True))
         for login, names in (("other", []), ("abbudjoe", ["GH_TOKEN"])):
-            with self.assertRaises(ContractError):
-                contracts.validate_auth(login, names)
+            self.assertRaises(ContractError, contracts.validate_auth, login, names)
 
     def test_command_fixture_and_phase_isolation(self) -> None:
         fixture = json.loads((ROOT / "governance/fixtures/w00-command-policy.json").read_text())
@@ -116,16 +117,14 @@ class ContractTests(unittest.TestCase):
         comments.append(marked(contracts.REVIEW, review, 2, now + timedelta(seconds=1)))
         self.assertEqual(contracts.validate_record_order(comments, completed, identity, handoff_url), "REVIEW")
         comments.append(marked(contracts.INACTIVE_MARKERS[0], {"status": "AUTHORIZED"}, 3, now + timedelta(seconds=2)))
-        with self.assertRaises(ContractError):
-            contracts.validate_record_order(comments, completed, identity, handoff_url)
-        with self.assertRaises(ContractError):
-            contracts.current_completion([*comments[:1], comments[0]], expected)
+        self.assertRaises(ContractError, contracts.validate_record_order, comments, completed, identity, handoff_url)
+        self.assertRaises(ContractError, contracts.current_completion, [*comments[:1], comments[0]], expected)
 
 
 class RepositoryTests(GitFixture):
     def metrics(self, **changes: object) -> dict[str, Any]:
         values = {"additions": 1, "deletions": 0, "production_loc_added": 1, "production_loc_removed": 0, "test_loc_added": 1, "test_loc_removed": 0, "production_files": sorted(checks.PRODUCTION), "production_added": sorted(checks.PRODUCTION), "production_removed": []}
-        values.update({"test_files": ["governance/test_w00_checks.py"], "governance_files": [], "dependencies": ["actions/checkout", "actions/upload-artifact"], "public_contracts": list(checks.PUBLIC_CONTRACTS), "workflows": sorted(checks.WORKFLOWS), "migrations": [], "cli_commands": sorted(checks.CLI_COMMANDS)})
+        values.update({"test_files": ["governance/test_w00_checks.py"], "governance_files": [], "dependencies": ["actions/checkout", "actions/upload-artifact"], "public_contracts": list(checks.PUBLIC_CONTRACTS), "workflows": sorted(checks.WORKFLOWS), "migrations": [], "cli_commands": sorted({*checks.CLI_SPECS, "command-policy"})})
         values.update(changes)
         return values
 
@@ -145,19 +144,22 @@ class RepositoryTests(GitFixture):
         checks.validate_budget(self.metrics(), activation())
         failures = (self.metrics(additions=1501), self.metrics(production_files=[str(i) for i in range(13)]), self.metrics(dependencies=["a", "b", "c"]), self.metrics(public_contracts=["a", "b", "c", "d"]), self.metrics(migrations=["x.sql"]), self.metrics(workflows=["other.yml"]))
         for item in failures:
-            with self.assertRaises(ContractError):
-                checks.validate_budget(item, activation())
+            self.assertRaises(ContractError, checks.validate_budget, item, activation())
 
     def test_dependency_schema_migration_and_complexity_discovery(self) -> None:
         with mock.patch.object(checks, "_diff_lines", return_value=(1, 0)), mock.patch.object(checks, "_statuses", side_effect=lambda _b, _h, paths, _r: dict.fromkeys(paths, "A")), mock.patch.object(checks, "_record_types", return_value=set()):
             for path in ("governance/package.json", "governance/Pipfile", "governance/schemas/other.json"):
-                with self.assertRaises(ContractError):
-                    checks.budget(BASE, HEAD, [path])
+                self.assertRaises(ContractError, checks.budget, BASE, HEAD, [path])
             self.assertEqual(checks.budget(BASE, HEAD, ["governance/alembic/versions/x.py"])["migrations"], ["governance/alembic/versions/x.py"])
-            self.assertEqual(checks.budget(BASE, HEAD, ["governance/run.sh"])["production_files"], ["governance/run.sh"])
+            self.assertEqual(checks.budget(BASE, HEAD, ["governance/run.sh", "governance/runtime-policy.json"])["production_files"], ["governance/run.sh", "governance/runtime-policy.json"])
+        source = (ROOT / "governance/w00_checks.py").read_text()
+        self.assertEqual(contracts.cli_surface(__import__("ast").parse(source)), {*checks.CLI_SPECS, "command-policy"})
+        for invalid in (source.replace('policy = sub.add_parser("command-policy")', 'policy = sub.add_parser("command-policy")\n    sub.add_parser("rogue")'), source.replace("CLI_SPECS.update(", 'CLI_SPECS["rogue"] = ()\nCLI_SPECS.update(')):
+            self.assertRaises(ContractError, contracts.cli_surface, __import__("ast").parse(invalid))
+        with mock.patch.object(checks, "blob", return_value=b"class PublicContract: pass\n"), self.assertRaises(ContractError):
+            checks._record_types(None, HEAD, {"governance/new.py"}, set())
         contracts.validate_python("ok.py", "def ok():\n    return True\n")
-        with self.assertRaises(ContractError):
-            contracts.validate_python("large.py", "\n".join(f"x{i}={i}" for i in range(501)))
+        self.assertRaises(ContractError, contracts.validate_python, "large.py", "\n".join(f"x{i}={i}" for i in range(501)))
 
     def test_base_package_is_fully_bound_and_corruption_fails(self) -> None:
         self.assertGreater(checks.validate_package(None, "3d3ebb706fe6c8779445cbbfd9fea271b86d3646")["checksum_files"], 30)
@@ -180,21 +182,17 @@ class CandidateTests(GitFixture):
         for target, key, value in changes:
             changed_tree, changed_compare = copy.deepcopy(tree), copy.deepcopy(compare)
             (changed_tree if target == "tree" else changed_compare)[key] = value
-            with self.assertRaises(ContractError):
-                checks.validate_metadata(changed_tree, changed_compare, BASE, HEAD)
+            self.assertRaises(ContractError, checks.validate_metadata, changed_tree, changed_compare, BASE, HEAD)
 
     def test_malformed_content_depth_archives_and_controls_fail(self) -> None:
         nested: object = 0
         for _ in range(checks.LIMITS["json_depth"] + 2):
             nested = [nested]
-        with self.assertRaises(ContractError):
-            checks._json_depth(nested)
+        self.assertRaises(ContractError, checks._json_depth, nested)
         for path in ("", "a//b", "../x", "x.zip", "bad\\path", "bad\x1bpath"):
-            with self.assertRaises(ContractError):
-                checks.safe_path(path)
-        for path, content in (("bad.json", b"{"), ("nan.json", b'{"x":NaN}'), ("duplicate.json", b'{"x":1,"x":2}'), ("bad.yml", b"x: ["), ("duplicate.yml", b"x: 1\nx: 2\n"), ("multi.yml", b"x: 1\n---\ny: 2\n"), ("bad.py", b"def:"), ("log.md", b"x\rcontrol"), ("text.py", b"\xff")):
-            with self.assertRaises((ContractError, SyntaxError, UnicodeDecodeError)):
-                checks._content(path, content)
+            self.assertRaises(ContractError, checks.safe_path, path)
+        for path, content in (("bad.json", b"{"), ("nan.json", b'{"x":NaN}'), ("overflow.json", b'{"x":1e999}'), ("duplicate.json", b'{"x":1,"x":2}'), ("bad.yml", b"x: ["), ("duplicate.yml", b"x: 1\nx: 2\n"), ("tag-duplicate.yml", b"x: 1\n!!str x: 2\n"), ("multi.yml", b"x: 1\n---\ny: 2\n"), ("bad.py", b"def:"), ("log.md", b"x\rcontrol"), ("text.py", b"\xff")):
+            self.assertRaises((ContractError, SyntaxError, UnicodeDecodeError), checks._content, path, content)
 
     def test_candidate_scripts_workflows_hooks_makefiles_and_dependencies_are_inert(self) -> None:
         temporary, directory, base = self.repository()
@@ -262,7 +260,7 @@ class HandoffAndReceiptTests(unittest.TestCase):
             self.assertEqual(checks.validate_handoff(BASE, HEAD, contracts.BRANCH, PR_URL)["implementation_head_sha"], IMPL)
             failed_exit = copy.deepcopy(record)
             failed_exit["commands"][0]["exit_status"] = 99
-            for invalid in (record | {"commands": []}, record | {"evaluations": []}, failed_exit):
+            for invalid in (record | {"commands": []}, record | {"commands": [item for item in record["commands"] if "project-integrity" not in item["command"]]}, record | {"commands": [record["commands"][0] | {"result": ""}, *record["commands"][1:]]}, record | {"evaluations": []}, record | {"evaluations": [record["evaluations"][0] | {"evidence": ""}, *record["evaluations"][1:]]}, failed_exit):
                 with self.assertRaises(ContractError):
                     checks._handoff_commands(invalid, contracts.BRANCH, PR_URL, True)
             patched["blob"].return_value = (phrases + " SAFE_TO_MERGE").encode()
@@ -305,7 +303,7 @@ class WorkflowAndLiveTests(unittest.TestCase):
         records[2]["protection_rules"][0]["reviewers"][0].update({"type": "User"})
         records[2]["protection_rules"][0]["reviewers"][0]["reviewer"].update({"id": 43298060})
         source = __import__("base64").b64encode((ROOT / ".github/CODEOWNERS").read_bytes()).decode()
-        codeowners = {"path": ".github/CODEOWNERS", "encoding": "base64", "content": source}
+        codeowners = {"path": ".github/CODEOWNERS", "encoding": "base64", "content": source, "sha": checks.CODEOWNERS_SHA}
         records[4]["total_count"] = len(records[4]["workflows"])
         records[5].update({"number": 1, "html_url": PR_URL})
         records[5]["base"].update({"sha": checks.BASE_SHA, "repo": {"full_name": contracts.REPOSITORY}})
@@ -320,8 +318,10 @@ class WorkflowAndLiveTests(unittest.TestCase):
             result = checks.validate_live(HEAD, now, now, True, True)
         self.assertEqual(api.call_count, 8)
         self.assertEqual((result["owner_authorization"], result["required_checks_role"]), ("INACTIVE_REQUIRES_W00B", "DEFENSE_IN_DEPTH_ONLY"))
-        with self.assertRaises(ContractError):
-            checks.validate_live(HEAD, "2000-01-01T00:00:00Z", now, True, True)
+        self.assertRaises(ContractError, checks.validate_live, HEAD, "2000-01-01T00:00:00Z", now, True, True)
+        for suffix in ("* @mallory", "* @abbudjoe @mallory"):
+            record = self.live_records()[3] | {"content": __import__("base64").b64encode(((ROOT / ".github/CODEOWNERS").read_text() + suffix + "\n").encode()).decode()}
+            self.assertRaises(ContractError, checks._codeowners, record, {"errors": []})
 
     def test_trusted_workflow_uses_only_base_code_and_bounded_inert_input(self) -> None:
         source = (ROOT / ".github/workflows/trusted-governance-validator.yml").read_text()
@@ -331,7 +331,7 @@ class WorkflowAndLiveTests(unittest.TestCase):
         self.assertNotIn("owner-merge-authorization", source)
         self.assertNotRegex(source, r"\b(?:source|make|npm|pip)\b")
         ordinary = (ROOT / ".github/workflows/governance-integrity.yml").read_text()
-        self.assertTrue(all(item not in ordinary for item in ("chatgpt-review-integrity", "owner-merge-record-integrity")))
+        self.assertTrue(all(item not in ordinary for item in ("chatgpt-review-integrity", "owner-merge-record-integrity")) and "exact, nonempty, zero-exit" in (ROOT / "governance/REQUIRED_CHECKS_SPEC.md").read_text())
 
 
 class AdapterAndCliTests(unittest.TestCase):
@@ -365,7 +365,7 @@ class AdapterAndCliTests(unittest.TestCase):
         for index, (turn, (identifier, live)) in enumerate(checks.PRIOR_COMPLETIONS.items()):
             comments.append(marked(contracts.COMPLETION, {"turn_id": turn, "live_pr_head_sha": live}, identifier, now + timedelta(seconds=index)))
         comments.append(marked(contracts.COMPLETION, current, 9, now + timedelta(seconds=3)))
-        pr = {"number": 1, "state": "open", "draft": True, "html_url": PR_URL, "base": {"ref": "main", "sha": BASE}, "head": {"ref": contracts.BRANCH, "sha": HEAD}}
+        pr = {"number": 1, "state": "open", "draft": True, "html_url": PR_URL, "base": {"ref": "main", "sha": BASE, "repo": {"full_name": contracts.REPOSITORY}}, "head": {"ref": contracts.BRANCH, "sha": HEAD, "repo": {"full_name": contracts.REPOSITORY}}}
         with tempfile.TemporaryDirectory() as directory:
             pr_file, comments_file = Path(directory, "pr.json"), Path(directory, "comments.json")
             pr_file.write_text(json.dumps(pr))
