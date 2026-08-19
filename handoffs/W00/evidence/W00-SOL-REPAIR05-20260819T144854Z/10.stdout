@@ -1,0 +1,1 @@
+{"result": {"migrations": 0, "production_files": 4, "production_loc_added": 507, "production_loc_removed": 0, "public_contracts": 1, "scope": "BOOTSTRAP_COMPATIBILITY_ONLY", "substantive_lines_total": 794, "test_loc_added": 287, "test_loc_removed": 0, "workflows": 1}, "status": "success"}

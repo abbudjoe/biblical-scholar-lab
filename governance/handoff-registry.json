@@ -25,6 +25,11 @@
       "json_path": "handoffs/W00/W00-SOL-REPAIR04-20260819T025659Z.json",
       "json_sha256": "1745d0684a72ee6a8718f7627515f61e522bf39148df569351e758c079e58a18",
       "markdown_path": "handoffs/W00/W00-SOL-REPAIR04-20260819T025659Z.md",
-      "markdown_sha256": "0ecccd9e7b80972ce6325a5f2abbeeedcec5a610533c003368cce9f1705856ef" }
+      "markdown_sha256": "0ecccd9e7b80972ce6325a5f2abbeeedcec5a610533c003368cce9f1705856ef" },
+    { "turn_id": "W00-SOL-REPAIR05-20260819T144854Z",
+      "json_path": "handoffs/W00/W00-SOL-REPAIR05-20260819T144854Z.json",
+      "json_sha256": "b20925ea3d94e7c8fce0b2425c28577b2b44af8dd825c8858341b7b696485a41",
+      "markdown_path": "handoffs/W00/W00-SOL-REPAIR05-20260819T144854Z.md",
+      "markdown_sha256": "f4bb8bcbb9dcd48f44499eb836e638262c17c9917fdaab3e0232ea902d5897d9" }
   ]
 }

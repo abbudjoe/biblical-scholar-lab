@@ -1,0 +1,1 @@
+{"active_login":"abbudjoe","auth_mode":"GH_CLI_EXISTING_AUTH","command_argv":["gh","auth","status","--active","--hostname","github.com"],"evidence_level":"LOCAL_SANITIZED_ASSERTION_NOT_INDEPENDENT","hostname":"github.com","token_exposed":false,"token_override_present":false}
