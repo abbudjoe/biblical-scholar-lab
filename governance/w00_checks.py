@@ -23,12 +23,13 @@ SCHEMA = "governance/schemas/turn-handoff.schema.json"
 TEST = "governance/test_w00_checks.py"
 FIXTURE = "governance/fixtures/w00a1a-record.json"
 POLICY_PATH = "governance/fixtures/w00a1a-policy.json"
-POLICY_HASH = "8229fa6af5030d395e5a6f8d53b841e70db68d78f6957949121a4022e5e92eea"
+POLICY_HASH = "aec2b2b6a8cc5ac9cab96a273dc62989c0869c4dbf026ba0bff3df46f871df9a"
 PRODUCTION = {WORKFLOW, "governance/ruff.toml", "governance/w00_checks.py", POLICY_PATH}
 TEST_FILES = {TEST, FIXTURE, "governance/fixtures/w00a1a-negative.json"}
 PACKAGE_FILES = {"governance/GOV-01-package-manifest.json", "governance/GOV-01-artifacts.sha256"}
 ACTIVE_FILES = PRODUCTION | TEST_FILES | PACKAGE_FILES | {SCHEMA}
-DR30_KEYS = "module_max_lines function_max_lines cyclomatic_complexity_max line_length_max nesting_limit_enforced target_excess_justification simplicity_conformance".split()
+DR30_KEYS = "module_max_lines function_max_lines cyclomatic_complexity_max line_length_max ".split()
+DR30_KEYS += "nesting_limit_enforced target_excess_justification simplicity_conformance".split()
 TURN = re.compile(r"^handoffs/W00/(W00-SOL(?:-REPAIR\d+)?-[0-9]{8}T[0-9]{6}Z)\.(json|md)$")
 PATH = re.compile(r"^[A-Za-z0-9._/-]+$")
 UTC_TIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
@@ -133,15 +134,14 @@ def _reports(record: dict[str, Any], coverage: int, dr30: dict[str, Any]) -> dic
 
 def _results(record: dict[str, Any], reports: dict[str, Any], outputs: dict[tuple[str, ...], bytes]) -> None:
     need(record["review_targets"] == POLICY["findings"], "finding ledger differs")
-    if record["status"] == "READY_FOR_CHATGPT_REVIEW":
-        review = record["evaluations"], record["delegated_operations"]
-        need(review == (POLICY["evaluations"], [POLICY["delegation"]]), "review differs")
-        coverage = int(outputs[VALIDATION_ARGV[1]].strip())
-        validation = reports.get("VALIDATION")
-        need(isinstance(validation, dict), "validation report differs")
-        claimed = cast(dict[str, Any], validation).get("dr30", {})
-        _check_dr30(claimed, record["complexity_receipt"]["substantive_lines_total"])
-        need(reports == _reports(record, coverage, claimed), "validation or review report differs")
+    review = record["evaluations"], record["delegated_operations"]
+    need(review == (POLICY["evaluations"], [POLICY["delegation"]]), "review differs")
+    coverage = int(outputs[VALIDATION_ARGV[1]].strip())
+    validation = reports.get("VALIDATION")
+    need(isinstance(validation, dict), "validation report differs")
+    claimed = cast(dict[str, Any], validation).get("dr30", {})
+    _check_dr30(claimed, record["complexity_receipt"]["substantive_lines_total"])
+    need(reports == _reports(record, coverage, claimed), "validation or review report differs")
 
 
 def validate_record(
@@ -155,7 +155,7 @@ def validate_record(
     jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(record)
     canonical = cast(dict[str, Any], POLICY["canonical_fields"])
     need(all(record[key] == value for key, value in canonical.items()), "canonical handoff truth differs")
-    need(record["status"] in POLICY["statuses"], "handoff disposition differs")
+    need(record["status"] == POLICY["terminal_dispositions"][0], "handoff disposition differs")
     started, completed = utc(record["started_at_utc"]), utc(record["completed_at_utc"])
     need(started <= implementation_time <= completed <= completion_limit, "root-turn chronology differs")
     turn = record["turn_id"]
@@ -183,8 +183,8 @@ def render_markdown(record: dict[str, Any], parent: str) -> str:
     facts = {key: record[key] for key in POLICY["terminal_fields"]}
     lines = [
         f"Identity: activation `{record['activation_id']}` / `W00A1A-REPAIR04`; branch `{record['branch']}`; PR "
-        f"`{record['pr_url']}`; base `{record['base_sha']}`; start `{POLICY['start_head']}`; implementation `{parent}`; "
-        "final/live "
+        f"`{record['pr_url']}`; base `{record['base_sha']}`; start `{POLICY['start_head']}`; "
+        f"implementation `{parent}`; final/live "
         f"SHA is the containing commit/live PR head; root `{record['turn_id']}`; window `{record['started_at_utc']}`–"
         f"`{record['completed_at_utc']}`.",
         f"Scope: {POLICY['scope_statement']} Exact path ledger `{compact(record['changes'])}`.",

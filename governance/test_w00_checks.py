@@ -75,12 +75,12 @@ class W00A1aTests(unittest.TestCase):
         self.record, self.files = fixture()
 
     def rejects(self, mutate: object, *, sync_index: int | None = None) -> None:
-        changed = copy.deepcopy(self.record)
+        changed, files = copy.deepcopy((self.record, self.files))
         mutate(changed)
         if sync_index is not None:
-            sync(changed, self.files, sync_index)
+            sync(changed, files, sync_index)
         with self.assertRaises((ValueError, KeyError, checks.jsonschema.ValidationError)):
-            validate(changed, self.files)
+            validate(changed, files)
 
     def test_typed_truth_and_recursive_schema(self) -> None:
         validate(self.record, self.files)
@@ -88,7 +88,7 @@ class W00A1aTests(unittest.TestCase):
         self.assertIn('"approval_submitted":false', markdown)
         self.assertIn(checks.POLICY["stop_statement"], markdown)
         self.assertEqual(self.record["commands"][0]["argv"].count("--with"), 2)
-        self.assertEqual(set(SCHEMA["properties"]["status"]["enum"]), set(checks.POLICY["statuses"]))
+        self.assertEqual(SCHEMA["properties"]["status"]["const"], checks.POLICY["terminal_dispositions"][0])
         for case in NEGATIVES:
             self.rejects(lambda record, item=case: apply_case(record, item), sync_index=case.get("sync"))
         for source in ('{"x":1,"x":2}', '{"x":1e999}', "{"):
@@ -176,6 +176,7 @@ class W00A1aTests(unittest.TestCase):
             self.assertNotIn(deferred, (ROOT / "governance/w00_checks.py").read_text())
         with mock.patch.object(checks, "blob", return_value=b"x" * 262_145), self.assertRaises(ValueError):
             checks.object_at(HEAD, checks.SCHEMA)
+        self.assertLessEqual(max(map(len, (ROOT / "governance/w00_checks.py").read_text().splitlines())), 120)
 
     def test_composed_handoff(self) -> None:
         final, pair = "d" * 40, (f"handoffs/W00/{TURN}.json", f"handoffs/W00/{TURN}.md")
@@ -202,7 +203,9 @@ class W00A1aTests(unittest.TestCase):
         with (
             mock.patch.multiple(checks, **{name: mock.DEFAULT for name in names}),
             mock.patch.object(checks, "PRIOR_HANDOFFS", ()),
-            mock.patch.object(checks, "_record_files", side_effect=[record_files, None]),
+            mock.patch.object(
+                checks, "_record_files", side_effect=lambda commit, _parent: record_files if commit == final else None
+            ),
             mock.patch.object(checks, "git", side_effect=fake_git),
             mock.patch.object(checks, "object_at", side_effect=objects),
             mock.patch.object(checks, "artifact_reader", return_value=self.files.__getitem__),
@@ -212,3 +215,7 @@ class W00A1aTests(unittest.TestCase):
             checks.budget.return_value = self.record["complexity_receipt"]
             checks._dr30.return_value = dr30
             checks.validate_handoff(checks.BASE_SHA, final, checks.BRANCH, checks.PR_URL)
+            for contradiction in ("The PR was merged.", "Owner approval was submitted."):
+                checks.blob.return_value = (checks.render_markdown(self.record, HEAD) + contradiction).encode()
+                with self.assertRaises(ValueError):
+                    checks.validate_handoff(checks.BASE_SHA, final, checks.BRANCH, checks.PR_URL)
