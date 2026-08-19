@@ -1,7 +1,7 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": "3 + ERRATA-01 + ERRATA-02 + W00A1a",
+  "approved_revision": "3 + ERRATA-01 + ERRATA-02",
   "proposal_date": "2026-08-17",
   "approval_date": "2026-08-17",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "35da554d3d9d75f37664e81449a6ea16f52ef7d35e79454d683ee25b3063b345",
-      "bytes": 13257
+      "sha256": "d261834452d1263282926d5f8fd4ca9db23e323a736d70ec6445289dcedc65fe",
+      "bytes": 8507
     },
     {
       "path": "governance/templates/chatgpt-review.md",

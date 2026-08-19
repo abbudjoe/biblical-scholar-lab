@@ -1,8 +1,11 @@
 import copy
 import json
+import os
+import subprocess
 import sys
+import tempfile
 import unittest
-from datetime import UTC, datetime
+from contextlib import chdir
 from pathlib import Path
 from unittest import mock
 
@@ -10,202 +13,299 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "governance"))
 import w00_checks as checks  # noqa: E402
 
-TURN = "W00-SOL-REPAIR04-20260818T235900Z"
-HEAD = "c" * 40
-IMPLEMENTED = datetime(2026, 8, 18, 23, 51, tzinfo=UTC)
-LIMIT = datetime(2026, 8, 19, 0, 0, tzinfo=UTC)
-SCHEMA = checks.strict_json((ROOT / checks.SCHEMA).read_bytes())
-RECORD = ROOT / "governance/fixtures/w00a1a-record.json"
-NEGATIVES = checks.strict_json((ROOT / "governance/fixtures/w00a1a-negative.json").read_bytes())
+SHA, BRANCH, PR = "a" * 40, "codex/w00-repair", "https://github.com/abbudjoe/biblical-scholar-lab/pull/7"
+TURN, NOW = "W00-SOL-REPAIR05-20260819T120000Z", "2026-08-19T12:00:00Z"
+BEFORE, AFTER, OFFSET = "2026-08-19T11:59:59Z", "2026-08-19T12:00:01Z", "2026-08-19T12:00:00+00:00"
+AT, SCHEMA_BYTES = checks.utc(NOW), (ROOT / checks.SCHEMA).read_bytes()
+SCHEMA = checks.strict_json(SCHEMA_BYTES)
+OPEN = {"finding_id": "OPEN", "severity": "P2", "status": "UNRESOLVED", "evidence": "X", "rationale": "X"}
 
 
-def canonical(value: object) -> bytes:
+def encoded(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
 
 
-def put(files: dict[str, bytes], path: str, content: bytes) -> str:
+def example(node):
+    if "$ref" in node:
+        return example(SCHEMA["$defs"][str(node["$ref"]).rsplit("/", 1)[-1]])
+    if "const" in node:
+        return copy.deepcopy(node["const"])
+    if "enum" in node:
+        return node["enum"][0]
+    kind = node.get("type")
+    if kind == "object":
+        keys = node.get("required", node.get("propertyNames", {}).get("enum", []))
+        return {key: example(node.get("properties", {}).get(key, node["additionalProperties"])) for key in keys}
+    if kind == "array":
+        return [example(node["items"]) for _ in range(int(node.get("minItems", 0)))]
+    if kind == "integer":
+        return node.get("minimum", 0)
+    pattern = str(node.get("pattern", ""))
+    choices = (("{40}", SHA), ("{64}", "0" * 64), ("github", PR), ("codex/", BRANCH), ("{4}-", NOW))
+    return next((value for marker, value in choices if marker in pattern), "X")
+
+
+def store(files, path, content):
     files[path] = content
-    return checks.digest(content)
+    return {"path": path, "sha256": checks.digest(content)}
 
 
-def fixture() -> tuple[dict[str, object], dict[str, bytes]]:
-    record, files = checks.strict_json(RECORD.read_bytes()), {}
-    for index, item in enumerate(record["commands"]):
-        item["stdout_sha256"] = put(files, item["stdout_path"], b"92\n" if index == 1 else b"output")
-        put(files, item["stderr_path"], b"")
-        receipt = {key: value for key, value in item.items() if not key.startswith("receipt_")}
-        item["receipt_sha256"] = put(files, item["receipt_path"], canonical(receipt))
-    auth = record["github_auth_preflight"]
-    receipt = {key: value for key, value in auth.items() if not key.startswith("receipt_")}
-    auth["receipt_sha256"] = put(files, auth["receipt_path"], canonical(receipt))
-    dr30 = dict(zip(checks.DR30_KEYS, (400, 50, 9, 120, 3, checks.POLICY["target_excess"], "PASS"), strict=True))
-    reports = checks._reports(record, 92, dr30)
-    for item in record["artifacts"]:
-        item["sha256"] = put(files, item["path"], canonical(reports[item["artifact_id"]]))
+def signed_receipt(files, path, item):
+    return store(files, path, encoded({key: value for key, value in item.items() if key != "receipt"}))
+
+
+def entry(turn, files):
+    row = {"turn_id": turn}
+    for name, suffix in (("json", "json"), ("markdown", "md")):
+        path = f"handoffs/W00/{turn}.{suffix}"
+        reference = store(files, path, files.get(path, b"{}\n"))
+        row[f"{name}_path"], row[f"{name}_sha256"] = reference.values()
+    return row
+
+
+def review_files(record, binary):
+    items, review = record["artifacts"], record["independent_review"]
+    contents = {"COMPLEXITY": encoded(record["complexity_receipt"]), "BINARY_DIFF": binary}
+    contents |= {"REVIEW_INSTRUCTION": checks.render_review_instruction(record).encode()}
+    for key, content in contents.items():
+        items[key]["sha256"] = checks.digest(content)
+    contents["REVIEW_REPORT_RECORD"] = (json.dumps(review, indent=2, sort_keys=True) + "\n").encode()
+    items["REVIEW_REPORT_RECORD"]["sha256"] = checks.digest(contents["REVIEW_REPORT_RECORD"])
+    return contents
+
+
+def fixture(base=SHA, implementation="b" * 40, start=SHA, binary=b"diff", tree="d" * 40):
+    record, files = example(SCHEMA), {}
+    record.update(
+        root_turn_id=TURN, base_sha=base, starting_live_sha=start, implementation_head_sha=implementation, branch=BRANCH
+    )
+    record["integrity"]["schema_sha256"] = checks.digest(SCHEMA_BYTES)
+    commands = record["commands"] = []
+    for index, argv in enumerate(checks.command_suite(base, implementation, BRANCH), 1):
+        item = example(SCHEMA["$defs"]["command"])
+        stem = f"{checks.EVIDENCE_ROOT}/{TURN}/{index:02d}"
+        item.update(command_index=index, evidence_id=f"CMD_{index:02d}", root_turn_id=TURN, argv=list(argv))
+        item["implementation_head_sha"] = implementation
+        for field, content in (("stdout", b"90\n" if index == 2 else b""), ("stderr", b"")):
+            item[field] = store(files, f"{stem}.{field}", content)
+        item["receipt"] = signed_receipt(files, f"{stem}.receipt.json", item)
+        commands.append(item)
+    root = f"{checks.EVIDENCE_ROOT}/{TURN}"
+    auth = record["github_auth"]
+    auth["receipt"] = signed_receipt(files, f"{root}/github.auth.json", auth)
+    items = record["artifacts"] = {
+        key: {"path": f"{root}/{name}", "sha256": "0" * 64} for key, name in checks.ARTIFACTS
+    }
+    review = record["independent_review"]
+    review.update(review_run_id="REPAIR05_REVIEW", reviewer_revision_or_exact_model_identity="GPT_5_6_SOL")
+    review.update(base_sha=base, implementation_head_sha=implementation, implementation_tree_sha=tree)
+    review["diff_sha256"] = checks.digest(binary)
+    review["review_instruction"] = items["REVIEW_INSTRUCTION"]
+    inspected = checks.ACTIVE | checks.IMMUTABLE
+    inspected |= {item[field]["path"] for item in commands for field in ("receipt", "stdout", "stderr")}
+    inspected |= {auth["receipt"]["path"], items["COMPLEXITY"]["path"], items["BINARY_DIFF"]["path"]}
+    review["artifacts_inspected"] = sorted(inspected)
+    files.update((items[key]["path"], content) for key, content in review_files(record, binary).items())
     return record, files
 
 
-def validate(record: dict[str, object], files: dict[str, bytes]) -> None:
-    checks.validate_record(record, SCHEMA, files.__getitem__, set(files), IMPLEMENTED, LIMIT)
+def git_capture(repo, *arguments, input=None, env=None):
+    command = ["git", "-C", repo, *arguments]
+    return subprocess.run(command, input=input, text=True, check=True, capture_output=True, env=env).stdout.strip()
 
 
-def sync(record: dict[str, object], files: dict[str, bytes], index: int) -> None:
-    item = record["commands"][index]
-    receipt = {key: value for key, value in item.items() if not key.startswith("receipt_")}
-    item["receipt_sha256"] = put(files, item["receipt_path"], canonical(receipt))
+def commit(repo, files):
+    for name, content in files.items():
+        path = Path(repo, name)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    git_capture(repo, "add", ".")
+    environment = dict(os.environ, GIT_AUTHOR_DATE=NOW, GIT_COMMITTER_DATE=NOW)
+    git_capture(repo, "-c", "user.name=T", "-c", "user.email=t@e", "commit", "-qm", "fixture", env=environment)
+    return git_capture(repo, "rev-parse", "HEAD")
 
 
-def apply_case(record: dict[str, object], case: dict[str, object]) -> None:
-    target = record
-    for key in case["path"][:-1]:
-        target = target[key]
-    key, operation = case["path"][-1], case["op"]
-    if operation == "set":
-        target[key] = copy.deepcopy(case["value"])
-    elif operation == "pop":
-        target.pop(key)
-    elif operation == "append_copy":
-        target[key].append(copy.deepcopy(target[key][case["value"]]))
-    else:
-        target[key].reverse()
-
-
-class W00A1aTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.record, self.files = fixture()
-
-    def rejects(self, mutate: object, *, sync_index: int | None = None) -> None:
-        changed, files = copy.deepcopy((self.record, self.files))
-        mutate(changed)
-        if sync_index is not None:
-            sync(changed, files, sync_index)
-        with self.assertRaises((ValueError, KeyError, checks.jsonschema.ValidationError)):
-            validate(changed, files)
-
-    def test_typed_truth_and_recursive_schema(self) -> None:
-        validate(self.record, self.files)
-        markdown = checks.render_markdown(self.record, HEAD)
-        self.assertTrue('"approval_submitted":false' in markdown and checks.POLICY["stop_statement"] in markdown)
-        for case in NEGATIVES:
-            self.rejects(lambda record, item=case: apply_case(record, item), sync_index=case.get("sync"))
-        for source in ('{"x":1,"x":2}', '{"x":1e999}', "{"):
-            with self.assertRaises(ValueError):
-                checks.strict_json(source)
-
-    def test_git_primitives_and_bootstrap_project(self) -> None:
-        head = checks.PRIOR_HANDOFFS[-1][0]
-        checks.activation(checks.BASE_SHA, checks.BRANCH)
-        paths = checks.paths_at(checks.BASE_SHA, head)
-        checks.artifact_reader(checks.BASE_SHA)(checks.ACTIVATION_PATH)
-        checks.budget(checks.BASE_SHA, head, paths)
-        checks._prior(head)
+class Repair05Tests(unittest.TestCase):
+    def test_schema_registry_and_primitives(self):
+        for path in checks.IMMUTABLE:
+            self.assertEqual((ROOT / path).read_bytes(), checks.blob("origin/main", path))
+        record = example(SCHEMA)
+        checks.jsonschema.Draft202012Validator(SCHEMA).validate(record)
+        mutations = (lambda item: item.update(extra=True), lambda item: item["commands"][0].update(extra=True))
+        mutations += (lambda item: item.pop("base_sha"), lambda item: item.update(base_sha=1))
+        mutations += (lambda item: item.update(starting_live_sha="b" * 40),)
+        for mutation in mutations:
+            changed = copy.deepcopy(record)
+            mutation(changed)
+            self.assertRaises(checks.jsonschema.ValidationError, checks.jsonschema.validate, changed, SCHEMA)
+        for source in ('{"x":1,"x":2}', '{"x":1e999}', '{"x":NaN}'):
+            self.assertRaises(ValueError, checks.strict_json, source)
+        files = {}
+        rows = [entry(turn, files) for turn in ("W00-SOL-REPAIR04-20260819T025659Z", TURN)]
+        data = {"schema_version": "bsl.handoff-registry.v1", "entries": rows}
         with (
-            mock.patch.object(checks, "budget", return_value=self.record["complexity_receipt"]),
-            mock.patch.object(checks, "blob", side_effect=lambda _revision, path: (ROOT / path).read_bytes()),
+            mock.patch.object(checks, "reader", return_value=files.__getitem__),
+            mock.patch.object(checks, "git", return_value="\n".join(files)),
         ):
-            checks.validate_project(checks.BASE_SHA, checks.BASE_SHA, checks.BRANCH)
-        report = {"governance/w00_checks.py": [{"lineno": 1, "endline": 40, "complexity": 9}]}
-        with mock.patch.object(checks, "blob", return_value=b"x\n" * 400):
-            metrics = checks._dr30({checks.VALIDATION_ARGV[6]: canonical(report)}, HEAD, 700)
-        bad = {**metrics, "cyclomatic_complexity_max": 11}
-        with self.assertRaises(ValueError):
-            checks._check_dr30(bad, 700)
+            for changed in (rows[::-1], rows[:1], [{**rows[0], "json_sha256": "0" * 64}, rows[1]], rows * 2):
+                self.assertRaises(ValueError, checks.registry_entries, SHA, {**data, "entries": changed})
+        for path in ("../x", "/x", "a//b", "a\\b"):
+            self.assertRaises(ValueError, checks.safe_path, path)
+        self.assertRaises(ValueError, checks.identity, "bad", SHA, BRANCH)
+        self.assertRaises(ValueError, checks.identity, SHA, SHA, "main")
+        diff_argv = checks.command_suite(SHA, "b" * 40, BRANCH)[8]
+        self.assertEqual(diff_argv, ("git", "diff", "--check", f"{SHA}...{'b' * 40}"))
+        suite = checks.command_suite(SHA, SHA, BRANCH)
+        self.assertTrue(all({"-B", checks.COVERAGE} <= set(argv) for argv in suite[:2]))
 
-    def test_receipts_paths_and_evidence_set(self) -> None:
-        first = self.record["commands"][0]
-        receipt_path, receipt = first["receipt_path"], checks.strict_json(self.files[first["receipt_path"]])
-        receipt["command_evidence_id"] = "OTHER"
-        first["receipt_sha256"] = put(self.files, receipt_path, canonical(receipt))
-        with self.assertRaises(ValueError):
-            validate(self.record, self.files)
-        sync(self.record, self.files, 0)
-        review, original = self.record["artifacts"][1], self.files[self.record["artifacts"][1]["path"]]
-        review["sha256"] = put(self.files, review["path"], b"{}")
-        with self.assertRaises(ValueError):
-            validate(self.record, self.files)
-        review["sha256"] = put(self.files, review["path"], original)
-        self.files[f"{checks.EVIDENCE_ROOT}/{TURN}/dangling.receipt.json"] = b""
-        with self.assertRaises(ValueError):
-            validate(self.record, self.files)
-
-    def test_symlink_and_chronology(self) -> None:
-        entry = f"120000 blob {'a' * 40}\t{checks.EVIDENCE_ROOT}/{TURN}/link.stdout"
-        with mock.patch.object(checks, "git", return_value=entry), self.assertRaises(ValueError):
-            checks.artifact_reader(HEAD)(f"{checks.EVIDENCE_ROOT}/{TURN}/link.stdout")
-        sequential, files = fixture()
-        for index, command in enumerate(sequential["commands"][1:], 1):
-            command.update(started_at_utc="2026-08-18T23:56:00Z", finished_at_utc="2026-08-18T23:57:00Z")
-            sync(sequential, files, index)
-        validate(sequential, files)
-
-    def test_append_only_scope_and_budget(self) -> None:
-        pair = [f"handoffs/W00/{TURN}.{suffix}" for suffix in ("json", "md")]
-        additions = "\n".join(f"A\t{path}" for path in [*pair, f"{checks.EVIDENCE_ROOT}/{TURN}/01.stdout"])
-        with mock.patch.object(checks, "git", return_value=additions):
-            self.assertEqual(checks._record_files("d" * 40, HEAD)[2], {f"{checks.EVIDENCE_ROOT}/{TURN}/01.stdout"})
-        with mock.patch.object(checks, "git", return_value="A\ta.py\nM\tb.py\nD\tc.py"):
-            self.assertEqual(
-                [item["kind"] for item in checks.change_ledger(checks.BASE_SHA, HEAD)], ["ADD", "MODIFY", "DELETE"]
-            )
-        for source in (additions.replace("A\t", "M\t", 1), additions + f"\nA\thandoffs/W00/{TURN}x.json"):
-            with mock.patch.object(checks, "git", return_value=source), self.assertRaises(ValueError):
-                checks._record_files("d" * 40, HEAD)
-        for evidence in ([b"original", b"changed"], FileNotFoundError()):
-            with (
-                mock.patch.object(checks, "PRIOR_HANDOFFS", (("c" * 40, "b" * 40, TURN),)),
-                mock.patch.object(checks.subprocess, "run", return_value=mock.Mock(returncode=0)),
-                mock.patch.object(checks, "git", return_value="b" * 40),
-                mock.patch.object(checks, "blob", side_effect=evidence),
-                self.assertRaises((ValueError, FileNotFoundError)),
+    def test_evidence_chronology_review_and_budget(self):
+        record, files = fixture()
+        cases = (
+            (0, "started_at_utc", BEFORE),
+            (0, "finished_at_utc", BEFORE),
+            (0, "finished_at_utc", AFTER),
+            (0, "started_at_utc", OFFSET),
+            (0, "implementation_head_sha", "c" * 40),
+            (8, "argv", ["git", "diff", "--check"]),
+            (1, "receipt", record["commands"][0]["receipt"]),
+            (1, "stdout", record["commands"][0]["stdout"]),
+            (0, "stdout", {**record["commands"][0]["stdout"], "sha256": "0" * 64}),
+        )
+        for index, field, value in cases:
+            changed = copy.deepcopy(record)
+            changed["commands"][index][field] = value
+            self.assertRaises((ValueError, KeyError), checks.validate_commands, changed, files.__getitem__, set(), AT)
+        record["completed_at_utc"] = AFTER
+        first = record["commands"][0]
+        first["finished_at_utc"] = record["completed_at_utc"]
+        first["receipt"] = signed_receipt(files, first["receipt"]["path"], first)
+        checks.validate_commands(record, files.__getitem__, set(), AT)
+        first["started_at_utc"] = AFTER
+        first["receipt"] = signed_receipt(files, first["receipt"]["path"], first)
+        self.assertRaises(ValueError, checks.validate_commands, record, files.__getitem__, set(), AT)
+        record, files = fixture()
+        status = record["commands"][-1]
+        status["stdout"] = store(files, status["stdout"]["path"], b"?? rogue\n")
+        status["receipt"] = signed_receipt(files, status["receipt"]["path"], status)
+        self.assertRaises(ValueError, checks.validate_commands, record, files.__getitem__, set(), AT)
+        mutations = (
+            lambda item: item["commands"][0].update(finished_at_utc="2026-08-19T12:30:00Z"),
+            lambda item: item["independent_review"].update(implementation_tree_sha="e" * 40),
+            lambda item: item["independent_review"].update(diff_sha256="f" * 64),
+            lambda item: item["independent_review"].update(artifacts_inspected=[]),
+            lambda item: item["independent_review"]["findings"].append(OPEN),
+            None,
+            "MINIFIED",
+        )
+        for mutation in mutations:
+            record, _files = fixture()
+            if callable(mutation):
+                mutation(record)
+            artifacts = review_files(record, b"diff")
+            if mutation is None:
+                artifacts["REVIEW_INSTRUCTION"] = b"generic\n"
+            elif mutation == "MINIFIED":
+                artifacts["REVIEW_REPORT_RECORD"] = encoded(record["independent_review"])
+            with mock.patch.multiple(
+                checks, run=mock.Mock(return_value=mock.Mock(stdout=b"diff")), git=mock.Mock(return_value="d" * 40)
             ):
-                checks._prior("d" * 40)
-        self.record["complexity_receipt"]["substantive_lines_total"] = 801
-        with self.assertRaises(ValueError):
-            checks.validate_budget(self.record["complexity_receipt"])
-        for deferred in ("import ast", "policy_calls", "class_surface", "_dependencies", "w00_yaml"):
-            self.assertNotIn(deferred, (ROOT / "governance/w00_checks.py").read_text())
-        with mock.patch.object(checks, "blob", return_value=b"x" * 262_145), self.assertRaises(ValueError):
-            checks.object_at(HEAD, checks.SCHEMA)
-        self.assertLessEqual(max(map(len, (ROOT / "governance/w00_checks.py").read_text().splitlines())), 120)
-
-    def test_composed_handoff(self) -> None:
-        final, pair = "d" * 40, (f"handoffs/W00/{TURN}.json", f"handoffs/W00/{TURN}.md")
-        record_files = (TURN, pair, set(self.files))
-
-        def fake_git(*args: str) -> str:
-            if args[0] == "rev-list":
-                return f"{final} {HEAD}"
-            if args[0] == "rev-parse":
-                return "b" * 40
-            if args[0] == "diff-tree":
-                return "\n".join(sorted(set(pair) | set(self.files)))
-            return "2026-08-18T23:51:00+00:00" if args[-1] == HEAD else "2026-08-19T00:00:00+00:00"
-
-        commands = self.record["commands"]
-        commands[-1]["argv"] = list(checks.project_command(HEAD))
-        sync(self.record, self.files, len(commands) - 1)
-        dr30 = checks.strict_json(self.files[self.record["artifacts"][0]["path"]])["dr30"]
-        names = "activation _prior change_ledger budget _dr30".split()
-
-        def objects(_revision: str, path: str) -> object:
-            return SCHEMA if path == checks.SCHEMA else self.record
-
-        with (
-            mock.patch.multiple(checks, **{name: mock.DEFAULT for name in names}),
-            mock.patch.object(checks, "PRIOR_HANDOFFS", ()),
-            mock.patch.object(
-                checks, "_record_files", side_effect=lambda commit, _parent: record_files if commit == final else None
-            ),
-            mock.patch.object(checks, "git", side_effect=fake_git),
-            mock.patch.object(checks, "object_at", side_effect=objects),
-            mock.patch.object(checks, "artifact_reader", return_value=self.files.__getitem__),
-            mock.patch.object(checks, "blob", return_value=checks.render_markdown(self.record, HEAD).encode()),
+                self.assertRaises(ValueError, checks.validate_review, record, artifacts)
+        cases = (((401, 0), (400, 0), b"x\ny\n"), ((300, 0), (300, 0), b"{}\n"))
+        cases += (((300, 0), (300, 0), b"x" * 121 + b"\ny\n"),)
+        for production, tests, content in cases:
+            with mock.patch.multiple(
+                checks, diff_lines=mock.Mock(side_effect=[production, tests]), blob=mock.Mock(return_value=content)
+            ):
+                self.assertRaises(ValueError, checks.budget, SHA, "b" * 40)
+        path = f"{checks.EVIDENCE_ROOT}/{TURN}/link.json"
+        with mock.patch.object(checks, "git", return_value=f"120000 blob {'a' * 40}\t{path}"):
+            self.assertRaises(ValueError, checks.reader("b" * 40), path)
+        radon = subprocess.check_output(["uvx", "radon@6.0.1", "cc", "-j", checks.CODE], cwd=ROOT)
+        with mock.patch.multiple(
+            checks,
+            blob=mock.Mock(side_effect=lambda _revision, path: (ROOT / path).read_bytes()),
+            budget=mock.Mock(return_value={"substantive_lines_total": 651}),
         ):
-            checks.change_ledger.return_value = self.record["changes"]
-            checks.budget.return_value = self.record["complexity_receipt"]
-            checks._dr30.return_value = dr30
-            checks.validate_handoff(checks.BASE_SHA, final, checks.BRANCH, checks.PR_URL)
-            for contradiction in ("The PR was merged.", "Owner approval was submitted."):
-                checks.blob.return_value = (checks.render_markdown(self.record, HEAD) + contradiction).encode()
-                with self.assertRaises(ValueError):
-                    checks.validate_handoff(checks.BASE_SHA, final, checks.BRANCH, checks.PR_URL)
+            receipt = checks.complexity(SHA, SHA, radon)
+        self.assertNotIn("nesting", receipt["measured"])
+        self.assertEqual(receipt["configured"]["nesting_limit"], 3)
+        self.assertEqual(receipt["target_excess_justification"], "ABOVE_TARGET_SMALLEST_READABLE_KERNEL")
+        prior = {"handoffs/W00/evidence/prior/review.txt": "old"}
+        for mode in ("BOOTSTRAP", "APPEND"):
+            for candidate in ({next(iter(prior)): "new"}, prior | {"handoffs/W00/evidence/rogue.txt": "x"}):
+                with mock.patch.multiple(
+                    checks,
+                    handoff_entries=mock.Mock(return_value=[]),
+                    handoff_snapshot=mock.Mock(side_effect=[candidate, prior]),
+                ):
+                    self.assertRaises(ValueError, checks.validate_project_history, SHA, SHA, mode, [])
+
+    def test_bootstrap_handoff_and_squash_append(self):
+        prior_files = {}
+        prior = entry("W00-SOL-REPAIR04-20260819T025659Z", prior_files)
+        registry = {"schema_version": "bsl.handoff-registry.v1", "entries": [prior]}
+        activation = {"activation_id": checks.ACTIVATION, "status": "APPROVED", "root_turn": {"task_id": "W00"}}
+        with tempfile.TemporaryDirectory() as repo:
+            git_capture(repo, "init", "-q")
+            immutable = {path: (ROOT / path).read_bytes() for path in checks.IMMUTABLE}
+            base = commit(repo, {checks.ACTIVATION_PATH: encoded(activation)} | immutable)
+            start = commit(repo, prior_files)
+            local_schema = copy.deepcopy(SCHEMA)
+            local_schema["properties"]["starting_live_sha"] = {"const": start}
+            schema_bytes = json.dumps(local_schema, indent=2).encode()
+            active = {checks.CODE: b"def active():\n    return True\n", checks.TEST: b"VALUE = True\n"}
+            active[checks.WORKFLOW] = (ROOT / checks.WORKFLOW).read_bytes()
+            active |= {checks.SCHEMA: schema_bytes, checks.REGISTRY: json.dumps(registry, indent=2).encode()}
+            implementation = commit(repo, active)
+            with (
+                chdir(repo),
+                mock.patch.object(checks, "START", start),
+                mock.patch.object(checks, "complexity") as measured,
+            ):
+                checks.validate_project(base, implementation, BRANCH)
+                for change in ({"outside.txt": b"rogue\n"}, {checks.WORKFLOW: b"on : {push: {}}\n"}):
+                    bad = commit(repo, change)
+                    self.assertRaises(ValueError, checks.validate_project, base, bad, BRANCH)
+                    git_capture(repo, "switch", "-q", "--detach", implementation)
+                binary = subprocess.check_output(["git", "-C", repo, "diff", "--binary", f"{base}...{implementation}"])
+                tree = git_capture(repo, "rev-parse", f"{implementation}^{{tree}}")
+                record, evidence = fixture(base, implementation, start, binary, tree)
+                record["integrity"]["schema_sha256"] = checks.digest(schema_bytes)
+                record["integrity"].update(registry_mode="BOOTSTRAP", registry_entry_count=2)
+                record["changes"] = checks.change_ledger(base, implementation)
+                measured.return_value = record["complexity_receipt"]
+                pair = {f"handoffs/W00/{TURN}.json": encoded(record)}
+                pair[f"handoffs/W00/{TURN}.md"] = checks.render_markdown(record).encode()
+                registry["entries"].append(entry(TURN, pair))
+                final_registry = json.dumps(registry, indent=2).encode()
+                bad_pair = pair | {f"handoffs/W00/{TURN}.md": pair[f"handoffs/W00/{TURN}.md"] + b"Merged.\n"}
+                bad_registry = copy.deepcopy(registry)
+                bad_registry["entries"][-1]["markdown_sha256"] = checks.digest(bad_pair[f"handoffs/W00/{TURN}.md"])
+                variants = (evidence | bad_pair | {checks.REGISTRY: json.dumps(bad_registry, indent=2).encode()},)
+                variants += (evidence | pair | {checks.REGISTRY: final_registry, checks.CODE: b"changed\n"},)
+                for files in variants:
+                    bad = commit(repo, files)
+                    self.assertRaises(ValueError, checks.validate_handoff, base, bad, BRANCH, PR)
+                    git_capture(repo, "switch", "-q", "--detach", implementation)
+                final = commit(repo, evidence | pair | {checks.REGISTRY: final_registry})
+                result = checks.validate_handoff(base, final, BRANCH, PR)
+                self.assertEqual(result["implementation_head_sha"], implementation)
+                invalid = (
+                    (start, final, BRANCH, PR),
+                    (base, final, "codex/other", PR),
+                    (base, final, BRANCH, "https://github.com/other/repo/pull/7"),
+                )
+                invalid += ((final, base, BRANCH, PR),)
+                for arguments in invalid:
+                    self.assertRaises((ValueError, subprocess.CalledProcessError), checks.validate_handoff, *arguments)
+                self.assertEqual(checks.validate_project(base, final, BRANCH)["scope"], "BOOTSTRAP_COMPATIBILITY_ONLY")
+                tree = git_capture(repo, "rev-parse", f"{final}^{{tree}}")
+                squash = git_capture(repo, "commit-tree", tree, "-p", base, input="squash\n")
+                subprocess.run(["git", "switch", "-q", "--detach", squash], check=True)
+                later_files = {}
+                registry["entries"].append(entry("W00-SOL-REPAIR05-20260820T120000Z", later_files))
+                candidate = commit(repo, later_files | {checks.REGISTRY: json.dumps(registry, indent=2).encode()})
+                mode, entries = checks.validate_registry(squash, candidate)
+                self.assertEqual(checks.validate_project_history(squash, candidate, mode, entries), set())
+                ancestry = subprocess.run(["git", "merge-base", "--is-ancestor", final, candidate])
+                self.assertNotEqual(ancestry.returncode, 0)

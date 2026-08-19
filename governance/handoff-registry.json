@@ -1,0 +1,30 @@
+{
+  "schema_version": "bsl.handoff-registry.v1",
+  "entries": [
+    { "turn_id": "W00-SOL-20260817T234806Z",
+      "json_path": "handoffs/W00/W00-SOL-20260817T234806Z.json",
+      "json_sha256": "1a48f94e97651175c9689ea99fa9b824ad4751ce42414951da00467288a6ee07",
+      "markdown_path": "handoffs/W00/W00-SOL-20260817T234806Z.md",
+      "markdown_sha256": "c1ce6a9f4849cc9280045e2825d38b794027fce8eb59e8d0facb94b238cafdd6" },
+    { "turn_id": "W00-SOL-REPAIR01-20260818T021301Z",
+      "json_path": "handoffs/W00/W00-SOL-REPAIR01-20260818T021301Z.json",
+      "json_sha256": "42339bc0be5da1c6d74699e86fea88677e2202c521cde14e906d497f98c246e4",
+      "markdown_path": "handoffs/W00/W00-SOL-REPAIR01-20260818T021301Z.md",
+      "markdown_sha256": "b05bbd1f56d2d6df2175f2ea9ef2ab954ed022b48080b97aded2878dd68b105e" },
+    { "turn_id": "W00-SOL-REPAIR02-20260818T141853Z",
+      "json_path": "handoffs/W00/W00-SOL-REPAIR02-20260818T141853Z.json",
+      "json_sha256": "4c7c9f9b07c0ab666201a0fd1b2440c2b583e44a3dcd01cb557da3cc726133cd",
+      "markdown_path": "handoffs/W00/W00-SOL-REPAIR02-20260818T141853Z.md",
+      "markdown_sha256": "503ae24558141cc81203038725d3290b3086d6c274fd54abf7a01a582eae025a" },
+    { "turn_id": "W00-SOL-REPAIR03-20260818T230834Z",
+      "json_path": "handoffs/W00/W00-SOL-REPAIR03-20260818T230834Z.json",
+      "json_sha256": "c2106010ba57aa766b5d914307388771f27218f5de4cde7b37964f96704ff126",
+      "markdown_path": "handoffs/W00/W00-SOL-REPAIR03-20260818T230834Z.md",
+      "markdown_sha256": "5f3d293b62235a6abcff6119682d087b92a1330786e451b69323b9a8f5c2fb19" },
+    { "turn_id": "W00-SOL-REPAIR04-20260819T025659Z",
+      "json_path": "handoffs/W00/W00-SOL-REPAIR04-20260819T025659Z.json",
+      "json_sha256": "1745d0684a72ee6a8718f7627515f61e522bf39148df569351e758c079e58a18",
+      "markdown_path": "handoffs/W00/W00-SOL-REPAIR04-20260819T025659Z.md",
+      "markdown_sha256": "0ecccd9e7b80972ce6325a5f2abbeeedcec5a610533c003368cce9f1705856ef" }
+  ]
+}

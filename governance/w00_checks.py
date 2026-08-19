@@ -1,4 +1,3 @@
-import argparse
 import hashlib
 import json
 import math
@@ -7,33 +6,36 @@ import subprocess
 import sys
 from collections.abc import Callable
 from datetime import UTC, datetime
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from typing import Any, cast
 
 import jsonschema
 
-BRANCH = "codex/w00-repository-governance"
-ACTIVATION = "ACT-W00-REPOSITORY-GOVERNANCE-v3"
-BASE_SHA = "3d3ebb706fe6c8779445cbbfd9fea271b86d3646"
-PR_URL = "https://github.com/abbudjoe/biblical-scholar-lab/pull/1"
-EVIDENCE_ROOT = "handoffs/W00/evidence"
-ACTIVATION_PATH = "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json"
-WORKFLOW = ".github/workflows/governance-integrity.yml"
-SCHEMA = "governance/schemas/turn-handoff.schema.json"
-TEST = "governance/test_w00_checks.py"
-FIXTURE = "governance/fixtures/w00a1a-record.json"
-POLICY_PATH = "governance/fixtures/w00a1a-policy.json"
-POLICY_HASH = "aec2b2b6a8cc5ac9cab96a273dc62989c0869c4dbf026ba0bff3df46f871df9a"
-PRODUCTION = {WORKFLOW, "governance/ruff.toml", "governance/w00_checks.py", POLICY_PATH}
-TEST_FILES = {TEST, FIXTURE, "governance/fixtures/w00a1a-negative.json"}
-PACKAGE_FILES = {"governance/GOV-01-package-manifest.json", "governance/GOV-01-artifacts.sha256"}
-ACTIVE_FILES = PRODUCTION | TEST_FILES | PACKAGE_FILES | {SCHEMA}
-DR30_KEYS = "module_max_lines function_max_lines cyclomatic_complexity_max line_length_max ".split()
-DR30_KEYS += "nesting_limit_enforced target_excess_justification simplicity_conformance".split()
-TURN = re.compile(r"^handoffs/W00/(W00-SOL(?:-REPAIR\d+)?-[0-9]{8}T[0-9]{6}Z)\.(json|md)$")
-PATH = re.compile(r"^[A-Za-z0-9._/-]+$")
-UTC_TIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+ACTIVATION, START = "ACT-W00-REPOSITORY-GOVERNANCE-v3", "20c2755bd5be2b080f78a9529792c83f0cd9c400"
+ACTIVATION_PATH, TEST = "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json", "governance/test_w00_checks.py"
+SCHEMA, REGISTRY = "governance/schemas/w00a1a-handoff.schema.json", "governance/handoff-registry.json"
+WORKFLOW, CODE = ".github/workflows/governance-integrity.yml", "governance/w00_checks.py"
+WORKFLOW_SHA = "372ebcfd646c9ac4e8e1105a79ed7d4b4dc5bf32e6b02720b594c744eee8f02e"
+ACTIVE = {WORKFLOW, CODE, TEST, SCHEMA, REGISTRY}
+IMMUTABLE = set("governance/schemas/turn-handoff.schema.json governance/GOV-01-artifacts.sha256 ".split())
+IMMUTABLE.add("governance/GOV-01-package-manifest.json")
+REMOVED = {f"governance/fixtures/w00a1a-{name}.json" for name in ("policy", "record", "negative")}
+REMOVED.add("governance/ruff.toml")
+EVIDENCE_ROOT, COVERAGE = "handoffs/W00/evidence", "--data-file=/tmp/bsl-w00a1a-repair05.coverage"
+TURN = re.compile(r"^W00-SOL(?:-REPAIR\d+)?-[0-9]{8}T[0-9]{6}Z$")
+SHA = re.compile(r"^[0-9a-f]{40}$")
+SAFE = re.compile(r"^[A-Za-z0-9._/-]+$")
+STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+Obj = dict[str, Any]
 Reader = Callable[[str], bytes]
+ARTIFACTS: tuple[tuple[str, str], ...] = (("COMPLEXITY", "complexity.json"), ("BINARY_DIFF", "implementation.diff"))
+ARTIFACTS += (("REVIEW_INSTRUCTION", "review.prompt.md"), ("REVIEW_REPORT_RECORD", "review.report.json"))
+STOP = (
+    "No merge was performed. No approval was submitted. The PR remains draft. No ready transition occurred. "
+    "No W00A1b, W00A2, W00B, or W01 work was started. No source acquisition or benchmark execution occurred. "
+    "No model, cloud, Lambda, Luna, training, evaluation, or billable work occurred. "
+    "The next action belongs to ChatGPT exact-head review and Joseph's decision."
+)
 
 
 def need(condition: bool, message: str) -> None:
@@ -42,27 +44,15 @@ def need(condition: bool, message: str) -> None:
 
 
 def strict_json(source: str | bytes) -> Any:
-    def unique(items: list[tuple[str, Any]]) -> dict[str, Any]:
-        need(len(items) == len(dict(items)), "JSON key is duplicated")
+    def unique(items: list[tuple[str, Any]]) -> Obj:
+        need(len(items) == len(dict(items)), "duplicate JSON key")
         return dict(items)
 
     def finite(value: str) -> float:
-        number = float(value)
-        need(math.isfinite(number), "JSON number is non-finite")
+        need(math.isfinite(number := float(value)), "nonfinite JSON number")
         return number
 
     return json.loads(source, object_pairs_hook=unique, parse_constant=finite, parse_float=finite)
-
-
-POLICY = cast(
-    dict[str, Any], strict_json(Path(__file__).with_name("fixtures").joinpath("w00a1a-policy.json").read_bytes())
-)
-VALIDATION_ARGV = tuple(tuple(command.split()) for command in POLICY["validation_commands"])
-PRIOR_HANDOFFS = tuple(tuple(row) for row in POLICY["prior_handoffs"])
-
-
-def compact(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
 def digest(content: bytes) -> str:
@@ -70,140 +60,18 @@ def digest(content: bytes) -> str:
 
 
 def utc(value: str) -> datetime:
-    need(UTC_TIME.fullmatch(value) is not None, "timestamp is not canonical UTC")
+    need(STAMP.fullmatch(value) is not None, "timestamp is not canonical UTC")
     return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
 
 
 def safe_path(path: str) -> None:
     pure = PurePosixPath(path)
-    valid = path and not pure.is_absolute() and str(pure) == path and ".." not in pure.parts
-    need(bool(valid and "\\" not in path and PATH.fullmatch(path) and len(path) <= 240), "path is unsafe")
-
-
-def _file(turn: str, path: str, expected: str, suffix: str, read: Reader, used: set[str]) -> bytes:
-    safe_path(path)
-    need(path.startswith(f"{EVIDENCE_ROOT}/{turn}/") and path.endswith(suffix), "evidence path differs")
-    need(path not in used, "evidence path is reused")
-    used.add(path)
-    content = read(path)
-    need(len(content) <= 262_144 and digest(content) == expected, f"artifact digest differs: {path}")
-    return content
-
-
-def _commands(
-    record: dict[str, Any], read: Reader, used: set[str], implementation_time: datetime
-) -> dict[tuple[str, ...], bytes]:
-    commands = record["commands"]
-    suite = [*VALIDATION_ARGV, project_command(record["implementation_head_sha"])]
-    need([tuple(item["argv"]) for item in commands] == suite, "authoritative command set differs")
-    need(all(item["exit_code"] == 0 for item in commands), "authoritative command failed")
-    need([item["command_index"] for item in commands] == list(range(1, len(commands) + 1)), "command indexes differ")
-    need(len({item["command_evidence_id"] for item in commands}) == len(commands), "command evidence id is reused")
-    turn = record["turn_id"]
-    previous = implementation_time
-    identity = turn, record["activation_id"], record["implementation_head_sha"]
-    completed = utc(record["completed_at_utc"])
-    outputs: dict[tuple[str, ...], bytes] = {}
-    for command in commands:
-        observed = command["root_turn_id"], command["activation_id"], command["implementation_head_sha"]
-        need(observed == identity and command["cwd_repo_relative"] == ".", "command identity differs")
-        started, finished = utc(command["started_at_utc"]), utc(command["finished_at_utc"])
-        need(previous <= started <= finished <= completed, "command chronology differs")
-        previous = started
-        receipt = _file(turn, command["receipt_path"], command["receipt_sha256"], ".receipt.json", read, used)
-        envelope = {key: value for key, value in command.items() if key not in {"receipt_path", "receipt_sha256"}}
-        need(strict_json(receipt) == envelope, "receipt identity differs")
-        stdout = _file(turn, command["stdout_path"], command["stdout_sha256"], ".stdout", read, used)
-        outputs[tuple(command["argv"])] = stdout
-        _file(turn, command["stderr_path"], command["stderr_sha256"], ".stderr", read, used)
-    return outputs
-
-
-def _reports(record: dict[str, Any], coverage: int, dr30: dict[str, Any]) -> dict[str, Any]:
-    validation = {
-        **POLICY["validation_report"],
-        "branch_coverage_percent": coverage,
-        "command_count": len(record["commands"]),
-        "commands_passed": len(record["commands"]),
-        "dr30": dr30,
-        "implementation_head_sha": record["implementation_head_sha"],
-    }
-    review = {**POLICY["review_report"], "implementation_head_sha": record["implementation_head_sha"]}
-    return {"VALIDATION": validation, "REVIEW": review}
-
-
-def _results(record: dict[str, Any], reports: dict[str, Any], outputs: dict[tuple[str, ...], bytes]) -> None:
-    need(record["review_targets"] == POLICY["findings"], "finding ledger differs")
-    review = record["evaluations"], record["delegated_operations"]
-    need(review == (POLICY["evaluations"], [POLICY["delegation"]]), "review differs")
-    coverage = int(outputs[VALIDATION_ARGV[1]].strip())
-    validation = reports.get("VALIDATION")
-    need(isinstance(validation, dict), "validation report differs")
-    claimed = cast(dict[str, Any], validation).get("dr30", {})
-    _check_dr30(claimed, record["complexity_receipt"]["substantive_lines_total"])
-    need(reports == _reports(record, coverage, claimed), "validation or review report differs")
-
-
-def validate_record(
-    record: dict[str, Any],
-    schema: dict[str, Any],
-    read: Reader,
-    declared_paths: set[str],
-    implementation_time: datetime,
-    completion_limit: datetime,
-) -> tuple[dict[tuple[str, ...], bytes], dict[str, Any]]:
-    jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(record)
-    canonical = cast(dict[str, Any], POLICY["canonical_fields"])
-    need(all(record[key] == value for key, value in canonical.items()), "canonical handoff truth differs")
-    need(record["status"] == POLICY["terminal_dispositions"][0], "handoff disposition differs")
-    started, completed = utc(record["started_at_utc"]), utc(record["completed_at_utc"])
-    need(started <= implementation_time <= completed <= completion_limit, "root-turn chronology differs")
-    turn = record["turn_id"]
-    used: set[str] = set()
-    outputs = _commands(record, read, used, implementation_time)
-    auth = record["github_auth_preflight"]
-    auth_bytes = _file(turn, auth["receipt_path"], auth["receipt_sha256"], ".auth.json", read, used)
-    canonical_auth = {key: value for key, value in auth.items() if key not in {"receipt_path", "receipt_sha256"}}
-    need(strict_json(auth_bytes) == canonical_auth, "authentication receipt differs")
-    root = f"{EVIDENCE_ROOT}/{turn}"
-    descriptors = [(item["artifact_id"], item["kind"], item["path"]) for item in record["artifacts"]]
-    expected_artifacts = [(artifact_id, kind, f"{root}/{name}") for artifact_id, kind, name in POLICY["artifacts"]]
-    need(descriptors == expected_artifacts, "artifact ledger differs")
-    reports = {
-        artifact["artifact_id"]: strict_json(_file(turn, artifact["path"], artifact["sha256"], ".json", read, used))
-        for artifact in record["artifacts"]
-    }
-    _results(record, reports, outputs)
-    observed = used, record["billable_actions"], record["known_risks"], record["decisions_required"]
-    need(observed == (declared_paths, POLICY["billable"], POLICY["risks"], []), "canonical evidence differs")
-    return outputs, reports
-
-
-def render_markdown(record: dict[str, Any], parent: str) -> str:
-    facts = {key: record[key] for key in POLICY["terminal_fields"]}
-    lines = [
-        f"Identity: activation `{record['activation_id']}` / `W00A1A-REPAIR04`; branch `{record['branch']}`; PR "
-        f"`{record['pr_url']}`; base `{record['base_sha']}`; start `{POLICY['start_head']}`; "
-        f"implementation `{parent}`; final/live "
-        f"SHA is the containing commit/live PR head; root `{record['turn_id']}`; window `{record['started_at_utc']}`–"
-        f"`{record['completed_at_utc']}`.",
-        f"Scope: {POLICY['scope_statement']} Exact path ledger `{compact(record['changes'])}`. "
-        f"Evidence: commands `{compact(record['commands'])}`; artifacts `{compact(record['artifacts'])}`; review "
-        f"`{compact(record['evaluations'] + record['delegated_operations'])}`.",
-        f"Complexity/dependencies `{compact(record['complexity_receipt'])}`; facts `{compact(facts)}`; limitations "
-        f"`{compact(record['known_risks'])}`.",
-        POLICY["stop_statement"],
-    ]
-    return "# W00A1a — Canonical Records and Evidence Integrity\n\n" + "\n".join(lines) + "\n"
-
-
-def project_command(head: str) -> tuple[str, ...]:
-    command = "uv run --with jsonschema==4.25.1 -- python3 governance/w00_checks.py project-integrity"
-    return tuple(f"{command} --base-sha {BASE_SHA} --head-sha {head} --branch {BRANCH}".split())
+    valid = path and str(pure) == path and not pure.is_absolute() and ".." not in pure.parts
+    need(bool(valid and "\\" not in path and SAFE.fullmatch(path) and len(path) <= 240), "unsafe path")
 
 
 def run(arguments: list[str], *, text: bool = True) -> subprocess.CompletedProcess[Any]:
-    return subprocess.run(arguments, check=True, text=text, capture_output=True, timeout=30)
+    return subprocess.run(arguments, check=True, text=text, capture_output=True, timeout=60)
 
 
 def git(*arguments: str) -> str:
@@ -214,217 +82,332 @@ def blob(revision: str, path: str) -> bytes:
     return cast(bytes, run(["git", "show", f"{revision}:{path}"], text=False).stdout)
 
 
-def object_at(revision: str, path: str) -> dict[str, Any]:
-    content = blob(revision, path)
+def object_at(revision: str, path: str) -> Obj:
+    content = reader(revision)(path)
     need(len(content) <= 262_144, f"{path} is oversized")
     value = strict_json(content)
     need(isinstance(value, dict), f"{path} is not an object")
-    return cast(dict[str, Any], value)
+    return cast(Obj, value)
 
 
-def artifact_reader(revision: str) -> Reader:
+def reader(revision: str) -> Reader:
     def read(path: str) -> bytes:
         safe_path(path)
         entry = git("ls-tree", revision, "--", path)
-        need(entry.startswith("100644 blob ") and entry.endswith(f"\t{path}"), "evidence is not a regular file")
+        need(entry.startswith("100644 blob ") and entry.endswith(f"\t{path}"), "path is not a regular Git blob")
         return blob(revision, path)
 
     return read
 
 
-def activation(base: str, branch: str) -> None:
-    valid = (base, branch) == (BASE_SHA, BRANCH) and digest(blob(base, ACTIVATION_PATH)) == POLICY["activation_hash"]
-    need(valid, "activation differs")
+def identity(base: str, head: str, branch: str) -> None:
+    need(all(SHA.fullmatch(value) for value in (base, head)), "invalid Git SHA")
+    need(re.fullmatch(r"codex/[A-Za-z0-9._/-]+", branch) is not None, "invalid task branch")
+    ancestor = subprocess.run(["git", "merge-base", "--is-ancestor", base, head], capture_output=True)
+    need(ancestor.returncode == 0, "base is not an ancestor of head")
+    activation = object_at(base, ACTIVATION_PATH)
+    root = cast(Obj, activation.get("root_turn", {}))
+    observed = activation.get("activation_id"), activation.get("status"), root.get("task_id")
+    need(observed == (ACTIVATION, "APPROVED", "W00"), "base activation differs")
 
 
-def change_ledger(base: str, head: str) -> list[dict[str, Any]]:
-    groups: dict[str, list[str]] = {kind: [] for kind in ("ADD", "MODIFY", "DELETE")}
-    status_kind = {"A": "ADD", "M": "MODIFY", "D": "DELETE"}
+def handoff_snapshot(revision: str) -> dict[str, str]:
+    paths = git("ls-tree", "-r", "--name-only", revision, "--", "handoffs/W00").splitlines()
+    read = reader(revision)
+    return {path: digest(read(path)) for path in paths}
+
+
+def handoff_entries(revision: str) -> list[dict[str, str]]:
+    snapshot = handoff_snapshot(revision)
+    direct = {path for path in snapshot if path.count("/") == 2}
+    turns = sorted({path.removeprefix("handoffs/W00/").rsplit(".", 1)[0] for path in direct})
+    expected = {f"handoffs/W00/{turn}.{suffix}" for turn in turns for suffix in ("json", "md")}
+    need(direct == expected and all(TURN.fullmatch(turn) for turn in turns), "handoff pair or path differs")
+    entries = []
+    for turn in turns:
+        json_path, markdown_path = (f"handoffs/W00/{turn}.{suffix}" for suffix in ("json", "md"))
+        entry = {"turn_id": turn, "json_path": json_path, "json_sha256": snapshot[json_path]}
+        entry |= {"markdown_path": markdown_path, "markdown_sha256": snapshot[markdown_path]}
+        entries.append(entry)
+    return entries
+
+
+def registry_entries(revision: str, data: Obj) -> list[dict[str, str]]:
+    entries = handoff_entries(revision)
+    need(bool(entries) and data == {"schema_version": "bsl.handoff-registry.v1", "entries": entries}, "registry")
+    return entries
+
+
+def validate_registry(base: str, head: str) -> tuple[str, list[dict[str, str]]]:
+    candidate = registry_entries(head, object_at(head, REGISTRY))
+    present = subprocess.run(["git", "cat-file", "-e", f"{base}:{REGISTRY}"], capture_output=True).returncode == 0
+    if not present:
+        return "BOOTSTRAP", candidate
+    registry_entries(base, object_at(base, REGISTRY))
+    return "APPEND", candidate
+
+
+def change_ledger(base: str, head: str) -> list[Obj]:
+    kinds = {"A": "ADD", "M": "MODIFY", "D": "DELETE"}
+    changes = []
     for row in git("diff", "--no-renames", "--name-status", f"{base}...{head}").splitlines():
         status, path = row.split("\t", 1)
         safe_path(path)
-        need(status in status_kind, "change status differs")
-        groups[status_kind[status]].append(path)
-    return [
-        {"change_id": f"FILES_{kind}", "kind": kind, "paths": sorted(paths)} for kind, paths in groups.items() if paths
-    ]
+        need(status in kinds, "unsupported diff status")
+        reason = "IMMUTABLE_HANDOFF_HISTORY" if path.startswith("handoffs/W00/") else "W00A1A_IMPLEMENTATION"
+        changes.append({"kind": kinds[status], "reason": reason, "path": path})
+    return changes
 
 
-def paths_at(base: str, head: str) -> list[str]:
-    return [path for item in change_ledger(base, head) for path in item["paths"]]
-
-
-def _diff_lines(base: str, head: str, paths: list[str] | None = None) -> tuple[int, int]:
-    if paths == []:
-        return 0, 0
-    args = ["diff", "--no-renames", "--unified=0", f"{base}...{head}", *(("--", *paths) if paths else ())]
+def diff_lines(base: str, head: str, paths: set[str]) -> tuple[int, int]:
+    output = git("diff", "--no-renames", "--unified=0", f"{base}...{head}", "--", *sorted(paths))
     added = removed = 0
-    in_hunk = False
-    for line in git(*args).splitlines():
+    hunk = False
+    for line in output.splitlines():
         if line.startswith(("diff --git", "@@")):
-            in_hunk = line.startswith("@@")
-        elif in_hunk and len(line) > 1 and line[1:].strip():
+            hunk = line.startswith("@@")
+        elif hunk and len(line) > 1 and line[1:].strip():
             added += int(line.startswith("+"))
             removed += int(line.startswith("-"))
     return added, removed
 
 
-def budget(base: str, head: str, paths: list[str]) -> dict[str, Any]:
-    ledger = change_ledger(base, head)
-    statuses = {path: item["kind"] for item in ledger for path in item["paths"]}
-    production, tests = sorted(PRODUCTION & set(paths)), sorted(TEST_FILES & set(paths))
-    total, production_lines, test_lines = (
-        _diff_lines(base, head),
-        _diff_lines(base, head, production),
-        _diff_lines(base, head, tests),
+def budget(base: str, head: str) -> Obj:
+    production, tests = diff_lines(base, head, ACTIVE - {TEST}), diff_lines(base, head, {TEST})
+    lines = {path: blob(head, path).decode().splitlines() for path in ACTIVE}
+    readable = all(
+        sum(bool(line.strip()) for line in value) > 1 for path, value in lines.items() if path.endswith(".json")
     )
-    added, removed = (sorted(path for path in production if statuses[path] == status) for status in ("ADD", "DELETE"))
-    receipt = dict(POLICY["complexity_static"])
-    receipt.update({
-        "substantive_lines_total": sum(total),
-        "production_loc_added": production_lines[0],
-        "production_loc_removed": production_lines[1],
-        "test_loc_added": test_lines[0],
-        "test_loc_removed": test_lines[1],
-        "production_files_added": len(added),
-        "production_files_removed": len(removed),
-        "modules_added": added,
-    })
-    need(not removed, "removed production surface differs")
-    return receipt
+    longest = max(len(line) for value in lines.values() for line in value)
+    total = sum(production + tests)
+    need(readable and longest <= 120 and total <= 800, "readability or W00A1a budget differs")
+    names = ("production_loc_added", "production_loc_removed", "test_loc_added", "test_loc_removed")
+    receipt: Obj = {"substantive_lines_total": total, **dict(zip(names, production + tests, strict=True))}
+    receipt["production_files"] = len(ACTIVE - {TEST})
+    return receipt | {"public_contracts": 1, "workflows": 1, "migrations": 0}
 
 
-def _dr30(outputs: dict[tuple[str, ...], bytes], head: str, total: int) -> dict[str, Any]:
-    report = strict_json(outputs[VALIDATION_ARGV[6]])
-    need(isinstance(report, dict), "Radon report differs")
-    need(set(report) == {"governance/w00_checks.py"}, "Radon report differs")
-    roots = report["governance/w00_checks.py"]
-    need(isinstance(roots, list), "Radon block differs")
-    blocks = roots + sum((item.get("closures", []) + item.get("methods", []) for item in roots), [])
-    need(bool(blocks) and all(isinstance(item, dict) for item in blocks), "Radon block differs")
-    source = blob(head, "governance/w00_checks.py").decode()
-    lines = source.splitlines()
-    values = (
-        sum(bool(line.strip()) for line in lines),
-        max(item["endline"] - item["lineno"] + 1 for item in blocks),
-        max(item["complexity"] for item in blocks),
-        max(map(len, lines)),
-        3,
-        "NONE" if total <= 650 else POLICY["target_excess"],
-        "PASS",
-    )
-    return dict(zip(DR30_KEYS, values, strict=True))
+def command_suite(base: str, head: str, branch: str) -> list[tuple[str, ...]]:
+    commands = [
+        f"uv run --with=jsonschema==4.25.1 --with=coverage==7.10.6 python3 -B -m coverage run "
+        f"{COVERAGE} --branch -m unittest {TEST}",
+        f"uv run --with=coverage==7.10.6 python3 -B -m coverage report "
+        f"{COVERAGE} --format=total --fail-under=90 {CODE}",
+        f"uvx ruff@0.16.3 check --quiet --preview --line-length 120 --select E4,E7,E9,F,B,C90,PLR1702 "
+        f"--config lint.mccabe.max-complexity=10 --config lint.pylint.max-nested-blocks=3 {CODE} {TEST}",
+        f"uvx ruff@0.16.3 format --quiet --check --preview --line-length 120 "
+        f"--config format.skip-magic-trailing-comma=true {CODE} {TEST}",
+        f"uvx mypy@2.3.1 --strict --no-error-summary --ignore-missing-imports {CODE}",
+        f"uvx zizmor@1.29.0 --offline -q {WORKFLOW}",
+        f"uvx radon@6.0.1 cc -j {CODE}",
+        "shasum -a 256 -s -c governance/GOV-01-artifacts.sha256",
+        f"git diff --check {base}...{head}",
+        f"uv run --with=jsonschema==4.25.1 python3 {CODE} project-integrity "
+        f"--base-sha {base} --head-sha {head} --branch {branch}",
+        "git fsck --full",
+        "git status --porcelain",
+    ]
+    return [tuple(command.split()) for command in commands]
 
 
-def _check_dr30(metrics: dict[str, Any], total: int) -> None:
-    target = "NONE" if total <= 650 else POLICY["target_excess"]
-    observed = tuple(metrics.get(key) for key in DR30_KEYS[:5])
-    valid = set(metrics) == set(DR30_KEYS) and all(
-        isinstance(value, int) and value <= limit for value, limit in zip(observed, (500, 60, 10, 120, 3), strict=True)
-    )
-    need(valid and metrics.get("target_excess_justification") == target, "DR-30 evidence differs")
-    need(metrics.get("simplicity_conformance") == "PASS", "simplicity evidence differs")
+def load_evidence(turn: str, item: Obj, suffix: str, read: Reader, used: set[str]) -> bytes:
+    path, expected = item["path"], item["sha256"]
+    safe_path(path)
+    valid = path.startswith(f"{EVIDENCE_ROOT}/{turn}/") and path.endswith(suffix) and path not in used
+    need(valid, "invalid or reused evidence path")
+    used.add(path)
+    content = read(path)
+    need(len(content) <= 262_144 and digest(content) == expected, "evidence hash differs")
+    return content
 
 
-def validate_budget(metrics: dict[str, Any]) -> None:
-    surface = set(metrics["modules_added"]) == PRODUCTION and metrics["substantive_lines_total"] <= 800
-    limits = len(metrics["dependencies_added"]) <= 2 and len(metrics["public_contracts_changed"]) <= 1
-    need(surface and limits and not metrics["migrations_added"], "W00A1a budget or surface differs")
+def validate_commands(record: Obj, read: Reader, used: set[str], at: datetime) -> bytes:
+    commands = record["commands"]
+    suite = command_suite(record["base_sha"], record["implementation_head_sha"], record["branch"])
+    need([tuple(item["argv"]) for item in commands] == suite, "authoritative command suite differs")
+    need([item["command_index"] for item in commands] == list(range(1, len(commands) + 1)), "command order differs")
+    need(len({item["evidence_id"] for item in commands}) == len(commands), "command evidence ID is reused")
+    turn = record["root_turn_id"]
+    identity_values = turn, record["activation_id"], record["implementation_head_sha"]
+    previous, completed = at, utc(record["completed_at_utc"])
+    radon = b""
+    for item in commands:
+        identity_fields = item["root_turn_id"], item["activation_id"], item["implementation_head_sha"]
+        need(identity_fields == identity_values, "command identity differs")
+        started, finished = utc(item["started_at_utc"]), utc(item["finished_at_utc"])
+        need(previous <= started <= finished <= completed, "command chronology differs")
+        previous = started
+        receipt = load_evidence(turn, item["receipt"], ".receipt.json", read, used)
+        envelope = {key: value for key, value in item.items() if key != "receipt"}
+        need(strict_json(receipt) == envelope, "command receipt differs")
+        stdout = load_evidence(turn, item["stdout"], ".stdout", read, used)
+        stderr = load_evidence(turn, item["stderr"], ".stderr", read, used)
+        if tuple(item["argv"]) == ("git", "status", "--porcelain"):
+            need(not stdout and not stderr, "worktree was not clean")
+        if tuple(item["argv"][:3]) == ("uvx", "radon@6.0.1", "cc"):
+            radon = stdout
+    return radon
 
 
-def validate_project(base: str, head: str, branch: str) -> dict[str, Any]:
-    activation(base, branch)
-    paths = paths_at(base, head)
-    need(all(path in ACTIVE_FILES or path.startswith("handoffs/W00/") for path in paths), "change is outside W00A1a")
-    metrics = budget(base, head, paths)
-    validate_budget(metrics)
-    jsonschema.Draft202012Validator.check_schema(strict_json(blob(head, SCHEMA)))
-    hashes = {**POLICY["trusted_hashes"], POLICY_PATH: POLICY_HASH}
-    need(all(digest(blob(head, path)) == expected for path, expected in hashes.items()), "trusted files differ")
-    return {"scope": "BOOTSTRAP_COMPATIBILITY_ONLY", "changed_paths": paths, **metrics}
+def source_metrics(head: str, output: bytes) -> Obj:
+    report = strict_json(output)
+    roots = report.get(CODE) if isinstance(report, dict) else None
+    need(isinstance(roots, list) and bool(roots), "Radon report differs")
+    blocks = cast(list[Obj], roots)
+    blocks += sum((item.get("closures", []) + item.get("methods", []) for item in blocks), [])
+    return {
+        "module_nonblank_lines": sum(bool(line.strip()) for line in blob(head, CODE).decode().splitlines()),
+        "maximum_function_lines": max(item["endline"] - item["lineno"] + 1 for item in blocks),
+        "maximum_cyclomatic_complexity": max(item["complexity"] for item in blocks),
+        "maximum_observed_line_length": max(
+            len(line) for path in ACTIVE for line in blob(head, path).decode().splitlines()
+        ),
+    }
 
 
-def _record_files(commit: str, parent: str) -> tuple[str, tuple[str, str], set[str]] | None:
-    lines = git("diff", "--name-status", "--no-renames", parent, commit, "--", "handoffs/W00/").splitlines()
-    if not lines:
-        return None
-    need(all(line.startswith("A\t") for line in lines), "append-only record was changed")
-    paths = [line.split("\t", 1)[1] for line in lines]
-    pair = {match.group(2): (path, match.group(1)) for path in paths if (match := TURN.fullmatch(path))}
-    need(set(pair) == {"json", "md"} and pair["json"][1] == pair["md"][1], "handoff pair differs")
-    turn = pair["json"][1]
-    files = pair["json"][0], pair["md"][0]
-    evidence = set(paths) - set(files)
-    need(all(path.startswith(f"{EVIDENCE_ROOT}/{turn}/") for path in evidence), "record evidence path differs")
-    return turn, files, evidence
+def complexity(base: str, head: str, radon: bytes) -> Obj:
+    measured = budget(base, head)
+    measured |= source_metrics(head, radon)
+    limits = {"module_nonblank_lines": 500, "maximum_function_lines": 60}
+    limits |= {"maximum_cyclomatic_complexity": 10, "maximum_observed_line_length": 120}
+    need(all(measured[name] <= limit for name, limit in limits.items()), "DR-30 source limit differs")
+    target = "NONE" if measured["substantive_lines_total"] <= 650 else "ABOVE_TARGET_SMALLEST_READABLE_KERNEL"
+    return {
+        "measured": measured,
+        "configured": {"max_cyclomatic_complexity": 10, "max_line_length": 120, "nesting_limit": 3},
+        "target_excess_justification": target,
+    }
 
 
-def _prior(head: str) -> None:
-    for commit, parent, turn in PRIOR_HANDOFFS:
-        ancestor = subprocess.run(["git", "merge-base", "--is-ancestor", commit, head], capture_output=True)
-        need(ancestor.returncode == 0 and git("rev-parse", f"{commit}^") == parent, "prior ancestry differs")
-        for suffix in ("json", "md"):
-            path = f"handoffs/W00/{turn}.{suffix}"
-            need(blob(head, path) == blob(commit, path), f"prior handoff changed: {path}")
+def validate_project_history(base: str, head: str, mode: str, entries: list[dict[str, str]]) -> set[str]:
+    anchor = START if mode == "BOOTSTRAP" else base
+    prior = handoff_entries(anchor)
+    if entries == prior:
+        need(handoff_snapshot(head) == handoff_snapshot(anchor), "handoff history changed")
+        return set()
+    need(entries[:-1] == prior and len(entries) == len(prior) + 1, "unexpected handoff append")
+    turn, parent = entries[-1]["turn_id"], git("rev-parse", f"{head}^")
+    need(turn.startswith("W00-SOL-REPAIR05-"), "unexpected handoff turn")
+    need(registry_entries(parent, object_at(parent, REGISTRY)) == prior, "implementation registry differs")
+    need(handoff_snapshot(parent) == handoff_snapshot(anchor), "handoff history changed")
+    return record_scope(parent, head, entries[-1], turn)
 
 
-def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> dict[str, Any]:
-    activation(base, branch)
-    need(pr_url == PR_URL, "PR URL differs")
-    _prior(head)
-    rows = [line.split() for line in git("rev-list", "--reverse", "--parents", f"{base}..{head}").splitlines()]
-    need(all(len(row) == 2 for row in rows), "candidate history contains a merge")
-    records = [(commit, parent, item) for commit, parent in rows if (item := _record_files(commit, parent))]
-    need([commit for commit, _, _ in records[:-1]] == [item[0] for item in PRIOR_HANDOFFS], "handoff order differs")
-    commit, parent, (turn, pair, evidence) = records[-1]
-    need(commit == head and turn.startswith("W00-SOL-REPAIR04-"), "final handoff differs")
-    need(_record_files(parent, git("rev-parse", f"{parent}^")) is None, "implementation head is a record commit")
-    changed = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", parent, commit).splitlines())
-    need(changed == set(pair) | evidence, "final commit contains implementation changes")
-    record = object_at(head, pair[0])
-    need(record["turn_id"] == turn and record["implementation_head_sha"] == parent, "handoff parent differs")
-    implementation_time = datetime.fromisoformat(git("show", "-s", "--format=%cI", parent))
-    completion_limit = datetime.fromisoformat(git("show", "-s", "--format=%cI", commit))
-    outputs, reports = validate_record(
-        record, object_at(head, SCHEMA), artifact_reader(head), evidence, implementation_time, completion_limit
-    )
-    need(record["changes"] == change_ledger(base, parent), "change ledger differs")
-    paths = paths_at(base, head)
-    metrics = budget(base, head, paths)
-    validate_budget(metrics)
-    need(record["complexity_receipt"] == metrics, "complexity receipt differs")
-    actual_dr30 = _dr30(outputs, parent, metrics["substantive_lines_total"])
-    need(reports["VALIDATION"]["dr30"] == actual_dr30, "DR-30 report differs")
-    need(blob(head, pair[1]).decode() == render_markdown(record, parent), "Markdown differs")
+def validate_project(base: str, head: str, branch: str) -> Obj:
+    identity(base, head, branch)
+    paths = {item["path"] for item in change_ledger(base, head)}
+    in_scope = all(path in ACTIVE or path.startswith("handoffs/W00/") for path in paths)
+    need(in_scope and all(blob(base, path) == blob(head, path) for path in IMMUTABLE), "scope differs")
+    removed = (subprocess.run(["git", "cat-file", "-e", f"{head}:{path}"], capture_output=True) for path in REMOVED)
+    need(all(item.returncode != 0 for item in removed), "minified fixture remains")
+    jsonschema.Draft202012Validator.check_schema(object_at(head, SCHEMA))
+    mode, entries = validate_registry(base, head)
+    validate_project_history(base, head, mode, entries)
+    need(digest(blob(head, WORKFLOW)) == WORKFLOW_SHA, "workflow differs")
+    return {"scope": "BOOTSTRAP_COMPATIBILITY_ONLY", **budget(base, head)}
+
+
+def validate_review(record: Obj, artifacts: dict[str, bytes]) -> None:
+    review = cast(Obj, record["independent_review"])
+    rendered = json.dumps(review, indent=2, sort_keys=True) + "\n"
+    need(artifacts["REVIEW_REPORT_RECORD"].decode() == rendered, "structured review differs")
+    base, head = record["base_sha"], record["implementation_head_sha"]
+    binary = cast(bytes, run(["git", "diff", "--binary", f"{base}...{head}"], text=False).stdout)
+    expected = base, head, git("rev-parse", f"{head}^{{tree}}"), digest(binary)
+    keys = "base_sha", "implementation_head_sha", "implementation_tree_sha", "diff_sha256"
+    need(tuple(review[key] for key in keys) == expected, "review Git identity differs")
+    items = record["artifacts"]
+    need(review["review_instruction"] == items["REVIEW_INSTRUCTION"], "review instruction differs")
+    need(artifacts["REVIEW_INSTRUCTION"].decode() == render_review_instruction(record), "review prompt differs")
+    required = ACTIVE | IMMUTABLE
+    required |= {item[field]["path"] for item in record["commands"] for field in ("receipt", "stdout", "stderr")}
+    required |= {record["github_auth"]["receipt"]["path"], items["COMPLEXITY"]["path"], items["BINARY_DIFF"]["path"]}
+    need(required == set(review["artifacts_inspected"]), "review artifact set differs")
+    blocking = (item for item in review["findings"] if item["severity"] in {"P0", "P1", "P2"})
+    need(all(item["status"] == "CLOSED" for item in blocking), "review has unresolved finding")
+    finished = max(utc(item["finished_at_utc"]) for item in record["commands"])
+    started, completed = utc(review["started_at_utc"]), utc(review["completed_at_utc"])
+    need(finished <= started <= completed <= utc(record["completed_at_utc"]), "review chronology differs")
+
+
+def render_review_instruction(record: Obj) -> str:
+    review = record["independent_review"]
+    instruction = {"contract": "BIBLICAL_SCHOLAR_LAB_W00A1A_REPAIR05", "acceptance": "ZERO_UNRESOLVED_P0_P1_P2"}
+    instruction |= {"implementation": record["implementation_head_sha"], "tree": review["implementation_tree_sha"]}
+    instruction |= {"base": record["base_sha"], "binary_diff_sha256": review["diff_sha256"]}
+    instruction["review_inputs"] = review["artifacts_inspected"]
+    return json.dumps(instruction, indent=2, sort_keys=True) + "\n"
+
+
+def render_markdown(record: Obj) -> str:
+    canonical = json.dumps(record, indent=2, sort_keys=True)
+    return f"# W00A1a Repair05 — Durable Handoff Contract\n\n```json\n{canonical}\n```\n\n{STOP}\n"
+
+
+def validate_record(record: Obj, schema: Obj, read: Reader, paths: set[str], at: datetime, limit: datetime) -> None:
+    jsonschema.Draft202012Validator(schema).validate(record)
+    schema_hash = digest(blob(record["implementation_head_sha"], SCHEMA))
+    need(record["integrity"]["schema_sha256"] == schema_hash, "schema hash differs")
+    started, completed = utc(record["started_at_utc"]), utc(record["completed_at_utc"])
+    need(started <= at <= completed <= limit, "root-turn chronology differs")
+    used: set[str] = set()
+    radon = validate_commands(record, read, used, at)
+    names = {key: item["path"].rsplit("/", 1)[-1] for key, item in record["artifacts"].items()}
+    need(names == dict(ARTIFACTS), "artifact set differs")
+    artifacts = {
+        artifact_id: load_evidence(record["root_turn_id"], item, PurePosixPath(item["path"]).suffix, read, used)
+        for artifact_id, item in record["artifacts"].items()
+    }
+    auth_data = record["github_auth"]
+    auth = {key: value for key, value in auth_data.items() if key != "receipt"}
+    auth_content = load_evidence(record["root_turn_id"], auth_data["receipt"], ".auth.json", read, used)
+    need(strict_json(auth_content) == auth and used == paths, "authentication receipt differs")
+    measured = complexity(record["base_sha"], record["implementation_head_sha"], radon)
+    observed = record["complexity_receipt"], strict_json(artifacts["COMPLEXITY"])
+    need(observed == (measured, measured), "complexity differs")
+    need(digest(artifacts["BINARY_DIFF"]) == record["independent_review"]["diff_sha256"], "diff artifact differs")
+    validate_review(record, artifacts)
+
+
+def record_scope(parent: str, head: str, entry: dict[str, str], turn: str) -> set[str]:
+    pair = {entry["json_path"], entry["markdown_path"]}
+    rows = git("diff", "--name-status", "--no-renames", parent, head).splitlines()
+    evidence = {row.split("\t", 1)[1] for row in rows} - pair - {REGISTRY}
+    statuses = f"M\t{REGISTRY}" in rows and all(row.startswith("A\t") or row == f"M\t{REGISTRY}" for row in rows)
+    prefix = f"{EVIDENCE_ROOT}/{turn}/"
+    need(statuses and all(path.startswith(prefix) for path in evidence), "final commit is not record-only")
+    return evidence
+
+
+def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> Obj:
+    identity(base, head, branch)
+    parent = git("rev-parse", f"{head}^")
+    mode, final_entries = validate_registry(base, head)
+    evidence = validate_project_history(base, head, mode, final_entries)
+    entry, turn = final_entries[-1], final_entries[-1]["turn_id"]
+    record = object_at(head, entry["json_path"])
+    keys = "root_turn_id", "base_sha", "implementation_head_sha", "branch", "pr_url"
+    need(tuple(record[key] for key in keys) == (turn, base, parent, branch, pr_url), "handoff identity differs")
+    registry_values = record["integrity"]["registry_mode"], record["integrity"]["registry_entry_count"]
+    registry_ok = registry_values == (mode, len(final_entries))
+    need(registry_ok and record["changes"] == change_ledger(base, parent), "receipt differs")
+    implemented = datetime.fromisoformat(git("show", "-s", "--format=%cI", parent))
+    final_time = datetime.fromisoformat(git("show", "-s", "--format=%cI", head))
+    validate_record(record, object_at(head, SCHEMA), reader(head), evidence, implemented, final_time)
+    need(blob(head, entry["markdown_path"]).decode() == render_markdown(record), "Markdown differs")
     return {"turn_id": turn, "implementation_head_sha": parent, "status": record["status"]}
 
 
-def parser() -> argparse.ArgumentParser:
-    root = argparse.ArgumentParser()
-    sub = root.add_subparsers(dest="check", required=True)
-    project = sub.add_parser("project-integrity")
-    for flag in ("--base-sha", "--head-sha", "--branch"):
-        project.add_argument(flag, required=True)
-    handoff = sub.add_parser("turn-handoff-integrity")
-    for flag in ("--base-sha", "--head-sha", "--branch", "--pr-url"):
-        handoff.add_argument(flag, required=True)
-    return root
-
-
-def main() -> int:
-    arguments = parser().parse_args()
-    try:
-        result = (
-            validate_project(arguments.base_sha, arguments.head_sha, arguments.branch)
-            if arguments.check == "project-integrity"
-            else validate_handoff(arguments.base_sha, arguments.head_sha, arguments.branch, arguments.pr_url)
-        )
-    except Exception:
-        print('{"status":"failure"}')
-        return 1
-    print(json.dumps({"status": "success", "result": result}, sort_keys=True))
-    return 0
+def main() -> None:
+    check = sys.argv[1] if len(sys.argv) > 1 else ""
+    functions = {"project-integrity": validate_project, "turn-handoff-integrity": validate_handoff}
+    function = cast(Callable[..., Obj], functions.get(check))
+    need(function is not None, "unknown check")
+    flags = ["--base-sha", "--head-sha", "--branch"] + (["--pr-url"] if check == "turn-handoff-integrity" else [])
+    arguments = sys.argv[2:]
+    need(arguments[::2] == flags and len(arguments) == 2 * len(flags), "CLI differs")
+    print(json.dumps({"status": "success", "result": function(*arguments[1::2])}, sort_keys=True))
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
