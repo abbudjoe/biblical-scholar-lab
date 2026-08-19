@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "91f5d440cf49f2df51b4cc789912f668deaf02d257a90a9912e457568fa4f86d",
-      "bytes": 13460
+      "sha256": "95a0070ddffea51a1114f85769b45c6412a165d2e4cd15dc6c91e595fa54685d",
+      "bytes": 13374
     },
     {
       "path": "governance/templates/chatgpt-review.md",

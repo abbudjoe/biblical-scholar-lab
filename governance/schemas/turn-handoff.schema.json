@@ -95,11 +95,8 @@
     "status": {
       "enum": [
         "READY_FOR_CHATGPT_REVIEW",
-        "BLOCKED_MISSING_EVIDENCE",
-        "BLOCKED_DEPENDENCY",
         "BLOCKED_REQUIRES_DESIGN_REVIEW",
-        "BLOCKED_REQUIRES_SOL_REPAIR",
-        "NO_CHANGE",
+        "BLOCKED_START_STATE_MISMATCH",
         "FAILED"
       ]
     },

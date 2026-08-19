@@ -88,6 +88,7 @@ class W00A1aTests(unittest.TestCase):
         self.assertIn('"approval_submitted":false', markdown)
         self.assertIn(checks.POLICY["stop_statement"], markdown)
         self.assertEqual(self.record["commands"][0]["argv"].count("--with"), 2)
+        self.assertEqual(set(SCHEMA["properties"]["status"]["enum"]), set(checks.POLICY["statuses"]))
         for case in NEGATIVES:
             self.rejects(lambda record, item=case: apply_case(record, item), sync_index=case.get("sync"))
         for source in ('{"x":1,"x":2}', '{"x":1e999}', "{"):
