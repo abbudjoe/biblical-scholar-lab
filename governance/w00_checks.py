@@ -15,7 +15,7 @@ ACTIVATION, START = "ACT-W00-REPOSITORY-GOVERNANCE-v3", "20c2755bd5be2b080f78a95
 ACTIVATION_PATH, TEST = "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json", "governance/test_w00_checks.py"
 SCHEMA, REGISTRY = "governance/schemas/w00a1a-handoff.schema.json", "governance/handoff-registry.json"
 WORKFLOW, CODE = ".github/workflows/governance-integrity.yml", "governance/w00_checks.py"
-WORKFLOW_SHA = "372ebcfd646c9ac4e8e1105a79ed7d4b4dc5bf32e6b02720b594c744eee8f02e"
+WORKFLOW_SHA = "80473d8bff8b4249d136d9c64c696d27bf8dda7a178baec9976bd9e27e4247fd"
 ACTIVE = {WORKFLOW, CODE, TEST, SCHEMA, REGISTRY}
 IMMUTABLE = set("governance/schemas/turn-handoff.schema.json governance/GOV-01-artifacts.sha256 ".split())
 IMMUTABLE.add("governance/GOV-01-package-manifest.json")
@@ -23,8 +23,7 @@ REMOVED = {f"governance/fixtures/w00a1a-{name}.json" for name in ("policy", "rec
 REMOVED.add("governance/ruff.toml")
 EVIDENCE_ROOT, COVERAGE = "handoffs/W00/evidence", "--data-file=/tmp/bsl-w00a1a-repair05.coverage"
 TURN = re.compile(r"^W00-SOL(?:-REPAIR\d+)?-[0-9]{8}T[0-9]{6}Z$")
-SHA = re.compile(r"^[0-9a-f]{40}$")
-SAFE = re.compile(r"^[A-Za-z0-9._/-]+$")
+SHA, SAFE = re.compile(r"^[0-9a-f]{40}$"), re.compile(r"^[A-Za-z0-9._/-]+$")
 STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 Obj = dict[str, Any]
 Reader = Callable[[str], bytes]
@@ -265,9 +264,9 @@ def source_metrics(head: str, output: bytes) -> Obj:
     }
 
 
-def complexity(base: str, head: str, radon: bytes) -> Obj:
-    measured = budget(base, head)
-    measured |= source_metrics(head, radon)
+def complexity(base: str, source_head: str, budget_head: str, radon: bytes) -> Obj:
+    measured = budget(base, budget_head)
+    measured |= source_metrics(source_head, radon)
     limits = {"module_nonblank_lines": 500, "maximum_function_lines": 60}
     limits |= {"maximum_cyclomatic_complexity": 10, "maximum_observed_line_length": 120}
     need(all(measured[name] <= limit for name, limit in limits.items()), "DR-30 source limit differs")
@@ -344,11 +343,12 @@ def render_markdown(record: Obj) -> str:
     return f"# W00A1a Repair05 — Durable Handoff Contract\n\n```json\n{canonical}\n```\n\n{STOP}\n"
 
 
-def validate_record(record: Obj, schema: Obj, read: Reader, paths: set[str], at: datetime, limit: datetime) -> None:
+def validate_record(record: Obj, schema: Obj, read: Reader, paths: set[str], at: datetime, head: str) -> None:
     jsonschema.Draft202012Validator(schema).validate(record)
     schema_hash = digest(blob(record["implementation_head_sha"], SCHEMA))
     need(record["integrity"]["schema_sha256"] == schema_hash, "schema hash differs")
     started, completed = utc(record["started_at_utc"]), utc(record["completed_at_utc"])
+    limit = datetime.fromisoformat(git("show", "-s", "--format=%cI", head))
     need(started <= at <= completed <= limit, "root-turn chronology differs")
     used: set[str] = set()
     radon = validate_commands(record, read, used, at)
@@ -362,7 +362,7 @@ def validate_record(record: Obj, schema: Obj, read: Reader, paths: set[str], at:
     auth = {key: value for key, value in auth_data.items() if key != "receipt"}
     auth_content = load_evidence(record["root_turn_id"], auth_data["receipt"], ".auth.json", read, used)
     need(strict_json(auth_content) == auth and used == paths, "authentication receipt differs")
-    measured = complexity(record["base_sha"], record["implementation_head_sha"], radon)
+    measured = complexity(record["base_sha"], record["implementation_head_sha"], head, radon)
     observed = record["complexity_receipt"], strict_json(artifacts["COMPLEXITY"])
     need(observed == (measured, measured), "complexity differs")
     need(digest(artifacts["BINARY_DIFF"]) == record["independent_review"]["diff_sha256"], "diff artifact differs")
@@ -392,8 +392,7 @@ def validate_handoff(base: str, head: str, branch: str, pr_url: str) -> Obj:
     registry_ok = registry_values == (mode, len(final_entries))
     need(registry_ok and record["changes"] == change_ledger(base, parent), "receipt differs")
     implemented = datetime.fromisoformat(git("show", "-s", "--format=%cI", parent))
-    final_time = datetime.fromisoformat(git("show", "-s", "--format=%cI", head))
-    validate_record(record, object_at(head, SCHEMA), reader(head), evidence, implemented, final_time)
+    validate_record(record, object_at(head, SCHEMA), reader(head), evidence, implemented, head)
     need(blob(head, entry["markdown_path"]).decode() == render_markdown(record), "Markdown differs")
     return {"turn_id": turn, "implementation_head_sha": parent, "status": record["status"]}
 

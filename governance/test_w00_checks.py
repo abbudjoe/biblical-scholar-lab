@@ -157,6 +157,7 @@ class Repair05Tests(unittest.TestCase):
         self.assertEqual(diff_argv, ("git", "diff", "--check", f"{SHA}...{'b' * 40}"))
         suite = checks.command_suite(SHA, SHA, BRANCH)
         self.assertTrue(all({"-B", checks.COVERAGE} <= set(argv) for argv in suite[:2]))
+        self.assertRegex((ROOT / checks.WORKFLOW).read_text(), r"turn-handoff-integrity:[\s\S]+env: \{PR_URL:")
 
     def test_evidence_chronology_review_and_budget(self):
         record, files = fixture()
@@ -224,10 +225,13 @@ class Repair05Tests(unittest.TestCase):
         with mock.patch.multiple(
             checks,
             blob=mock.Mock(side_effect=lambda _revision, path: (ROOT / path).read_bytes()),
-            budget=mock.Mock(return_value={"substantive_lines_total": 651}),
+            budget=mock.Mock(
+                side_effect=lambda _base, head: {"substantive_lines_total": 800 if head[0] == "c" else 795}
+            ),
         ):
-            receipt = checks.complexity(SHA, SHA, radon)
+            receipt = checks.complexity(SHA, SHA, "c" * 40, radon)
         self.assertNotIn("nesting", receipt["measured"])
+        self.assertEqual(receipt["measured"]["substantive_lines_total"], 800)
         self.assertEqual(receipt["configured"]["nesting_limit"], 3)
         self.assertEqual(receipt["target_excess_justification"], "ABOVE_TARGET_SMALLEST_READABLE_KERNEL")
         prior = {"handoffs/W00/evidence/prior/review.txt": "old"}
@@ -290,12 +294,8 @@ class Repair05Tests(unittest.TestCase):
                 final = commit(repo, evidence | pair | {checks.REGISTRY: final_registry})
                 result = checks.validate_handoff(base, final, BRANCH, PR)
                 self.assertEqual(result["implementation_head_sha"], implementation)
-                invalid = (
-                    (start, final, BRANCH, PR),
-                    (base, final, "codex/other", PR),
-                    (base, final, BRANCH, "https://github.com/other/repo/pull/7"),
-                )
-                invalid += ((final, base, BRANCH, PR),)
+                invalid = ((start, final, BRANCH, PR), (base, final, "codex/other", PR))
+                invalid += ((base, final, BRANCH, "https://github.com/other/repo/pull/7"), (final, base, BRANCH, PR))
                 for arguments in invalid:
                     self.assertRaises((ValueError, subprocess.CalledProcessError), checks.validate_handoff, *arguments)
                 self.assertEqual(checks.validate_project(base, final, BRANCH)["scope"], "BOOTSTRAP_COMPATIBILITY_ONLY")

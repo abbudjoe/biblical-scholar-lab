@@ -8,8 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with: {fetch-depth: 0, persist-credentials: false}
-      - env: {PR_URL: "${{ github.event.pull_request.html_url }}"}
-        run: |
+      - run: |
           python3 -m pip install --disable-pip-version-check 'jsonschema==4.25.1'
           python3 governance/w00_checks.py project-integrity \
             --base-sha "${{ github.event.pull_request.base.sha }}" \
@@ -20,7 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with: {fetch-depth: 0, persist-credentials: false}
-      - run: |
+      - env: {PR_URL: "${{ github.event.pull_request.html_url }}"}
+        run: |
           python3 -m pip install --disable-pip-version-check 'jsonschema==4.25.1'
           python3 governance/w00_checks.py turn-handoff-integrity \
             --base-sha "${{ github.event.pull_request.base.sha }}" \
