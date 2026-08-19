@@ -187,7 +187,7 @@ def render_markdown(record: dict[str, Any], parent: str) -> str:
         f"implementation `{parent}`; final/live "
         f"SHA is the containing commit/live PR head; root `{record['turn_id']}`; window `{record['started_at_utc']}`–"
         f"`{record['completed_at_utc']}`.",
-        f"Scope: {POLICY['scope_statement']} Exact path ledger `{compact(record['changes'])}`.",
+        f"Scope: {POLICY['scope_statement']} Exact path ledger `{compact(record['changes'])}`. "
         f"Evidence: commands `{compact(record['commands'])}`; artifacts `{compact(record['artifacts'])}`; review "
         f"`{compact(record['evaluations'] + record['delegated_operations'])}`.",
         f"Complexity/dependencies `{compact(record['complexity_receipt'])}`; facts `{compact(facts)}`; limitations "
