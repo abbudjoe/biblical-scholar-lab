@@ -1,7 +1,7 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": "3 + ERRATA-01 + ERRATA-02 + W00-SPLIT-01",
+  "approved_revision": "3 + ERRATA-01 + ERRATA-02 + W00A1a",
   "proposal_date": "2026-08-17",
   "approval_date": "2026-08-17",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
@@ -128,8 +128,8 @@
     },
     {
       "path": "governance/schemas/turn-handoff.schema.json",
-      "sha256": "ac232248bc02818e18829172e7afd4942ee64d86685617b0be1eecb2d22e9f9b",
-      "bytes": 13102
+      "sha256": "516d9df8c084b0254f93ebccd1d4ba0a17616e4c920e1e8afe4637293ae5444c",
+      "bytes": 13360
     },
     {
       "path": "governance/templates/chatgpt-review.md",
@@ -180,39 +180,9 @@
       "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
       "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
       "bytes": 6697
-    },
-    {
-      "path": ".github/workflows/governance-integrity.yml",
-      "sha256": "406f36d7102ac87da134a9ed817683344e89a12d2a50662504d7b716dd68dbdd",
-      "bytes": 1224
-    },
-    {
-      "path": "governance/ruff.toml",
-      "sha256": "e8d259c70778e0c00474ebbc943df93d1ac96fa0ff7b7a19e36d46e1a3ea5e00",
-      "bytes": 68
-    },
-    {
-      "path": "governance/test_w00_checks.py",
-      "sha256": "bfd7fb3903b0b8e45d0703b38179cad7b70621fe28546546600b87b91bf290ef",
-      "bytes": 11725
-    },
-    {
-      "path": "governance/w00_checks.py",
-      "sha256": "4352bb56a6e49ccb97bb8cd9c065ff08c7a2bb6828ff7a985b7009933b200ae7",
-      "bytes": 19661
-    },
-    {
-      "path": "governance/w00_contracts.py",
-      "sha256": "de5f408b1ed51dc53afa0a1c3cd35e5c90a2d9c36b548353d3d99a0443546339",
-      "bytes": 29149
-    },
-    {
-      "path": "governance/w00_yaml.rb",
-      "sha256": "a2966f18f6c478bdfd054ac4ebfff46ae78c9b9dd4fa4ca7e3eda2e2dfaedd00",
-      "bytes": 2004
     }
   ],
-  "file_count": 40,
+  "file_count": 34,
   "activation": {
     "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
     "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
