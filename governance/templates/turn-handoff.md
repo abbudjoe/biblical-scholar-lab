@@ -50,4 +50,6 @@ Unapproved design changes executed: `none`
 READY_FOR_CHATGPT_REVIEW
 ```
 
-No merge was performed. No owner authorization record was created or posted. No subsequent task was started.
+Next required action: ChatGPT exact-head review. Joseph approval and a separately prompted merge-only turn occur later.
+
+No merge was performed. No approval was submitted. No subsequent task was started.

@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-W00C-GOVERNANCE-CLOSURE-v1",
+  "task_id": "W00C",
+  "turn_id": "W00C-SOL-20260820T134527Z",
+  "codex_run_id": "codex-desktop-W00C-SOL-20260820T134527Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/w00c-lean-governance-closure",
+  "base_sha": "35a7f5a5967f12cb6e8c043218fb2e8fdf7d592c",
+  "implementation_head_sha": "f8a85424e07416c451e3be18002b6860b5e3ea56",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/2",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/w00c-lean-governance-closure",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Commit GOV-01-S03, retire universal governance automation, preserve W00A1a evidence, and align active governance with manual exact-head review, approval, and merge-only control.",
+  "acceptance_criteria": [
+    "Design and activation are indexed, hash-matched, and separately committed.",
+    "The universal workflow is deleted and no workflow is added.",
+    "Active governance uses activation-specific evidence, ChatGPT exact-head review, Joseph exact-head approval, and a separate match-head merge-only turn.",
+    "Legacy owner-record and trusted-check material is historical and non-authoritative.",
+    "GOV-01 package identity verifies and W00A1a evidence is byte-preserved.",
+    "Substantive changed lines do not exceed the 400-line hard cap.",
+    "The final commit contains only this handoff pair and the PR remains draft."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": ["DR-30", "GOV-01", "GOV-01-S03"],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {"phase": 1, "commit": "5ab9183e11c1a1716435ce3e1057306c089b932b", "summary": "Added the exact approved GOV-01-S03 design, sidecar, and governance index row."},
+    {"phase": 2, "commit": "91cd2e7bdb787eafbebdbc0944794b1b084af115", "summary": "Bound and validated ACT-W00C-GOVERNANCE-CLOSURE-v1 with only the approved design SHA substituted."},
+    {"phase": "3-4", "commit": "f8a85424e07416c451e3be18002b6860b5e3ea56", "summary": "Deleted the universal workflow, aligned activated governance documents, recorded W00A1a history, and repaired GOV-01 package identity."}
+  ],
+  "review_targets": [
+    {"path": "AGENTS.md", "focus": "manual exact-head review and merge-only sequence"},
+    {"path": "governance/BRANCH_AND_RULESET_SPEC.md", "focus": "S03 active override and preserved structural protections"},
+    {"path": "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md", "focus": "owner-record retirement and historical boundary"},
+    {"path": "governance/GOV-01-package-manifest.json", "focus": "S03/W00C package identity and 37 verified entries"},
+    {"path": "governance/W00A1A-HISTORICAL.md", "focus": "historical identities and non-universal treatment"}
+  ],
+  "commands": [
+    {"command": "uv run --with=jsonschema==4.25.1 python3 -c <activation validation>", "result": "PASS"},
+    {"command": "shasum -a 256 -c design/approved/GOV-01-S03-lean-governance-closure.sha256", "result": "PASS"},
+    {"command": "shasum -a 256 -c activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.sha256", "result": "PASS"},
+    {"command": "shasum -a 256 -c governance/GOV-01-artifacts.sha256", "result": "PASS (49 artifacts)"},
+    {"command": "gh ruleset check --default --repo abbudjoe/biblical-scholar-lab", "result": "PASS: four structural rules; no retired required checks"},
+    {"command": "git diff --exit-code <base>...<implementation> -- <preserved W00A1a paths>", "result": "PASS"},
+    {"command": "active-doc stale-claim search and changed-file scope comparison", "result": "PASS: 0 active stale claims; 0 out-of-scope paths"},
+    {"command": "git diff --check 35a7f5a5967f12cb6e8c043218fb2e8fdf7d592c...f8a85424e07416c451e3be18002b6860b5e3ea56", "result": "PASS"},
+    {"command": "git fsck --full", "result": "PASS; pre-existing dangling objects reported"},
+    {"command": "git status --porcelain", "result": "CLEAN before handoff creation"}
+  ],
+  "evaluations": [
+    {"criterion": "activation schema and sidecars", "status": "met"},
+    {"criterion": "workflow retirement without addition", "status": "met"},
+    {"criterion": "active governance semantic alignment", "status": "met"},
+    {"criterion": "package/checksum consistency", "status": "met"},
+    {"criterion": "W00A1a byte preservation", "status": "met"},
+    {"criterion": "scope and 400-line hard cap", "status": "met"},
+    {"criterion": "draft PR and completion comment", "status": "pending until post-push GitHub steps"}
+  ],
+  "artifacts": [
+    {"kind": "design_commit", "sha": "5ab9183e11c1a1716435ce3e1057306c089b932b"},
+    {"kind": "activation_commit", "sha": "91cd2e7bdb787eafbebdbc0944794b1b084af115"},
+    {"kind": "implementation_head", "sha": "f8a85424e07416c451e3be18002b6860b5e3ea56"},
+    {"kind": "handoff", "path": "handoffs/W00C/W00C-SOL-20260820T134527Z.json"},
+    {"kind": "handoff", "path": "handoffs/W00C/W00C-SOL-20260820T134527Z.md"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 0,
+    "production_loc_removed": 0,
+    "test_loc_added": 0,
+    "test_loc_removed": 0,
+    "generated_loc": 74,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": ["GOV-01 governance documentation only"],
+    "abstractions": [],
+    "simpler_alternatives_considered": ["Used short S03 overrides and surgical edits instead of rewriting unaffected historical material."],
+    "known_duplication_or_debt": ["381 substantive lines exceed the 250-line target but remain below the 400-line hard cap."],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The 250-line target was exceeded; the honest count is 381 substantive lines, within the approved 400-line hard cap.",
+    "No universal CI check exists by design; ChatGPT must review the exact live PR head."
+  ],
+  "decisions_required": ["ChatGPT exact-head review, followed by Joseph's explicit decision on that exact head."],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

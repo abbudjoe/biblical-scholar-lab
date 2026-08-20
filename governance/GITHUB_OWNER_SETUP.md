@@ -1,5 +1,9 @@
 # GitHub owner setup
 
+> **HISTORICAL PRE-S03 BOOTSTRAP RECORD — NON-AUTHORITATIVE** — Retained for audit only. `GOV-01-S03` controls the current sequence: task-specific activation and CI → Sol draft PR and concise handoff → ChatGPT exact-head review → Joseph exact-head approval → separate merge-only turn → unchanged-head and task-specific-check verification → `--match-head-commit`.
+
+## Historical detail
+
 This is an owner action. Codex may use the existing authenticated `gh` CLI session as `@abbudjoe` for ordinary task-branch and PR operations. Human merge authorization remains a separate exact-head action in ChatGPT.
 
 ## 1. Create the repository

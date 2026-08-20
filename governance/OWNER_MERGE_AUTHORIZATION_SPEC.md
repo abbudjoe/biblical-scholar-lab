@@ -1,5 +1,13 @@
 # Owner merge authorization specification
 
+## GOV-01-S03 active rule
+
+Joseph's exact-head approval in the current ChatGPT conversation is the human gate. No `OwnerMergeAuthorizationRecord`, owner-record schema check, or owner-record PR comment is an active prerequisite.
+
+The separate merge-only prompt must name the repository, PR, exact head, clean-review identity, and Joseph approval reference. Merge-only Sol verifies the unchanged head, activation-named task-specific checks, and conversations before using `--match-head-commit`. A new commit invalidates review and approval.
+
+## Historical pre-S03 specification — non-authoritative
+
 ## Purpose
 
 Joseph and Codex share the GitHub login `@abbudjoe` and the existing authenticated `gh` credential. GitHub account identity therefore cannot independently prove that an action was performed personally by Joseph.

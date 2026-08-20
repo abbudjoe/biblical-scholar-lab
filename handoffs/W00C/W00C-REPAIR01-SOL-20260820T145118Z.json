@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-W00C-GOVERNANCE-CLOSURE-v2",
+  "task_id": "W00C",
+  "turn_id": "W00C-REPAIR01-SOL-20260820T145118Z",
+  "codex_run_id": "codex-desktop-W00C-REPAIR01-SOL-20260820T145118Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/w00c-lean-governance-closure",
+  "base_sha": "35a7f5a5967f12cb6e8c043218fb2e8fdf7d592c",
+  "implementation_head_sha": "b503540e15c08c9867d1ea862cc8323aea5aede7",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/2",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/w00c-lean-governance-closure",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Repair the existing W00C draft PR under the exact approved v2 activation by aligning current repository status, historical bootstrap labeling, reusable templates, GOV-01 package identity, and complete stale-claim evidence with GOV-01-S03.",
+  "acceptance_criteria": [
+    "The exact v2 activation is schema-valid, hash-matched, and committed separately before repair implementation.",
+    "The decision index marks v1 superseded by v2 and binds v2 to the approved GOV-01-S03 design commit.",
+    "README and the three design navigation files agree on W00A1a, W00C, retired prerequisites, governance closure, and VS01-T01.",
+    "Bootstrap documents carry first-screen historical non-authoritative banners and reusable templates contain no active retired-record requirement.",
+    "The GOV-01 manifest and artifact checksum identify v2 accurately and verify every package entry.",
+    "The complete specified stale-claim file set is reviewed with zero unresolved active stale claims.",
+    "Prohibited files remain byte-identical and workflow, schema, code, test, and dependency delta is zero.",
+    "The cumulative PR remains at or below the 700-line hard cap.",
+    "The final commit contains only this new append-only handoff pair and PR #2 remains draft and unmerged."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-30",
+      "GOV-01",
+      "GOV-01-S03"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "1a09ac140a8ded52fdb6e80616d34936317f1d44",
+      "summary": "Added the exact approved v2 activation and sidecar, marked v1 superseded, and indexed v2 in an isolated commit."
+    },
+    {
+      "phase": "repair_implementation",
+      "commit": "b503540e15c08c9867d1ea862cc8323aea5aede7",
+      "summary": "Aligned current status, labeled historical bootstrap records, repaired reusable templates and package identity, and completed the v2 stale-claim review."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "README.md and design/{APPROVED_BASELINE_SUMMARY,PACKAGE_STATUS,DECISION_INDEX}.md",
+      "focus": "four-file current-status alignment and VS01-T01 next-task identity"
+    },
+    {
+      "path": "governance/{GITHUB_OWNER_SETUP,W00_ACCEPTANCE}.md",
+      "focus": "first-screen historical non-authoritative banners"
+    },
+    {
+      "path": "governance/templates/{sol-root-turn-prompt,turn-handoff}.md",
+      "focus": "lean exact-head sequence with no active retired owner-record requirement"
+    },
+    {
+      "path": "governance/GOV-01-package-manifest.json and governance/GOV-01-artifacts.sha256",
+      "focus": "v2 activation identity, historical list, exact hashes, bytes, and checksum"
+    },
+    {
+      "path": "governance/W00A1A-HISTORICAL.md",
+      "focus": "explicit historical/non-authoritative classification of six legacy artifacts"
+    }
+  ],
+  "commands": [
+    {
+      "command": "uv run --with=jsonschema==4.25.1 python <v2 activation schema/hash/sidecar validation>",
+      "result": "PASS at b503540e15c08c9867d1ea862cc8323aea5aede7; exact activation hash 51e593d96c3ec6d8dd68bc203f468fb68bd3b46997783647e116e2cbfa890174"
+    },
+    {
+      "command": "four-file status alignment assertions",
+      "result": "PASS for README.md, design/APPROVED_BASELINE_SUMMARY.md, design/PACKAGE_STATUS.md, and design/DECISION_INDEX.md"
+    },
+    {
+      "command": "historical-banner and reusable-template retired-record assertions",
+      "result": "PASS; both banners occur at line 3 and active retired-record matches in the two reusable templates equal 0"
+    },
+    {
+      "command": "shasum -a 256 -c governance/GOV-01-artifacts.sha256 plus manifest identity/entry validation",
+      "result": "PASS; all checksums verify and all 38 manifest entries have exact hashes and byte counts"
+    },
+    {
+      "command": "git diff --name-only b65dec167040df4fc4a8844bbcb8d969a0187353 b503540e15c08c9867d1ea862cc8323aea5aede7 against activated and prohibited paths",
+      "result": "PASS; 13 changed paths are activated, prohibited files are byte-identical, and workflow/schema/code/test/dependency delta is 0"
+    },
+    {
+      "command": "git diff --numstat 35a7f5a5967f12cb6e8c043218fb2e8fdf7d592c...b503540e15c08c9867d1ea862cc8323aea5aede7 excluding handoffs",
+      "result": "562 added + 134 deleted = 696 cumulative substantive lines; 575 target missed, 700 hard cap passed"
+    },
+    {
+      "command": "git diff --check 35a7f5a5967f12cb6e8c043218fb2e8fdf7d592c...b503540e15c08c9867d1ea862cc8323aea5aede7",
+      "result": "PASS"
+    },
+    {
+      "command": "git fsck --full",
+      "result": "PASS; only dangling blobs/tree reported"
+    },
+    {
+      "command": "git status --porcelain",
+      "result": "CLEAN at the repair implementation commit before handoff creation"
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "exact v2 activation and decision-index state",
+      "status": "met"
+    },
+    {
+      "criterion": "four-file current-status alignment",
+      "status": "met"
+    },
+    {
+      "criterion": "historical banners and reusable-template repair",
+      "status": "met"
+    },
+    {
+      "criterion": "complete active stale-claim review",
+      "status": "met",
+      "files_inspected": [
+        "README.md",
+        "design/APPROVED_BASELINE_SUMMARY.md",
+        "design/PACKAGE_STATUS.md",
+        "design/DECISION_INDEX.md",
+        "AGENTS.md",
+        ".github/pull_request_template.md",
+        "governance/BRANCH_AND_RULESET_SPEC.md",
+        "governance/CHATGPT_REVIEW_SPEC.md",
+        "governance/GITHUB_CLI_OPERATION_POLICY.md",
+        "governance/GITHUB_OWNER_SETUP.md",
+        "governance/MODEL_ROLE_POLICY.md",
+        "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md",
+        "governance/REQUIRED_CHECKS_SPEC.md",
+        "governance/ROOT_TURN_HANDOFF_SPEC.md",
+        "governance/W00A1A-HISTORICAL.md",
+        "governance/W00_ACCEPTANCE.md",
+        "governance/templates/chatgpt-review.md",
+        "governance/templates/owner-merge-authorization.md",
+        "governance/templates/pr-completion-comment.md",
+        "governance/templates/sol-merge-only-prompt.md",
+        "governance/templates/sol-root-turn-prompt.md",
+        "governance/templates/turn-handoff.md"
+      ],
+      "search_terms": [
+        "OwnerMergeAuthorizationRecord",
+        "owner-merge-record-integrity",
+        "chatgpt-review-integrity",
+        "project-integrity",
+        "turn-handoff-integrity",
+        "W01 becomes",
+        "W02 and later work remain blocked",
+        "owner bootstrap prerequisite",
+        "ACT-W00-REPOSITORY-GOVERNANCE-v3 is active"
+      ],
+      "findings_and_resolutions": [
+        "BRANCH_AND_RULESET_SPEC legacy check names are under 'Historical pre-S03 specification — non-authoritative'.",
+        "GITHUB_OWNER_SETUP legacy check names are below its line-3 historical non-authoritative banner.",
+        "OWNER_MERGE_AUTHORIZATION_SPEC line 5 is an active negation; later owner-record and check terms are under its historical non-authoritative heading.",
+        "REQUIRED_CHECKS_SPEC legacy check and record terms are under 'Historical W00A1a and planned checks — non-authoritative'.",
+        "W00A1A-HISTORICAL legacy check names are historical by the document's purpose and explicit classifications.",
+        "W00_ACCEPTANCE legacy W01/W02 and check terms are below its line-3 historical non-authoritative banner.",
+        "No active stale match remains in current navigation, AGENTS.md, the PR template, or reusable active templates."
+      ],
+      "unresolved_active_stale_claims": 0,
+      "supersedes": "The incomplete v1 claim of zero active stale claims."
+    },
+    {
+      "criterion": "GOV-01 package identity and checksum",
+      "status": "met"
+    },
+    {
+      "criterion": "scope, preservation, and forbidden-delta controls",
+      "status": "met"
+    },
+    {
+      "criterion": "cumulative line budget",
+      "status": "met at hard cap; target missed"
+    },
+    {
+      "criterion": "draft PR body update and new completion comment",
+      "status": "pending until post-push GitHub steps"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "exact_start",
+      "sha": "b65dec167040df4fc4a8844bbcb8d969a0187353"
+    },
+    {
+      "kind": "activation_commit",
+      "sha": "1a09ac140a8ded52fdb6e80616d34936317f1d44"
+    },
+    {
+      "kind": "repair_implementation_head",
+      "sha": "b503540e15c08c9867d1ea862cc8323aea5aede7"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/W00C/W00C-REPAIR01-SOL-20260820T145118Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/W00C/W00C-REPAIR01-SOL-20260820T145118Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 0,
+    "production_loc_removed": 0,
+    "test_loc_added": 0,
+    "test_loc_removed": 0,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "GOV-01 package identity and governance documentation only"
+    ],
+    "abstractions": [],
+    "simpler_alternatives_considered": [
+      "Used direct navigation/template edits, historical banners, and explicit package records rather than introducing validators or automation."
+    ],
+    "known_duplication_or_debt": [
+      "The cumulative 696-line PR exceeds the 575-line target but remains below the 700-line hard cap; historical material remains intentionally duplicated for audit."
+    ],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The cumulative substantive-line count is 696, above the 575 target but within the binding 700 hard cap.",
+    "Historical bootstrap detail remains intentionally present under explicit non-authoritative labels.",
+    "No universal CI check exists by design; ChatGPT must review the exact live PR head."
+  ],
+  "decisions_required": [
+    "ChatGPT exact-head review, followed by Joseph's explicit decision on that exact head."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

@@ -36,6 +36,8 @@
 
 ## Validation
 
+- Activation-named task-specific CI:
+
 | Command/check | Exit/result | Evidence link/path |
 |---|---|---|
 

@@ -19,10 +19,9 @@ ChatGPT review:
 CHATGPT_REVIEW_CLEAN
 ```
 
-Owner authorization record:
-
-```json
-<OWNER_MERGE_AUTHORIZATION_RECORD>
+Joseph approval reference:
+```text
+<CURRENT_CHATGPT_CONVERSATION_APPROVAL_REFERENCE>
 ```
 
 Use **GPT-5.6 Sol**.
@@ -33,7 +32,6 @@ Read:
 
 1. `AGENTS.md`
 2. `governance/GITHUB_CLI_OPERATION_POLICY.md`
-3. `governance/OWNER_MERGE_AUTHORIZATION_SPEC.md`
 
 Perform only this sequence:
 
@@ -42,19 +40,18 @@ Perform only this sequence:
 3. Fetch and inspect the PR.
 4. Verify the live head exactly equals `<EXACT_AUTHORIZED_HEAD_SHA>`.
 5. Verify the referenced ChatGPT review is current and clean.
-6. Verify all required checks pass and all conversations are resolved.
-7. Post the authorization record as the required machine-readable PR comment.
-8. Wait for `owner-merge-record-integrity` to succeed on the exact head.
-9. Mark the PR ready if necessary.
-10. Execute exactly:
+6. Verify the activation's task-specific checks pass and all conversations are resolved.
+7. Verify the Joseph approval reference identifies this PR and exact head.
+8. Mark the PR ready if necessary.
+9. Execute exactly:
 
 ```bash
 gh pr merge <PR_URL_OR_NUMBER> --squash --match-head-commit <EXACT_AUTHORIZED_HEAD_SHA> --delete-branch
 ```
 
-11. Verify the resulting `main` commit and post-merge checks.
-12. Post a merge receipt.
-13. Stop.
+10. Verify the resulting `main` commit and post-merge checks.
+11. Post a merge receipt.
+12. Stop.
 
 Prohibited:
 

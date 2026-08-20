@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-W00C-GOVERNANCE-CLOSURE-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "5ab9183e11c1a1716435ce3e1057306c089b932b",
+  "approved_design_ids": [
+    "DR-30",
+    "GOV-01",
+    "GOV-01-S03"
+  ],
+  "root_turn": {
+    "task_id": "W00C",
+    "title": "Lean governance closure and workflow retirement",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/w00c-lean-governance-closure",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Commit GOV-01-S03, retire the W00A1a pull-request workflow and universal required-check claims, align active governance prose with manual exact-head control, preserve W00A1a evidence, and close governance implementation without adding product or executable behavior.",
+  "vertical_slice_id": null,
+  "activated_user_visible_capability": "None; governance documentation and workflow retirement only.",
+  "activated_invariants": [
+    "Joseph removed project-integrity and turn-handoff-integrity from universal required status checks before the root turn.",
+    "Structural GitHub protections remain active with an empty bypass list.",
+    "W00A1a validator, tests, schema, registry, handoffs, and evidence remain byte-identical to the approved base.",
+    "The W00A1a GitHub Actions workflow is deleted and no workflow is added.",
+    "Active governance requires task-specific CI, ChatGPT exact-head review, Joseph exact-head approval, and a separate match-head merge-only turn.",
+    "Legacy review and owner-authorization schemas/templates remain historical rather than active merge gates.",
+    "No production code, tests, schemas, dependencies, product work, cloud work, or billable action is added."
+  ],
+  "activated_paths": [
+    ".github/pull_request_template.md",
+    ".github/workflows/governance-integrity.yml",
+    "AGENTS.md",
+    "activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json",
+    "activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.sha256",
+    "design/DECISION_INDEX.md",
+    "design/approved/GOV-01-S03-lean-governance-closure.md",
+    "design/approved/GOV-01-S03-lean-governance-closure.sha256",
+    "governance/BRANCH_AND_RULESET_SPEC.md",
+    "governance/CHATGPT_REVIEW_SPEC.md",
+    "governance/GITHUB_CLI_OPERATION_POLICY.md",
+    "governance/GOV-01-artifacts.sha256",
+    "governance/GOV-01-package-manifest.json",
+    "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md",
+    "governance/REQUIRED_CHECKS_SPEC.md",
+    "governance/W00A1A-HISTORICAL.md",
+    "governance/templates/sol-merge-only-prompt.md",
+    "handoffs/W00C/"
+  ],
+  "activated_contracts": [
+    "GOV-01-S03",
+    "ImplementationActivationManifest",
+    "RootTurnHandoff",
+    "ManualExactHeadMergeControl"
+  ],
+  "activated_interfaces": [
+    "GitHub structural ruleset",
+    "task-specific CI",
+    "ChatGPT exact-head review",
+    "Joseph exact-head approval",
+    "separate Sol merge-only turn"
+  ],
+  "activated_data_stores": [
+    "Git repository and GitHub pull-request metadata only."
+  ],
+  "activated_adapters": [
+    "Existing authenticated GitHub CLI in read/task-branch mode only."
+  ],
+  "required_tests": [
+    "The design supplement is indexed, hash-matched, and committed before activation.",
+    "The activation validates against the existing activation schema and its sidecar matches.",
+    "gh ruleset check for the default branch no longer lists project-integrity or turn-handoff-integrity as required.",
+    "Structural pull-request, conversation, linear-history, force-push, deletion, squash-only, and no-auto-merge posture is recorded.",
+    "The retired workflow is absent and no workflow is added.",
+    "W00A1a validator, tests, schema, registry, handoffs, and evidence are byte-identical to the approved base.",
+    "Active governance documents contain no current claim that a universal review or owner-record check must pass.",
+    "The GOV-01 package manifest and artifact checksum verify after the approved edits.",
+    "The existing general handoff schema validates the W00C JSON handoff.",
+    "git diff --check, git fsck --full, and clean-worktree checks pass."
+  ],
+  "required_evidence": [
+    "Exact design, activation, implementation, and live handoff SHAs.",
+    "Ruleset read-only inspection output.",
+    "Changed-file ledger and W00A1a preservation comparison.",
+    "GOV-01 package-manifest and checksum verification.",
+    "Zero-code, zero-workflow-addition, zero-schema-addition, zero-dependency complexity receipt.",
+    "Open draft PR, concise W00C handoff pair, and completion comment."
+  ],
+  "explicit_non_goals": [
+    "No universal validator, static analyzer, policy engine, parser, dependency inference, or trusted-live workflow.",
+    "No owner-authorization record/check, protected environment, merge automation, or dummy merge proof.",
+    "No source acquisition, benchmark execution, biblical domain, database, archive, runtime, retrieval, model, UI, cloud, Lambda, Luna, training, evaluation, or billable work.",
+    "No repair or reuse of any failed W00A1b or W00G implementation."
+  ],
+  "prohibited_scaffolding": [
+    "No new workflow, schema, dependency, executable, test module, service, package, flag, TODO, or placeholder.",
+    "No modification of preserved W00A1a implementation or evidence.",
+    "No activation of VS01-T01 in this root turn."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 250,
+    "substantive_changed_lines_hard_limit": 400,
+    "handwritten_production_files_hard_limit": 0,
+    "new_public_contracts_hard_limit": 0,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "GOV-01-S03 and ACT-W00C-GOVERNANCE-CLOSURE-v1 are indexed, hashed, and committed.",
+    "The universal workflow and required-check claims are retired without weakening structural rules.",
+    "All active governance prose agrees on the lean exact-head merge sequence.",
+    "The package manifest/checksum are internally consistent.",
+    "W00A1a historical files are preserved.",
+    "The final commit contains only the W00C handoff pair.",
+    "The PR is open, draft, unapproved, and unmerged for ChatGPT exact-head review.",
+    "The honest substantive-line count is at most 400 and no prohibited scope exists."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-20T08:50:22-04:00"
+  }
+}

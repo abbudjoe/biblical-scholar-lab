@@ -1,8 +1,8 @@
 # Biblical Scholar Lab — Design Baseline
 
-This repository is the authoritative pre-implementation design record for Biblical Scholar Lab.
+This repository is the authoritative design record and governance implementation history for Biblical Scholar Lab.
 
-Production code is intentionally absent. Approved product, scholarly, architecture, benchmark, experiment, governance, and execution decisions are recorded here before GPT-5.6 Sol implements them.
+Governance implementation is present. Biblical-product implementation has not started; approved product, scholarly, architecture, benchmark, experiment, governance, and execution decisions are recorded before GPT-5.6 Sol implements them.
 
 ## Authority
 
@@ -22,6 +22,12 @@ Production code is intentionally absent. Approved product, scholarly, architectu
 See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.md`](design/DECISION_INDEX.md).
 
 Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROVED_BASELINE_SUMMARY.md), [`design/TERMINOLOGY_REGISTRY.md`](design/TERMINOLOGY_REGISTRY.md), and [`design/PACKAGE_STATUS.md`](design/PACKAGE_STATUS.md).
+
+## Current implementation status
+
+- W00A1a is merged historical bootstrap governance; W00C is the current closure PR under v2 repair.
+- W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
+- After W00C merges, governance implementation is closed. The next task is `VS01-T01 — Local Archive and Source-Admission Foundation`.
 
 ## Current approved baseline
 
@@ -76,18 +82,19 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 ## Approved repository governance
 
-- `GOV-01` revision 3 — Public Repository Governance and Review Package, allowing Sol to use Joseph's existing authenticated `gh` CLI identity for task-branch and PR operations, while requiring an exact-head ChatGPT review, Joseph's explicit approval in this conversation, and a separate merge-only Sol turn before squash merge
-- `GOV-01-ERRATA-01` — makes the W00 PR the one owner-manual bootstrap merge and moves the first live Codex merge-only proof to W01, before W02 or later work
-- `GOV-01-ERRATA-02` — removes the superseded activation manifest from W00's writable scope and requires an immutable v3 activation aligned with the W00/W01 merge-proof boundary
+- `GOV-01` revision 3 with `GOV-01-S03` — lean manual exact-head control: task-specific CI, ChatGPT exact-head review, Joseph exact-head approval, and a separate merge-only turn using `--match-head-commit`
+- `GOV-01-ERRATA-01/02` — preserved historical conformance corrections; their bootstrap sequence is non-authoritative after S03
 
 ## Approved implementation activations
 
 - `ACT-W00-REPOSITORY-GOVERNANCE-v1` — superseded; historical only
 - `ACT-W00-REPOSITORY-GOVERNANCE-v2` — superseded by v3; historical only
-- `ACT-W00-REPOSITORY-GOVERNANCE-v3` — active bootstrap-safe authorization for one bounded GPT-5.6 Sol root turn to implement and prove repository-governance integrity only; owner bootstrap remains a prerequisite and no biblical domain, source acquisition, benchmark execution, model, cloud, or training work is activated
+- `ACT-W00-REPOSITORY-GOVERNANCE-v3` — completed historical W00A1a bootstrap authorization
+- `ACT-W00C-GOVERNANCE-CLOSURE-v1` — superseded by v2; historical execution evidence
+- `ACT-W00C-GOVERNANCE-CLOSURE-v2` — active repair authorization for the current W00C closure PR
 
 ## Preimplementation design status
 
-The architecture and implementation-governance series, `DR-01` through `DR-30`, the first implementation scope, `VS-01`, its exact source-admission contract, `SOURCE-PLAN-01`, and its first public-safe benchmark seed, `BENCH-VS01-BATCH-01`, are approved. Production implementation remains absent. Documentation normalization and the independent clean-room review are complete with no findings. The next prerequisite is the owner bootstrap of the public repository, followed by the bounded W00 Sol turn. Source acquisition and benchmark execution remain blocked until their later activations and verification gates are approved.
+The approved design baseline remains intact. Governance implementation is present through merged W00A1a and the current W00C closure PR; biblical-product implementation remains absent. After W00C merges, governance implementation is closed and `VS01-T01` is the next task. Source acquisition and benchmark execution still require their later approved activations and verification gates.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

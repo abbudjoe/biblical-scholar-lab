@@ -1,5 +1,13 @@
 # Branch and ruleset specification
 
+## GOV-01-S03 active rule
+
+Each activation names its task-specific CI; no universal custom status check is required. Preserve an empty bypass list, pull requests with zero required approvals, resolved conversations, linear history, force-push and deletion protection, squash-only merging, and disabled auto-merge.
+
+The active sequence is task-specific activation and CI → Sol draft PR and concise handoff → ChatGPT exact-head review → Joseph exact-head approval in the current ChatGPT conversation → separate Sol merge-only turn → `gh pr merge --squash --match-head-commit <SHA>`. A new commit invalidates review and approval.
+
+## Historical pre-S03 specification — non-authoritative
+
 ## Branches
 
 ```text

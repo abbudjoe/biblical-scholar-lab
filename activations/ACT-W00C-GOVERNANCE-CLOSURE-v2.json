@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-W00C-GOVERNANCE-CLOSURE-v2",
+  "status": "APPROVED",
+  "approved_design_commit": "5ab9183e11c1a1716435ce3e1057306c089b932b",
+  "approved_design_ids": [
+    "DR-30",
+    "GOV-01",
+    "GOV-01-S03"
+  ],
+  "root_turn": {
+    "task_id": "W00C",
+    "title": "Lean governance closure repair and repository-status alignment",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/w00c-lean-governance-closure",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Supersede ACT-W00C-GOVERNANCE-CLOSURE-v1 on the existing draft PR by aligning the repository's current navigation, bootstrap-history documents, reusable root-turn and handoff templates, GOV-01 package identity, and stale-claim evidence with GOV-01-S03, without adding production code, tests, workflows, schemas, dependencies, product work, or new governance automation.",
+  "vertical_slice_id": null,
+  "activated_user_visible_capability": "None; documentation and package-consistency repair only.",
+  "activated_invariants": [
+    "ACT-W00C-GOVERNANCE-CLOSURE-v1 remains immutable historical execution evidence and is superseded by v2 in the decision index.",
+    "PR #2 and branch codex/w00c-lean-governance-closure continue append-only from exact head b65dec167040df4fc4a8844bbcb8d969a0187353.",
+    "README and current navigation documents identify W00A1a as merged historical bootstrap work, W00C as governance closure, and VS01-T01 as the next task after merge.",
+    "GITHUB_OWNER_SETUP and W00_ACCEPTANCE are prominently labeled historical and non-authoritative under GOV-01-S03.",
+    "Reusable Sol root-turn and handoff templates contain no active OwnerMergeAuthorizationRecord prerequisite.",
+    "Legacy ChatGPT-review and owner-authorization schemas/templates are identified as historical non-authoritative artifacts without modifying their bytes.",
+    "The GOV-01 package manifest distinguishes active S03 controls from historical-only artifacts and points to the v2 closure activation.",
+    "The stale-claim validation covers all public navigation, active governance Markdown, and reusable templates, while allowing terms only in clearly labeled historical sections.",
+    "No production code, tests, workflow additions, schema changes, dependencies, W00A2, W00B, W01, or VS01-T01 work is introduced."
+  ],
+  "activated_paths": [
+    "README.md",
+    "activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json",
+    "activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.sha256",
+    "design/APPROVED_BASELINE_SUMMARY.md",
+    "design/DECISION_INDEX.md",
+    "design/PACKAGE_STATUS.md",
+    "governance/GITHUB_OWNER_SETUP.md",
+    "governance/GOV-01-artifacts.sha256",
+    "governance/GOV-01-package-manifest.json",
+    "governance/W00_ACCEPTANCE.md",
+    "governance/W00A1A-HISTORICAL.md",
+    "governance/templates/sol-root-turn-prompt.md",
+    "governance/templates/turn-handoff.md",
+    "handoffs/W00C/"
+  ],
+  "activated_contracts": [
+    "GOV-01-S03",
+    "ImplementationActivationManifest",
+    "RootTurnHandoff",
+    "ManualExactHeadMergeControl",
+    "GOV-01PackageManifest"
+  ],
+  "activated_interfaces": [
+    "repository navigation",
+    "task-specific activation and CI",
+    "ChatGPT exact-head review",
+    "Joseph exact-head approval",
+    "separate Sol merge-only turn"
+  ],
+  "activated_data_stores": [
+    "Git repository and GitHub pull-request metadata only."
+  ],
+  "activated_adapters": [
+    "Existing authenticated GitHub CLI in read/task-branch mode only."
+  ],
+  "required_tests": [
+    "The v2 activation validates against the existing activation schema and its SHA-256 sidecar matches.",
+    "The decision index marks v1 superseded by v2 and adds the v2 activation row bound to GOV-01-S03's design commit.",
+    "README, APPROVED_BASELINE_SUMMARY, PACKAGE_STATUS, and DECISION_INDEX agree on current governance status and VS01-T01 as the next post-merge task.",
+    "GITHUB_OWNER_SETUP and W00_ACCEPTANCE contain prominent historical non-authoritative banners before their legacy instructions.",
+    "sol-root-turn-prompt and turn-handoff templates contain no active OwnerMergeAuthorizationRecord requirement.",
+    "W00A1A-HISTORICAL identifies the legacy ChatGPT-review and owner-authorization schemas/templates as historical non-authoritative artifacts.",
+    "The GOV-01 package manifest identifies active versus historical artifacts, points to v2, and the artifact checksum verifies.",
+    "A repository-wide active-document stale-claim review covers README.md, design navigation/status files, AGENTS.md, the PR template, governance Markdown, and governance templates.",
+    "No workflow, schema, production-code, test, or dependency file is added or modified by Repair01.",
+    "The previous W00C handoff pair and all W00A1a historical implementation/evidence remain byte-identical.",
+    "The new W00C Repair01 JSON handoff validates against the existing general handoff schema.",
+    "git diff --check, git fsck --full, and clean-worktree checks pass."
+  ],
+  "required_evidence": [
+    "Exact start, activation, repair implementation, and live handoff SHAs.",
+    "Activation schema and sidecar results.",
+    "Current-status alignment matrix across the four public navigation files.",
+    "Historical-banner and reusable-template review results.",
+    "Active stale-claim scan inputs, exceptions, and result.",
+    "GOV-01 package-manifest and artifact-checksum verification.",
+    "Changed-file scope, prohibited-file delta, and cumulative substantive-line receipt.",
+    "Open draft PR #2, new append-only Repair01 handoff pair, and updated completion comment."
+  ],
+  "explicit_non_goals": [
+    "No new design supplement; GOV-01-S03 remains the governing design.",
+    "No universal validator, static analyzer, policy engine, parser, dependency inference, or trusted-live workflow.",
+    "No owner-authorization record/check, protected environment, merge automation, or dummy merge proof.",
+    "No source acquisition, benchmark execution, biblical domain, database, archive, runtime, retrieval, model, UI, cloud, Lambda, Luna, training, evaluation, or billable work.",
+    "No repair or reuse of failed W00A1b or W00G implementation branches."
+  ],
+  "prohibited_scaffolding": [
+    "No production code, tests, workflows, schemas, dependencies, services, packages, flags, TODOs, or placeholders.",
+    "No modification of W00A1a validator, tests, schema, registry, handoffs, or evidence.",
+    "No modification of legacy review or owner-authorization schema bytes.",
+    "No activation or implementation of VS01-T01."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 575,
+    "substantive_changed_lines_hard_limit": 700,
+    "handwritten_production_files_hard_limit": 0,
+    "new_public_contracts_hard_limit": 0,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "Every P1 and P2 finding from ChatGPT's exact-head review of b65dec167040df4fc4a8844bbcb8d969a0187353 is closed.",
+    "All current repository navigation and reusable instructions agree with GOV-01-S03.",
+    "Historical bootstrap material is unmistakably labeled and remains available for audit.",
+    "The GOV-01 package manifest/checksum are internally consistent and distinguish active from historical artifacts.",
+    "The v1 false zero-stale-claim result is explicitly superseded by a complete v2 validation result.",
+    "The cumulative PR remains at or below 700 honest substantive lines.",
+    "The final commit contains only the new W00C Repair01 handoff pair.",
+    "PR #2 remains open, draft, unapproved, and unmerged for ChatGPT exact-head review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-20T10:10:57-04:00"
+  }
+}

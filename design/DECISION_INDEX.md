@@ -67,6 +67,7 @@
 | GOV-01 | Public Repository Governance and Review Package, revision 3 | APPROVED | 2026-08-17 | [`approved/GOV-01-public-repository-governance-and-review-package.md`](approved/GOV-01-public-repository-governance-and-review-package.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
 | GOV-01-ERRATA-01 | W00 Bootstrap Merge Conformance | APPROVED CONFORMANCE CORRECTION | 2026-08-17 | [`approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md`](approved/GOV-01-ERRATA-01-w00-bootstrap-merge-conformance.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
 | GOV-01-ERRATA-02 | W00 Activation Scope Integrity | APPROVED CONFORMANCE CORRECTION | 2026-08-17 | [`approved/GOV-01-ERRATA-02-w00-activation-scope-integrity.md`](approved/GOV-01-ERRATA-02-w00-activation-scope-integrity.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
+| GOV-01-S03 | Lean Governance Closure and Manual Exact-Head Control | APPROVED | 2026-08-20 | [`approved/GOV-01-S03-lean-governance-closure.md`](approved/GOV-01-S03-lean-governance-closure.md) | [`../governance/GOV-01-package-manifest.json`](../governance/GOV-01-package-manifest.json) |
 
 ## Approved implementation activations
 
@@ -74,7 +75,9 @@
 |---|---|---|---|---|---|
 | ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | SUPERSEDED BY v2 | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
 | ACT-W00-REPOSITORY-GOVERNANCE-v2 | Public repository governance and integrity controls; owner-manual bootstrap merge | SUPERSEDED BY v3 | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json) | `b32acf74e2560bd840f2c7aa542f24e6566bd553` |
-| ACT-W00-REPOSITORY-GOVERNANCE-v3 | Public repository governance and integrity controls; bootstrap-safe scope correction | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json) | `09f3f30b4638d0bdc3345e7eda554266270c1267` |
+| ACT-W00-REPOSITORY-GOVERNANCE-v3 | Public repository governance and integrity controls; bootstrap-safe scope correction | COMPLETED HISTORICAL W00A1a AUTHORIZATION | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json) | `09f3f30b4638d0bdc3345e7eda554266270c1267` |
+| ACT-W00C-GOVERNANCE-CLOSURE-v1 | Lean governance closure and workflow retirement | SUPERSEDED BY v2 | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
+| ACT-W00C-GOVERNANCE-CLOSURE-v2 | Lean governance closure repair and repository-status alignment | APPROVED | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
 
 ## Documentation normalization
 
@@ -82,7 +85,7 @@
 
 ## Design-review status
 
-The architecture and implementation-governance series, DR-01 through DR-30, VS-01, SOURCE-PLAN-01, and BENCH-VS01-BATCH-01 are approved. The public-repository governance package is approved. Production implementation remains blocked until documentation normalization and clean-room package review are closed; W00 itself additionally requires the owner bootstrap specified by GOV-01. Source acquisition and benchmark execution remain blocked until governance, source and derivative verification, and an approved implementation activation manifest are active.
+The design baseline is approved. W00A1a is merged historical bootstrap governance, and W00C is the current closure PR under v2 repair. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. After W00C merges, governance implementation is closed and `VS01-T01 — Local Archive and Source-Admission Foundation` is next; biblical-product implementation has not started.
 
 
 ## Preimplementation audits

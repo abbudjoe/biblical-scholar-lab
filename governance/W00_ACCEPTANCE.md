@@ -1,5 +1,9 @@
 # W00 acceptance criteria
 
+> **HISTORICAL PRE-S03 BOOTSTRAP RECORD — NON-AUTHORITATIVE** — Retained for audit only. `GOV-01-S03` controls the current sequence: task-specific activation and CI → Sol draft PR and concise handoff → ChatGPT exact-head review → Joseph exact-head approval → separate merge-only turn → unchanged-head and task-specific-check verification → `--match-head-commit`.
+
+## Historical detail
+
 W00 is complete only when all tests are evidenced on the public repository.
 
 ## Bootstrap merge rule
