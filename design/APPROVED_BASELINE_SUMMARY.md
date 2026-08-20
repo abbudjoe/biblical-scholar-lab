@@ -25,11 +25,10 @@ Explicitly absent from VS-01: model training, Lambda execution, vector search, L
 
 ## Current implementation order
 
-1. W00A1a is merged historical bootstrap governance.
-2. W00C is the current closure PR under `ACT-W00C-GOVERNANCE-CLOSURE-v2` repair.
-3. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
-4. After W00C merges, governance implementation is closed.
-5. The next task is `VS01-T01 — Local Archive and Source-Admission Foundation`.
+1. W00A1a and W00C are merged historical governance implementation.
+2. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
+3. Governance implementation is closed.
+4. `VS01-T01 — Local Archive and Source-Admission Foundation` is active under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
 
 ## Simplicity rule
 
@@ -37,4 +36,4 @@ Only contracts named by the active `ImplementationActivationManifest` may become
 
 ## Current implementation gate
 
-Governance implementation is present: W00A1a is historical and W00C is the current closure PR. Biblical-product implementation has not started. `ACT-W00C-GOVERNANCE-CLOSURE-v2` is active; after W00C merges, `VS01-T01` is next.
+W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. `VS01-T01` is the active first biblical-product implementation task under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
