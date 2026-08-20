@@ -1,0 +1,219 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T01-APFS-PLIST-COMPAT-v1",
+  "task_id": "VS01-T01-R02",
+  "turn_id": "VS01-T01-R02-20260820T221312Z",
+  "codex_run_id": "codex-desktop-VS01-T01-R02-20260820T221312Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t01-apfs-plist-compat",
+  "base_sha": "3e9673640f08542279189d2f50c872a0723d5ca4",
+  "implementation_head_sha": "f5f1a449c15bbec8bffa3b99cb9b625320931ae3",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/4",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t01-apfs-plist-compat",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Repair APFS plist compatibility in the existing read-only macOS archive inspector without changing public contracts, dependencies, CLI behavior, or archive state.",
+  "acceptance_criteria": [
+    "Recognize all approved volume-info and matched APFS-volume encryption booleans using fail-closed consensus.",
+    "Match exactly one APFS volume and containing container by live device identity and compatible volume UUID.",
+    "Derive effective free bytes from valid container capacity and quota evidence while rejecting malformed or impossible states.",
+    "Change exactly one handwritten production file and preserve every protected contract, schema, dependency, workflow, CLI, and source-plan byte.",
+    "Pass frozen environment, static analysis, full tests, Hypothesis, branch coverage, scope, simplicity, committed-diff, integrity, and private live evidence gates.",
+    "Leave the pull request draft, unapproved, and unmerged for exact-head ChatGPT review."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "SOURCE-PLAN-01",
+      "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+      "VS01-T01-R02",
+      "ACT-VS01-T01-APFS-PLIST-COMPAT-v1"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "ef0b60642a6a42e2877a8a6fb91164001a95be1a",
+      "summary": "Committed the byte-identical approved activation pair and minimal decision-index transition."
+    },
+    {
+      "phase": "implementation",
+      "commit": "f5f1a449c15bbec8bffa3b99cb9b625320931ae3",
+      "summary": "Added exact APFS volume/container matching, consensus encryption evidence, quota-aware effective capacity, and focused sanitized regressions."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/infrastructure/macos_volume.py",
+      "focus": "Unique APFS match, encryption consensus, exact-integer capacity validation, quota calculation, and unchanged read-only command boundary."
+    },
+    {
+      "path": "tests/test_archive.py",
+      "focus": "Sanitized encryption, UUID/device matching, ambiguity, quota, malformed integer, and regression coverage."
+    }
+  ],
+  "commands": [
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS at the exact implementation SHA; dependency pins unchanged."
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; 76 files formatted, lint clean, 0 type errors and warnings."
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 73 tests; 95.76 percent branch coverage."
+    },
+    {
+      "command": "activation schema, sidecar, package-byte, protected-surface, changed-path, and prohibited-scope audits",
+      "result": "PASS; activation exact; five authorized implementation paths; protected surfaces byte-identical."
+    },
+    {
+      "command": "git diff --check 3e9673640f08542279189d2f50c872a0723d5ca4...f5f1a449c15bbec8bffa3b99cb9b625320931ae3 && git fsck --full",
+      "result": "PASS; committed diff clean; repository integrity reported dangling objects only."
+    },
+    {
+      "command": "uv run bsl archive inspect --volume-name BSL-Archive, twice with private output",
+      "result": "PASS; candidate facts and readiness agreed; only redacted public booleans and hashes retained here."
+    },
+    {
+      "command": "diskutil apfs list -plist with private output",
+      "result": "PASS; read-only snapshot captured under ignored diagnostics; quota present and valid."
+    }
+  ],
+  "evaluations": [
+    {
+      "name": "apfs_compatibility",
+      "status": "PASS",
+      "result": "New and legacy encryption fields, matched-volume encryption, unique matching, quota arithmetic, and malformed evidence are regression protected."
+    },
+    {
+      "name": "merged_t01_regression",
+      "status": "PASS",
+      "result": "Archive semantics, stable identity, Thunderbolt, source plan, promotion, CLI, schemas, and workflow tests remain green."
+    },
+    {
+      "name": "live_read_only_profile",
+      "status": "PASS",
+      "result": "CANDIDATE_READY_FOR_OWNER_APPROVAL with all permitted fact booleans true; this is not owner approval or provisioning."
+    },
+    {
+      "name": "simplicity_and_scope",
+      "status": "PASS",
+      "result": "330 cumulative nonblank changed lines, one production file, max complexity 10, no contracts, dependencies, migrations, or new modules."
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "activation_commit",
+      "sha": "ef0b60642a6a42e2877a8a6fb91164001a95be1a"
+    },
+    {
+      "kind": "implementation_head",
+      "sha": "f5f1a449c15bbec8bffa3b99cb9b625320931ae3",
+      "tree": "75dac23ff70a5679353271a66fac8a74e2ab746d"
+    },
+    {
+      "kind": "prior_private_receipt",
+      "path": ".local/evidence/VS01-T01/archive-preflight.pre-R02.f5f1a449.json",
+      "sha256": "c160ac3228eab8c63e96fd00bc08377ead83cc5b7c91ba3ed2d2555f0ab8afe7",
+      "preserved_unchanged": true,
+      "committed": false
+    },
+    {
+      "kind": "fresh_private_archive_receipt",
+      "path": ".local/evidence/VS01-T01/archive-preflight.json",
+      "sha256": "a3b54f678a251626bcc7573ae1e7f8d096d5a401da8509dc4274729a95d669f3",
+      "committed": false,
+      "readiness": "CANDIDATE_READY_FOR_OWNER_APPROVAL",
+      "candidate_present": true,
+      "apfs": true,
+      "encrypted": true,
+      "external": true,
+      "mounted": true,
+      "writable": true,
+      "thunderbolt": true,
+      "stable_identity": true,
+      "effective_free_at_least_20_gib": true
+    },
+    {
+      "kind": "fresh_private_apfs_snapshot",
+      "path": ".local/evidence/VS01-T01/archive-profile-diagnostics/apfs-list-post-recreate.plist",
+      "sha256": "ce2bdc57bbcc544e978684fb3b8cb938fe7e3b553e6742753011808c629167f9",
+      "committed": false,
+      "quota_present": true,
+      "quota_valid": true
+    },
+    {
+      "kind": "final_live_handoff_head_and_ci",
+      "status": "Recorded after this handoff-only commit in the PR completion comment."
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 77,
+    "production_loc_removed": 14,
+    "test_loc_added": 136,
+    "test_loc_removed": 4,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [],
+    "abstractions": [
+      {
+        "name": "_compatible_uuid",
+        "reason": "One private predicate expresses the approved optional UUID correlation rule."
+      },
+      {
+        "name": "_container_capacity",
+        "reason": "One private validator keeps exact-integer container evidence fail-closed and DR-30 compliant."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Extending the existing adapter directly rather than adding a parser, storage abstraction, command, contract, or fallback.",
+      "Using sanitized parameterized fixtures rather than copying private plist content."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The live ready state is a candidate gate only; Joseph has not approved or provisioned an archive profile.",
+    "The full private receipt and plist must be supplied directly to ChatGPT if exact private-profile review is desired."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact final live PR head.",
+    "Joseph must separately decide whether to approve the exact reviewed head and any archive profile."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
