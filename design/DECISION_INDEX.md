@@ -76,7 +76,8 @@
 | ACT-W00-REPOSITORY-GOVERNANCE-v1 | Public repository governance and integrity controls | SUPERSEDED BY v2 | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v1.json) | `578fd4a913984c3d025c9c32971cbd8426477f8c` |
 | ACT-W00-REPOSITORY-GOVERNANCE-v2 | Public repository governance and integrity controls; owner-manual bootstrap merge | SUPERSEDED BY v3 | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v2.json) | `b32acf74e2560bd840f2c7aa542f24e6566bd553` |
 | ACT-W00-REPOSITORY-GOVERNANCE-v3 | Public repository governance and integrity controls; bootstrap-safe scope correction | APPROVED — owner bootstrap prerequisite | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json) | `09f3f30b4638d0bdc3345e7eda554266270c1267` |
-| ACT-W00C-GOVERNANCE-CLOSURE-v1 | Lean governance closure and workflow retirement | APPROVED | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
+| ACT-W00C-GOVERNANCE-CLOSURE-v1 | Lean governance closure and workflow retirement | SUPERSEDED BY v2 | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
+| ACT-W00C-GOVERNANCE-CLOSURE-v2 | Lean governance closure repair and repository-status alignment | APPROVED | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
 
 ## Documentation normalization
 
