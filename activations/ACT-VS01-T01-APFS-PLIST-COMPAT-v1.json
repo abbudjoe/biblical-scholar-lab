@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T01-APFS-PLIST-COMPAT-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "3e9673640f08542279189d2f50c872a0723d5ca4",
+  "approved_design_ids": [
+    "DR-28",
+    "DR-30",
+    "VS-01",
+    "SOURCE-PLAN-01",
+    "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+    "VS01-T01-R02"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T01-R02",
+    "title": "APFS plist compatibility",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t01-apfs-plist-compat",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Repair the merged VS01-T01 macOS archive inspector so that it recognizes the observed APFS encryption fields, uniquely matches the selected archive volume to its APFS volume and container records, and derives fail-closed effective usable capacity from matching container and quota evidence, without changing public contracts, schemas, dependencies, CLI behavior, or archive state.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "The existing bsl archive inspect command truthfully interprets the owner-observed macOS APFS plist shape and can produce an accurate candidate profile for the provisioned BSL-Archive volume.",
+  "activated_invariants": [
+    "The repair starts from merged main 3e9673640f08542279189d2f50c872a0723d5ca4 on a new branch and draft PR.",
+    "Only src/bsl/infrastructure/macos_volume.py is modified as handwritten production code.",
+    "ArchivePreflightReceipt and every other public contract and committed JSON Schema remain byte-identical to the base.",
+    "Runtime and development dependency names and versions remain unchanged.",
+    "Encryption evidence recognizes boolean APFSEncrypted, Encrypted, Encryption, and EncryptionThisVolumeProper fields plus the matched APFS volume entry's Encryption field.",
+    "Absent or conflicting encryption evidence remains fail-closed and never fabricates encrypted=true.",
+    "The selected volume must match exactly one APFS volume entry and its containing APFS container by live device identity and, when present, volume UUID.",
+    "Volume-level FreeSpace=0 and VolumeSize=0 do not override valid matching APFS container capacity evidence.",
+    "Effective free bytes are derived from valid nonnegative container CapacityFree and, for a positive valid quota, min(container_free, CapacityQuota minus CapacityInUse).",
+    "CapacityQuota=0 or an absent quota means no volume quota is applied; matching container free space remains the effective value.",
+    "Negative values, capacity free above container ceiling, quota above container ceiling, use above quota, ambiguous matches, and otherwise impossible capacity evidence fail closed.",
+    "No real volume is written, initialized, resized, renamed, mounted, unmounted, formatted, encrypted, repaired, or approved.",
+    "The live post-repair receipt and APFS snapshot remain owner-private under ignored .local paths; no stable device or volume identity enters Git, CI, the PR, or the public handoff.",
+    "All source-plan, stable-device, Thunderbolt, receipt-semantic, synthetic-promotion, and exact-head CI behavior from merged VS01-T01 remains regression-protected.",
+    "No source acquisition, VS01-T02, database, retrieval, benchmark execution, model, cloud, Lambda, Luna, training, evaluation, or billable work is introduced."
+  ],
+  "activated_paths": [
+    "activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json",
+    "activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.sha256",
+    "design/DECISION_INDEX.md",
+    "src/bsl/infrastructure/macos_volume.py",
+    "tests/test_archive.py",
+    "handoffs/VS01-T01/"
+  ],
+  "activated_contracts": [
+    "ArchivePreflightReceipt — consumed unchanged"
+  ],
+  "activated_interfaces": [
+    "bsl archive inspect --volume-name BSL-Archive",
+    "vs01-t01-ci — unchanged workflow"
+  ],
+  "activated_data_stores": [
+    "Read-only macOS diskutil plist observations.",
+    "Ignored owner-private .local/evidence/VS01-T01 receipt and diagnostic files.",
+    "Sanitized test fixtures containing no live owner identifiers."
+  ],
+  "activated_adapters": [
+    "Existing macOS diskutil plist inspection adapter in src/bsl/infrastructure/macos_volume.py."
+  ],
+  "required_tests": [
+    "Observed Encryption and EncryptionThisVolumeProper fields are recognized as positive encryption evidence.",
+    "Legacy APFSEncrypted and Encrypted fields remain compatible.",
+    "Contradictory encryption booleans fail closed rather than selecting an arbitrary value.",
+    "The selected volume is matched uniquely to one APFS container and volume entry by device identity and volume UUID.",
+    "A mismatched, missing, or ambiguous APFS volume entry fails closed.",
+    "A matching fixture with volume FreeSpace=0, positive container CapacityFree, positive 650000000000-byte quota, and small CapacityInUse derives the exact effective quota remainder.",
+    "CapacityQuota=0 and an absent quota use matching container free capacity.",
+    "Quota above container ceiling, use above quota, negative values, free capacity above ceiling, and malformed integer evidence fail closed.",
+    "The smaller of container free and quota remaining is used.",
+    "The existing stable parent identity, Thunderbolt, archive state, UUIDv7, source-plan, promotion, CLI, schema-drift, and workflow tests remain passing.",
+    "No production source transport or real archive mutation path is introduced.",
+    "Ruff, Pyright strict, pytest/Hypothesis, and at least 90 percent branch coverage on src/bsl pass."
+  ],
+  "required_evidence": [
+    "Exact activation, implementation, and final live handoff SHAs.",
+    "Activation-schema and sidecar validation.",
+    "Sanitized fixture summary showing the observed Encryption, APFSContainerFree, CapacityFree, CapacityQuota, CapacityInUse, and misleading FreeSpace=0 shape.",
+    "Local validation and exact-head vs01-t01-ci result.",
+    "No-diff proof for public contracts, committed JSON Schemas, dependencies, CLI, source plan, and workflow.",
+    "Fresh owner-private archive receipt path and SHA-256 plus a non-identifying public summary.",
+    "Fresh owner-private post-recreation diskutil apfs list plist path and SHA-256 plus redacted quota/capacity booleans.",
+    "DR-30 changed-file, substantive-line, production-file, function, complexity, dependency, and contract receipt.",
+    "Explicit no-source-acquisition, no-real-archive-mutation, no-sensitive-identifier-in-Git, and no-VS01-T02 statements."
+  ],
+  "explicit_non_goals": [
+    "No public contract, Pydantic model, JSON Schema, contract registry, CLI, workflow, dependency, or lockfile change.",
+    "No archive provisioning, initialization marker, directory layout, write probe, authoritative object promotion, or source acquisition.",
+    "No cross-platform disk abstraction, storage framework, parser framework, provider registry, plugin system, or generalized capacity policy engine.",
+    "No source normalization, John 1:5 evidence packet, benchmark execution, database, worker, API, retrieval, model, UI, cloud, Lambda, Luna, training, evaluation, or billable work."
+  ],
+  "prohibited_scaffolding": [
+    "No new production module, public helper package, contract, schema, command, workflow, dependency, service, flag, TODO, or placeholder.",
+    "No copy of private raw plist or real identifiers in tests, fixtures, Git, CI, PR text, or handoffs.",
+    "No weakening of the 20 GiB readiness floor or any merged T01 semantic invariant.",
+    "No hidden fallback to df output, mount-path inference, source transport, or another storage device."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 350,
+    "substantive_changed_lines_hard_limit": 550,
+    "handwritten_production_files_hard_limit": 1,
+    "new_public_contracts_hard_limit": 0,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "The approved activation is committed and indexed before implementation.",
+    "The macOS adapter correctly interprets sanitized fixtures matching the observed real plist field shape.",
+    "Encryption and effective free-space evidence remain fail-closed under absence, conflict, ambiguity, and impossible quota states.",
+    "All merged VS01-T01 tests and the new compatibility regressions pass with at least 90 percent branch coverage.",
+    "Public contracts, schemas, dependencies, CLI, workflow, source-plan behavior, and synthetic-promotion behavior are unchanged.",
+    "A fresh read-only live preflight and APFS snapshot are captured privately after implementation without mutating the volume.",
+    "The task stays at or below 550 honest substantive changed lines and changes exactly one handwritten production file.",
+    "The final commit contains only the concise VS01-T01-R02 handoff pair.",
+    "The PR remains open, draft, unapproved, and unmerged for ChatGPT exact-head review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-20T17:27:29-04:00"
+  }
+}

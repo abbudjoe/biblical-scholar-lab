@@ -78,7 +78,8 @@
 | ACT-W00-REPOSITORY-GOVERNANCE-v3 | Public repository governance and integrity controls; bootstrap-safe scope correction | COMPLETED HISTORICAL W00A1a AUTHORIZATION | 2026-08-17 | [`../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json`](../activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json) | `09f3f30b4638d0bdc3345e7eda554266270c1267` |
 | ACT-W00C-GOVERNANCE-CLOSURE-v1 | Lean governance closure and workflow retirement | SUPERSEDED BY v2 | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
 | ACT-W00C-GOVERNANCE-CLOSURE-v2 | Lean governance closure repair and repository-status alignment | COMPLETED HISTORICAL W00C AUTHORIZATION | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
-| ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1 | Local archive and source-admission foundation | ACTIVE | 2026-08-20 | [`../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json`](../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json) | `b157c300df240b4383341e1285a6f96103be2d40` |
+| ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1 | Local archive and source-admission foundation | COMPLETED HISTORICAL T01 AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json`](../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json) | `b157c300df240b4383341e1285a6f96103be2d40` |
+| ACT-VS01-T01-APFS-PLIST-COMPAT-v1 | APFS plist compatibility | ACTIVE | 2026-08-20 | [`../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json`](../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json) | `3e9673640f08542279189d2f50c872a0723d5ca4` |
 
 ## Documentation normalization
 
