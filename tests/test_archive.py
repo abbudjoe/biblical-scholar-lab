@@ -33,10 +33,36 @@ from bsl.infrastructure.macos_volume import inspect_volume
 RunCommand = Callable[[tuple[str, ...]], bytes]
 LIST = {"AllDisksAndPartitions": [{"APFSVolumes": [{"VolumeName": "BSL-Archive", "DeviceIdentifier": "disk4s1"}]}]}
 INFO = {"FilesystemType": "apfs", "APFSEncrypted": True, "Internal": False, "MountPoint": "/fixture/archive"}
-INFO |= {"ReadOnlyVolume": False, "VolumeUUID": "fixture-volume-uuid", "FreeSpace": MINIMUM_FREE_BYTES}
-APFS = {
-    "Containers": [{"Volumes": [{"DeviceIdentifier": "disk4s1"}], "PhysicalStores": [{"DeviceIdentifier": "disk4"}]}]
-}
+INFO |= {"ReadOnlyVolume": False, "VolumeUUID": "fixture-volume-uuid", "FreeSpace": 0, "VolumeSize": 0}
+
+
+def apfs_fixture(
+    *,
+    device: str = "disk4s1",
+    volume_uuid: str = "fixture-volume-uuid",
+    ceiling: object = 1_000_240_963_584,
+    free: object = MINIMUM_FREE_BYTES,
+    volume_updates: dict[str, object] | None = None,
+) -> dict[str, object]:
+    volume: dict[str, object] = {
+        "DeviceIdentifier": device,
+        "APFSVolumeUUID": volume_uuid,
+        "Encryption": True,
+    }
+    volume.update(volume_updates or {})
+    return {
+        "Containers": [
+            {
+                "CapacityCeiling": ceiling,
+                "CapacityFree": free,
+                "Volumes": [volume],
+                "PhysicalStores": [{"DeviceIdentifier": "disk4"}],
+            }
+        ]
+    }
+
+
+APFS = apfs_fixture()
 PARENT_INFO = {"MediaUUID": "fixture-media-uuid", "DiskUUID": "fixture-disk-uuid"}
 PROFILE = {"SPThunderboltDataType": [{"_items": [{"bsd_name": "disk4"}]}]}
 
@@ -136,6 +162,112 @@ def test_parent_disk_uuid_is_valid_fallback() -> None:
     result = inspect_volume("BSL-Archive", system="Darwin", run=runner(parent_info={"DiskUUID": "fixture-disk-uuid"}))
     assert result.readiness == ArchiveReadiness.CANDIDATE_READY_FOR_OWNER_APPROVAL
     assert result.candidate and result.candidate.stable_physical_device_id_kind == StablePhysicalDeviceIdKind.DISK_UUID
+
+
+@pytest.mark.parametrize("field", ["APFSEncrypted", "Encrypted", "Encryption", "EncryptionThisVolumeProper"])
+def test_supported_encryption_boolean_fields(field: str) -> None:
+    fields = {"APFSEncrypted", "Encrypted", "Encryption", "EncryptionThisVolumeProper"}
+    info = {key: value for key, value in INFO.items() if key not in fields} | {field: True}
+    apfs = apfs_fixture(volume_updates={"Encryption": "not-boolean"})
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(info=info, apfs=apfs))
+    assert result.candidate and result.candidate.encrypted is True
+    assert result.readiness == ArchiveReadiness.CANDIDATE_READY_FOR_OWNER_APPROVAL
+
+
+def test_matching_apfs_volume_encryption_field_is_supported() -> None:
+    fields = {"APFSEncrypted", "Encrypted", "Encryption", "EncryptionThisVolumeProper"}
+    info = {key: value for key, value in INFO.items() if key not in fields}
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(info=info))
+    assert result.candidate and result.candidate.encrypted is True
+    assert result.readiness == ArchiveReadiness.CANDIDATE_READY_FOR_OWNER_APPROVAL
+
+
+def test_conflicting_encryption_evidence_fails_closed() -> None:
+    info = INFO | {"Encryption": True, "EncryptionThisVolumeProper": False}
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(info=info))
+    assert result.candidate and result.candidate.encrypted is None
+    assert (result.readiness, result.reasons) == (
+        ArchiveReadiness.IDENTITY_INCOMPLETE,
+        ("REQUIRED_VOLUME_FACT_NOT_PROVEN",),
+    )
+
+
+def test_apfs_volume_and_container_are_matched_uniquely() -> None:
+    unrelated = apfs_fixture(volume_uuid="fixture-other-uuid")["Containers"]
+    matching = APFS["Containers"]
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(apfs={"Containers": unrelated + matching}))
+    assert result.candidate and result.candidate.free_bytes == MINIMUM_FREE_BYTES
+    assert result.readiness == ArchiveReadiness.CANDIDATE_READY_FOR_OWNER_APPROVAL
+
+
+@pytest.mark.parametrize(
+    "apfs",
+    [
+        apfs_fixture(device="disk9s1"),
+        apfs_fixture(volume_uuid="fixture-other-uuid"),
+        {"Containers": []},
+        {"Containers": APFS["Containers"] + APFS["Containers"]},
+    ],
+)
+def test_missing_mismatched_or_ambiguous_apfs_match_fails_closed(apfs: object) -> None:
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(apfs=apfs))
+    assert result.candidate
+    assert (result.candidate.encrypted, result.candidate.free_bytes) == (None, None)
+    assert result.readiness == ArchiveReadiness.IDENTITY_INCOMPLETE
+
+
+def test_effective_free_uses_observed_quota_remainder() -> None:
+    quota, used = 650_000_000_000, 12_345_678
+    apfs = apfs_fixture(
+        ceiling=1_000_240_963_584,
+        free=735_102_152_704,
+        volume_updates={"CapacityQuota": quota, "CapacityInUse": used},
+    )
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(apfs=apfs))
+    assert result.candidate and result.candidate.free_bytes == min(735_102_152_704, quota - used)
+
+
+@pytest.mark.parametrize("volume_updates", [{}, {"CapacityQuota": 0}])
+def test_absent_or_zero_quota_uses_container_free(volume_updates: dict[str, object]) -> None:
+    free = MINIMUM_FREE_BYTES + 123
+    result = inspect_volume(
+        "BSL-Archive",
+        system="Darwin",
+        run=runner(apfs=apfs_fixture(free=free, volume_updates=volume_updates)),
+    )
+    assert result.candidate and result.candidate.free_bytes == free
+
+
+def test_container_free_is_used_when_smaller_than_quota_remaining() -> None:
+    free = MINIMUM_FREE_BYTES + 1
+    apfs = apfs_fixture(free=free, volume_updates={"CapacityQuota": 100_000_000_000, "CapacityInUse": 1})
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(apfs=apfs))
+    assert result.candidate and result.candidate.free_bytes == free
+
+
+@pytest.mark.parametrize(
+    ("ceiling", "free", "volume_updates"),
+    [
+        (-1, 0, {}),
+        (100, -1, {}),
+        (100, 101, {}),
+        (100, 50, {"CapacityQuota": 101, "CapacityInUse": 0}),
+        (100, 50, {"CapacityQuota": 80, "CapacityInUse": 81}),
+        (100, 50, {"CapacityQuota": -1, "CapacityInUse": 0}),
+        (100, 50, {"CapacityQuota": 80, "CapacityInUse": -1}),
+        (100, True, {}),
+        (100, "50", {}),
+        (100, 50, {"CapacityQuota": "80", "CapacityInUse": 0}),
+        (100, 50, {"CapacityQuota": 80, "CapacityInUse": True}),
+    ],
+)
+def test_invalid_capacity_evidence_fails_closed(
+    ceiling: object, free: object, volume_updates: dict[str, object]
+) -> None:
+    apfs = apfs_fixture(ceiling=ceiling, free=free, volume_updates=volume_updates)
+    result = inspect_volume("BSL-Archive", system="Darwin", run=runner(apfs=apfs))
+    assert result.candidate and result.candidate.free_bytes is None
+    assert result.readiness == ArchiveReadiness.IDENTITY_INCOMPLETE
 
 
 @pytest.mark.parametrize(
