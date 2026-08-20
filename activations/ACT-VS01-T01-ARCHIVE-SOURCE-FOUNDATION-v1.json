@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "b157c300df240b4383341e1285a6f96103be2d40",
+  "approved_design_ids": [
+    "DR-10",
+    "DR-23",
+    "DR-27",
+    "DR-28",
+    "DR-30",
+    "GOV-01-S03",
+    "VS-01",
+    "SOURCE-PLAN-01"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T01",
+    "title": "Local archive and source-admission foundation",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t01-archive-source-foundation",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Implement the smallest local archive and source-admission foundation for VS-01: a minimal Python 3.12 project, read-only macOS archive-volume inspection, deterministic SOURCE-PLAN-01 acquisition dry run, a synthetic content-addressed staging/promotion primitive, three portable receipt contracts, and task-specific CI, without acquiring sources or mutating the real archive.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "An operator can inspect the proposed BSL-Archive volume and compile an exact machine-readable SOURCE-PLAN-01 acquisition dry run without external-source network access or real-archive mutation.",
+  "activated_invariants": [
+    "No exact volume UUID, device identity, or mount path is assumed; live inspection produces a candidate requiring later owner approval.",
+    "Archive inspection is read-only: no write probe, format, partition, rename, mount, unmount, encryption, repair, initialization, or marker creation is permitted.",
+    "A candidate is ready only when exactly one BSL-Archive volume is observed on Darwin, APFS and encrypted, external, mounted, not read-only, has stable volume and parent-device identity, has at least 20 GiB free, and its Thunderbolt connection is positively evidenced; otherwise a defined fail-closed state and reasons are emitted.",
+    "Failure to prove Thunderbolt attachment is IDENTITY_INCOMPLETE with reason THUNDERBOLT_NOT_PROVEN; the implementation may not invent a new readiness state or infer protocol from a mount path.",
+    "No internal-disk, temporary-directory, network-volume, other-removable-volume, or cloud fallback can become authoritative storage.",
+    "The full live ArchivePreflightReceipt is owner-private and excluded from Git; public handoffs may contain only its SHA-256, readiness state, non-identifying summary, and local ignored path.",
+    "No hostname, username, Mac serial number, hardware UUID, credential, or raw system-profiler output may enter Git, CI, a PR, or the public handoff.",
+    "SOURCE-PLAN-01 is the sole source-selection and rights authority; exactly six approved source entries and every hard prohibition are preserved.",
+    "No external source URL is fetched, cloned, downloaded, or probed in T01; dependency installation and ordinary GitHub operations remain permitted.",
+    "SourceAcquisitionDryRun contains a deterministic semantic payload and RFC 8785 SHA-256; envelope UUIDv7 and timestamp fields are excluded from that semantic hash.",
+    "Content-addressed promotion is proven only with synthetic bytes inside explicitly non-authoritative temporary fixture roots.",
+    "Only ArchivePreflightReceipt, SourceAcquisitionDryRun, and ArchiveObjectPromotionReceipt become portable contracts.",
+    "Runtime dependencies are limited to the package names pydantic, rfc8785, and uuid6; Sol pins exact Python-3.12-compatible versions after a bounded compatibility probe and must stop for design review rather than substitute another package.",
+    "The CLI uses the standard library argparse boundary; Typer, Click, a plugin system, provider registry, dependency-injection framework, and generalized storage abstraction are prohibited.",
+    "No database, worker, HTTP API, retrieval, model, benchmark execution, cloud, Luna, training, or billable work is introduced.",
+    "The root turn ends at one open draft PR for ChatGPT exact-head review."
+  ],
+  "activated_paths": [
+    ".github/workflows/vs01-t01-ci.yml",
+    ".python-version",
+    ".gitignore",
+    "README.md",
+    "pyproject.toml",
+    "uv.lock",
+    "activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json",
+    "activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.sha256",
+    "contracts/registry.json",
+    "contracts/json-schema/archive/",
+    "contracts/json-schema/acquisition/",
+    "design/APPROVED_BASELINE_SUMMARY.md",
+    "design/DECISION_INDEX.md",
+    "design/PACKAGE_STATUS.md",
+    "src/bsl/",
+    "tests/",
+    "handoffs/VS01-T01/"
+  ],
+  "activated_contracts": [
+    "ArchivePreflightReceipt",
+    "SourceAcquisitionDryRun",
+    "ArchiveObjectPromotionReceipt"
+  ],
+  "activated_interfaces": [
+    "bsl archive inspect --volume-name BSL-Archive",
+    "bsl source plan --manifest <SOURCE-PLAN-01 manifest>",
+    "vs01-t01-ci"
+  ],
+  "activated_data_stores": [
+    "Git repository for code, schemas, approved manifest, and public-safe fixtures.",
+    "Temporary test directories carrying an explicit non-authoritative fixture marker for synthetic archive tests only.",
+    "Read-only macOS metadata observation of a proposed external volume.",
+    "Ignored owner-private .local/evidence/VS01-T01 for the full live preflight receipt only."
+  ],
+  "activated_adapters": [
+    "macOS diskutil plist inspection and optional read-only system_profiler correlation without volume mutation.",
+    "Local-filesystem synthetic .incoming to SHA-256 object publication using a no-overwrite atomic same-filesystem primitive.",
+    "Committed SOURCE-PLAN-01 manifest loader."
+  ],
+  "required_tests": [
+    "Archive-inspection fixtures cover encrypted external APFS Thunderbolt candidate, internal, unencrypted, wrong filesystem, duplicate names, missing identity, unproven protocol, read-only, low-space, unsupported-host, and command-failure states.",
+    "Readiness uses the exact 20 GiB free-space floor, requires positive Thunderbolt evidence, and never performs a live write probe.",
+    "Private receipt handling excludes stable identifiers, mount paths, host identifiers, and raw profiler output from Git-visible evidence.",
+    "SOURCE-PLAN-01 compilation yields exactly six sources with exact revisions or snapshot rules, exclusions, rights lineages, and hard prohibitions.",
+    "Mutable WEB package planning fails without an acquisition-time snapshot-hash requirement.",
+    "Any training, embedding, cloud, automatic-update, MACULA, apparatus, copyrighted-page, private-source, or model-generated-source authorization fails.",
+    "The dry-run semantic payload and RFC 8785 SHA-256 are deterministic even when receipt UUIDv7 and generated-at fields differ.",
+    "Synthetic object promotion proves no-overwrite atomic immutable placement, idempotent identical-object handling, corrupt-existing-object failure, truncated-stage failure, path and symlink safety, and concurrent duplicate safety.",
+    "Synthetic promotion rejects a root without the exact non-authoritative fixture marker.",
+    "Portable contract schemas reject unknown fields and remain byte-current with generated Pydantic schemas.",
+    "CLI emits machine-readable records; expected fail-closed readiness is a successful inspection result, while invalid arguments, unsupported execution, or inspection-tool failure return nonzero without traceback leakage.",
+    "Tests prevent all external-source network access and verify no source transport implementation exists.",
+    "Ruff, Pyright strict, pytest, Hypothesis, and at least 90 percent branch coverage on the new production package pass."
+  ],
+  "required_evidence": [
+    "Exact activation, implementation, and live handoff SHAs.",
+    "Dependency compatibility and justification receipt for exact pinned pydantic, rfc8785, and uuid6 versions.",
+    "Task-specific CI run and local validation summary.",
+    "Owner-private live read-only macOS ArchivePreflightReceipt path and SHA-256 plus a non-identifying public summary; the full receipt must not be committed.",
+    "Deterministic SOURCE-PLAN-01 SourceAcquisitionDryRun semantic hash.",
+    "Synthetic ArchiveObjectPromotionReceipt.",
+    "Schema-generation drift result and contract-registry inventory.",
+    "DR-30 changed-file, line, module, function, complexity, dependency, and public-contract receipt.",
+    "Explicit no-external-source-network, no-source-acquisition, no-real-archive-mutation, and no-sensitive-device-metadata-in-Git statement."
+  ],
+  "explicit_non_goals": [
+    "No actual source acquisition, clone, download, font retrieval, source-URL probe, or normalization.",
+    "No real archive initialization, profile approval, authoritative write, marker creation, or write test.",
+    "No BSL-Private or private-vault implementation.",
+    "No PostgreSQL, migration, work queue, worker, API, or web application.",
+    "No John 1:5 evidence packet, page fixture, translation diagnosis, or benchmark execution.",
+    "No embeddings, vector index, retrieval framework, inference, model download, training, Lambda, Luna, cloud, or billable action.",
+    "No generic source connector framework, rights engine, plugin system, dependency-injection framework, network archive adapter, or broad storage API."
+  ],
+  "prohibited_scaffolding": [
+    "No future service or package shells, empty namespaces, stubs, TODO implementations, feature flags, provider registry, repository abstraction, or generalized storage layer.",
+    "No source-specific transport implementation beyond deterministic dry-run planning records.",
+    "No hidden fallback to internal, temporary, network, other removable, or cloud storage.",
+    "No changes to benchmark case content, approved source-plan semantics, or W00 historical governance implementation.",
+    "No public fixture containing a real volume UUID, device identifier, mount path, host identifier, serial number, or raw system metadata."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 900,
+    "substantive_changed_lines_hard_limit": 1200,
+    "handwritten_production_files_hard_limit": 8,
+    "new_public_contracts_hard_limit": 3,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 3
+  },
+  "completion_criteria": [
+    "The minimal Python package and locked environment install on Python 3.12.",
+    "The two CLI commands produce schema-valid machine-readable output under the defined exit-code semantics.",
+    "A live Mac archive inspection produces a truthful candidate or fail-closed private receipt without mutating a volume or exposing sensitive device metadata publicly.",
+    "SOURCE-PLAN-01 compiles to an exact six-source dry run with every rights and operation prohibition preserved and a deterministic semantic hash.",
+    "Synthetic content-addressed promotion passes all atomicity, identity, fixture-authority, and path-safety tests.",
+    "Task-specific CI and all required local checks pass.",
+    "No real external source or archive bytes are acquired, probed, initialized, or mutated.",
+    "The implementation stays within DR-30 and activation budgets without compression or speculative abstraction.",
+    "The final commit contains only the concise VS01-T01 handoff pair.",
+    "The PR remains open, draft, unapproved, and unmerged for ChatGPT exact-head review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-20T11:55:37-04:00"
+  }
+}

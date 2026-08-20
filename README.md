@@ -1,8 +1,8 @@
 # Biblical Scholar Lab — Design Baseline
 
-This repository is the authoritative design record and governance implementation history for Biblical Scholar Lab.
+This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is present. Biblical-product implementation has not started; approved product, scholarly, architecture, benchmark, experiment, governance, and execution decisions are recorded before GPT-5.6 Sol implements them.
+Governance implementation is closed. Biblical-product implementation is active under the approved `VS01-T01 — Local Archive and Source-Admission Foundation` activation.
 
 ## Authority
 
@@ -25,9 +25,9 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 
 ## Current implementation status
 
-- W00A1a is merged historical bootstrap governance; W00C is the current closure PR under v2 repair.
+- W00A1a and W00C are merged historical governance implementation; governance implementation is closed.
 - W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
-- After W00C merges, governance implementation is closed. The next task is `VS01-T01 — Local Archive and Source-Admission Foundation`.
+- `VS01-T01 — Local Archive and Source-Admission Foundation` is active under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
 
 ## Current approved baseline
 
@@ -91,10 +91,11 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-W00-REPOSITORY-GOVERNANCE-v2` — superseded by v3; historical only
 - `ACT-W00-REPOSITORY-GOVERNANCE-v3` — completed historical W00A1a bootstrap authorization
 - `ACT-W00C-GOVERNANCE-CLOSURE-v1` — superseded by v2; historical execution evidence
-- `ACT-W00C-GOVERNANCE-CLOSURE-v2` — active repair authorization for the current W00C closure PR
+- `ACT-W00C-GOVERNANCE-CLOSURE-v2` — completed historical W00C authorization
+- `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1` — active local archive and source-admission foundation authorization
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. Governance implementation is present through merged W00A1a and the current W00C closure PR; biblical-product implementation remains absent. After W00C merges, governance implementation is closed and `VS01-T01` is the next task. Source acquisition and benchmark execution still require their later approved activations and verification gates.
+The approved design baseline remains intact. W00C is merged and governance implementation is closed. `VS01-T01` is the active first biblical-product implementation task. Source acquisition and benchmark execution still require their later approved activations and verification gates.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

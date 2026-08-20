@@ -1,0 +1,276 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+  "task_id": "VS01-T01",
+  "turn_id": "VS01-T01-SOL-20260820T171012Z",
+  "codex_run_id": "codex-desktop-VS01-T01-SOL-20260820T171012Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t01-archive-source-foundation",
+  "base_sha": "b157c300df240b4383341e1285a6f96103be2d40",
+  "implementation_head_sha": "46baefbcc88a585711ad3b4c791bc322ae4caae8",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/3",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t01-archive-source-foundation",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Implement the activated local archive preflight, synthetic content-addressed promotion primitive, and deterministic six-source admission dry-run foundation without acquiring external sources or writing a real archive volume.",
+  "acceptance_criteria": [
+    "The exact approved activation and checksum sidecar are committed and schema-valid before implementation.",
+    "Exactly three strict public contracts are registered with deterministic committed JSON Schemas.",
+    "macOS archive inspection is read-only, fail-closed, machine-readable, and stores its full receipt only in an ignored owner-private path.",
+    "The synthetic fixture-only promotion primitive uses staged fsync, SHA-256 verification, atomic no-overwrite publication, directory fsync, deduplication, corruption rejection, and concurrency-safe behavior.",
+    "The approved source manifest compiles deterministically into exactly six prohibited-acquisition dry-run records with the approved manifest identity.",
+    "Pinned dependencies, static analysis, schema drift, unit and property tests, branch coverage, and activation-specific CI pass.",
+    "No external source is fetched and no real archive volume is mutated.",
+    "The counted substantive change remains at or below the 1,200-line hard cap.",
+    "The final commit contains only this handoff pair and the PR remains draft."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-30",
+      "VS01-T01-local-archive-and-source-admission-foundation-APPROVED"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "1adbc0bde177f55353856bd8f550961d64d6cb08",
+      "summary": "Committed the byte-exact approved activation pair and the minimal active-status updates."
+    },
+    {
+      "phase": "implementation",
+      "commit": "46baefbcc88a585711ad3b4c791bc322ae4caae8",
+      "summary": "Implemented three strict contracts, deterministic schemas and registry, source-plan compiler, read-only macOS preflight, fixture-only promotion primitive, CLI, tests, pins, and activation-specific CI."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/contracts",
+      "focus": "The only three public contracts, strict validation, UUIDv7 identity, and RFC 8785 semantic bytes."
+    },
+    {
+      "path": "src/bsl/infrastructure/macos_volume.py",
+      "focus": "Read-only diskutil/system_profiler inspection, non-shell argv execution, minimal receipt fields, and fail-closed readiness."
+    },
+    {
+      "path": "src/bsl/infrastructure/archive_store.py",
+      "focus": "Synthetic fixture gate, staged fsync, verified hash, atomic no-overwrite publication, deduplication, and corruption handling."
+    },
+    {
+      "path": "src/bsl/application/source_admission.py",
+      "focus": "Exact approved-manifest identity, duplicate/non-finite rejection, six-source deterministic dry run, and acquisition prohibitions."
+    },
+    {
+      "path": ".github/workflows/vs01-t01-ci.yml",
+      "focus": "Pinned actions, Python 3.12, frozen dependency sync, schema drift, Ruff, Pyright, Hypothesis, and branch coverage gate."
+    },
+    {
+      "path": "tests",
+      "focus": "Contract strictness, determinism, failure states, symlinks, corruption, deduplication, and concurrency regressions."
+    }
+  ],
+  "commands": [
+    {
+      "command": "shasum -a 256 -c VS01-T01-approved-inputs.sha256 and ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.sha256",
+      "result": "PASS: all approved inputs and the committed activation pair match."
+    },
+    {
+      "command": "activation validation against governance/schemas/implementation-activation.schema.json",
+      "result": "PASS"
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check && uv tree --depth 1",
+      "result": "PASS: runtime pins pydantic 2.13.4, rfc8785 0.1.4, uuid6 2025.0.1; development pins hypothesis 6.165.10, pyright 1.1.411, pytest 9.1.1, pytest-cov 7.1.0, ruff 0.16.3."
+    },
+    {
+      "command": "uv run pytest tests/test_cli_and_schemas.py::test_committed_schemas_are_current -q",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run pytest --cov=src/bsl --cov-branch --cov-fail-under=90",
+      "result": "PASS: 12 tests; 93.04% branch coverage."
+    },
+    {
+      "command": "bsl source plan repeated against the approved manifest",
+      "result": "PASS: two envelopes differ only in receipt identity; RFC 8785 semantic bytes and SHA-256 caefe40c7ce400828cfe5703531a22ffd58ec9025a9227dd53c3b2b62a3770fe are identical."
+    },
+    {
+      "command": "synthetic fixture promotion evidence run",
+      "result": "PASS: receipt 01a02025-9782-7d34-a3c7-9b6c5f846560; SHA-256 0382e97fdf93e59572b0f2f4039385b0d8779fcb938661c0eaa4c66c0f9e2fbc; 38 bytes; PUBLISHED; verified; fixture_only."
+    },
+    {
+      "command": "bsl archive inspect --volume-name <approved-profile-name> outside the filesystem sandbox",
+      "result": "PASS: exit 0; VOLUME_NOT_FOUND; candidate_present=false; no raw host metadata committed or included here."
+    },
+    {
+      "command": "schema registry checksum verification",
+      "result": "PASS: all three committed schema hashes match contracts/registry.json."
+    },
+    {
+      "command": "forbidden transport/tool scan and changed-file scope audit",
+      "result": "PASS: no network/source acquisition path and no out-of-activation implementation."
+    },
+    {
+      "command": "git diff --check b157c300df240b4383341e1285a6f96103be2d40...46baefbcc88a585711ad3b4c791bc322ae4caae8 && git fsck --full && git status --porcelain",
+      "result": "PASS: clean before handoff creation; fsck reported only pre-existing dangling objects."
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "approved activation identity and status transition",
+      "status": "met"
+    },
+    {
+      "criterion": "three public contracts, schema determinism, and registry identity",
+      "status": "met"
+    },
+    {
+      "criterion": "read-only fail-closed archive preflight",
+      "status": "met"
+    },
+    {
+      "criterion": "fixture-only atomic promotion primitive",
+      "status": "met"
+    },
+    {
+      "criterion": "six-source deterministic admission dry run with no acquisition authority",
+      "status": "met"
+    },
+    {
+      "criterion": "static, test, coverage, property, and scope gates",
+      "status": "met"
+    },
+    {
+      "criterion": "draft PR exact-head CI and completion comment",
+      "status": "pending until post-push GitHub steps"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "activation_commit",
+      "sha": "1adbc0bde177f55353856bd8f550961d64d6cb08"
+    },
+    {
+      "kind": "implementation_head",
+      "sha": "46baefbcc88a585711ad3b4c791bc322ae4caae8"
+    },
+    {
+      "kind": "activation_sha256",
+      "sha256": "378ffdb421284afdbf19fc7685a6dc3220fec86ed2aa282b0c455f08294e6e5e"
+    },
+    {
+      "kind": "source_plan_semantic_sha256",
+      "sha256": "caefe40c7ce400828cfe5703531a22ffd58ec9025a9227dd53c3b2b62a3770fe"
+    },
+    {
+      "kind": "private_live_archive_receipt",
+      "path": ".local/evidence/VS01-T01/archive-preflight.json",
+      "sha256": "fa83083a4018cbf14bd603da383572659835c4c9af76fda733e5c41374e68084",
+      "committed": false,
+      "summary": "VOLUME_NOT_FOUND; candidate_present=false"
+    },
+    {
+      "kind": "ci_workflow",
+      "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t01-ci.yml",
+      "status": "pending until post-push GitHub steps"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T01/VS01-T01-SOL-20260820T171012Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T01/VS01-T01-SOL-20260820T171012Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 573,
+    "production_loc_removed": 0,
+    "test_loc_added": 300,
+    "test_loc_removed": 0,
+    "generated_loc": 558,
+    "production_files_added": 7,
+    "production_files_removed": 0,
+    "modules_added": [
+      "bsl.application.source_admission",
+      "bsl.contracts.archive",
+      "bsl.contracts.source_admission",
+      "bsl.infrastructure.archive_store",
+      "bsl.infrastructure.macos_volume",
+      "bsl.interfaces.cli"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl archive inspect",
+      "bsl source plan"
+    ],
+    "dependencies_added": [
+      "pydantic==2.13.4",
+      "rfc8785==0.1.4",
+      "uuid6==2025.0.1"
+    ],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "ArchivePreflightReceipt",
+      "ArchiveObjectPromotionReceipt",
+      "SourceAcquisitionDryRun"
+    ],
+    "abstractions": [
+      {
+        "name": "strict frozen contract base",
+        "reason": "Centralizes an activated inviolable serialization and validation policy for exactly three contracts."
+      },
+      {
+        "name": "platform inspection adapter",
+        "reason": "Confines macOS subprocess execution and host-data minimization behind one read-only boundary."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Used direct typed records and pure compilation functions instead of a generic source or rules framework.",
+      "Used pathlib, os.link, and fsync directly instead of a storage manager or custom broker.",
+      "Used one narrow macOS adapter instead of a cross-platform device abstraction."
+    ],
+    "known_duplication_or_debt": [
+      "The honest counted scope is exactly 1,200 substantive changed lines, above the 900-line target and at the approved hard cap."
+    ],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The honest scope count is exactly the 1,200-line hard cap; any implementation expansion requires a new approved scope or split.",
+    "The approved archive volume was not present during live inspection, so later exact-profile approval requires Joseph to provide the private full receipt to ChatGPT after the intended volume is available.",
+    "The full live archive receipt is intentionally ignored and uncommitted; loss of the local .local evidence tree would require rerunning read-only inspection.",
+    "The CI link and exact live PR-head result are recorded by the post-push completion comment rather than by this pre-push handoff commit."
+  ],
+  "decisions_required": [
+    "ChatGPT exact-head review of the draft PR after CI completes.",
+    "Joseph must separately provide the owner-private full archive receipt to ChatGPT for exact-profile review and later decide whether to approve the exact reviewed PR head."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

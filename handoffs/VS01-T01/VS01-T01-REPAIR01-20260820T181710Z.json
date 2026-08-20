@@ -1,0 +1,297 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+  "task_id": "VS01-T01-REPAIR01",
+  "turn_id": "VS01-T01-REPAIR01-20260820T181710Z",
+  "codex_run_id": "codex-desktop-VS01-T01-REPAIR01-20260820T181710Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t01-archive-source-foundation",
+  "base_sha": "b157c300df240b4383341e1285a6f96103be2d40",
+  "implementation_head_sha": "e9593137a4dbef6595cac8b8d89277e20ad5abc7",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/3",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t01-archive-source-foundation",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Close the four binding VS01-T01 review findings with shared archive semantics, stable physical-device evidence, deserialization invariants, and exact-head committed-diff CI while preserving the unchanged activation and task boundary.",
+  "acceptance_criteria": [
+    "P1-01 is closed by one deterministic archive-candidate evaluator used by both live inspection and ArchivePreflightReceipt validation.",
+    "P1-02 is closed by separating live parent correlation from stable MediaUUID or DiskUUID evidence obtained through a read-only parent diskutil query.",
+    "P2-01 is closed by enforcing UUIDv7, archive state relationships, source identities/order/prohibitions/paths/hash, and promotion path/hash relationships on deserialization.",
+    "P2-02 is closed by checking out the exact PR head and running git diff --check from the PR base SHA to head SHA.",
+    "All required adversarial, atomicity, property, schema, static, typing, coverage, scope, and evidence gates pass at the exact repair implementation SHA.",
+    "Cumulative substantive changes remain at or below 1,200 lines without minification, new dependencies, new public contracts, migrations, or scope expansion.",
+    "The prior private receipt is byte-preserved and the fresh live receipt remains ignored, owner-private, and redacted publicly.",
+    "The final commit contains only this new Repair01 handoff pair and PR #3 remains draft and unmerged."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-30",
+      "VS-01",
+      "SOURCE-PLAN-01",
+      "ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1",
+      "VS01-T01-REPAIR01-binding-repair-design"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "start",
+      "commit": "c3bbd289b9e783f9e812def99ce387e781c7ac9a",
+      "summary": "Verified the exact clean starting live head, base, draft PR, disabled auto-merge, successful starting CI, authentication boundary, and unchanged activation."
+    },
+    {
+      "phase": "repair_implementation",
+      "commit": "e9593137a4dbef6595cac8b8d89277e20ad5abc7",
+      "summary": "Replaced duplicated readiness logic with one pure evaluator; separated live and stable device identity; added archive, source, promotion, and UUID semantic validators; bound CI to the exact PR head; and added focused adversarial tests."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/contracts/archive.py",
+      "focus": "Shared precedence-ordered evaluator, stable physical identity kind, receipt state invariants, UUIDv7, and promotion path/hash validation."
+    },
+    {
+      "path": "src/bsl/infrastructure/macos_volume.py",
+      "focus": "Exact read-only parent-device argv, MediaUUID preference/DiskUUID fallback, live-parent Thunderbolt correlation, and no serial collection."
+    },
+    {
+      "path": "src/bsl/contracts/source_admission.py",
+      "focus": "Single approved source/prohibition constants and deterministic payload/path/manifest/hash/UUID validation."
+    },
+    {
+      "path": ".github/workflows/vs01-t01-ci.yml",
+      "focus": "Exact PR-head checkout and base-to-head committed whitespace diff."
+    },
+    {
+      "path": "tests",
+      "focus": "Serialized tampering, stable identity, source-set/prohibition, promotion-path, workflow, atomicity, symlink, corruption, truncation, concurrency, and Hypothesis coverage."
+    }
+  ],
+  "commands": [
+    {
+      "command": "exact local and GitHub start-state preflight",
+      "result": "PASS: branch/head/reachability/worktree/main refs/PR state/auto-merge/starting CI/login/token overrides all exact."
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS at e9593137a4dbef6595cac8b8d89277e20ad5abc7."
+    },
+    {
+      "command": "schema drift, registry hash, and workflow text assertions",
+      "result": "PASS: 2 focused tests; three committed schemas byte-current; registry hashes exact; workflow exact-head/base-to-head assertions exact."
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS: 75 files formatted; lint clean; 0 typing errors/warnings."
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS: 47 tests; 94.94% branch coverage."
+    },
+    {
+      "command": "SOURCE-PLAN-01 compilation twice",
+      "result": "PASS: six sources; semantic bytes and hashes equal; recomputed RFC 8785 SHA-256 caefe40c7ce400828cfe5703531a22ffd58ec9025a9227dd53c3b2b62a3770fe."
+    },
+    {
+      "command": "fresh synthetic fixture-only publication",
+      "result": "PASS: receipt 01a02063-8437-7371-b446-82800e1e70d3; object e28ccc9e132cb856abc65ef9f774ad8d54f2a44a09de32f253d119cc1747d009; 34 bytes; PUBLISHED; verified; fixture_only."
+    },
+    {
+      "command": "fresh read-only bsl archive inspect --volume-name BSL-Archive with full output suppressed",
+      "result": "PASS: exit 0; VOLUME_NOT_FOUND; candidate_present=false; only permitted non-identifying booleans were emitted publicly."
+    },
+    {
+      "command": "activation, source manifest, lockfile, changed-path, prohibited transport, legacy identity, and sensitive-field audits",
+      "result": "PASS: unchanged approved bytes; 12 Repair01 paths all authorized; no production transport, legacy field, serial collection, or live identity in Git."
+    },
+    {
+      "command": "git diff --check b157c300df240b4383341e1285a6f96103be2d40...e9593137a4dbef6595cac8b8d89277e20ad5abc7 && git fsck --full && git status --porcelain",
+      "result": "PASS: exact committed diff clean; fsck reported dangling objects only; tracked worktree clean before handoff creation."
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "P1-01 contradictory archive readiness",
+      "status": "met",
+      "evidence": "One pure evaluator is invoked by adapter and contract; serialized contradictory ready and candidate-derived receipts fail."
+    },
+    {
+      "criterion": "P1-02 live identifier mistaken for stable identity",
+      "status": "met",
+      "evidence": "live_parent_device is distinct; only nonempty parent MediaUUID or DiskUUID plus closed evidence kind can satisfy stable identity."
+    },
+    {
+      "criterion": "P2-01 missing semantic validation",
+      "status": "met",
+      "evidence": "All three receipt UUIDs, archive relationships, source set/order/prohibitions/manifest/quarantine/hash, and promotion path/hash are adversarially validated."
+    },
+    {
+      "criterion": "P2-02 plain unbounded git diff check",
+      "status": "met",
+      "evidence": "CI checks out pull_request.head.sha and verifies HEAD_SHA plus git diff --check BASE_SHA...HEAD_SHA."
+    },
+    {
+      "criterion": "exact-head CI and completion comment",
+      "status": "pending until final handoff head is pushed; exact run URL/result will be posted in the completion comment"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "starting_live_head",
+      "sha": "c3bbd289b9e783f9e812def99ce387e781c7ac9a"
+    },
+    {
+      "kind": "starting_ci",
+      "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/32396633229/job/96514858593",
+      "result": "SUCCESS"
+    },
+    {
+      "kind": "repair_implementation_head",
+      "sha": "e9593137a4dbef6595cac8b8d89277e20ad5abc7"
+    },
+    {
+      "kind": "final_live_handoff_head",
+      "status": "commit containing this pair; exact SHA and exact-head CI result are necessarily recorded after commit in the PR completion comment"
+    },
+    {
+      "kind": "final_ci_workflow",
+      "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t01-ci.yml",
+      "status": "pending final handoff-head push"
+    },
+    {
+      "kind": "source_plan_semantic_sha256",
+      "sha256": "caefe40c7ce400828cfe5703531a22ffd58ec9025a9227dd53c3b2b62a3770fe"
+    },
+    {
+      "kind": "synthetic_promotion_receipt",
+      "receipt_id": "01a02063-8437-7371-b446-82800e1e70d3",
+      "object_sha256": "e28ccc9e132cb856abc65ef9f774ad8d54f2a44a09de32f253d119cc1747d009",
+      "byte_count": 34,
+      "disposition": "PUBLISHED"
+    },
+    {
+      "kind": "fresh_private_live_archive_receipt",
+      "path": ".local/evidence/VS01-T01/archive-preflight.json",
+      "sha256": "05d5129a0a3c9a581ef63bee325dfd7ee3207585b904ec6157bb7782f149ca62",
+      "committed": false,
+      "readiness": "VOLUME_NOT_FOUND",
+      "candidate_present": false
+    },
+    {
+      "kind": "preserved_prior_private_receipt",
+      "path": ".local/evidence/VS01-T01/archive-preflight.c3bbd289.json",
+      "sha256": "fa83083a4018cbf14bd603da383572659835c4c9af76fda733e5c41374e68084",
+      "committed": false,
+      "preserved_unchanged": true
+    },
+    {
+      "kind": "schema_sha256",
+      "contract": "ArchivePreflightReceipt",
+      "sha256": "3a251c47a86e6f5727852dea4f70307399b5d6a3413fb704093fb6bcdebbf5cc"
+    },
+    {
+      "kind": "schema_sha256",
+      "contract": "ArchiveObjectPromotionReceipt",
+      "sha256": "f639d512782a57850047368b7ad3cc428fab733cb9c129902901504aaa59c006"
+    },
+    {
+      "kind": "schema_sha256",
+      "contract": "SourceAcquisitionDryRun",
+      "sha256": "0a13ee34120c1fd7e0e6a21d97b90da2c5f450ad20814f418334970c85548343"
+    },
+    {
+      "kind": "contract_registry_sha256",
+      "sha256": "24cbcf0ec664fe82d4c466cd9893bd0af22af63b11a80554879133e373cca464"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T01/VS01-T01-REPAIR01-20260820T181710Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T01/VS01-T01-REPAIR01-20260820T181710Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 680,
+    "production_loc_removed": 0,
+    "test_loc_added": 501,
+    "test_loc_removed": 0,
+    "generated_loc": 950,
+    "production_files_added": 7,
+    "production_files_removed": 0,
+    "modules_added": [
+      "bsl.application.source_admission",
+      "bsl.contracts.archive",
+      "bsl.contracts.source_admission",
+      "bsl.infrastructure.archive_store",
+      "bsl.infrastructure.macos_volume",
+      "bsl.interfaces.cli"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl archive inspect",
+      "bsl source plan"
+    ],
+    "dependencies_added": [
+      "pydantic==2.13.4",
+      "rfc8785==0.1.4",
+      "uuid6==2025.0.1"
+    ],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "ArchivePreflightReceipt",
+      "SourceAcquisitionDryRun",
+      "ArchiveObjectPromotionReceipt"
+    ],
+    "abstractions": [
+      {
+        "name": "evaluate_archive_candidate",
+        "reason": "One pure local evaluator is the binding archive-readiness contract and removes the adapter's duplicate decision tree."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Replaced duplicated readiness code rather than adding a second validator-specific rule path.",
+      "Used one closed enum and three explicit candidate fields rather than a device identity framework.",
+      "Used local Pydantic validators and exact constants rather than a generic validation or rules engine.",
+      "Used parameterized serialized-tampering tests and standard-library JSON schema formatting rather than bespoke helpers."
+    ],
+    "known_duplication_or_debt": [
+      "The live archive remains fail-closed because no exact-name volume was present; no ready state was fabricated.",
+      "Cumulative accounting is 1,093 nonblank substantive additions plus 16 substantive removals = 1,109; 614 generated schema lines, 336 generated lock lines, 154 immutable activation lines, and append-only handoff evidence are reported separately."
+    ],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The intended live archive volume was not present, so later owner-profile review still requires the owner-private fresh receipt and a truthful rerun when the intended device is available.",
+    "The exact final handoff commit SHA and its CI run cannot exist before this pair is committed; the completion comment is the authoritative post-commit receipt for those two identities."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact final live PR head and the owner-provided full fresh private archive receipt.",
+    "Joseph must later decide whether to approve that exact reviewed head; this repair turn provides no merge authority."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
