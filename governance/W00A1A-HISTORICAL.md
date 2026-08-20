@@ -26,3 +26,5 @@ Known unpushed terminal identities remain untouched:
 - W00G implementation: `e52cfb070e608d411e3552f722d58e73266763e1`
 
 None of these files, checks, schemas, records, templates, branches, or terminal identities is a future universal contract.
+
+These legacy bootstrap/review/owner-record artifacts are also historical and non-authoritative: `governance/schemas/chatgpt-review.schema.json`, `governance/templates/chatgpt-review.md`, `governance/schemas/owner-merge-authorization.schema.json`, `governance/templates/owner-merge-authorization.md`, `governance/GITHUB_OWNER_SETUP.md`, and `governance/W00_ACCEPTANCE.md`. Their bytes remain unchanged where W00C does not explicitly update the surrounding audit document.

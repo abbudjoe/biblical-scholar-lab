@@ -23,18 +23,13 @@ The model is subordinate to deterministic tools, reviewed evidence, rights contr
 
 Explicitly absent from VS-01: model training, Lambda execution, vector search, LangGraph, Inspect AI, full-canon context, mobile clients, accounts, and speculative service scaffolding.
 
-## Implementation order
+## Current implementation order
 
-1. `W00` — repository governance, exact-head review, owner authorization, and integrity checks.
-2. `W01` — activation validation, simplicity enforcement, and minimal project tooling.
-3. `W02` — minimal authoritative storage and archive/private-vault preflight.
-4. `W03` — exact `SOURCE-PLAN-01` acquisition and verification.
-5. `W04` — minimal VS-01 scholarly domain records.
-6. `W05` — exact tools, evidence packet, deterministic runtime, verification, and audit.
-7. `W06` — approved benchmark loaders and deterministic reference evaluation.
-8. `W07` — minimal accessible Study workspace.
-9. `W08` — framework and retrieval adapters only after the reference slice proves a need.
-10. `W09` — Lambda and training control plane only after A0 and benchmark validity.
+1. W00A1a is merged historical bootstrap governance.
+2. W00C is the current closure PR under `ACT-W00C-GOVERNANCE-CLOSURE-v2` repair.
+3. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
+4. After W00C merges, governance implementation is closed.
+5. The next task is `VS01-T01 — Local Archive and Source-Admission Foundation`.
 
 ## Simplicity rule
 
@@ -42,4 +37,4 @@ Only contracts named by the active `ImplementationActivationManifest` may become
 
 ## Current implementation gate
 
-`GOV-01`, GOV-01-ERRATA-01/02, and `ACT-W00-REPOSITORY-GOVERNANCE-v3` are approved. The final clean-room package review has passed. Production implementation may begin only after owner bootstrap of the public repository, and only through `ACT-W00-REPOSITORY-GOVERNANCE-v3`.
+Governance implementation is present: W00A1a is historical and W00C is the current closure PR. Biblical-product implementation has not started. `ACT-W00C-GOVERNANCE-CLOSURE-v2` is active; after W00C merges, `VS01-T01` is next.

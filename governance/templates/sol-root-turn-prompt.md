@@ -42,6 +42,8 @@ Before any GitHub write, verify the active `gh` login is `abbudjoe`, verify no t
 
 Implement only the activated capability. Do not create future scaffolding. Do not alter experiment, source, benchmark, product, safety, rights, or architecture semantics.
 
+Reusable sequence: task-specific activation and CI → Sol draft PR and concise handoff → ChatGPT exact-head review → Joseph exact-head approval → separate merge-only prompt/turn → unchanged-head and task-specific-check verification → `--match-head-commit`.
+
 At completion:
 
 1. Run every required validation.
@@ -52,6 +54,6 @@ At completion:
 6. Post the completion comment with the live PR head.
 7. Stop with an allowed disposition.
 
-Do not mark ready, create/post an owner authorization, merge, enable auto-merge, push to `main`, start another task, or claim merge readiness during this root turn.
+Do not mark ready, submit approval, merge, enable auto-merge, push to `main`, start another task, or claim merge readiness during this root turn.
 
-A later owner-authorized merge-only turn may merge only the exact head named in a current `OwnerMergeAuthorizationRecord`.
+A later separately prompted merge-only turn may merge only the unchanged head that ChatGPT reviewed and Joseph explicitly approved, using `--match-head-commit` after task-specific checks and conversations pass.
