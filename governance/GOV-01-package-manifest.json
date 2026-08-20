@@ -1,15 +1,15 @@
 {
   "artifact_id": "GOV-01",
   "status": "APPROVED",
-  "approved_revision": "3 + ERRATA-01 + ERRATA-02",
+  "approved_revision": "3 + ERRATA-01 + ERRATA-02 + S03",
   "proposal_date": "2026-08-17",
-  "approval_date": "2026-08-17",
+  "approval_date": "2026-08-20",
   "design_baseline_commit": "2056d707865df8ab5e3f5ba55e07bd372c6ef752",
   "github_execution_identity": "abbudjoe",
   "github_auth_mode": "GH_CLI_EXISTING_AUTH",
-  "owner_merge_authorization": "EXACT_HEAD_CHATGPT_CONVERSATION_APPROVAL_AND_SEPARATE_MERGE_ONLY_TURN",
+  "owner_merge_authorization": "CHATGPT_EXACT_HEAD_REVIEW_JOSEPH_EXACT_HEAD_CONVERSATION_APPROVAL_SEPARATE_MERGE_ONLY_TURN_NO_UNIVERSAL_OWNER_RECORD",
   "approved_design_document": "design/approved/GOV-01-public-repository-governance-and-review-package.md",
-  "activation_state": "V1_SUPERSEDED_V2_SUPERSEDED_V3_FROZEN_APPROVED",
+  "activation_state": "W00A1A_HISTORICAL_W00C_CLOSURE_APPROVED",
   "files": [
     {
       "path": ".codex/agents/luna-runner.toml",
@@ -28,13 +28,13 @@
     },
     {
       "path": ".github/pull_request_template.md",
-      "sha256": "c962291adbd68a80d8fbf85638ab49cee39babbbb10ff638e90d93f8e47f1624",
-      "bytes": 2460
+      "sha256": "43755d1f73a8645f2d1a7a61c15cb4cec00d384047dbe5ae1024c895a3368dee",
+      "bytes": 2498
     },
     {
       "path": "AGENTS.md",
-      "sha256": "376d9d31c8c7f9c6869c48dd4251cfe58bd776a10c5f58eb6c947b3508e0a9d3",
-      "bytes": 9623
+      "sha256": "4736248e76a2a708a1b72ffacf4a79eadac50336e09c404577c38787dd939a6d",
+      "bytes": 9592
     },
     {
       "path": "CONTRIBUTING.md",
@@ -68,18 +68,18 @@
     },
     {
       "path": "governance/BRANCH_AND_RULESET_SPEC.md",
-      "sha256": "e0be27823917836717e3aa0b1d8c8823a82c012675d4987abe34d0286242931c",
-      "bytes": 2465
+      "sha256": "b41c71db9df558476e479b5dbf6c0508ae63dd02a97720fdde41edff260bbb25",
+      "bytes": 3162
     },
     {
       "path": "governance/CHATGPT_REVIEW_SPEC.md",
-      "sha256": "9ed87b8b815c5002f913883047d7c7852d2c906f04f236a3aa7d337767f66f70",
-      "bytes": 1061
+      "sha256": "615ba6d49f8558cf047b8680043d9646be0aabffee9b0fbde71a94a7c881ced9",
+      "bytes": 1573
     },
     {
       "path": "governance/GITHUB_CLI_OPERATION_POLICY.md",
-      "sha256": "70205a69839635bd1fd8c1a0520ddaa88d52b150ce5a905b8ff2dd844fbe7420",
-      "bytes": 4891
+      "sha256": "f4de1eb1f223ce71ea460498c62f2bcd91d098d2202f04e0a5a1e560c617fd47",
+      "bytes": 4877
     },
     {
       "path": "governance/GITHUB_OWNER_SETUP.md",
@@ -93,13 +93,13 @@
     },
     {
       "path": "governance/OWNER_MERGE_AUTHORIZATION_SPEC.md",
-      "sha256": "c663f0c148890ecb453ac8cf190e8ac7d9959137b4163e49a60c15473fb6062c",
-      "bytes": 3095
+      "sha256": "cbeaabde2e3ee9b503cbee37733b1d3cf4f8161d55af34da8151ecade071af1b",
+      "bytes": 3694
     },
     {
       "path": "governance/REQUIRED_CHECKS_SPEC.md",
-      "sha256": "f3715de8bef718722ef83debc13f44da61068f556f290bec0f4c0f4cae2da3dd",
-      "bytes": 3239
+      "sha256": "1c4dd753f78c72d53468ed2ec16ea7e52bcf5b91dbb14726e8814b60a8aee3a1",
+      "bytes": 3599
     },
     {
       "path": "governance/ROOT_TURN_HANDOFF_SPEC.md",
@@ -110,6 +110,11 @@
       "path": "governance/W00_ACCEPTANCE.md",
       "sha256": "4cda7b9550e63454251fb4b2c0c388a2a87ff5f1c1436c29bc982d9f5afad43b",
       "bytes": 3147
+    },
+    {
+      "path": "governance/W00A1A-HISTORICAL.md",
+      "sha256": "740736de4f1e4e2a66cd87ac64a416aa6a33159f47fc65727f0fc64a1ecbfad7",
+      "bytes": 1119
     },
     {
       "path": "governance/schemas/chatgpt-review.schema.json",
@@ -148,8 +153,8 @@
     },
     {
       "path": "governance/templates/sol-merge-only-prompt.md",
-      "sha256": "7e7094e6a841009bcc19feeb04bf9668c64e457a0a5168d256cdc64d2dba223c",
-      "bytes": 1743
+      "sha256": "3ba6f9ea245047bbe80407bb23ea33e0cde749be3797599fd0eb953119f93035",
+      "bytes": 1647
     },
     {
       "path": "governance/templates/sol-root-turn-prompt.md",
@@ -180,15 +185,30 @@
       "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
       "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
       "bytes": 6697
+    },
+    {
+      "path": "design/approved/GOV-01-S03-lean-governance-closure.md",
+      "sha256": "9e2893fded0a8c9335af89ba98940130fb348abf439d9376f4e111cbe09ff9ec",
+      "bytes": 3949
+    },
+    {
+      "path": "activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json",
+      "sha256": "44d6f03c07ef39d3232f112bcb81dbb1d792c896449bb0be1ae0834df0ea1ca5",
+      "bytes": 6416
     }
   ],
-  "file_count": 34,
+  "file_count": 37,
   "activation": {
-    "activation_id": "ACT-W00-REPOSITORY-GOVERNANCE-v3",
-    "path": "activations/ACT-W00-REPOSITORY-GOVERNANCE-v3.json",
-    "sha256": "60def3ad374823a3c9065ad43deb6fb41b7ff079de52a212dc7c47c18d0d30c6",
-    "approved_design_commit": "09f3f30b4638d0bdc3345e7eda554266270c1267",
-    "approved_at": "2026-08-17T21:51:31Z"
+    "activation_id": "ACT-W00C-GOVERNANCE-CLOSURE-v1",
+    "path": "activations/ACT-W00C-GOVERNANCE-CLOSURE-v1.json",
+    "sha256": "44d6f03c07ef39d3232f112bcb81dbb1d792c896449bb0be1ae0834df0ea1ca5",
+    "approved_design_commit": "5ab9183e11c1a1716435ce3e1057306c089b932b",
+    "approved_at": "2026-08-20T08:50:22-04:00"
+  },
+  "governance_closure": {
+    "id": "GOV-01-S03",
+    "path": "design/approved/GOV-01-S03-lean-governance-closure.md",
+    "sha256": "9e2893fded0a8c9335af89ba98940130fb348abf439d9376f4e111cbe09ff9ec"
   },
   "conformance_errata": {
     "id": "GOV-01-ERRATA-01",

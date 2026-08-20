@@ -1,5 +1,11 @@
 # ChatGPT exact-head review specification
 
+## GOV-01-S03 active rule
+
+ChatGPT reviews one exact live PR head; any new commit invalidates the review. Structured review comments and legacy schemas/templates are optional evidence, not trusted checks. After a clean review, Joseph's exact-head approval in the current ChatGPT conversation is the human gate, and ChatGPT provides a separate merge-only prompt with the repository, PR, exact head, clean-review identity, and Joseph approval reference.
+
+## Historical pre-S03 specification — non-authoritative
+
 ## Dispositions
 
 ```text

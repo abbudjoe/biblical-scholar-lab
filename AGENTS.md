@@ -172,7 +172,7 @@ Any new commit invalidates the prior review.
 
 After a clean review and all required checks, Joseph explicitly approves or rejects the exact PR head in the current ChatGPT conversation. The approval must identify the PR and exact head SHA.
 
-ChatGPT then produces a separate merge-only prompt containing a schema-valid `OwnerMergeAuthorizationRecord`. Joseph sends that prompt to Sol only when he intends the exact head to be merged.
+ChatGPT then produces a separate merge-only prompt containing the repository, PR, exact head, clean-review identity, and Joseph approval reference. Joseph sends that prompt to Sol only when he intends the exact head to be merged.
 
 The implementation root-turn prompt is never merge authority.
 
@@ -182,22 +182,20 @@ The merge-only Sol turn may only:
 
 1. Verify the live PR head equals the authorized head.
 2. Verify the referenced ChatGPT review remains current and clean.
-3. Post the owner-authorization record as a PR comment.
-4. Wait for `owner-merge-record-integrity` to pass.
-5. Verify all required checks and conversations.
-6. Mark the PR ready if needed.
-7. Execute:
+3. Verify the activation's task-specific checks and all conversations.
+4. Mark the PR ready if needed.
+5. Execute:
 
 ```bash
 gh pr merge <PR> --squash --match-head-commit <AUTHORIZED_HEAD_SHA> --delete-branch
 ```
 
-8. Verify the resulting `main` commit and post-merge checks.
-9. Post a merge receipt and stop.
+6. Verify the resulting `main` commit and post-merge checks.
+7. Post a merge receipt and stop.
 
 It may not modify code, push a new commit, alter settings, bypass checks, enable auto-merge, use `--admin`, approve itself, or start the next task.
 
-A changed head requires a new ChatGPT review and a new owner authorization.
+A changed head requires a new ChatGPT review and a new Joseph approval.
 
 ## 12. Fail closed
 
@@ -207,7 +205,7 @@ Stop rather than guess when:
 - The active GitHub CLI login is not `abbudjoe`.
 - A token override environment variable is present.
 - Authentication would require token display, login, logout, refresh, or account switching.
-- The owner authorization is absent, malformed, stale, reused, or mismatched to the live PR head.
+- The merge-only prompt, clean-review identity, Joseph approval reference, or exact live head is absent or mismatched.
 - A source revision or license differs from the approved plan.
 - Benchmark semantics are ambiguous or impossible to implement faithfully.
 - A required test/evidence item cannot be produced.

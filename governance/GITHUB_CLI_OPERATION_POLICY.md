@@ -86,7 +86,7 @@ These operations become eligible only after:
 1. ChatGPT has reviewed the exact live PR head and returned `CHATGPT_REVIEW_CLEAN`.
 2. Every required check passes for that exact head.
 3. Joseph explicitly approves that exact head in the current ChatGPT conversation.
-4. ChatGPT produces a separate merge-only prompt containing a schema-valid `OwnerMergeAuthorizationRecord`.
+4. ChatGPT produces a separate merge-only prompt naming the repository, PR, exact head, clean-review identity, and Joseph approval reference.
 5. Joseph sends that merge-only prompt to Sol.
 
 The merge-only turn may use:
@@ -105,7 +105,7 @@ The exact approved command is:
 gh pr merge <PR> --squash --match-head-commit <AUTHORIZED_HEAD_SHA> --delete-branch
 ```
 
-Any head mismatch, failed check, unresolved conversation, or malformed/stale authorization must stop without merge.
+Any head mismatch, failed task-specific check, unresolved conversation, or stale/mismatched approval reference must stop without merge.
 
 ## Class C — prohibited operations
 
@@ -157,13 +157,8 @@ Raw unrestricted `gh api` is not part of the ordinary Codex tool surface.
 
 ## Enforcement and fallback
 
-W00 must prove that:
+Each activation names its task-specific CI; there is no universal custom required status check. The merge-only prompt permits only the exact authorized sequence, `--match-head-commit` enforces the head, and any new commit invalidates review and approval.
 
-- The implementation prompt and validator prohibit Class B and Class C operations during root turns.
-- The merge-only prompt permits only the exact authorized merge sequence.
-- The exact head is enforced through `--match-head-commit`.
-- New commits make the authorization stale.
-
-Because the GitHub credential is shared, these are process and executable-policy controls, not independent identity authentication.
+Because the GitHub credential is shared, these are process controls, not independent identity authentication.
 
 If the merge-only boundary cannot be implemented faithfully, Codex may still commit, push, and manage draft PRs through existing `gh` authentication, but Joseph must perform every merge personally.

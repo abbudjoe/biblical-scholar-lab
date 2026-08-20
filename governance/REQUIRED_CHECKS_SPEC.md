@@ -1,5 +1,11 @@
 # Required checks specification
 
+## GOV-01-S03 active rule
+
+There is no universal custom required status check. Each activation names its task-specific CI. Structured review comments are optional evidence, and no owner-record workflow is required. Root-turn handoffs remain concise and append-only without a universal validator.
+
+## Historical W00A1a and planned checks — non-authoritative
+
 ## project-integrity
 
 Validates, at minimum:
