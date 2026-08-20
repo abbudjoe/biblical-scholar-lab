@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "contracts": [
+    {
+      "contract": "ArchivePreflightReceipt", "schema_version": "1.0", "owning_design": "VS-01",
+      "schema_path": "contracts/json-schema/archive/archive-preflight-receipt.schema.json",
+      "owning_task": "VS01-T01", "sha256": "ea008ffa13af3d7d5ec86ee0ca972e588deab1c144bbe8afc058e09b36d3ae3c"
+    },
+    {
+      "contract": "ArchiveObjectPromotionReceipt", "schema_version": "1.0", "owning_design": "VS-01",
+      "schema_path": "contracts/json-schema/archive/archive-object-promotion-receipt.schema.json",
+      "owning_task": "VS01-T01", "sha256": "1a347c1ee1ac5dc581663bbfcc12827357970ab4ee57697cbea8a4990ba13de2"
+    },
+    {
+      "contract": "SourceAcquisitionDryRun", "schema_version": "1.0", "owning_design": "VS-01",
+      "schema_path": "contracts/json-schema/acquisition/source-acquisition-dry-run.schema.json",
+      "owning_task": "VS01-T01", "sha256": "d412787d01cb3a614fa00514f845f95386320ea0efc0d7c7f7eb4bfb74b1817a"
+    }
+  ]
+}

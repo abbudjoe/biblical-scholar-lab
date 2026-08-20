@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "PlannedSource": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_components": {"items": {"type": "string"}, "title": "Admitted Components", "type": "array"},
+        "admitted_fields": {"default": [], "items": {"type": "string"}, "title": "Admitted Fields", "type": "array"},
+        "disposition": {"title": "Disposition", "type": "string"},
+        "doi": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Doi"},
+        "excluded_components": {
+          "default": [],
+          "items": {"type": "string"},
+          "title": "Excluded Components",
+          "type": "array"
+        },
+        "excluded_fields": {"default": [], "items": {"type": "string"}, "title": "Excluded Fields", "type": "array"},
+        "license": {"title": "License", "type": "string"},
+        "name": {"title": "Name", "type": "string"},
+        "normalized_scope": {"items": {"type": "string"}, "title": "Normalized Scope", "type": "array"},
+        "package": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Package"},
+        "planned_manifest_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Planned Manifest Identity",
+          "type": "string"
+        },
+        "pre_acquisition_stop_conditions": {
+          "items": {"type": "string"},
+          "title": "Pre Acquisition Stop Conditions",
+          "type": "array"
+        },
+        "provider": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Provider"},
+        "relative_quarantine_plan": {"title": "Relative Quarantine Plan", "type": "string"},
+        "repository": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Repository"},
+        "revision": {"title": "Revision", "type": "string"},
+        "rights_lineage": {"title": "Rights Lineage", "type": "string"},
+        "source_id": {"pattern": "^SP01-SRC-00[1-6]$", "title": "Source Id", "type": "string"},
+        "source_page": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Source Page"},
+        "tag": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Tag"},
+        "trademark": {"anyOf": [{"type": "string"}, {"type": "null"}], "default": null, "title": "Trademark"},
+        "transport_class": {"title": "Transport Class", "type": "string"}
+      },
+      "required": [
+        "source_id",
+        "name",
+        "transport_class",
+        "revision",
+        "admitted_components",
+        "normalized_scope",
+        "license",
+        "rights_lineage",
+        "disposition",
+        "relative_quarantine_plan",
+        "planned_manifest_identity",
+        "pre_acquisition_stop_conditions"
+      ],
+      "title": "PlannedSource",
+      "type": "object"
+    },
+    "SourcePlanSemanticPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {"const": "SOURCE-PLAN-01", "title": "Artifact Id", "type": "string"},
+        "cloud_execution_authorized": {"const": false, "title": "Cloud Execution Authorized", "type": "boolean"},
+        "design_baseline_commit": {"pattern": "^[0-9a-f]{40}$", "title": "Design Baseline Commit", "type": "string"},
+        "embedding_authorized": {"const": false, "title": "Embedding Authorized", "type": "boolean"},
+        "hard_prohibitions": {"items": {"type": "string"}, "title": "Hard Prohibitions", "type": "array"},
+        "manifest_identity": {"pattern": "^[0-9a-f]{64}$", "title": "Manifest Identity", "type": "string"},
+        "source_acquisition_authorized_now": {
+          "const": false,
+          "title": "Source Acquisition Authorized Now",
+          "type": "boolean"
+        },
+        "sources": {
+          "items": {"$ref": "#/$defs/PlannedSource"},
+          "maxItems": 6,
+          "minItems": 6,
+          "title": "Sources",
+          "type": "array"
+        },
+        "status": {"const": "APPROVED", "title": "Status", "type": "string"},
+        "training_authorized": {"const": false, "title": "Training Authorized", "type": "boolean"},
+        "vertical_slice": {"const": "VS-01", "title": "Vertical Slice", "type": "string"}
+      },
+      "required": [
+        "artifact_id",
+        "status",
+        "vertical_slice",
+        "design_baseline_commit",
+        "manifest_identity",
+        "training_authorized",
+        "embedding_authorized",
+        "cloud_execution_authorized",
+        "source_acquisition_authorized_now",
+        "sources",
+        "hard_prohibitions"
+      ],
+      "title": "SourcePlanSemanticPayload",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "SourceAcquisitionDryRun",
+      "default": "SourceAcquisitionDryRun",
+      "title": "Contract",
+      "type": "string"
+    },
+    "generated_at": {"format": "date-time", "title": "Generated At", "type": "string"},
+    "receipt_id": {"format": "uuid", "title": "Receipt Id", "type": "string"},
+    "schema_version": {"const": "1.0", "default": "1.0", "title": "Schema Version", "type": "string"},
+    "semantic_payload": {"$ref": "#/$defs/SourcePlanSemanticPayload"},
+    "semantic_sha256": {"pattern": "^[0-9a-f]{64}$", "title": "Semantic Sha256", "type": "string"}
+  },
+  "required": ["receipt_id", "generated_at", "semantic_payload", "semantic_sha256"],
+  "title": "SourceAcquisitionDryRun",
+  "type": "object"
+}
