@@ -1,28 +1,78 @@
 {
   "additionalProperties": false,
   "properties": {
-    "algorithm": {"const": "sha256", "default": "sha256", "title": "Algorithm", "type": "string"},
-    "byte_count": {"minimum": 0, "title": "Byte Count", "type": "integer"},
+    "algorithm": {
+      "const": "sha256",
+      "default": "sha256",
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "byte_count": {
+      "minimum": 0,
+      "title": "Byte Count",
+      "type": "integer"
+    },
     "contract": {
       "const": "ArchiveObjectPromotionReceipt",
       "default": "ArchiveObjectPromotionReceipt",
       "title": "Contract",
       "type": "string"
     },
-    "disposition": {"enum": ["PUBLISHED", "DEDUPLICATED"], "title": "Disposition", "type": "string"},
-    "fixture_only": {"const": true, "default": true, "title": "Fixture Only", "type": "boolean"},
-    "generated_at": {"format": "date-time", "title": "Generated At", "type": "string"},
+    "disposition": {
+      "enum": [
+        "PUBLISHED",
+        "DEDUPLICATED"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "fixture_only": {
+      "const": true,
+      "default": true,
+      "title": "Fixture Only",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
     "object_relative_path": {
       "pattern": "^objects/sha256/[0-9a-f]{2}/[0-9a-f]{64}$",
       "title": "Object Relative Path",
       "type": "string"
     },
-    "object_sha256": {"pattern": "^[0-9a-f]{64}$", "title": "Object Sha256", "type": "string"},
-    "receipt_id": {"format": "uuid", "title": "Receipt Id", "type": "string"},
-    "schema_version": {"const": "1.0", "default": "1.0", "title": "Schema Version", "type": "string"},
-    "verified": {"const": true, "default": true, "title": "Verified", "type": "boolean"}
+    "object_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Object Sha256",
+      "type": "string"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "verified": {
+      "const": true,
+      "default": true,
+      "title": "Verified",
+      "type": "boolean"
+    }
   },
-  "required": ["receipt_id", "generated_at", "object_sha256", "byte_count", "disposition", "object_relative_path"],
+  "required": [
+    "receipt_id",
+    "generated_at",
+    "object_sha256",
+    "byte_count",
+    "disposition",
+    "object_relative_path"
+  ],
   "title": "ArchiveObjectPromotionReceipt",
   "type": "object"
 }

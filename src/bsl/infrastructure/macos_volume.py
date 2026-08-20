@@ -10,9 +10,14 @@ from typing import cast
 
 from uuid6 import uuid7
 
-from bsl.contracts.archive import ArchiveCandidate, ArchivePreflightReceipt, ArchiveReadiness
+from bsl.contracts.archive import (
+    ArchiveCandidate,
+    ArchivePreflightReceipt,
+    ArchiveReadiness,
+    StablePhysicalDeviceIdKind,
+    evaluate_archive_candidate,
+)
 
-MINIMUM_FREE_BYTES = 20 * 1024**3
 RunCommand = Callable[[tuple[str, ...]], bytes]
 
 
@@ -89,7 +94,12 @@ def _thunderbolt_evidenced(profile: bytes, parent_device: str) -> bool:
     return any(item.get("bsd_name") == normalized or item.get("BSD Name") == normalized for item in _values(parsed))
 
 
-def _candidate(info: dict[str, object], parent: str | None, thunderbolt: bool) -> ArchiveCandidate:
+def _candidate(
+    info: dict[str, object],
+    parent: str | None,
+    parent_info: dict[str, object],
+    thunderbolt: bool,
+) -> ArchiveCandidate:
     filesystem = info.get("FilesystemType") or info.get("FileSystemPersonality")
     encrypted = info.get("APFSEncrypted", info.get("Encrypted"))
     internal = info.get("Internal")
@@ -99,6 +109,11 @@ def _candidate(info: dict[str, object], parent: str | None, thunderbolt: bool) -
         read_only = not info["Writable"]
     free_bytes = info.get("FreeSpace", info.get("VolumeFreeSpace"))
     volume_uuid = info.get("VolumeUUID")
+    stable_id = _optional(parent_info.get("MediaUUID"), str)
+    stable_kind = StablePhysicalDeviceIdKind.MEDIA_UUID if stable_id else None
+    if not stable_id:
+        stable_id = _optional(parent_info.get("DiskUUID"), str)
+        stable_kind = StablePhysicalDeviceIdKind.DISK_UUID if stable_id else None
     return ArchiveCandidate(
         filesystem=_optional(filesystem, str),
         encrypted=_optional(encrypted, bool),
@@ -106,39 +121,12 @@ def _candidate(info: dict[str, object], parent: str | None, thunderbolt: bool) -
         mounted=bool(_optional(mount_point, str)),
         read_only=_optional(read_only, bool),
         volume_uuid=_optional(volume_uuid, str),
-        parent_physical_device=parent,
+        live_parent_device=parent,
+        stable_physical_device_id=stable_id,
+        stable_physical_device_id_kind=stable_kind,
         free_bytes=_optional(free_bytes, int),
         thunderbolt_evidenced=thunderbolt,
     )
-
-
-def _space_readiness(free_bytes: int | None) -> tuple[ArchiveReadiness, tuple[str, ...]] | None:
-    if free_bytes is None:
-        return ArchiveReadiness.IDENTITY_INCOMPLETE, ("FREE_SPACE_NOT_PROVEN",)
-    low_space = ArchiveReadiness.INSUFFICIENT_SPACE, ("LESS_THAN_20_GIB_FREE",)
-    return low_space if free_bytes < MINIMUM_FREE_BYTES else None
-
-
-def _readiness(candidate: ArchiveCandidate) -> tuple[ArchiveReadiness, tuple[str, ...]]:
-    if None in (candidate.filesystem, candidate.internal, candidate.encrypted):
-        return ArchiveReadiness.IDENTITY_INCOMPLETE, ("REQUIRED_VOLUME_FACT_NOT_PROVEN",)
-    if cast(str, candidate.filesystem).lower() != "apfs":
-        return ArchiveReadiness.NOT_APFS, ("FILESYSTEM_NOT_APFS",)
-    if not candidate.encrypted:
-        return ArchiveReadiness.NOT_ENCRYPTED, ("ENCRYPTION_NOT_PROVEN",)
-    if candidate.internal:
-        return ArchiveReadiness.NOT_EXTERNAL, ("VOLUME_IS_INTERNAL",)
-    if not candidate.mounted:
-        return ArchiveReadiness.IDENTITY_INCOMPLETE, ("VOLUME_NOT_MOUNTED",)
-    if candidate.read_only is not False:
-        return ArchiveReadiness.READ_ONLY, ("VOLUME_READ_ONLY_OR_UNKNOWN",)
-    if not all((candidate.volume_uuid, candidate.parent_physical_device)):
-        return ArchiveReadiness.IDENTITY_INCOMPLETE, ("STABLE_IDENTITY_NOT_PROVEN",)
-    if space_readiness := _space_readiness(candidate.free_bytes):
-        return space_readiness
-    if not candidate.thunderbolt_evidenced:
-        return ArchiveReadiness.IDENTITY_INCOMPLETE, ("THUNDERBOLT_NOT_PROVEN",)
-    return ArchiveReadiness.CANDIDATE_READY_FOR_OWNER_APPROVAL, ()
 
 
 def inspect_volume(volume_name: str, *, system: str | None = None, run: RunCommand = _run) -> ArchivePreflightReceipt:
@@ -159,15 +147,20 @@ def inspect_volume(volume_name: str, *, system: str | None = None, run: RunComma
         info = cast(dict[str, object], plistlib.loads(run(("diskutil", "info", "-plist", device))))
         apfs = cast(dict[str, object], plistlib.loads(run(("diskutil", "apfs", "list", "-plist"))))
         parent = _parent_device(apfs, device)
+        parent_info: dict[str, object] = {}
         thunderbolt = False
         if parent:
+            parent_info = cast(
+                dict[str, object],
+                plistlib.loads(run(("diskutil", "info", "-plist", parent))),
+            )
             try:
                 profile = run(("system_profiler", "SPThunderboltDataType", "-json"))
                 thunderbolt = _thunderbolt_evidenced(profile, parent)
             except (RuntimeError, ValueError, json.JSONDecodeError):
                 thunderbolt = False
-        candidate = _candidate(info, parent, thunderbolt)
-        readiness, reasons = _readiness(candidate)
+        candidate = _candidate(info, parent, parent_info, thunderbolt)
+        readiness, reasons = evaluate_archive_candidate(candidate)
         return _receipt(volume_name, readiness, reasons, 1, candidate)
     except (OSError, RuntimeError, subprocess.SubprocessError, plistlib.InvalidFileException, ValueError):
         return _receipt(volume_name, ArchiveReadiness.INSPECTION_FAILED, ("INSPECTION_TOOL_FAILURE",), 0)

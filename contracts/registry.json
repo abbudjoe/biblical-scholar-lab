@@ -4,17 +4,17 @@
     {
       "contract": "ArchivePreflightReceipt", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/archive/archive-preflight-receipt.schema.json",
-      "owning_task": "VS01-T01", "sha256": "ea008ffa13af3d7d5ec86ee0ca972e588deab1c144bbe8afc058e09b36d3ae3c"
+      "owning_task": "VS01-T01", "sha256": "3a251c47a86e6f5727852dea4f70307399b5d6a3413fb704093fb6bcdebbf5cc"
     },
     {
       "contract": "ArchiveObjectPromotionReceipt", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/archive/archive-object-promotion-receipt.schema.json",
-      "owning_task": "VS01-T01", "sha256": "1a347c1ee1ac5dc581663bbfcc12827357970ab4ee57697cbea8a4990ba13de2"
+      "owning_task": "VS01-T01", "sha256": "f639d512782a57850047368b7ad3cc428fab733cb9c129902901504aaa59c006"
     },
     {
       "contract": "SourceAcquisitionDryRun", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/acquisition/source-acquisition-dry-run.schema.json",
-      "owning_task": "VS01-T01", "sha256": "d412787d01cb3a614fa00514f845f95386320ea0efc0d7c7f7eb4bfb74b1817a"
+      "owning_task": "VS01-T01", "sha256": "0a13ee34120c1fd7e0e6a21d97b90da2c5f450ad20814f418334970c85548343"
     }
   ]
 }

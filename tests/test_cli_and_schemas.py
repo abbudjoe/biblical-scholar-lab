@@ -27,36 +27,11 @@ SCHEMAS = (
 )
 
 
-def pretty_json(value: object, level: int = 0, *, expand: bool = False) -> str:
-    indent = "  " * level
-    child_indent = "  " * (level + 1)
-    if isinstance(value, dict):
-        if not value:
-            return "{}"
-        inline = json.dumps(value, sort_keys=True, separators=(", ", ": "))
-        if not expand and len(indent + inline) <= 120:
-            return inline
-        entries = []
-        for key, item in sorted(value.items()):
-            prefix = f"{child_indent}{json.dumps(key)}: "
-            rendered = pretty_json(item, level + 1)
-            if "\n" not in rendered and len(prefix + rendered) > 120:
-                rendered = pretty_json(item, level + 1, expand=True)
-            entries.append(prefix + rendered)
-        return "{\n" + ",\n".join(entries) + f"\n{indent}}}"
-    if isinstance(value, list):
-        inline = json.dumps(value, separators=(", ", ": "))
-        if not expand and all(not isinstance(item, (dict, list)) for item in value) and len(indent + inline) <= 120:
-            return inline
-        entries = [f"{child_indent}{pretty_json(item, level + 1)}" for item in value]
-        return "[\n" + ",\n".join(entries) + f"\n{indent}]"
-    return json.dumps(value)
-
-
 def schema_bytes(
     model: type[ArchivePreflightReceipt] | type[ArchiveObjectPromotionReceipt] | type[SourceAcquisitionDryRun],
 ) -> bytes:
-    return (pretty_json(model.model_json_schema(by_alias=False)) + "\n").encode()
+    rendered = json.dumps(model.model_json_schema(by_alias=False), indent=2, sort_keys=True)
+    return f"{rendered}\n".encode()
 
 
 def test_schema_generation_has_no_drift_and_registry_hashes_match() -> None:
@@ -68,6 +43,16 @@ def test_schema_generation_has_no_drift_and_registry_hashes_match() -> None:
     for entry in registry["contracts"]:
         path = ROOT / entry["schema_path"]
         assert entry["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:
+    workflow = (ROOT / ".github/workflows/vs01-t01-ci.yml").read_text()
+    assert "ref: ${{ github.event.pull_request.head.sha }}" in workflow
+    assert "HEAD_SHA: ${{ github.event.pull_request.head.sha }}" in workflow
+    assert "BASE_SHA: ${{ github.event.pull_request.base.sha }}" in workflow
+    assert 'test "$(git rev-parse HEAD)" = "$HEAD_SHA"' in workflow
+    assert 'git diff --check "${BASE_SHA}...${HEAD_SHA}"' in workflow
+    assert "      - run: git diff --check\n" not in workflow
 
 
 def test_cli_plan_and_invalid_input_are_machine_readable(capsys) -> None:
@@ -85,12 +70,16 @@ def test_cli_archive_persists_private_receipt_and_maps_exit_codes(tmp_path: Path
     monkeypatch.chdir(tmp_path)
 
     def receipt(readiness: ArchiveReadiness) -> ArchivePreflightReceipt:
+        reasons = {
+            ArchiveReadiness.VOLUME_NOT_FOUND: ("NO_EXACT_NAME_MATCH",),
+            ArchiveReadiness.UNSUPPORTED_HOST: ("DARWIN_REQUIRED",),
+        }[readiness]
         return ArchivePreflightReceipt(
             receipt_id=uuid7(),
             generated_at=datetime.now(UTC),
             requested_volume_name="BSL-Archive",
             readiness=readiness,
-            reasons=(),
+            reasons=reasons,
             candidate_count=0,
             candidate=None,
         )

@@ -3,15 +3,113 @@
     "ArchiveCandidate": {
       "additionalProperties": false,
       "properties": {
-        "encrypted": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "title": "Encrypted"},
-        "filesystem": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Filesystem"},
-        "free_bytes": {"anyOf": [{"minimum": 0, "type": "integer"}, {"type": "null"}], "title": "Free Bytes"},
-        "internal": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "title": "Internal"},
-        "mounted": {"title": "Mounted", "type": "boolean"},
-        "parent_physical_device": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Parent Physical Device"},
-        "read_only": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "title": "Read Only"},
-        "thunderbolt_evidenced": {"title": "Thunderbolt Evidenced", "type": "boolean"},
-        "volume_uuid": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Volume Uuid"}
+        "encrypted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Encrypted"
+        },
+        "filesystem": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Filesystem"
+        },
+        "free_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Free Bytes"
+        },
+        "internal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Internal"
+        },
+        "live_parent_device": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Live Parent Device"
+        },
+        "mounted": {
+          "title": "Mounted",
+          "type": "boolean"
+        },
+        "read_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Read Only"
+        },
+        "stable_physical_device_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stable Physical Device Id"
+        },
+        "stable_physical_device_id_kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StablePhysicalDeviceIdKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "thunderbolt_evidenced": {
+          "title": "Thunderbolt Evidenced",
+          "type": "boolean"
+        },
+        "volume_uuid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Volume Uuid"
+        }
       },
       "required": [
         "filesystem",
@@ -20,7 +118,9 @@
         "mounted",
         "read_only",
         "volume_uuid",
-        "parent_physical_device",
+        "live_parent_device",
+        "stable_physical_device_id",
+        "stable_physical_device_id_kind",
         "free_bytes",
         "thunderbolt_evidenced"
       ],
@@ -43,24 +143,70 @@
       ],
       "title": "ArchiveReadiness",
       "type": "string"
+    },
+    "StablePhysicalDeviceIdKind": {
+      "enum": [
+        "MEDIA_UUID",
+        "DISK_UUID"
+      ],
+      "title": "StablePhysicalDeviceIdKind",
+      "type": "string"
     }
   },
   "additionalProperties": false,
   "properties": {
-    "candidate": {"anyOf": [{"$ref": "#/$defs/ArchiveCandidate"}, {"type": "null"}]},
-    "candidate_count": {"minimum": 0, "title": "Candidate Count", "type": "integer"},
+    "candidate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArchiveCandidate"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
     "contract": {
       "const": "ArchivePreflightReceipt",
       "default": "ArchivePreflightReceipt",
       "title": "Contract",
       "type": "string"
     },
-    "generated_at": {"format": "date-time", "title": "Generated At", "type": "string"},
-    "readiness": {"$ref": "#/$defs/ArchiveReadiness"},
-    "reasons": {"items": {"type": "string"}, "title": "Reasons", "type": "array"},
-    "receipt_id": {"format": "uuid", "title": "Receipt Id", "type": "string"},
-    "requested_volume_name": {"minLength": 1, "title": "Requested Volume Name", "type": "string"},
-    "schema_version": {"const": "1.0", "default": "1.0", "title": "Schema Version", "type": "string"}
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "readiness": {
+      "$ref": "#/$defs/ArchiveReadiness"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "requested_volume_name": {
+      "minLength": 1,
+      "title": "Requested Volume Name",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
   },
   "required": [
     "receipt_id",

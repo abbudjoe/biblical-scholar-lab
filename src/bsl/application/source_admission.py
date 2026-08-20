@@ -10,23 +10,13 @@ import rfc8785
 from uuid6 import uuid7
 
 from bsl.contracts.source_admission import (
+    HARD_PROHIBITIONS,
     PlannedSource,
     SourceAcquisitionDryRun,
     SourcePlanSemanticPayload,
 )
 
 APPROVED_MANIFEST_SHA256 = "9410d89f00829dd7bfe0d71d4f27a64b59046d8f38c353426e161d7c36415816"
-HARD_PROHIBITIONS = (
-    "no training",
-    "no embeddings or vector indexes",
-    "no Lambda or other cloud execution",
-    "no automatic source updates",
-    "no mixed-rights MACULA ingestion",
-    "no apparatus",
-    "no copyrighted modern translation or study Bible page",
-    "no user-private source",
-    "no model-generated source evidence",
-)
 
 
 def _object_without_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
