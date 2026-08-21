@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1",
+  "activation_sha256": "98c5488ee9ee429de7e248362f554a1df9a45cb8c0fc99cc8425bc0e914a1b82",
+  "task_id": "VS01-T02B-IMP",
+  "turn_id": "VS01-T02B-IMP-SOL-20260821T170753Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t02b-source-admission-kernel",
+  "worktree": "/Users/joseph/.codex/worktrees/bsl-vs01-t02b",
+  "base_sha": "65a6bf333b53e497652a8fa3676ed00413c35d40",
+  "design_sha": "1affe7ea5f78a8b4260ea1f44a20629826ecf9a7",
+  "activation_commit_sha": "42314835c6907d70a29fc1ebc742b488f9118653",
+  "implementation_head_sha": "109b223633ac0fdb98e0d6108d6d0488319bd981",
+  "pr_url": null,
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t02b-source-admission-kernel",
+  "required_ci": {
+    "name": "vs01-t01-ci",
+    "status": "PENDING_POST_HANDOFF_PUSH",
+    "url": null,
+    "note": "The mandated sequence creates this handoff-only commit before the first push, draft PR, and exact-head CI run; final identities are posted in the completion comment."
+  },
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false
+  },
+  "objective": "Implement only the approved code-only VS01-T02B source-admission kernel with three portable contracts, one-source CLI acquisition, exact GitHub and bounded WEB adapters, quarantine validation, immutable content-addressed promotion, and idempotent snapshot handling using synthetic evidence only.",
+  "design_conformance": {
+    "status": "CONFORMING",
+    "independent_review": "CLEAN",
+    "reviewed_dod_items": 14,
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "42314835c6907d70a29fc1ebc742b488f9118653",
+      "summary": "Committed the exact approved activation pair and the single decision-index row first."
+    },
+    {
+      "phase": "implementation",
+      "commit": "109b223633ac0fdb98e0d6108d6d0488319bd981",
+      "summary": "Added the three contracts/schemas, source adapters, quarantine-first admission flow, immutable authority publication, one-source CLI, and synthetic regression suite."
+    }
+  ],
+  "commands": [
+    {
+      "command": "dependency-free Draft 2020-12 schema-keyword validation plus sha256sum -c for the approved activation",
+      "result": "PASS; activation schema-valid and exact SHA-256 sidecar matched"
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS; 20 packages checked and 21 lock entries resolved"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check .",
+      "result": "PASS; 85 files already formatted and lint clean"
+    },
+    {
+      "command": "uv run ruff check --select C901,PLR0915 <changed production modules>",
+      "result": "PASS; all functions within cyclomatic and statement limits"
+    },
+    {
+      "command": "uv run pyright",
+      "result": "PASS; 0 errors, 0 warnings, 0 information messages"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 173 passed and total branch coverage 90.17%"
+    },
+    {
+      "command": "schema drift and contract-registry hash tests",
+      "result": "PASS in tests/test_cli_and_schemas.py"
+    },
+    {
+      "command": "independent specification-conformance rereview after all repairs",
+      "result": "CLEAN; every mapped DoD item classified met"
+    },
+    {
+      "command": "git diff --check 65a6bf333b53e497652a8fa3676ed00413c35d40 && git fsck --full",
+      "result": "PASS; fsck reported dangling objects only"
+    }
+  ],
+  "evaluations": [
+    {"criterion": "exact three contracts, schemas, registry hashes, and approved source-spec anchors", "status": "met"},
+    {"criterion": "exact six-source manifest, revisions, tags, components, exclusions, rights, and attribution", "status": "met"},
+    {"criterion": "one-source machine-readable CLI with no --all", "status": "met"},
+    {"criterion": "initialized-root enforcement and unique quarantine decisions", "status": "met"},
+    {"criterion": "GitHub pinned raw paths and Abbott-Smith PDF prohibition", "status": "met"},
+    {"criterion": "WEB package identity, redirects, archive limits, inventory, source text, rights, and executable safety", "status": "met"},
+    {"criterion": "immutable promotion, dependency-before-snapshot publication, and rollback", "status": "met"},
+    {"criterion": "complete existing-authority projection verification and rerun idempotency", "status": "met"},
+    {"criterion": "synthetic-only tests and no network or real archive access", "status": "met"},
+    {"criterion": "coverage, quality, complexity, and 1,500-line hard boundary", "status": "met"},
+    {"criterion": "draft PR exact-head CI and completion comment", "status": "pending until post-handoff push"}
+  ],
+  "artifacts": [
+    {"kind": "generated_schema", "path": "contracts/json-schema/acquisition/fetch-receipt.schema.json", "sha256": "29db4545fc6c2c3604ae6ff5eaf4c8031f97923b776f7d667f96fbb02541ca22"},
+    {"kind": "generated_schema", "path": "contracts/json-schema/acquisition/source-snapshot.schema.json", "sha256": "5fea04e854cd1a0a1eea34bcec9c1fa3ece166b0bacaede98066443b16a01fa3"},
+    {"kind": "generated_schema", "path": "contracts/json-schema/acquisition/admission-decision.schema.json", "sha256": "d1526aeebbcdb1b94281ccf22d0f8d7c23f7cbd0c7f19670aefb7f46e9db2779"},
+    {"kind": "handoff", "path": "handoffs/VS01-T02/VS01-T02B-IMP-SOL-20260821T170753Z.md"},
+    {"kind": "handoff", "path": "handoffs/VS01-T02/VS01-T02B-IMP-SOL-20260821T170753Z.json"}
+  ],
+  "complexity_receipt": {
+    "substantive_production_added": 1090,
+    "substantive_production_removed": 5,
+    "substantive_test_added": 389,
+    "substantive_test_removed": 1,
+    "substantive_registry_added": 15,
+    "substantive_changed_lines": 1500,
+    "generated_schema_lines": 1034,
+    "handwritten_production_files_changed": 4,
+    "production_modules_added": 2,
+    "public_contracts_added": ["FetchReceipt", "SourceSnapshot", "AdmissionDecision"],
+    "dependencies_added": [],
+    "migrations_added": [],
+    "max_module_nonblank_lines": 425,
+    "max_function_nonblank_lines": 48,
+    "max_class_nonblank_lines": 66,
+    "max_control_nesting": 3,
+    "max_cyclomatic_complexity": 10,
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "access_audit": {
+    "external_network_requests": 0,
+    "real_archive_reads": 0,
+    "real_archive_writes": 0,
+    "real_source_acquisitions": 0,
+    "real_source_bytes_committed": 0,
+    "lane_a_files_changed": 0,
+    "new_dependencies": 0,
+    "migrations": 0,
+    "billable_actions": 0
+  },
+  "known_risks": [
+    "The implementation proves only synthetic control paths; separately approved T02B-EXEC must perform any real source admission after merge and archive initialization.",
+    "The full pytest run emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 173 tests and the coverage gate passed.",
+    "The PR and CI identities are necessarily absent from this pre-push handoff artifact and are supplied by the completion comment after exact-head CI."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "merge_performed": false,
+  "approval_submitted": false,
+  "pr_marked_ready": false,
+  "next_task_started": false,
+  "next_required_action": "PUSH_DRAFT_PR_CI_COMPLETION_COMMENT_THEN_CHATGPT_REVIEW"
+}
