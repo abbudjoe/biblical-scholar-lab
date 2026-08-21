@@ -60,7 +60,7 @@ COMPONENTS: dict[str, dict[str, bytes]] = {
     "SP01-SRC-002": {
         "README.md": b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/3.0/",
         "64-Jn-morphgnt.txt": (
-            "040105 C- -------- καὶ καί καί\n040105 V- 3AAI-S-- κατέλαβεν. κατέλαβε(ν) καταλαμβάνω\n"
+            "040105 C- -------- καὶ καί καί\n040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε(ν) καταλαμβάνω\n"
         ).encode(),
     },
     "SP01-SRC-003": {
@@ -205,6 +205,34 @@ def test_every_approved_source_admits_synthetic_bytes(archive_root: Path, source
     if source_id != "SP01-SRC-004":
         assert all(REVISIONS[source_id] in url for url in transport.urls if "raw.githubusercontent.com" in url)
         assert source_id != "SP01-SRC-005" or all("manualgreeklexic00abborich.pdf" not in url for url in transport.urls)
+
+
+def test_morphgnt_exact_seven_column_target_is_accepted() -> None:
+    content, rights = source_transport._morphgnt_checks(COMPONENTS["SP01-SRC-002"])
+
+    assert content is True
+    assert rights is True
+
+
+@pytest.mark.parametrize(
+    "target_row",
+    (
+        "040105 V- 3AAI-S-- κατέλαβεν. κατέλαβε(ν) καταλαμβάνω",
+        "040105 V- 3AAI-S-- κατέλαβεν κατέλαβεν κατέλαβε(ν) καταλαμβάνω",
+        "040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν! κατέλαβε(ν) καταλαμβάνω",
+        "040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε καταλαμβάνω",
+        "040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε(ν) καταλαμβάνω!",
+        "040105 V- 3PAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε(ν) καταλαμβάνω",
+    ),
+)
+def test_morphgnt_target_column_mismatches_are_rejected(target_row: str) -> None:
+    files = COMPONENTS["SP01-SRC-002"] | {
+        "64-Jn-morphgnt.txt": f"040105 C- -------- καὶ καί καί\n{target_row}\n".encode()
+    }
+    content, rights = source_transport._morphgnt_checks(files)
+
+    assert content is False
+    assert rights is True
 
 
 @pytest.mark.parametrize("case", ("unknown", "duplicate", "reordered", "changed-revision"))
