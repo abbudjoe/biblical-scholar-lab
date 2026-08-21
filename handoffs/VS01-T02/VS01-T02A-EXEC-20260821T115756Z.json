@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1",
+  "task_id": "VS01-T02A-EXEC",
+  "turn_id": "VS01-T02A-EXEC-20260821T115756Z",
+  "codex_run_id": "codex-desktop-VS01-T02A-EXEC-20260821T115756Z",
+  "status": "FAILED",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t02a-archive-initialization",
+  "base_sha": "65a6bf333b53e497652a8fa3676ed00413c35d40",
+  "implementation_head_sha": "cd277986edd02d6b8c31e1faf17440b5e15d42df",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/6",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t02a-archive-initialization",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Invoke the approved canonical archive initializer exactly once after publishing its activation, then validate success read-only or stop cleanly under the authorized failure contract.",
+  "acceptance_criteria": [
+    "Start from exact main with a clean worktree, no prior branch or PR, approved public and private evidence, and absent canonical and staging paths.",
+    "Commit and push the exact approved activation before the archive write.",
+    "Invoke the exact initializer command once without wrapping, redirecting, retrying, or calling archive inspect.",
+    "On nonzero exit, inspect only canonical-root and matching-staging-path presence, retain no archive path, and stop without the success validator.",
+    "Change no production, test, contract, schema, dependency, profile, lockfile, workflow, or approved-design file.",
+    "Contact no source and start no later task."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "SOURCE-PLAN-01",
+      "VS01-T02",
+      "ARCHIVE-PROFILE-BSL-ARCHIVE-v1",
+      "ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1",
+      "VS01-T02A-EXEC"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "cd277986edd02d6b8c31e1faf17440b5e15d42df",
+      "summary": "Added the byte-exact approved activation and sidecar and updated only the decision-index authorization rows."
+    },
+    {
+      "phase": "archive_execution",
+      "write_category": "INITIALIZATION_ONLY",
+      "initializer_invocation_count": 1,
+      "summary": "The sole initializer invocation exited nonzero; the authorized failure check found no canonical root and no matching staging path."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "activations/ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1.json",
+      "focus": "Byte identity, approved activation scope, and schema conformance."
+    },
+    {
+      "path": "design/DECISION_INDEX.md",
+      "focus": "Historical T02A-IMP status and active T02A-EXEC authorization row only."
+    },
+    {
+      "path": "handoffs/VS01-T02/VS01-T02A-EXEC-20260821T115756Z.json",
+      "focus": "Public-safe clean-failure evidence and exact one-invocation accounting."
+    }
+  ],
+  "commands": [
+    {
+      "command": "read-only start-state, Git/GitHub/auth/profile/private-evidence/root/staging/prior-task preflight",
+      "result": "PASS; exact base and login, token overrides absent, profile sidecar and two approved private hashes passed, one ready candidate validated without values, and archive paths were absent."
+    },
+    {
+      "command": "activation schema validation and shasum -a 256 -c activations/ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1.sha256",
+      "result": "PASS; activation SHA-256 35b7f94a62fc9fcdcafc0475b68ee9bbd0e02b90776d76856930f397b234c19b."
+    },
+    {
+      "command": "git push --set-upstream origin HEAD:refs/heads/codex/vs01-t02a-archive-initialization",
+      "result": "PASS; remote task head cd277986edd02d6b8c31e1faf17440b5e15d42df and remote main 65a6bf333b53e497652a8fa3676ed00413c35d40."
+    },
+    {
+      "command": "final repeated clean/evidence/archive-path/local-head/remote-head pre-write gate",
+      "result": "PASS immediately before execution."
+    },
+    {
+      "command": "uv run bsl archive initialize --profile profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.json --private-receipt .local/evidence/VS01-T01/archive-preflight.json --private-apfs-snapshot .local/evidence/VS01-T01/archive-profile-diagnostics/apfs-list-post-merge.plist --root /Volumes/BSL-Archive/BiblicalScholarLab",
+      "result": "NONZERO exit 2 after 0.874 seconds during the 2026-08-21T11:56Z execution window; public-safe category OPERATION_FAILED because mounted archive evidence did not match the approved current APFS volume; invocation count 1."
+    },
+    {
+      "command": "authorized post-failure canonical-root and matching-staging-path existence check",
+      "result": "PASS clean-failure condition; canonical root absent and matching staging path count 0."
+    },
+    {
+      "command": "bsl archive inspect",
+      "result": "NOT INVOKED."
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "Task-specific disposition",
+      "status": "BLOCKED_EXECUTION_FAILED_CLEAN"
+    },
+    {
+      "criterion": "Initializer result",
+      "status": "not initialized; sole invocation failed closed before retaining an archive root"
+    },
+    {
+      "criterion": "Success-only post-write validator and redacted evidence",
+      "status": "not run and not created, as required after nonzero initializer exit"
+    },
+    {
+      "criterion": "Source and later-task isolation",
+      "status": "met; source requests 0 and no T02B or VS01-T03 work"
+    },
+    {
+      "criterion": "Schema status mapping",
+      "status": "The task disposition is recorded above; top-level FAILED is used because the unchanged public handoff schema does not enumerate BLOCKED_EXECUTION_FAILED_CLEAN."
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "activation_commit",
+      "sha": "cd277986edd02d6b8c31e1faf17440b5e15d42df"
+    },
+    {
+      "kind": "approved_public_profile_sha256",
+      "sha256": "1b1571c1b18a1c0e73858b2e3d24d2e1be848e01651665e25f99c9e110c58ef7"
+    },
+    {
+      "kind": "approved_private_receipt_sha256",
+      "sha256": "6c3baa9f428bbe55b0062a06af214a1892510375edcb82f47748e5fc5ff8da0c"
+    },
+    {
+      "kind": "approved_private_apfs_snapshot_sha256",
+      "sha256": "5cbef8cee7f9f180afc941380eb2bbfc5d053026ce94444ea513da5360818870"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T02/VS01-T02A-EXEC-20260821T115756Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T02/VS01-T02A-EXEC-20260821T115756Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 0,
+    "production_loc_removed": 0,
+    "test_loc_added": 0,
+    "test_loc_removed": 0,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [],
+    "abstractions": [],
+    "simpler_alternatives_considered": [
+      "No implementation, repair, fallback, retry, cleanup, or schema change was permitted or performed."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The approved private evidence and the current mounted APFS volume no longer agree under the merged initializer's live binding check.",
+    "The canonical archive remains uninitialized; no retry or evidence refresh is authorized in this turn."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact head and public-safe clean-failure evidence; Joseph must decide whether a newly designed and approved evidence-refresh or execution turn is warranted."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
