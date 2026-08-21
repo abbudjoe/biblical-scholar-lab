@@ -56,34 +56,30 @@ LAYOUT_DIRECTORIES = (
 )
 
 
-def _current_apfs_plist() -> bytes:
+def _diskutil_plist(arguments: tuple[str, ...]) -> bytes:
     try:
-        result = subprocess.run(("diskutil", "apfs", "list", "-plist"), check=False, capture_output=True, timeout=15)
+        result = subprocess.run(("diskutil", *arguments), check=False, capture_output=True, timeout=15)
     except (OSError, subprocess.SubprocessError):
-        raise ValueError("current APFS inspection failed") from None
+        raise ValueError("system volume inspection failed") from None
     if result.returncode != 0:
-        raise ValueError("current APFS inspection failed")
+        raise ValueError("system volume inspection failed")
     return result.stdout
 
 
-def _evidence_digest(_path: Path, data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def _nothing(_path: Path) -> None:
-    return None
+def _mount_info(mount: Path) -> bytes:
+    return _diskutil_plist(("info", "-plist", str(mount)))
 
 
 @dataclass(frozen=True)
 class _Services:
     inspect: Callable[[str], ArchivePreflightReceipt] = inspect_volume
-    current_apfs: Callable[[], bytes] = _current_apfs_plist
-    evidence_digest: Callable[[Path, bytes], str] = _evidence_digest
+    current_apfs: Callable[[], bytes] = lambda: _diskutil_plist(("apfs", "list", "-plist"))
+    mount_info: Callable[[Path], bytes] = _mount_info
+    evidence_digest: Callable[[Path, bytes], str] = lambda _path, data: hashlib.sha256(data).hexdigest()
     new_uuid: Callable[[], UUID] = uuid7
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
-    is_mount: Callable[[Path], bool] = os.path.ismount
     sandbox_root: Path | None = None
-    before_publish: Callable[[Path], None] = _nothing
+    before_publish: Callable[[Path], None] = lambda _path: None
 
 
 def _read_regular(path: Path, label: str) -> bytes:
@@ -131,31 +127,22 @@ def _ready_candidate(receipt: ArchivePreflightReceipt, volume_name: str, label: 
 
 
 def _require_candidate_agreement(approved: ArchiveCandidate, live: ArchiveCandidate) -> None:
-    approved_facts = (
-        approved.filesystem and approved.filesystem.lower(),
-        approved.encrypted,
-        approved.internal,
-        approved.mounted,
-        approved.read_only,
-        approved.volume_uuid,
-        approved.live_parent_device,
-        approved.stable_physical_device_id,
-        approved.stable_physical_device_id_kind,
-        approved.thunderbolt_evidenced,
+    approved_facts = approved.model_copy(
+        update={
+            "filesystem": approved.filesystem and approved.filesystem.lower(),
+            "live_parent_device": live.live_parent_device,
+            "free_bytes": live.free_bytes,
+        }
     )
-    live_facts = (
-        live.filesystem and live.filesystem.lower(),
-        live.encrypted,
-        live.internal,
-        live.mounted,
-        live.read_only,
-        live.volume_uuid,
-        live.live_parent_device,
-        live.stable_physical_device_id,
-        live.stable_physical_device_id_kind,
-        live.thunderbolt_evidenced,
+    live_facts = live.model_copy(update={"filesystem": live.filesystem and live.filesystem.lower()})
+    readiness = (
+        live_facts.filesystem,
+        live_facts.encrypted,
+        live_facts.internal,
+        live_facts.mounted,
+        live_facts.read_only,
     )
-    if approved_facts != live_facts or approved_facts[:5] != ("apfs", True, False, True, False):
+    if approved_facts != live_facts or readiness != ("apfs", True, False, True, False):
         raise ValueError("approved and live archive identity or readiness facts differ")
     if approved.free_bytes is None or live.free_bytes is None:
         raise ValueError("approved and live effective free space must be proven")
@@ -190,7 +177,13 @@ def _matching_apfs_entries(parsed: object, live: ArchiveCandidate) -> list[tuple
         if len(stores) != 1 or not isinstance(stores[0], dict):
             continue
         store = cast(dict[str, object], stores[0])
-        if store.get("DeviceIdentifier") != live.live_parent_device:
+        store_identity = (live.stable_physical_device_id_kind, store.get("DeviceIdentifier"), store.get("DiskUUID"))
+        expected_identity = (
+            StablePhysicalDeviceIdKind.DISK_UUID,
+            live.live_parent_device,
+            live.stable_physical_device_id,
+        )
+        if store_identity != expected_identity:
             continue
         for volume in volumes:
             if isinstance(volume, dict):
@@ -222,29 +215,41 @@ def _require_apfs_facts(
     volume: dict[str, object],
     profile: ApprovedArchiveProfile,
     live: ArchiveCandidate,
-) -> None:
-    if volume.get("VolumeName", volume.get("Name")) != profile.public_requirements.volume_name:
-        raise ValueError("current APFS volume name differs from the approved profile")
-    if volume.get("Encryption") is not True:
-        raise ValueError("current APFS encryption state differs from approval")
-    if volume.get("Locked") is not False:
-        raise ValueError("current APFS lock state differs from approval")
+) -> str:
+    security = (
+        volume.get("VolumeName", volume.get("Name")) == profile.public_requirements.volume_name,
+        volume.get("Encryption") is True,
+        volume.get("Locked") is False,
+    )
+    if not all(security):
+        raise ValueError("current APFS identity or security state differs from approval")
     effective_free = _effective_apfs_free(container, volume, profile.public_requirements.quota_bytes_observed)
     if effective_free < profile.public_requirements.minimum_effective_free_bytes:
         raise ValueError("current APFS effective free space is below the minimum")
     if live.free_bytes != effective_free:
         raise ValueError("fresh preflight and current APFS capacity evidence differ")
+    device = volume.get("DeviceIdentifier")
+    if not isinstance(device, str) or not device:
+        raise ValueError("current APFS volume device identifier is missing")
+    return device
 
 
-def _require_current_apfs(data: bytes, profile: ApprovedArchiveProfile, live: ArchiveCandidate) -> None:
+def _plist_dictionary(data: bytes, label: str) -> dict[str, object]:
     try:
         parsed = plistlib.loads(data)
     except (plistlib.InvalidFileException, ValueError):
-        raise ValueError("current APFS evidence is not a valid plist") from None
+        raise ValueError(f"{label} is not a valid plist dictionary") from None
+    if not isinstance(parsed, dict):
+        raise ValueError(f"{label} is not a valid plist dictionary")
+    return cast(dict[str, object], parsed)
+
+
+def _require_current_apfs(data: bytes, profile: ApprovedArchiveProfile, live: ArchiveCandidate) -> str:
+    parsed = _plist_dictionary(data, "current APFS evidence")
     matches = _matching_apfs_entries(parsed, live)
     if len(matches) != 1:
         raise ValueError("current APFS evidence does not uniquely match the archive volume and physical store")
-    _require_apfs_facts(*matches[0], profile, live)
+    return _require_apfs_facts(*matches[0], profile, live)
 
 
 def _actual_root(requested: Path, profile: ApprovedArchiveProfile, sandbox: Path | None) -> tuple[Path, Path]:
@@ -259,12 +264,11 @@ def _actual_root(requested: Path, profile: ApprovedArchiveProfile, sandbox: Path
     return sandbox / Path(*logical.parts[1:]), sandbox
 
 
-def _require_mount(root: Path, boundary: Path, volume_name: str, is_mount: Callable[[Path], bool]) -> None:
+def _require_safe_mount_path(root: Path, boundary: Path, volume_name: str) -> None:
     mount = root.parent
-    try:
-        relative = mount.relative_to(boundary)
-    except ValueError:
-        raise ValueError("archive root escapes its filesystem boundary") from None
+    if not mount.is_relative_to(boundary):
+        raise ValueError("archive root escapes its filesystem boundary")
+    relative = mount.relative_to(boundary)
     current = boundary
     for part in relative.parts:
         current = current / part
@@ -274,10 +278,35 @@ def _require_mount(root: Path, boundary: Path, volume_name: str, is_mount: Calla
             raise ValueError("approved archive mount is absent") from None
         if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
             raise ValueError("archive mount path contains a symlink or non-directory")
-    if mount.name != volume_name or not is_mount(mount):
+    if mount.name != volume_name:
         raise ValueError("archive root is not on the exact approved mounted volume")
     if root.is_symlink():
         raise ValueError("archive root must not be a symlink")
+
+
+def _require_mount(
+    data: bytes,
+    logical_mount: Path,
+    profile: ApprovedArchiveProfile,
+    live: ArchiveCandidate,
+    apfs_volume_device: str,
+) -> None:
+    info = _plist_dictionary(data, "mounted archive evidence")
+    filesystems = tuple(info[key] for key in ("FilesystemType", "FileSystemPersonality") if key in info)
+    facts = (
+        info.get("VolumeName") == profile.public_requirements.volume_name,
+        info.get("VolumeUUID") == live.volume_uuid,
+        info.get("MountPoint") == str(logical_mount),
+        info.get("Internal") is False,
+        info.get("Writable") is True,
+        info.get("ReadOnlyVolume", info.get("ReadOnlyMedia")) is False,
+        info.get("ReadOnlyMedia", False) is False,
+        bool(filesystems),
+        all(type(value) is str and value.lower() == "apfs" for value in filesystems),
+        info.get("DeviceIdentifier") == apfs_volume_device,
+    )
+    if not all(facts):
+        raise ValueError("mounted archive evidence does not match the approved current APFS volume")
 
 
 def _canonical(model: ArchiveRootMarker | ArchiveInitializationReceipt) -> bytes:
@@ -388,29 +417,20 @@ def _require_marker_identity(
     profile_hash: str,
     candidate: ArchiveCandidate,
 ) -> None:
-    fields = {
-        "profile_id",
-        "profile_file_sha256",
-        "archive_preflight_receipt_sha256",
-        "post_merge_apfs_snapshot_sha256",
-        "canonical_archive_root",
-        "volume_name",
-        "stable_volume_identifier",
-        "stable_physical_identifier",
-        "stable_physical_identifier_kind",
-    }
-    expected = {
-        "profile_id": profile.profile_id,
-        "profile_file_sha256": profile_hash,
-        "archive_preflight_receipt_sha256": profile.profile_evidence.archive_preflight_receipt_sha256,
-        "post_merge_apfs_snapshot_sha256": profile.profile_evidence.post_merge_apfs_snapshot_sha256,
-        "canonical_archive_root": profile.public_requirements.canonical_archive_root,
-        "volume_name": profile.public_requirements.volume_name,
-        "stable_volume_identifier": candidate.volume_uuid,
-        "stable_physical_identifier": candidate.stable_physical_device_id,
-        "stable_physical_identifier_kind": candidate.stable_physical_device_id_kind,
-    }
-    if marker.model_dump(include=fields) != expected:
+    expected = marker.model_copy(
+        update={
+            "profile_id": profile.profile_id,
+            "profile_file_sha256": profile_hash,
+            "archive_preflight_receipt_sha256": profile.profile_evidence.archive_preflight_receipt_sha256,
+            "post_merge_apfs_snapshot_sha256": profile.profile_evidence.post_merge_apfs_snapshot_sha256,
+            "canonical_archive_root": profile.public_requirements.canonical_archive_root,
+            "volume_name": profile.public_requirements.volume_name,
+            "stable_volume_identifier": candidate.volume_uuid,
+            "stable_physical_identifier": candidate.stable_physical_device_id,
+            "stable_physical_identifier_kind": candidate.stable_physical_device_id_kind,
+        }
+    )
+    if marker != expected:
         raise ValueError("archive root marker differs from the approved live identity")
 
 
@@ -495,9 +515,11 @@ def initialize_archive(
     live_receipt = services.inspect(profile.public_requirements.volume_name)
     live = _ready_candidate(live_receipt, profile.public_requirements.volume_name, "fresh preflight")
     _require_candidate_agreement(approved, live)
-    _require_current_apfs(services.current_apfs(), profile, live)
+    apfs_volume_device = _require_current_apfs(services.current_apfs(), profile, live)
     root, boundary = _actual_root(requested_root, profile, services.sandbox_root)
-    _require_mount(root, boundary, profile.public_requirements.volume_name, services.is_mount)
+    logical_mount = Path(profile.public_requirements.canonical_archive_root).parent
+    _require_safe_mount_path(root, boundary, profile.public_requirements.volume_name)
+    _require_mount(services.mount_info(logical_mount), logical_mount, profile, live, apfs_volume_device)
     if root.exists() or root.is_symlink():
         if not (root / MARKER_PATH).is_file() or (root / MARKER_PATH).is_symlink():
             raise ValueError("every existing unmarked archive root is rejected")
