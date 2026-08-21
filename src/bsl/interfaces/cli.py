@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import NoReturn
 
+from bsl.application.archive_initialization import initialize_archive
 from bsl.application.source_admission import compile_source_plan
 from bsl.contracts.archive import ArchiveReadiness
 from bsl.infrastructure.macos_volume import inspect_volume
@@ -30,6 +31,11 @@ def _parser() -> JsonArgumentParser:
     archive_commands = archive.add_subparsers(dest="archive_command", required=True)
     inspect = archive_commands.add_parser("inspect")
     inspect.add_argument("--volume-name", required=True)
+    initialize = archive_commands.add_parser("initialize")
+    initialize.add_argument("--profile", required=True, type=Path)
+    initialize.add_argument("--private-receipt", required=True, type=Path)
+    initialize.add_argument("--private-apfs-snapshot", required=True, type=Path)
+    initialize.add_argument("--root", required=True, type=Path)
     source = commands.add_parser("source")
     source_commands = source.add_subparsers(dest="source_command", required=True)
     plan = source_commands.add_parser("plan")
@@ -56,6 +62,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         args = _parser().parse_args(argv)
         if args.command == "archive" and args.archive_command == "inspect":
             return _archive(args.volume_name)
+        if args.command == "archive" and args.archive_command == "initialize":
+            receipt = initialize_archive(args.profile, args.private_receipt, args.private_apfs_snapshot, args.root)
+            print(receipt.model_dump_json(indent=2))
+            return 0
         if args.command == "source" and args.source_command == "plan":
             print(compile_source_plan(args.manifest).model_dump_json(indent=2))
             return 0

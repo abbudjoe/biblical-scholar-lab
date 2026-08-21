@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "StablePhysicalDeviceIdKind": {
+      "enum": [
+        "MEDIA_UUID",
+        "DISK_UUID"
+      ],
+      "title": "StablePhysicalDeviceIdKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "archive_id": {
+      "format": "uuid",
+      "title": "Archive Id",
+      "type": "string"
+    },
+    "archive_preflight_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Preflight Receipt Sha256",
+      "type": "string"
+    },
+    "canary_relative_path": {
+      "const": "objects/sha256/fa/faeb22898dfceb94a94874b336f75be3d084f03f8fce2b24b8bf077134a9407b",
+      "title": "Canary Relative Path",
+      "type": "string"
+    },
+    "canary_sha256": {
+      "const": "faeb22898dfceb94a94874b336f75be3d084f03f8fce2b24b8bf077134a9407b",
+      "title": "Canary Sha256",
+      "type": "string"
+    },
+    "canonical_archive_root": {
+      "const": "/Volumes/BSL-Archive/BiblicalScholarLab",
+      "title": "Canonical Archive Root",
+      "type": "string"
+    },
+    "contract": {
+      "const": "ArchiveRootMarker",
+      "default": "ArchiveRootMarker",
+      "title": "Contract",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "initialization_receipt_relative_path": {
+      "pattern": "^registry/archive-initialization/[0-9a-f-]{36}\\.json$",
+      "title": "Initialization Receipt Relative Path",
+      "type": "string"
+    },
+    "layout_revision": {
+      "const": 1,
+      "default": 1,
+      "title": "Layout Revision",
+      "type": "integer"
+    },
+    "post_merge_apfs_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Post Merge Apfs Snapshot Sha256",
+      "type": "string"
+    },
+    "profile_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile File Sha256",
+      "type": "string"
+    },
+    "profile_id": {
+      "const": "ARCHIVE-PROFILE-BSL-ARCHIVE-v1",
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stable_physical_identifier": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Stable Physical Identifier",
+      "type": "string"
+    },
+    "stable_physical_identifier_kind": {
+      "$ref": "#/$defs/StablePhysicalDeviceIdKind"
+    },
+    "stable_volume_identifier": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Stable Volume Identifier",
+      "type": "string"
+    },
+    "volume_name": {
+      "const": "BSL-Archive",
+      "title": "Volume Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "archive_id",
+    "created_at",
+    "profile_id",
+    "profile_file_sha256",
+    "archive_preflight_receipt_sha256",
+    "post_merge_apfs_snapshot_sha256",
+    "canonical_archive_root",
+    "volume_name",
+    "stable_volume_identifier",
+    "stable_physical_identifier",
+    "stable_physical_identifier_kind",
+    "canary_sha256",
+    "canary_relative_path",
+    "initialization_receipt_relative_path"
+  ],
+  "title": "ArchiveRootMarker",
+  "type": "object"
+}

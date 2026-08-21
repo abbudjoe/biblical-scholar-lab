@@ -5,13 +5,17 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from pydantic import BaseModel
 from uuid6 import uuid7
 
 import bsl.interfaces.cli as cli
 from bsl.contracts.archive import (
+    ApprovedArchiveProfile,
+    ArchiveInitializationReceipt,
     ArchiveObjectPromotionReceipt,
     ArchivePreflightReceipt,
     ArchiveReadiness,
+    ArchiveRootMarker,
 )
 from bsl.contracts.source_admission import SourceAcquisitionDryRun
 from bsl.interfaces.cli import main
@@ -24,12 +28,16 @@ SCHEMAS = (
         ArchiveObjectPromotionReceipt,
     ),
     (ROOT / "contracts/json-schema/acquisition/source-acquisition-dry-run.schema.json", SourceAcquisitionDryRun),
+    (ROOT / "contracts/json-schema/archive/approved-archive-profile.schema.json", ApprovedArchiveProfile),
+    (ROOT / "contracts/json-schema/archive/archive-root-marker.schema.json", ArchiveRootMarker),
+    (
+        ROOT / "contracts/json-schema/archive/archive-initialization-receipt.schema.json",
+        ArchiveInitializationReceipt,
+    ),
 )
 
 
-def schema_bytes(
-    model: type[ArchivePreflightReceipt] | type[ArchiveObjectPromotionReceipt] | type[SourceAcquisitionDryRun],
-) -> bytes:
+def schema_bytes(model: type[BaseModel]) -> bytes:
     rendered = json.dumps(model.model_json_schema(by_alias=False), indent=2, sort_keys=True)
     return f"{rendered}\n".encode()
 
@@ -38,7 +46,7 @@ def test_schema_generation_has_no_drift_and_registry_hashes_match() -> None:
     for path, model in SCHEMAS:
         assert path.read_bytes() == schema_bytes(model)
     registry = json.loads((ROOT / "contracts/registry.json").read_text())
-    names = ["ArchivePreflightReceipt", "ArchiveObjectPromotionReceipt", "SourceAcquisitionDryRun"]
+    names = [model.__name__ for _path, model in SCHEMAS]
     assert [entry["contract"] for entry in registry["contracts"]] == names
     for entry in registry["contracts"]:
         path = ROOT / entry["schema_path"]

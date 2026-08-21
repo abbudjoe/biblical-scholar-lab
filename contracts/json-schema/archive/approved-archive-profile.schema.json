@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "_ArchiveProfilePrivacy": {
+      "additionalProperties": false,
+      "properties": {
+        "mount_device_identifier_committed": {
+          "const": false,
+          "title": "Mount Device Identifier Committed",
+          "type": "boolean"
+        },
+        "private_evidence_must_remain_uncommitted": {
+          "const": true,
+          "title": "Private Evidence Must Remain Uncommitted",
+          "type": "boolean"
+        },
+        "stable_physical_identifier_committed": {
+          "const": false,
+          "title": "Stable Physical Identifier Committed",
+          "type": "boolean"
+        },
+        "stable_volume_identifier_committed": {
+          "const": false,
+          "title": "Stable Volume Identifier Committed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "stable_volume_identifier_committed",
+        "stable_physical_identifier_committed",
+        "mount_device_identifier_committed",
+        "private_evidence_must_remain_uncommitted"
+      ],
+      "title": "_ArchiveProfilePrivacy",
+      "type": "object"
+    },
+    "_ProfileEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "archive_preflight_receipt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Archive Preflight Receipt Sha256",
+          "type": "string"
+        },
+        "post_merge_apfs_snapshot_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Post Merge Apfs Snapshot Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "archive_preflight_receipt_sha256",
+        "post_merge_apfs_snapshot_sha256"
+      ],
+      "title": "_ProfileEvidence",
+      "type": "object"
+    },
+    "_PublicArchiveRequirements": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_archive_root": {
+          "const": "/Volumes/BSL-Archive/BiblicalScholarLab",
+          "title": "Canonical Archive Root",
+          "type": "string"
+        },
+        "encrypted": {
+          "const": true,
+          "title": "Encrypted",
+          "type": "boolean"
+        },
+        "external": {
+          "const": true,
+          "title": "External",
+          "type": "boolean"
+        },
+        "filesystem": {
+          "const": "apfs",
+          "title": "Filesystem",
+          "type": "string"
+        },
+        "minimum_effective_free_bytes": {
+          "const": 21474836480,
+          "title": "Minimum Effective Free Bytes",
+          "type": "integer"
+        },
+        "mounted": {
+          "const": true,
+          "title": "Mounted",
+          "type": "boolean"
+        },
+        "quota_bytes_observed": {
+          "const": 650000003072,
+          "title": "Quota Bytes Observed",
+          "type": "integer"
+        },
+        "stable_physical_identity_required": {
+          "const": true,
+          "title": "Stable Physical Identity Required",
+          "type": "boolean"
+        },
+        "stable_volume_identity_required": {
+          "const": true,
+          "title": "Stable Volume Identity Required",
+          "type": "boolean"
+        },
+        "thunderbolt_evidenced": {
+          "const": true,
+          "title": "Thunderbolt Evidenced",
+          "type": "boolean"
+        },
+        "volume_name": {
+          "const": "BSL-Archive",
+          "title": "Volume Name",
+          "type": "string"
+        },
+        "writable": {
+          "const": true,
+          "title": "Writable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "volume_name",
+        "filesystem",
+        "encrypted",
+        "external",
+        "mounted",
+        "writable",
+        "thunderbolt_evidenced",
+        "stable_volume_identity_required",
+        "stable_physical_identity_required",
+        "quota_bytes_observed",
+        "minimum_effective_free_bytes",
+        "canonical_archive_root"
+      ],
+      "title": "_PublicArchiveRequirements",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved_at": {
+      "format": "date-time",
+      "title": "Approved At",
+      "type": "string"
+    },
+    "approved_by": {
+      "const": "Joseph Abbud",
+      "title": "Approved By",
+      "type": "string"
+    },
+    "invalidation_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Invalidation Conditions",
+      "type": "array"
+    },
+    "privacy": {
+      "$ref": "#/$defs/_ArchiveProfilePrivacy"
+    },
+    "profile_evidence": {
+      "$ref": "#/$defs/_ProfileEvidence"
+    },
+    "profile_id": {
+      "const": "ARCHIVE-PROFILE-BSL-ARCHIVE-v1",
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "public_requirements": {
+      "$ref": "#/$defs/_PublicArchiveRequirements"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "APPROVED_CANONICAL_ARCHIVE_TARGET",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile_id",
+    "status",
+    "approved_at",
+    "approved_by",
+    "profile_evidence",
+    "public_requirements",
+    "privacy",
+    "invalidation_conditions"
+  ],
+  "title": "ApprovedArchiveProfile",
+  "type": "object"
+}

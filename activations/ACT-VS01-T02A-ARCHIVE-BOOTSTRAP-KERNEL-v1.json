@@ -1,0 +1,146 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "1affe7ea5f78a8b4260ea1f44a20629826ecf9a7",
+  "approved_design_ids": [
+    "DR-10",
+    "DR-28",
+    "DR-30",
+    "VS-01",
+    "SOURCE-PLAN-01",
+    "VS01-T02",
+    "ARCHIVE-PROFILE-BSL-ARCHIVE-v1"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T02A-IMP",
+    "title": "Canonical archive bootstrap kernel",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t02a-archive-bootstrap-kernel",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Implement and test the canonical BSL-Archive bootstrap kernel, public-safe approved-profile contract, private root marker, initialization receipt, idempotent archive initializer, and authoritative content-addressed canary boundary using sanitized synthetic fixtures only, without reading or writing owner-private archive evidence, mutating the real archive, or contacting a source.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "A reviewed local command can validate the approved private archive profile and initialize or verify one canonical BiblicalScholarLab archive root after a later live-execution activation.",
+  "activated_invariants": [
+    "The implementation starts from main a0f7e76e99f63c0bdd0229a995733ebbe2e6bf7a.",
+    "The approved private evidence hashes are 6c3baa9f428bbe55b0062a06af214a1892510375edcb82f47748e5fc5ff8da0c and 5cbef8cee7f9f180afc941380eb2bbfc5d053026ce94444ea513da5360818870.",
+    "The exact canonical root is /Volumes/BSL-Archive/BiblicalScholarLab.",
+    "The implementation turn does not inspect owner-private evidence or the real archive.",
+    "No real archive path is created, initialized, verified, or mutated in this turn.",
+    "No external source URL or other external network resource is contacted.",
+    "The public profile contains no private device, volume, host, serial, or credential value.",
+    "The later live initializer must verify approved hashes, semantic receipt validity, fresh preflight identity, and current APFS quota/security evidence before writing.",
+    "Only an absent root may be initialized; every existing unmarked root fails closed.",
+    "First initialization uses a same-volume sibling staging tree and atomic rename.",
+    "The exact canary SHA-256 is faeb22898dfceb94a94874b336f75be3d084f03f8fce2b24b8bf077134a9407b.",
+    "ArchiveObjectPromotionReceipt remains fixture-only and byte-compatible.",
+    "Exactly ApprovedArchiveProfile, ArchiveRootMarker, and ArchiveInitializationReceipt are added as public contracts.",
+    "No dependency, database, source connector, acquisition, normalization, benchmark, retrieval, model, cloud, or billable behavior is introduced.",
+    "The turn stops at one open draft PR for ChatGPT exact-head review."
+  ],
+  "activated_paths": [
+    "README.md",
+    "design/APPROVED_BASELINE_SUMMARY.md",
+    "design/PACKAGE_STATUS.md",
+    "design/DECISION_INDEX.md",
+    "design/approved/VS01-T02-canonical-archive-and-raw-source-admission.md",
+    "design/approved/VS01-T02-canonical-archive-and-raw-source-admission.sha256",
+    "profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.json",
+    "profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.sha256",
+    "activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json",
+    "activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.sha256",
+    "contracts/registry.json",
+    "contracts/json-schema/archive/",
+    "src/bsl/contracts/archive.py",
+    "src/bsl/infrastructure/archive_store.py",
+    "src/bsl/application/archive_initialization.py",
+    "src/bsl/interfaces/cli.py",
+    "tests/",
+    "handoffs/VS01-T02/"
+  ],
+  "activated_contracts": [
+    "ApprovedArchiveProfile",
+    "ArchiveRootMarker",
+    "ArchiveInitializationReceipt"
+  ],
+  "activated_interfaces": [
+    "bsl archive initialize",
+    "existing vs01-t01-ci workflow"
+  ],
+  "activated_data_stores": [
+    "Git for public-safe profile, contracts, schemas, code, and sanitized fixtures.",
+    "Temporary pytest directories only.",
+    "No owner-private evidence or real archive data store is accessed."
+  ],
+  "activated_adapters": [
+    "Existing read-only macOS volume preflight.",
+    "Existing content-addressed archive-store primitives refactored behind fixture or authoritative-root validation."
+  ],
+  "required_tests": [
+    "The exact public profile and sidecar validate and contain no private identifiers.",
+    "Sanitized private receipt and APFS fixtures must match profile hashes before initialization.",
+    "A synthetic fresh preflight must be ready and match approved fake identities.",
+    "Synthetic current APFS evidence must match volume, physical store, quota, encryption, unlocked state, and filesystem.",
+    "Hash, identity, encryption, quota, mount, volume, physical-store, or Thunderbolt mismatch fails.",
+    "Internal, temporary, network, wrong-volume, symlink, path-traversal, and non-mount roots fail.",
+    "Every existing unmarked root, empty or nonempty, fails.",
+    "First initialization creates only the approved layout, marker, canary, and one persisted receipt.",
+    "Second identical initialization returns VERIFIED_EXISTING without changing bytes or modes.",
+    "Marker, receipt, canary, object, profile, or unexpected-top-level corruption fails.",
+    "A failed staged initialization leaves no canonical root and removes only its own staging tree.",
+    "Existing fixture promotion, concurrency, archive preflight, source dry-run, CLI, schema, and workflow tests remain green.",
+    "No test accesses /Volumes/BSL-Archive, .local/evidence, diskutil, system_profiler, or a source URL.",
+    "Ruff, Pyright strict, pytest/Hypothesis, and at least 90 percent branch coverage pass."
+  ],
+  "required_evidence": [
+    "Exact design, activation, implementation, and live handoff SHAs.",
+    "Design, profile, and activation checksum results.",
+    "Three new schema hashes and updated contract registry.",
+    "Synthetic initialization, marker, canary, idempotency, cleanup, and corruption receipts.",
+    "Byte-compatibility proof for existing contracts, SOURCE-PLAN-01, dependencies, lockfile, and workflow.",
+    "No-network, no-private-evidence, no-real-archive, changed-path, and prohibited-scope audits.",
+    "DR-30 handwritten/generated line, file, function, complexity, dependency, contract, and migration receipt.",
+    "Exact-head CI result and concise handoff."
+  ],
+  "explicit_non_goals": [
+    "No live archive initialization, owner-private profile inspection, or authoritative volume write.",
+    "No source connector, network request, download, clone, package acquisition, quarantine attempt, or source snapshot.",
+    "No normalization, evidence packet, page fixture, database, retrieval, benchmark, model, cloud, Lambda, Luna, training, evaluation, or billable action.",
+    "No BSL-Private implementation.",
+    "No generic storage framework, provider registry, plugin system, repository abstraction, or multi-backend archive API."
+  ],
+  "prohibited_scaffolding": [
+    "No T02A-EXEC, T02B connector, transport stub, TODO, feature flag, empty namespace, or future service shell.",
+    "No private UUID, BSD device, mount identifier, host identity, serial, passphrase, or raw plist in Git or tests.",
+    "No public-profile identity substitute for the private approved receipt.",
+    "No internal, temporary, network, other-volume, or cloud fallback.",
+    "No weakening or generalization of ArchiveObjectPromotionReceipt.",
+    "No minification, one-line control flow, or generated-file budget evasion."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 800,
+    "substantive_changed_lines_hard_limit": 1100,
+    "handwritten_production_files_hard_limit": 6,
+    "new_public_contracts_hard_limit": 3,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "The approved design and public profile are committed before activation and implementation.",
+    "The initializer and three new contracts are strict, complete, schema-current, and registry-bound.",
+    "All implementation tests use sanitized synthetic fixtures only.",
+    "No owner-private evidence, real archive path, or source network is accessed.",
+    "The implementation remains within hard simplicity limits.",
+    "Existing VS01-T01 and source-plan behavior remains regression-protected.",
+    "The final commit contains only the concise VS01-T02A handoff pair.",
+    "The PR remains open, draft, unapproved, and unmerged."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-20T21:43:52-04:00"
+  }
+}

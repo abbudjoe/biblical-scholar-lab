@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "ARCHIVE-PROFILE-BSL-ARCHIVE-v1",
+  "status": "APPROVED_CANONICAL_ARCHIVE_TARGET",
+  "approved_at": "2026-08-20T21:10:47-04:00",
+  "approved_by": "Joseph Abbud",
+  "profile_evidence": {
+    "archive_preflight_receipt_sha256": "6c3baa9f428bbe55b0062a06af214a1892510375edcb82f47748e5fc5ff8da0c",
+    "post_merge_apfs_snapshot_sha256": "5cbef8cee7f9f180afc941380eb2bbfc5d053026ce94444ea513da5360818870"
+  },
+  "public_requirements": {
+    "volume_name": "BSL-Archive",
+    "filesystem": "apfs",
+    "encrypted": true,
+    "external": true,
+    "mounted": true,
+    "writable": true,
+    "thunderbolt_evidenced": true,
+    "stable_volume_identity_required": true,
+    "stable_physical_identity_required": true,
+    "quota_bytes_observed": 650000003072,
+    "minimum_effective_free_bytes": 21474836480,
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab"
+  },
+  "privacy": {
+    "stable_volume_identifier_committed": false,
+    "stable_physical_identifier_committed": false,
+    "mount_device_identifier_committed": false,
+    "private_evidence_must_remain_uncommitted": true
+  },
+  "invalidation_conditions": [
+    "archive volume replacement or recreation",
+    "stable volume identity change",
+    "stable physical-device identity change",
+    "encryption state change",
+    "quota change",
+    "filesystem change",
+    "approved volume-name or canonical-root change",
+    "loss of positive Thunderbolt evidence",
+    "private evidence hash mismatch"
+  ]
+}
