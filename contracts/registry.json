@@ -30,6 +30,21 @@
       "contract": "ArchiveInitializationReceipt", "schema_version": "1.0", "owning_design": "VS01-T02",
       "schema_path": "contracts/json-schema/archive/archive-initialization-receipt.schema.json",
       "owning_task": "VS01-T02A", "sha256": "8c4b934b62bbfe360aa636b900eeab5e0a312cd0c44bd15b82ea370de9ca3cb1"
+    },
+    {
+      "contract": "FetchReceipt", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/acquisition/fetch-receipt.schema.json",
+      "owning_task": "VS01-T02B", "sha256": "29db4545fc6c2c3604ae6ff5eaf4c8031f97923b776f7d667f96fbb02541ca22"
+    },
+    {
+      "contract": "SourceSnapshot", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/acquisition/source-snapshot.schema.json",
+      "owning_task": "VS01-T02B", "sha256": "5fea04e854cd1a0a1eea34bcec9c1fa3ece166b0bacaede98066443b16a01fa3"
+    },
+    {
+      "contract": "AdmissionDecision", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/acquisition/admission-decision.schema.json",
+      "owning_task": "VS01-T02B", "sha256": "d1526aeebbcdb1b94281ccf22d0f8d7c23f7cbd0c7f19670aefb7f46e9db2779"
     }
   ]
 }

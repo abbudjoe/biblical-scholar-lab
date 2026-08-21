@@ -1,0 +1,490 @@
+{
+  "$defs": {
+    "PlannedSource": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_components": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Admitted Components",
+          "type": "array"
+        },
+        "admitted_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Admitted Fields",
+          "type": "array"
+        },
+        "disposition": {
+          "title": "Disposition",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "excluded_components": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Components",
+          "type": "array"
+        },
+        "excluded_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Fields",
+          "type": "array"
+        },
+        "license": {
+          "title": "License",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "normalized_scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Normalized Scope",
+          "type": "array"
+        },
+        "package": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package"
+        },
+        "planned_manifest_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Planned Manifest Identity",
+          "type": "string"
+        },
+        "pre_acquisition_stop_conditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pre Acquisition Stop Conditions",
+          "type": "array"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "relative_quarantine_plan": {
+          "title": "Relative Quarantine Plan",
+          "type": "string"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "string"
+        },
+        "rights_lineage": {
+          "title": "Rights Lineage",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^SP01-SRC-00[1-6]$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Page"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "trademark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trademark"
+        },
+        "transport_class": {
+          "title": "Transport Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "name",
+        "transport_class",
+        "revision",
+        "admitted_components",
+        "normalized_scope",
+        "license",
+        "rights_lineage",
+        "disposition",
+        "relative_quarantine_plan",
+        "planned_manifest_identity",
+        "pre_acquisition_stop_conditions"
+      ],
+      "title": "PlannedSource",
+      "type": "object"
+    },
+    "_ArchiveEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "byte_count"
+      ],
+      "title": "_ArchiveEntry",
+      "type": "object"
+    },
+    "_FetchedObject": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "rights_evidence": {
+          "title": "Rights Evidence",
+          "type": "boolean"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "byte_count",
+        "rights_evidence"
+      ],
+      "title": "_FetchedObject",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acquired_at": {
+      "format": "date-time",
+      "title": "Acquired At",
+      "type": "string"
+    },
+    "admission_attempt_id": {
+      "format": "uuid",
+      "title": "Admission Attempt Id",
+      "type": "string"
+    },
+    "admission_decision_relative_path": {
+      "title": "Admission Decision Relative Path",
+      "type": "string"
+    },
+    "admission_decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Admission Decision Sha256",
+      "type": "string"
+    },
+    "allowed_operations": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Operations",
+      "type": "array"
+    },
+    "archive_inventory": {
+      "items": {
+        "$ref": "#/$defs/_ArchiveEntry"
+      },
+      "title": "Archive Inventory",
+      "type": "array"
+    },
+    "attribution": {
+      "title": "Attribution",
+      "type": "string"
+    },
+    "content_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "SourceSnapshot",
+      "default": "SourceSnapshot",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "const": "ADMITTED",
+      "default": "ADMITTED",
+      "title": "Disposition",
+      "type": "string"
+    },
+    "edition_identity": {
+      "title": "Edition Identity",
+      "type": "string"
+    },
+    "extraction_code_identity": {
+      "const": "bsl.source-acquisition.v1",
+      "default": "bsl.source-acquisition.v1",
+      "title": "Extraction Code Identity",
+      "type": "string"
+    },
+    "fetch_receipt_relative_path": {
+      "title": "Fetch Receipt Relative Path",
+      "type": "string"
+    },
+    "fetch_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Fetch Receipt Sha256",
+      "type": "string"
+    },
+    "http_metadata_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Http Metadata Sha256",
+      "type": "string"
+    },
+    "language_identity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Language Identity"
+    },
+    "manifest_identity": {
+      "const": "9410d89f00829dd7bfe0d71d4f27a64b59046d8f38c353426e161d7c36415816",
+      "title": "Manifest Identity",
+      "type": "string"
+    },
+    "normalization_state": {
+      "const": "NOT_STARTED",
+      "default": "NOT_STARTED",
+      "title": "Normalization State",
+      "type": "string"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/_FetchedObject"
+      },
+      "minItems": 1,
+      "title": "Objects",
+      "type": "array"
+    },
+    "objects_aggregate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Objects Aggregate Sha256",
+      "type": "string"
+    },
+    "package_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Package Sha256"
+    },
+    "passage_identity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Passage Identity"
+    },
+    "retrieval_urls": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Retrieval Urls",
+      "type": "array"
+    },
+    "review_state": {
+      "const": "PENDING_CHATGPT_EXACT_HEAD_REVIEW",
+      "default": "PENDING_CHATGPT_EXACT_HEAD_REVIEW",
+      "title": "Review State",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "script_identity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Script Identity"
+    },
+    "snapshot_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Identity",
+      "type": "string"
+    },
+    "snapshot_relative_path": {
+      "title": "Snapshot Relative Path",
+      "type": "string"
+    },
+    "source_id": {
+      "enum": [
+        "SP01-SRC-001",
+        "SP01-SRC-002",
+        "SP01-SRC-003",
+        "SP01-SRC-004",
+        "SP01-SRC-005",
+        "SP01-SRC-006"
+      ],
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_spec": {
+      "$ref": "#/$defs/PlannedSource"
+    },
+    "source_spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Spec Sha256",
+      "type": "string"
+    },
+    "storage_zone": {
+      "const": "AUTHORITATIVE_ARCHIVE",
+      "default": "AUTHORITATIVE_ARCHIVE",
+      "title": "Storage Zone",
+      "type": "string"
+    },
+    "upstream_update_policy": {
+      "const": "FROZEN_NO_AUTOMATIC_REFRESH",
+      "default": "FROZEN_NO_AUTOMATIC_REFRESH",
+      "title": "Upstream Update Policy",
+      "type": "string"
+    }
+  },
+  "required": [
+    "content_identity",
+    "snapshot_identity",
+    "source_id",
+    "source_spec",
+    "source_spec_sha256",
+    "acquired_at",
+    "retrieval_urls",
+    "http_metadata_sha256",
+    "objects",
+    "archive_inventory",
+    "objects_aggregate_sha256",
+    "allowed_operations",
+    "attribution",
+    "language_identity",
+    "script_identity",
+    "edition_identity",
+    "passage_identity",
+    "manifest_identity",
+    "fetch_receipt_sha256",
+    "admission_decision_sha256",
+    "admission_attempt_id",
+    "fetch_receipt_relative_path",
+    "admission_decision_relative_path",
+    "snapshot_relative_path"
+  ],
+  "title": "SourceSnapshot",
+  "type": "object"
+}

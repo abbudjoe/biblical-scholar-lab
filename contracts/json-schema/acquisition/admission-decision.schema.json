@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "admitted_object_sha256": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Admitted Object Sha256",
+      "type": "array"
+    },
+    "attempt_id": {
+      "format": "uuid",
+      "title": "Attempt Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "AdmissionDecision",
+      "default": "AdmissionDecision",
+      "title": "Contract",
+      "type": "string"
+    },
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "ADMITTED",
+        "REJECTED",
+        "UNRESOLVED"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "fetch_receipt_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fetch Receipt Sha256"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "manifest_identity": {
+      "const": "9410d89f00829dd7bfe0d71d4f27a64b59046d8f38c353426e161d7c36415816",
+      "title": "Manifest Identity",
+      "type": "string"
+    },
+    "quarantine_relative_path": {
+      "title": "Quarantine Relative Path",
+      "type": "string"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_id": {
+      "enum": [
+        "SP01-SRC-001",
+        "SP01-SRC-002",
+        "SP01-SRC-003",
+        "SP01-SRC-004",
+        "SP01-SRC-005",
+        "SP01-SRC-006"
+      ],
+      "title": "Source Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "attempt_id",
+    "generated_at",
+    "source_id",
+    "manifest_identity",
+    "disposition",
+    "admitted_object_sha256",
+    "reasons",
+    "quarantine_relative_path"
+  ],
+  "title": "AdmissionDecision",
+  "type": "object"
+}
