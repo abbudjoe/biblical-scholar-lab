@@ -3,9 +3,10 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import stat
 import zipfile
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import PurePosixPath, PureWindowsPath
 from typing import cast
@@ -45,7 +46,7 @@ _EXECUTABLE_EXTENSIONS = {".app", ".bat", ".bin", ".class", ".cmd", ".com", ".dl
 _EXECUTABLE_MAGIC = (b"MZ", b"\x7fELF", b"#!", b"\0asm") + tuple(
     bytes.fromhex(value) for value in ("cafebabe", "feedface", "cefaedfe", "feedfacf", "cffaedfe")
 )
-_RIGHTS_CONFLICTS = ("all rights reserved", "license replaced", "license withdrawn", "permission revoked")
+_RIGHTS_CONFLICTS = ("license replaced", "license withdrawn", "permission revoked")
 
 
 @dataclass(frozen=True)
@@ -207,9 +208,18 @@ def _text(files: dict[str, bytes], path: str) -> str:
         raise ValueError(f"approved text component is not UTF-8: {path}") from None
 
 
-def _rights_claim(text: str, required: str, forbidden: tuple[str, ...]) -> bool:
+def _rights_claim(
+    text: str,
+    required: tuple[str, ...],
+    forbidden: tuple[str, ...],
+    conflict_patterns: tuple[str, ...] = (),
+) -> bool:
     lowered = text.lower()
-    return required in lowered and not any(value in lowered for value in (*forbidden, *_RIGHTS_CONFLICTS))
+    return (
+        all(value in lowered for value in required)
+        and not any(value in lowered for value in (*forbidden, *_RIGHTS_CONFLICTS))
+        and not any(re.search(pattern, lowered) for pattern in conflict_patterns)
+    )
 
 
 def _xml_root(files: dict[str, bytes], path: str) -> ElementTree.Element:
@@ -221,33 +231,82 @@ def _xml_root(files: dict[str, bytes], path: str) -> ElementTree.Element:
 
 def _sblgnt_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
     expected = "καὶ τὸ φῶς ἐν τῇ σκοτίᾳ φαίνει, καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν."
-    lines = (line for line in _text(files, "data/sblgnt/text/John.txt").splitlines() if line.endswith(expected))
-    content = sum(line.removesuffix(expected).split()[-1:] == ["1:5"] for line in lines) == 1
+    prefix = "John 1:5\t"
+    lines = tuple(
+        line.rstrip() for line in _text(files, "data/sblgnt/text/John.txt").splitlines() if line.startswith(prefix)
+    )
+    content = lines == (f"{prefix}{expected}",)
     rights = _rights_claim(
-        _text(files, "LICENSE"), "creative commons attribution 4.0", ("not licensed", "does not apply")
+        _text(files, "LICENSE"),
+        ("attribution 4.0 international",),
+        (
+            "not attribution 4.0 international",
+            "not licensed under attribution 4.0 international",
+            "attribution 4.0 international does not apply",
+        ),
+        (r"\bnot\s+(?:licensed|distributed)\s+under\b[^\r\n.]{0,96}\battribution\s+4\.0\s+international\b",),
     )
     return content, rights
 
 
 def _morphgnt_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
-    rows = tuple(line.split() for line in _text(files, "64-Jn-morphgnt.txt").splitlines() if line.startswith("430105 "))
-    row = rows[0] if len(rows) == 1 else []
-    content = len(row) >= 7 and row[1:4] == ["V-", "3SAAI-S", "κατέλαβεν"] and row[-1] == "καταλαμβάνω"
-    rights = _rights_claim(_text(files, "README.md"), "cc by-sa 3.0", ("not cc by-sa 3.0", "license unknown"))
+    rows = tuple(line.split() for line in _text(files, "64-Jn-morphgnt.txt").splitlines())
+    target = ("V-", "3AAI-S--", "κατέλαβεν.", "κατέλαβε(ν)", "καταλαμβάνω")
+    verse_rows = tuple(row for row in rows if row and row[0] == "040105")
+    content = sum(tuple(row[1:]) == target for row in verse_rows) == 1
+    rights = _rights_claim(
+        _text(files, "README.md"),
+        ("cc-by-sa license", "/licenses/by-sa/3.0/"),
+        (
+            "not the cc-by-sa license",
+            "not licensed under cc-by-sa",
+            "cc-by-sa license does not apply",
+            "license unknown",
+        ),
+        (r"\bnot\s+(?:licensed|distributed)\s+under\b[^\r\n.]{0,96}\bcc-by-sa\s+license\b",),
+    )
     return content, rights
+
+
+def _xml_events(element: ElementTree.Element) -> Iterator[ElementTree.Element | str]:
+    yield element
+    if element.tag.rsplit("}", 1)[-1] != "note" and element.text:
+        yield element.text
+    if element.tag.rsplit("}", 1)[-1] != "note":
+        for child in element:
+            yield from _xml_events(child)
+            if child.tail:
+                yield child.tail
 
 
 def _asv_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
     expected = "And the light shineth in the darkness; and the darkness apprehended it not."
     chapter: str | None = None
-    verses: list[str] = []
-    for element in _xml_root(files, "usx/43-JHN.usx").iter():
+    active = False
+    targets = 0
+    fragments: list[str] = []
+    for event in _xml_events(_xml_root(files, "usx/43-JHN.usx")):
+        if isinstance(event, str):
+            if active:
+                fragments.append(event)
+            continue
+        element = event
         name = element.tag.rsplit("}", 1)[-1]
-        chapter = element.get("number") if name == "chapter" else chapter
-        if name == "verse" and chapter == "1" and element.get("number") == "5":
-            verses.append((element.tail or "").strip())
-    content = verses == [expected]
-    return content, _rights_claim(_text(files, "License.html"), "public domain", ("not public domain", "copyrighted"))
+        if name == "chapter":
+            active = False
+            chapter = element.get("number")
+        elif name == "verse":
+            if active:
+                active = False
+            if chapter == "1" and element.get("number") == "5":
+                targets += 1
+                active = True
+    normalized = re.sub(r"[ \t\r\n]+", " ", "".join(fragments)).strip()
+    content = targets == 1 and normalized == expected
+    rights = _rights_claim(
+        _text(files, "License.html"), ("public domain",), ("not public domain", "copyrighted", "all rights reserved")
+    )
+    return content, rights
 
 
 def _abbott_smith_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
@@ -260,8 +319,8 @@ def _abbott_smith_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
             entries += 1
     rights = _rights_claim(
         _text(files, "README.md"),
-        "public domain",
-        ("tei is not public domain", "lexicon is not public domain"),
+        ("public domain",),
+        ("tei is not public domain", "lexicon is not public domain", "all rights reserved"),
     )
     return entries == 1, rights
 
@@ -283,7 +342,19 @@ def _valid_sfnt(data: bytes) -> bool:
 
 def _source_serif_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
     content = all(_valid_sfnt(files[path]) for path, rights in _GITHUB_PATHS["SP01-SRC-006"] if not rights)
-    rights = _rights_claim(_text(files, "LICENSE.md"), "sil open font license", ("not sil open font license",))
+    rights = _rights_claim(
+        _text(files, "LICENSE.md"),
+        ("sil open font license", "version 1.1"),
+        (
+            "not licensed under the sil open font license",
+            "sil open font license does not apply",
+            "sil open font license grant is withdrawn",
+        ),
+        (
+            r"\bnot\s+(?:licensed|distributed)\s+under\b[^\r\n.]{0,96}\bsil\s+open\s+font\s+license\b",
+            r"\b(?:license(?:\s+grant)?|grant)\s+(?:has\s+been|was|is)\s+(?:replaced|withdrawn)\b",
+        ),
+    )
     return content, rights
 
 
@@ -392,16 +463,66 @@ def _rights_entries(infos: tuple[zipfile.ZipInfo, ...]) -> tuple[zipfile.ZipInfo
     return tuple(info for info in infos if any(token in PurePosixPath(info.filename).name.lower() for token in tokens))
 
 
+_USFM_INLINE_SPAN = re.compile(r"\\([fx])(\*|\s)")
+_USFM_CHAPTER = re.compile(r"^\\c\s+(\S+)\s*$")
+_USFM_VERSE = re.compile(r"^\\v\s+(\S+)(?:\s+(.*))?$")
+
+
+def _without_usfm_notes(text: str) -> str:
+    result: list[str] = []
+    active: str | None = None
+    retained_from = 0
+    for marker in _USFM_INLINE_SPAN.finditer(text):
+        name, suffix = marker.groups()
+        if active is None and suffix != "*":
+            result.append(text[retained_from : marker.start()])
+            active = name
+        elif active is None:
+            raise ValueError("WEB verse has an unmatched inline note terminator")
+        elif active == name and suffix == "*":
+            active = None
+            retained_from = marker.end()
+    if active is not None:
+        raise ValueError("WEB verse has an unbounded inline note")
+    result.append(text[retained_from:])
+    return "".join(result)
+
+
+def _web_verse(text: str) -> str | None:
+    chapter: str | None = None
+    active = False
+    targets = 0
+    fragments: list[str] = []
+    for line in text.splitlines():
+        if match := _USFM_CHAPTER.fullmatch(line.strip()):
+            active = False
+            chapter = match.group(1)
+            continue
+        if match := _USFM_VERSE.fullmatch(line.strip()):
+            active = False
+            if chapter == "1" and match.group(1) == "5":
+                active = True
+                targets += 1
+                fragments.append(match.group(2) or "")
+            continue
+        if active:
+            fragments.append(line)
+    if targets != 1:
+        return None
+    return " ".join(_without_usfm_notes("\n".join(fragments)).split())
+
+
 def _validate_web_evidence(john_data: bytes, evidence: tuple[FetchedBytes, ...]) -> None:
     text = john_data.decode("utf-8").replace("’", "'")
     evidence_text = b"\n".join(item.data for item in evidence).decode("utf-8", errors="replace").lower()
-    expected = "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it."
-    verses = tuple(line.strip() for line in text.splitlines() if line.startswith("\\v 5 "))
+    expected = "The light shines in the darkness, and the darkness hasn't overcome it."
     identities = tuple(line.strip() for line in text.splitlines() if line.startswith("\\id "))
-    if identities != ("\\id JHN World English Bible",) or verses != (expected,):
+    if identities != ("\\id JHN World English Bible",) or _web_verse(text) != expected:
         raise ValueError("WEB John 1:5 content sanity check failed")
     translation_names = ("world english bible", "eng-web")
-    rights = _rights_claim(evidence_text, "public domain", ("not public domain", "copyrighted"))
+    rights = _rights_claim(
+        evidence_text, ("public domain",), ("not public domain", "copyrighted", "all rights reserved")
+    )
     if not rights or not any(value in evidence_text for value in translation_names):
         raise ValueError("WEB translation identity or public-domain evidence failed")
 

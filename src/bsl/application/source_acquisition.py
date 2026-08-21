@@ -48,6 +48,7 @@ from bsl.infrastructure.source_transport import (
 NewUuid = Callable[[], UUID]
 Now = Callable[[], datetime]
 _Disposition = Literal["ADMITTED", "REJECTED", "UNRESOLVED"]
+_CANONICAL_ARCHIVE_ROOT = Path("/Volumes/BSL-Archive/BiblicalScholarLab")
 
 
 @dataclass(frozen=True)
@@ -87,10 +88,16 @@ def _read_regular(path: Path, label: str) -> bytes:
         raise ValueError(f"{label} cannot be read as a regular file") from None
 
 
-def _require_initialized_root(root: Path) -> Path:
+def _require_expected_archive_root(root: Path, expected_root: Path) -> None:
+    if root != expected_root:
+        raise ValueError("archive root does not resolve to the canonical archive root")
+
+
+def _require_initialized_root(root: Path, expected_root: Path = _CANONICAL_ARCHIVE_ROOT) -> Path:
     if root.is_symlink() or not root.is_dir():
         raise ValueError("archive root must be an initialized real directory")
     root = root.resolve(strict=True)
+    _require_expected_archive_root(root, expected_root)
     marker_path = root / ".bsl-archive-root.json"
     try:
         marker = ArchiveRootMarker.model_validate_json(_read_regular(marker_path, "archive marker"))
@@ -109,6 +116,8 @@ def _require_initialized_root(root: Path) -> Path:
         or receipt.operation_id != marker.archive_id
         or receipt.disposition != "INITIALIZED"
         or receipt.marker_sha256 != marker_sha256
+        or marker.canonical_archive_root != str(_CANONICAL_ARCHIVE_ROOT)
+        or receipt.canonical_archive_root != marker.canonical_archive_root
     ):
         raise ValueError("archive marker evidence bindings are invalid")
     required = ("objects/sha256", "manifests/source", "snapshots/source", "quarantine", ".incoming")
@@ -435,10 +444,11 @@ def acquire_source(
     transport: Transport = https_transport,
     new_uuid: NewUuid = uuid7,
     now: Now = lambda: datetime.now(UTC),
+    _expected_archive_root: Path = _CANONICAL_ARCHIVE_ROOT,
 ) -> _AcquisitionResult:
     context = _source(manifest, source_id)
     source = context.plan
-    root = _require_initialized_root(archive_root)
+    root = _require_initialized_root(archive_root, _expected_archive_root)
     attempt_id = new_uuid()
     attempt, relative = _attempt_directory(root, source.source_id, attempt_id)
     receipt: FetchReceipt | None = None

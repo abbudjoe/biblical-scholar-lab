@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import socket
 import stat
 import zipfile
@@ -51,19 +52,24 @@ def synthetic_sfnt(marker: bytes) -> bytes:
 COMPONENTS: dict[str, dict[str, bytes]] = {
     "SP01-SRC-001": {
         "README.md": b"SBL Greek New Testament",
-        "LICENSE": b"Creative Commons Attribution 4.0 International",
-        "data/sblgnt/text/John.txt": "1:5 καὶ τὸ φῶς ἐν τῇ σκοτίᾳ φαίνει, καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.\n".encode(),
+        "LICENSE": b"Attribution 4.0 International\nThis Public License does not apply",
+        "data/sblgnt/text/John.txt": (
+            "John 1:5\tκαὶ τὸ φῶς ἐν τῇ σκοτίᾳ φαίνει, καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν. \n"
+        ).encode(),
     },
     "SP01-SRC-002": {
-        "README.md": b"MorphGNT licensed CC BY-SA 3.0",
-        "64-Jn-morphgnt.txt": "430105 V- 3SAAI-S κατέλαβεν κατέλαβεν κατέλαβεν καταλαμβάνω\n".encode(),
+        "README.md": b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/3.0/",
+        "64-Jn-morphgnt.txt": (
+            "040105 C- -------- καὶ καί καί\n040105 V- 3AAI-S-- κατέλαβεν. κατέλαβε(ν) καταλαμβάνω\n"
+        ).encode(),
     },
     "SP01-SRC-003": {
         "README.md": b"American Standard Version",
         "License.html": b"This edition is public domain.",
         "usx/43-JHN.usx": (
             b"<usx><chapter number='1'/><verse number='5'/>And the light shineth in the darkness; "
-            b"and the darkness apprehended it not.<verse eid='JHN 1:5'/></usx>"
+            b"and the darkness<note>excluded note text</note> apprehended it not."
+            b"<verse eid='JHN 1:5'/></usx>"
         ),
     },
     "SP01-SRC-005": {
@@ -73,7 +79,7 @@ COMPONENTS: dict[str, dict[str, bytes]] = {
     "SP01-SRC-006": {
         "TTF/SourceSerif4-Regular.ttf": synthetic_sfnt(b"reg!"),
         "TTF/SourceSerif4-It.ttf": synthetic_sfnt(b"ita!"),
-        "LICENSE.md": b"SIL OPEN FONT LICENSE Version 1.1",
+        "LICENSE.md": b"Copyright 2014 Adobe. All Rights Reserved.\nSIL Open Font License\nVersion 1.1",
     },
 }
 
@@ -139,7 +145,8 @@ def web_zip(
     extra: tuple[str | zipfile.ZipInfo, bytes] | None = None,
     john_text: str = (
         "\\id JHN World English Bible\n\\c 1\n"
-        "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
+        "\\v 5 The light shines in the darkness, \\f + \\fr 1:5 \\ft synthetic note \\f* "
+        "and the darkness hasn’t overcome it.\n"
     ),
 ) -> bytes:
     stream = BytesIO()
@@ -175,7 +182,13 @@ class FakeTransport:
 
 
 def _acquire(root: Path, source_id: str, transport: FakeTransport | None = None):
-    return acquire_source(source_id, MANIFEST, root, transport=transport or FakeTransport(source_id))
+    return acquire_source(
+        source_id,
+        MANIFEST,
+        root,
+        transport=transport or FakeTransport(source_id),
+        _expected_archive_root=root.resolve(),
+    )
 
 
 @pytest.mark.parametrize("source_id", tuple(f"SP01-SRC-00{index}" for index in range(1, 7)))
@@ -223,7 +236,7 @@ def test_wrong_revision_or_rights_evidence_is_rejected(archive_root: Path, sourc
     path = next(path for path, rights in source_transport._GITHUB_PATHS[source_id] if not rights)
     body = b"invalid"
     if source_id in {"SP01-SRC-001", "SP01-SRC-002"}:
-        old, new = (b"1:5", b"1:6") if source_id.endswith("1") else (b"3SAAI", b"3SPAI")
+        old, new = (b"1:5", b"1:6") if source_id.endswith("1") else (b"3AAI-S--", b"3PAI-S--")
         body = COMPONENTS[source_id][path].replace(old, new)
     changed = FakeTransport(source_id)
     changed.body_updates[path] = body
@@ -246,6 +259,58 @@ def test_missing_rights_oversize_and_unexpected_final_path_are_rejected(
     unexpected = FakeTransport("SP01-SRC-005")
     unexpected.final_url_updates["abbott-smith.tei.xml"] = "https://raw.githubusercontent.com/other/path"
     assert _acquire(archive_root, "SP01-SRC-005", unexpected).decision.disposition == "REJECTED"
+
+
+@pytest.mark.parametrize(
+    ("source_id", "path", "rights"),
+    (
+        ("SP01-SRC-001", "LICENSE", b"Attribution 3.0 International"),
+        ("SP01-SRC-001", "LICENSE", b"Attribution 4.0 International\nlicense withdrawn"),
+        (
+            "SP01-SRC-001",
+            "LICENSE",
+            b"This work is not licensed under the Creative Commons Attribution 4.0 International License.",
+        ),
+        ("SP01-SRC-002", "README.md", b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/4.0/"),
+        (
+            "SP01-SRC-002",
+            "README.md",
+            b"Not licensed under the CC-BY-SA License. https://creativecommons.org/licenses/by-sa/3.0/",
+        ),
+        (
+            "SP01-SRC-002",
+            "README.md",
+            b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/3.0/\nlicense replaced",
+        ),
+        ("SP01-SRC-006", "LICENSE.md", b"Copyright 2014 Adobe. All Rights Reserved.\nApache License 2.0"),
+        (
+            "SP01-SRC-006",
+            "LICENSE.md",
+            b"All Rights Reserved.\nSIL Open Font License\nVersion 1.1\nSIL Open Font License grant is withdrawn",
+        ),
+        (
+            "SP01-SRC-006",
+            "LICENSE.md",
+            b"This software is not distributed under the SIL Open Font License Version 1.1.",
+        ),
+        (
+            "SP01-SRC-006",
+            "LICENSE.md",
+            b"SIL Open Font License\nVersion 1.1\nThe SIL Open Font License grant has been withdrawn.",
+        ),
+        (
+            "SP01-SRC-006",
+            "LICENSE.md",
+            b"SIL Open Font License\nVersion 1.1\nThis license has been replaced by Apache 2.0.",
+        ),
+    ),
+)
+def test_source_specific_rights_failures_are_rejected(
+    archive_root: Path, source_id: str, path: str, rights: bytes
+) -> None:
+    transport = FakeTransport(source_id)
+    transport.body_updates[path] = rights
+    assert _acquire(archive_root, source_id, transport).decision.disposition == "REJECTED"
 
 
 def test_identical_rerun_verifies_and_changed_rerun_does_not_replace(archive_root: Path) -> None:
@@ -338,7 +403,28 @@ def test_uninitialized_or_unverified_archive_fails_closed(archive_root: Path, tm
     with pytest.raises(ValueError, match="initialized"):
         _acquire(archive_root, "SP01-SRC-003")
     with pytest.raises(ValueError, match="initialized"):
-        acquire_source("SP01-SRC-003", MANIFEST, tmp_path, transport=FakeTransport("SP01-SRC-003"))
+        acquire_source(
+            "SP01-SRC-003",
+            MANIFEST,
+            tmp_path,
+            transport=FakeTransport("SP01-SRC-003"),
+            _expected_archive_root=tmp_path.resolve(),
+        )
+
+
+def test_canonical_archive_root_binding_requires_explicit_private_test_seam(archive_root: Path, tmp_path: Path) -> None:
+    canonical = Path("/Volumes/BSL-Archive/BiblicalScholarLab")
+    acquisition._require_expected_archive_root(canonical, canonical)
+
+    with pytest.raises(ValueError, match="canonical archive root"):
+        acquire_source("SP01-SRC-001", MANIFEST, archive_root, transport=FakeTransport("SP01-SRC-001"))
+
+    copied = tmp_path / "copied-initialized-archive"
+    shutil.copytree(archive_root, copied)
+    with pytest.raises(ValueError, match="canonical archive root"):
+        acquire_source("SP01-SRC-001", MANIFEST, copied, transport=FakeTransport("SP01-SRC-001"))
+
+    assert _acquire(archive_root, "SP01-SRC-001").decision.disposition == "ADMITTED"
 
 
 def test_attempt_ids_are_exclusive(archive_root: Path) -> None:
@@ -415,7 +501,13 @@ def test_unresolved_transport_retains_decision(archive_root: Path) -> None:
     def unavailable(_url: str, _limit: int) -> HttpResponse:
         raise SourceTransportError("synthetic unavailable")
 
-    unresolved = acquire_source("SP01-SRC-005", MANIFEST, archive_root, transport=unavailable)
+    unresolved = acquire_source(
+        "SP01-SRC-005",
+        MANIFEST,
+        archive_root,
+        transport=unavailable,
+        _expected_archive_root=archive_root.resolve(),
+    )
     assert unresolved.decision.disposition == "UNRESOLVED"
 
 
@@ -432,6 +524,36 @@ def test_web_bad_zip_identity_and_content_failures(archive_root: Path) -> None:
     for package in cases:
         result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
         assert result.decision.disposition == "REJECTED"
+
+
+def test_web_cross_reference_is_excluded_and_unbounded_note_is_rejected(archive_root: Path) -> None:
+    cross_reference = web_zip(
+        john_text=(
+            "\\id JHN World English Bible\n\\c 1\n"
+            "\\v 5 The light shines in the darkness, \\x + \\xo 1:5 \\xt synthetic reference \\x* "
+            "and the darkness hasn’t overcome it.\n"
+        )
+    )
+    admitted = _acquire(
+        archive_root,
+        "SP01-SRC-004",
+        FakeTransport("SP01-SRC-004", package=cross_reference),
+    )
+    assert admitted.decision.disposition == "ADMITTED"
+
+    unbounded = web_zip(
+        john_text=(
+            "\\id JHN World English Bible\n\\c 1\n"
+            "\\v 5 The light shines in the darkness, \\f + \\ft unbounded note "
+            "and the darkness hasn't overcome it.\n"
+        )
+    )
+    rejected = _acquire(
+        archive_root,
+        "SP01-SRC-004",
+        FakeTransport("SP01-SRC-004", package=unbounded),
+    )
+    assert rejected.decision.disposition == "REJECTED"
 
 
 def test_cross_field_contract_rejections(archive_root: Path) -> None:
