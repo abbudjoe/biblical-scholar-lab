@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "1affe7ea5f78a8b4260ea1f44a20629826ecf9a7",
+  "approved_design_ids": [
+    "DR-28",
+    "DR-30",
+    "VS-01",
+    "SOURCE-PLAN-01",
+    "VS01-T02",
+    "ARCHIVE-PROFILE-BSL-ARCHIVE-v1",
+    "ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1",
+    "VS01-T02A-EXEC"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T02A-EXEC",
+    "title": "Initialize canonical archive",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t02a-archive-initialization",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Execute the merged canonical archive initializer exactly once against the owner-approved BSL-Archive profile, create only the activated root layout, marker, canary, and initial ArchiveInitializationReceipt, validate the resulting archive read-only, and preserve a public-safe redacted execution handoff without contacting any external source.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "The owner-approved encrypted Thunderbolt BSL-Archive volume contains one initialized, identity-bound, content-addressed BiblicalScholarLab root ready for later source admission.",
+  "activated_invariants": [
+    "The execution starts from merged main 65a6bf333b53e497652a8fa3676ed00413c35d40.",
+    "The exact public profile SHA-256 is 1b1571c1b18a1c0e73858b2e3d24d2e1be848e01651665e25f99c9e110c58ef7.",
+    "The approved private receipt SHA-256 is 6c3baa9f428bbe55b0062a06af214a1892510375edcb82f47748e5fc5ff8da0c.",
+    "The approved private APFS snapshot SHA-256 is 5cbef8cee7f9f180afc941380eb2bbfc5d053026ce94444ea513da5360818870.",
+    "The exact canonical root is /Volumes/BSL-Archive/BiblicalScholarLab.",
+    "The canonical root and all matching sibling staging paths must be absent before activation mutation and again immediately before execution.",
+    "The execution activation is committed and pushed before the authoritative archive write.",
+    "The approved private receipt is semantically ready and is never overwritten by bsl archive inspect.",
+    "The merged bsl archive initialize command is invoked exactly once and is never retried in this turn.",
+    "Any preflight mismatch stops before the archive command; any command failure stops without a second invocation or manual archive cleanup.",
+    "Only the approved directory layout, root marker, canary object, and one persisted initialization receipt may be created.",
+    "Post-execution checks are read-only and do not call the initializer a second time.",
+    "Private stable identities and marker contents remain on BSL-Archive and never enter Git, CI, PR text, comments, or the public handoff.",
+    "The public handoff may contain only approved evidence hashes, artifact hashes, modes, counts, booleans, and a redacted tree fingerprint.",
+    "No code, contract, schema, profile, dependency, lockfile, workflow, or approved design is changed.",
+    "No source URL is resolved, probed, fetched, cloned, or downloaded.",
+    "No T02B, VS01-T03, database, normalization, retrieval, benchmark, model, cloud, or billable work is introduced.",
+    "The root turn stops at one open draft PR for ChatGPT review; it does not mark ready, approve, or merge."
+  ],
+  "activated_paths": [
+    "activations/ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1.json",
+    "activations/ACT-VS01-T02A-ARCHIVE-INITIALIZATION-v1.sha256",
+    "design/DECISION_INDEX.md",
+    "handoffs/VS01-T02/"
+  ],
+  "activated_contracts": [
+    "ApprovedArchiveProfile — consumed unchanged",
+    "ArchivePreflightReceipt — consumed unchanged",
+    "ArchiveRootMarker — created once as private archive content",
+    "ArchiveInitializationReceipt — persisted once and summarized redacted"
+  ],
+  "activated_interfaces": [
+    "uv run bsl archive initialize --profile profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.json --private-receipt .local/evidence/VS01-T01/archive-preflight.json --private-apfs-snapshot .local/evidence/VS01-T01/archive-profile-diagnostics/apfs-list-post-merge.plist --root /Volumes/BSL-Archive/BiblicalScholarLab",
+    "unchanged vs01-t01-ci workflow"
+  ],
+  "activated_data_stores": [
+    "Git for the execution activation, decision-index row, and public-safe handoff.",
+    "Owner-private .local/evidence/VS01-T01/archive-preflight.json read-only.",
+    "Owner-private .local/evidence/VS01-T01/archive-profile-diagnostics/apfs-list-post-merge.plist read-only.",
+    "Canonical archive root /Volumes/BSL-Archive/BiblicalScholarLab, written once only through the merged initializer.",
+    "Ignored redacted local execution evidence at .local/evidence/VS01-T02A-EXEC/post-initialization-redacted.json."
+  ],
+  "activated_adapters": [
+    "Merged VS01-T02A archive initializer at main 65a6bf333b53e497652a8fa3676ed00413c35d40.",
+    "Merged read-only macOS preflight, APFS-list, and exact mounted-volume observations.",
+    "Read-only post-initialization structural verifier that emits no private identifier."
+  ],
+  "required_tests": [
+    "Local main, origin/main, and GitHub main equal the exact base and the worktree is clean.",
+    "The execution branch and PR do not already exist.",
+    "The public profile sidecar passes and the profile SHA-256 equals the approved value.",
+    "Both owner-private files exist as regular non-symlink files and match the approved SHA-256 values.",
+    "The private receipt validates as one CANDIDATE_READY_FOR_OWNER_APPROVAL record without printing its candidate values.",
+    "The canonical root and any matching sibling initialization staging paths are absent before execution.",
+    "The exact initializer command executes once and exits successfully.",
+    "The resulting root contains the exact activated directory and file set with no symlinks or unexpected paths.",
+    "The marker and persisted receipt validate semantically and are exact canonical JSON.",
+    "The marker, receipt, and canary cross-links and hashes agree.",
+    "The retained marker, receipt, and canary files are mode 0444 and the activated directories are mode 0755.",
+    "The .incoming directory is empty after successful initialization.",
+    "The marker's private stable identities equal the approved receipt candidate without emitting either value.",
+    "The redacted tree fingerprint and public-safe evidence record are generated outside Git.",
+    "The repository diff contains only the activation pair, one decision-index update, and the final handoff pair.",
+    "Exact-head CI passes on the draft PR."
+  ],
+  "required_evidence": [
+    "Exact base, activation commit, execution time, handoff commit, and final live PR head.",
+    "Exact command text and command-invocation count of one.",
+    "Public profile and both approved private-evidence SHA-256 values.",
+    "Initializer success disposition.",
+    "Marker SHA-256, persisted initialization-receipt SHA-256, canary SHA-256, and redacted tree fingerprint.",
+    "Exact-layout, no-symlink, no-unexpected-path, empty-incoming, file-mode, directory-mode, canonical-JSON, and identity-match booleans.",
+    "Ignored redacted evidence path and SHA-256.",
+    "Proof that no code, contract, schema, dependency, lockfile, workflow, profile, or approved design changed.",
+    "Exact-head CI and public-safe completion comment.",
+    "Explicit zero source requests and no later-task work."
+  ],
+  "explicit_non_goals": [
+    "No code repair, implementation change, contract, schema, dependency, workflow, profile, or design change.",
+    "No second initializer invocation or idempotent verification invocation.",
+    "No bsl archive inspect invocation before or after initialization.",
+    "No manual archive directory creation, marker editing, repair, cleanup, or fallback.",
+    "No source connector, source request, quarantine attempt, download, clone, or source snapshot.",
+    "No T02B implementation or execution and no VS01-T03 work.",
+    "No database, normalization, evidence packet, page fixture, retrieval, benchmark execution, model, cloud, Lambda, Luna, training, evaluation, or billable action."
+  ],
+  "prohibited_scaffolding": [
+    "No production or test file changes.",
+    "No helper script committed to Git.",
+    "No private UUID, physical identity, live device name, raw plist, or marker content in Git or public evidence.",
+    "No internal-disk, temporary, network-volume, other-volume, or cloud fallback.",
+    "No retry loop, second invocation, automatic repair, or deletion of an unexpected canonical root or staging path.",
+    "No source-operation stub, TODO, future-task placeholder, or feature flag."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 400,
+    "substantive_changed_lines_hard_limit": 550,
+    "handwritten_production_files_hard_limit": 0,
+    "new_public_contracts_hard_limit": 0,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "The exact approved execution activation is committed and pushed before initialization.",
+    "All public and private pre-write identity gates pass and the root remains absent immediately before execution.",
+    "The exact merged initializer command succeeds on its sole invocation.",
+    "The archive root, marker, canary, and persisted initialization receipt pass every read-only post-check.",
+    "No private identifier is disclosed publicly or retained outside the approved archive/private-evidence boundaries.",
+    "A redacted local evidence record and one public-safe handoff pair are produced.",
+    "The cumulative Git change stays within the documentation-only hard cap and changes no production file.",
+    "The final commit contains only the execution handoff pair.",
+    "The PR remains open, draft, unapproved, and unmerged for ChatGPT review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-21T07:33:11-04:00"
+  }
+}
