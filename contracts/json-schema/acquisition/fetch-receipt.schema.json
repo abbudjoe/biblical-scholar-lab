@@ -1,0 +1,441 @@
+{
+  "$defs": {
+    "PlannedSource": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_components": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Admitted Components",
+          "type": "array"
+        },
+        "admitted_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Admitted Fields",
+          "type": "array"
+        },
+        "disposition": {
+          "title": "Disposition",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "excluded_components": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Components",
+          "type": "array"
+        },
+        "excluded_fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Fields",
+          "type": "array"
+        },
+        "license": {
+          "title": "License",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "normalized_scope": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Normalized Scope",
+          "type": "array"
+        },
+        "package": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package"
+        },
+        "planned_manifest_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Planned Manifest Identity",
+          "type": "string"
+        },
+        "pre_acquisition_stop_conditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pre Acquisition Stop Conditions",
+          "type": "array"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "relative_quarantine_plan": {
+          "title": "Relative Quarantine Plan",
+          "type": "string"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "string"
+        },
+        "rights_lineage": {
+          "title": "Rights Lineage",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^SP01-SRC-00[1-6]$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Page"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "trademark": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trademark"
+        },
+        "transport_class": {
+          "title": "Transport Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "name",
+        "transport_class",
+        "revision",
+        "admitted_components",
+        "normalized_scope",
+        "license",
+        "rights_lineage",
+        "disposition",
+        "relative_quarantine_plan",
+        "planned_manifest_identity",
+        "pre_acquisition_stop_conditions"
+      ],
+      "title": "PlannedSource",
+      "type": "object"
+    },
+    "_ArchiveEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "byte_count"
+      ],
+      "title": "_ArchiveEntry",
+      "type": "object"
+    },
+    "_FetchedObject": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "rights_evidence": {
+          "title": "Rights Evidence",
+          "type": "boolean"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "byte_count",
+        "rights_evidence"
+      ],
+      "title": "_FetchedObject",
+      "type": "object"
+    },
+    "_HttpExchange": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "final_url": {
+          "title": "Final Url",
+          "type": "string"
+        },
+        "headers": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Headers",
+          "type": "array"
+        },
+        "redirect_chain": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Redirect Chain",
+          "type": "array"
+        },
+        "requested_url": {
+          "title": "Requested Url",
+          "type": "string"
+        },
+        "response_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Response Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "status": {
+          "const": 200,
+          "title": "Status",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "requested_url",
+        "final_url",
+        "status",
+        "redirect_chain",
+        "headers",
+        "response_sha256",
+        "retrieved_at",
+        "byte_count"
+      ],
+      "title": "_HttpExchange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "archive_inventory": {
+      "items": {
+        "$ref": "#/$defs/_ArchiveEntry"
+      },
+      "title": "Archive Inventory",
+      "type": "array"
+    },
+    "attempt_id": {
+      "format": "uuid",
+      "title": "Attempt Id",
+      "type": "string"
+    },
+    "contract": {
+      "const": "FetchReceipt",
+      "default": "FetchReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "exchanges": {
+      "items": {
+        "$ref": "#/$defs/_HttpExchange"
+      },
+      "minItems": 1,
+      "title": "Exchanges",
+      "type": "array"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "manifest_identity": {
+      "const": "9410d89f00829dd7bfe0d71d4f27a64b59046d8f38c353426e161d7c36415816",
+      "title": "Manifest Identity",
+      "type": "string"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/_FetchedObject"
+      },
+      "minItems": 1,
+      "title": "Objects",
+      "type": "array"
+    },
+    "objects_aggregate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Objects Aggregate Sha256",
+      "type": "string"
+    },
+    "package_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Package Sha256"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "resolved_revision": {
+      "title": "Resolved Revision",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_id": {
+      "enum": [
+        "SP01-SRC-001",
+        "SP01-SRC-002",
+        "SP01-SRC-003",
+        "SP01-SRC-004",
+        "SP01-SRC-005",
+        "SP01-SRC-006"
+      ],
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_spec": {
+      "$ref": "#/$defs/PlannedSource"
+    },
+    "source_spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Spec Sha256",
+      "type": "string"
+    },
+    "total_received_bytes": {
+      "minimum": 0,
+      "title": "Total Received Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "attempt_id",
+    "generated_at",
+    "source_id",
+    "manifest_identity",
+    "source_spec",
+    "source_spec_sha256",
+    "resolved_revision",
+    "exchanges",
+    "objects",
+    "archive_inventory",
+    "objects_aggregate_sha256",
+    "total_received_bytes"
+  ],
+  "title": "FetchReceipt",
+  "type": "object"
+}

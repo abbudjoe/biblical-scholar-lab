@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "1affe7ea5f78a8b4260ea1f44a20629826ecf9a7",
+  "approved_design_ids": [
+    "DR-10",
+    "DR-28",
+    "DR-30",
+    "VS-01",
+    "SOURCE-PLAN-01",
+    "VS01-T02",
+    "VS01-T02B-IMP"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T02B-IMP",
+    "title": "Source-admission kernel",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t02b-source-admission-kernel",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Implement the code-only VS01-T02B source-admission kernel with strict portable FetchReceipt, SourceSnapshot, and AdmissionDecision contracts, one-source CLI acquisition, synthetic GitHub and WEB transports, quarantine validation, immutable content-addressed promotion, and idempotent snapshot handling without contacting the network or writing the real archive.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "A reviewed local command can acquire and admit one approved SOURCE-PLAN-01 source through a deterministic, rights-aware, content-addressed workflow after a later live-execution authorization.",
+  "activated_invariants": [
+    "The implementation is based on exact main 65a6bf333b53e497652a8fa3676ed00413c35d40.",
+    "The task runs only in the isolated worktree /Users/joseph/.codex/worktrees/bsl-vs01-t02b.",
+    "The shared repository checkout may be dirty from another authorized lane and must not be reset, stashed, cleaned, or modified.",
+    "No production or test file changed by the T02A mount-writability hotfix is modified.",
+    "Exactly FetchReceipt, SourceSnapshot, and AdmissionDecision are added as public contracts.",
+    "The source set, revisions, tags, components, rights dispositions, exclusions, and hard prohibitions are taken unchanged from SOURCE-PLAN-01.",
+    "One CLI invocation handles exactly one source ID; no --all command is added.",
+    "Five GitHub-hosted sources use exact immutable revision metadata and exact raw-file paths; no clone, fetch, checkout, repository archive, or upstream-code execution is implemented.",
+    "WEB Classic uses only the approved official ZIP URL and a bounded, safe ZIP-inspection path.",
+    "Every attempt begins in quarantine and produces an explicit admission decision.",
+    "Admitted bytes are promoted through existing content-addressed no-overwrite mechanics.",
+    "An identical rerun verifies the existing snapshot; a changed rerun never replaces it.",
+    "All tests use synthetic transports and temporary initialized-archive fixtures.",
+    "External network requests, real archive writes, source acquisition, normalization, database, model, cloud, and billable actions are zero.",
+    "No new dependency or migration is introduced.",
+    "The turn ends at one draft PR and a required final handoff; it does not mark ready, approve, or merge."
+  ],
+  "activated_paths": [
+    "activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json",
+    "activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.sha256",
+    "design/DECISION_INDEX.md",
+    "contracts/registry.json",
+    "contracts/json-schema/acquisition/",
+    "src/bsl/contracts/source_admission.py",
+    "src/bsl/application/source_acquisition.py",
+    "src/bsl/infrastructure/source_transport.py",
+    "src/bsl/interfaces/cli.py",
+    "tests/",
+    "handoffs/VS01-T02/"
+  ],
+  "activated_contracts": [
+    "FetchReceipt",
+    "SourceSnapshot",
+    "AdmissionDecision"
+  ],
+  "activated_interfaces": [
+    "bsl source acquire --source-id <SP01-SRC-ID> --manifest <SOURCE-PLAN-01 manifest> --archive-root <initialized root>",
+    "unchanged vs01-t01-ci workflow"
+  ],
+  "activated_data_stores": [
+    "Git for contracts, schemas, source-admission code, synthetic fixtures, activation, and handoff.",
+    "Temporary pytest directories representing an initialized archive.",
+    "No real /Volumes/BSL-Archive access."
+  ],
+  "activated_adapters": [
+    "Narrow standard-library HTTPS transport with injected synthetic responses.",
+    "Exact-revision GitHub raw-file source adapter.",
+    "Official WEB Classic ZIP adapter with bounded safe inspection.",
+    "Existing content-addressed archive-store primitives."
+  ],
+  "required_tests": [
+    "Every approved SOURCE-PLAN-01 source ID is represented and unknown IDs fail.",
+    "Manifest source order, exact IDs, revisions, tags, components, exclusions, and prohibitions remain unchanged.",
+    "Wrong Git revision or tag resolution fails.",
+    "Unexpected, missing, oversized, or changed components fail.",
+    "Required rights evidence is enforced.",
+    "The Abbott-Smith PDF is never requested or admitted.",
+    "WEB traversal, absolute paths, symlinks, encrypted entries, nested archives, executable content, file-count, and expanded-byte violations fail.",
+    "Successful admission produces all three schema-valid contracts and immutable object promotion.",
+    "Rejected or unresolved attempts retain a decision in quarantine without an authoritative snapshot.",
+    "Identical reruns are idempotent and changed reruns do not replace snapshots.",
+    "No partial authoritative snapshot remains after failure.",
+    "CLI success and errors are machine-readable.",
+    "No test or CI process contacts the network or accesses /Volumes/BSL-Archive.",
+    "All existing tests remain green with branch coverage at least 90 percent."
+  ],
+  "required_evidence": [
+    "Exact activation, implementation, final handoff, PR-head, and CI identities.",
+    "Three generated schema hashes and contract-registry result.",
+    "Per-source synthetic success and failure coverage.",
+    "No-network and no-real-archive audits.",
+    "No dependency, migration, database, normalization, or later-task changes.",
+    "DR-30 function, module, complexity, file, and substantive-line accounting.",
+    "Required final Markdown/JSON handoff and completion comment."
+  ],
+  "explicit_non_goals": [
+    "No real external request, source acquisition, archive initialization, or authoritative source snapshot.",
+    "No John 1:5 normalization, evidence packet, page fixture, database, retrieval, benchmark, model, cloud, Lambda, Luna, training, evaluation, or billable action.",
+    "No generic plugin system, downloader framework, repository abstraction, service container, async framework, or one-class-per-source hierarchy.",
+    "No T02A hotfix, archive-initialization, or private-evidence changes."
+  ],
+  "prohibited_scaffolding": [
+    "No --all source command.",
+    "No git clone, git fetch, upstream checkout, repository ZIP/tar acquisition, or upstream code execution.",
+    "No source-operation placeholder, future-service shell, TODO, feature flag, or unused public type.",
+    "No new dependency unless the task stops for owner review.",
+    "No modification, reset, stash, clean, or checkout operation in the shared repository worktree.",
+    "No minification or generated-file budget evasion."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 1000,
+    "substantive_changed_lines_hard_limit": 1500,
+    "handwritten_production_files_hard_limit": 8,
+    "new_public_contracts_hard_limit": 3,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "The exact approved activation is read before repository mutation and committed as the first task commit.",
+    "The task is isolated in its dedicated worktree and does not interact with Lane A files.",
+    "All three contracts, schemas, source adapters, admission flow, and one-source CLI are complete.",
+    "Synthetic tests cover all six sources and required security, rights, immutability, and idempotency failures.",
+    "No network request, real archive write, source acquisition, or normalization occurred.",
+    "The implementation remains within DR-30 limits without speculative abstractions.",
+    "The final commit contains only the required append-only handoff pair.",
+    "The PR remains draft, unapproved, and unmerged for ChatGPT exact-head review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-21T11:42:09-04:00"
+  }
+}

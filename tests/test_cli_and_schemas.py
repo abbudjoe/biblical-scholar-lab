@@ -17,7 +17,7 @@ from bsl.contracts.archive import (
     ArchiveReadiness,
     ArchiveRootMarker,
 )
-from bsl.contracts.source_admission import SourceAcquisitionDryRun
+from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.interfaces.cli import main
 
 ROOT = Path(__file__).parents[1]
@@ -34,6 +34,9 @@ SCHEMAS = (
         ROOT / "contracts/json-schema/archive/archive-initialization-receipt.schema.json",
         ArchiveInitializationReceipt,
     ),
+    (ROOT / "contracts/json-schema/acquisition/fetch-receipt.schema.json", FetchReceipt),
+    (ROOT / "contracts/json-schema/acquisition/source-snapshot.schema.json", SourceSnapshot),
+    (ROOT / "contracts/json-schema/acquisition/admission-decision.schema.json", AdmissionDecision),
 )
 
 
