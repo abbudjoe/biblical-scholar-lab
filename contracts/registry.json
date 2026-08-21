@@ -15,6 +15,21 @@
       "contract": "SourceAcquisitionDryRun", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/acquisition/source-acquisition-dry-run.schema.json",
       "owning_task": "VS01-T01", "sha256": "0a13ee34120c1fd7e0e6a21d97b90da2c5f450ad20814f418334970c85548343"
+    },
+    {
+      "contract": "ApprovedArchiveProfile", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/archive/approved-archive-profile.schema.json",
+      "owning_task": "VS01-T02A", "sha256": "b0481e7ca320fa1e0aa3d332f378041b90a9d7e0ad2a259a4bea2463286b8c7c"
+    },
+    {
+      "contract": "ArchiveRootMarker", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/archive/archive-root-marker.schema.json",
+      "owning_task": "VS01-T02A", "sha256": "16ea9ba4cc9ad5a4ac1332a0f4a2e95902a71cc1efbbdc5d3fd8e18522c4ffca"
+    },
+    {
+      "contract": "ArchiveInitializationReceipt", "schema_version": "1.0", "owning_design": "VS01-T02",
+      "schema_path": "contracts/json-schema/archive/archive-initialization-receipt.schema.json",
+      "owning_task": "VS01-T02A", "sha256": "8c4b934b62bbfe360aa636b900eeab5e0a312cd0c44bd15b82ea370de9ca3cb1"
     }
   ]
 }

@@ -95,7 +95,9 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-W00-REPOSITORY-GOVERNANCE-v3` — completed historical W00A1a bootstrap authorization
 - `ACT-W00C-GOVERNANCE-CLOSURE-v1` — superseded by v2; historical execution evidence
 - `ACT-W00C-GOVERNANCE-CLOSURE-v2` — completed historical W00C authorization
-- `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1` — active local archive and source-admission foundation authorization
+- `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1` — completed historical T01 foundation authorization
+- `ACT-VS01-T01-APFS-PLIST-COMPAT-v1` — completed historical R02 compatibility authorization
+- `ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1` — active code-only T02A-IMP authorization; no real archive initialization or source acquisition
 
 ## Preimplementation design status
 
