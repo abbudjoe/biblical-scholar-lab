@@ -403,13 +403,16 @@ def _validate_zip_path(name: str) -> PurePosixPath:
 
 def _validate_zip_type(info: zipfile.ZipInfo, path: PurePosixPath) -> None:
     mode = info.external_attr >> 16
+    file_type = stat.S_IFMT(mode)
     if stat.S_ISLNK(mode):
         raise ValueError("ZIP contains a symlink")
+    if file_type and ((info.is_dir() and not stat.S_ISDIR(mode)) or (not info.is_dir() and not stat.S_ISREG(mode))):
+        raise ValueError("ZIP contains a special file type")
     if info.flag_bits & 0x1:
         raise ValueError("ZIP contains an encrypted entry")
     if not info.is_dir() and path.suffix.lower() in _NESTED_ARCHIVES:
         raise ValueError("ZIP contains a nested archive")
-    if not info.is_dir() and (path.suffix.lower() in _EXECUTABLE_EXTENSIONS or mode & 0o111):
+    if not info.is_dir() and path.suffix.lower() in _EXECUTABLE_EXTENSIONS:
         raise ValueError("ZIP contains executable content")
 
 

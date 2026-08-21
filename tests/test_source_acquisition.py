@@ -389,6 +389,35 @@ def _encrypted(package: bytes) -> bytes:
     return bytes(changed)
 
 
+def _unix_entry(name: str, mode: int, data: bytes = b"ordinary text") -> tuple[zipfile.ZipInfo, bytes]:
+    entry = zipfile.ZipInfo(name)
+    entry.create_system = 3
+    entry.external_attr = (stat.S_IFREG | mode) << 16
+    return entry, data
+
+
+@pytest.mark.parametrize("name", ("ordinary.usfm", "ordinary.txt", "ordinary.md", "rights"))
+@pytest.mark.parametrize("mode", (0o644, 0o755))
+def test_web_regular_files_accept_unix_permission_modes(archive_root: Path, name: str, mode: int) -> None:
+    package = web_zip(extra=_unix_entry(name, mode))
+    result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
+    assert result.decision.disposition == "ADMITTED"
+
+
+@pytest.mark.parametrize("suffix", sorted(source_transport._EXECUTABLE_EXTENSIONS))
+def test_web_executable_extensions_remain_rejected(archive_root: Path, suffix: str) -> None:
+    package = web_zip(extra=_unix_entry(f"ordinary{suffix}", 0o644))
+    result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
+    assert result.decision.disposition == "REJECTED"
+
+
+@pytest.mark.parametrize("magic", source_transport._EXECUTABLE_MAGIC)
+def test_web_executable_magic_remains_rejected(archive_root: Path, magic: bytes) -> None:
+    package = web_zip(extra=_unix_entry("ordinary.txt", 0o644, magic + b" ordinary text"))
+    result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
+    assert result.decision.disposition == "REJECTED"
+
+
 @pytest.mark.parametrize(
     ("case", "entry"),
     (
@@ -410,7 +439,10 @@ def test_web_symlink_encryption_and_inventory_limits_are_rejected(
     link = zipfile.ZipInfo("link")
     link.create_system = 3
     link.external_attr = (stat.S_IFLNK | 0o777) << 16
-    packages = [web_zip(extra=(link, b"target")), _encrypted(web_zip())]
+    fifo = zipfile.ZipInfo("fifo")
+    fifo.create_system = 3
+    fifo.external_attr = (stat.S_IFIFO | 0o644) << 16
+    packages = [web_zip(extra=(link, b"target")), web_zip(extra=(fifo, b"")), _encrypted(web_zip())]
     for package in packages:
         result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
         assert result.decision.disposition == "REJECTED"
