@@ -251,7 +251,7 @@ def _sblgnt_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
 
 def _morphgnt_checks(files: dict[str, bytes]) -> tuple[bool, bool]:
     rows = tuple(line.split() for line in _text(files, "64-Jn-morphgnt.txt").splitlines())
-    target = ("V-", "3AAI-S--", "κατέλαβεν.", "κατέλαβε(ν)", "καταλαμβάνω")
+    target = ("V-", "3AAI-S--", "κατέλαβεν.", "κατέλαβεν", "κατέλαβε(ν)", "καταλαμβάνω")
     verse_rows = tuple(row for row in rows if row and row[0] == "040105")
     content = sum(tuple(row[1:]) == target for row in verse_rows) == 1
     rights = _rights_claim(
