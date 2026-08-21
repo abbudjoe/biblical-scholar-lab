@@ -114,7 +114,6 @@ def mounted(**updates: object) -> bytes:
         "MountPoint": str(LOGICAL_ROOT.parent),
         "Internal": False,
         "Writable": True,
-        "ReadOnlyVolume": False,
         "FilesystemType": "apfs",
         "DeviceIdentifier": VOLUME_DEVICE,
     }
@@ -256,6 +255,24 @@ def test_symlink_mount_root_fails(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
+    "writability",
+    [
+        {"Writable": True, "WritableVolume": True, "WritableMedia": True},
+        {"Writable": True, "ReadOnlyVolume": False},
+        {"Writable": True, "ReadOnlyMedia": False},
+    ],
+)
+def test_supported_positive_mount_writability_evidence_passes(tmp_path: Path, writability: dict[str, object]) -> None:
+    receipt_path, snapshot_path, _sandbox, services = setup(tmp_path)
+    receipt = run(
+        receipt_path,
+        snapshot_path,
+        replace(services, mount_info=lambda _mount: mounted(**writability)),
+    )
+    assert receipt.disposition == "INITIALIZED"
+
+
+@pytest.mark.parametrize(
     "changes",
     [
         {"FilesystemType": "other"},
@@ -265,9 +282,17 @@ def test_symlink_mount_root_fails(tmp_path: Path) -> None:
         {"VolumeName": "Other"},
         {"Internal": True},
         {"Writable": False},
+        {"WritableVolume": False},
+        {"WritableMedia": False},
         {"ReadOnlyVolume": True},
+        {"ReadOnlyMedia": True},
         {"ReadOnlyVolume": False, "ReadOnlyMedia": True},
         {"Internal": 0},
+        {"Writable": 1},
+        {"WritableVolume": 1},
+        {"WritableMedia": 1},
+        {"ReadOnlyVolume": 0},
+        {"ReadOnlyMedia": 0},
     ],
 )
 def test_mounted_root_identity_or_security_mismatch_fails_before_staging(
