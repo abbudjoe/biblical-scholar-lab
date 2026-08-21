@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1",
+  "activation_sha256": "98c5488ee9ee429de7e248362f554a1df9a45cb8c0fc99cc8425bc0e914a1b82",
+  "task_id": "VS01-T02B-REPAIR01",
+  "turn_id": "VS01-T02B-REPAIR01-SOL-20260821T184423Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t02b-source-admission-kernel",
+  "worktree": "/Users/joseph/.codex/worktrees/bsl-vs01-t02b",
+  "base_sha": "65a6bf333b53e497652a8fa3676ed00413c35d40",
+  "activation_commit_sha": "42314835c6907d70a29fc1ebc742b488f9118653",
+  "starting_pr_head_sha": "54b15f73a46d31fed0f9f171345125fb62ee9810",
+  "original_implementation_sha": "109b223633ac0fdb98e0d6108d6d0488319bd981",
+  "implementation_head_sha": "d5b34be37108d173110ea4494418689141eb6717",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/8",
+  "required_ci": {
+    "name": "vs01-t01-ci",
+    "status": "PENDING_REPAIR_PUSH",
+    "url": null,
+    "note": "The mandated sequence creates and commits this handoff pair before pushing the final repair head; the completion comment records the exact final head and CI URL."
+  },
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false
+  },
+  "objective": "Repair only exact compatibility with the five pinned upstream source shapes and bind acquisition to the canonical archive root, without altering the approved source plan, public contracts, CLI, schemas, registry, dependencies, workflow, or Lane A.",
+  "design_conformance": {
+    "status": "CONFORMING",
+    "independent_review": "CLEAN",
+    "reviewed_dod_items": 9,
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "starting_reviewed_head",
+      "commit": "54b15f73a46d31fed0f9f171345125fb62ee9810",
+      "summary": "Existing draft PR #8 head supplied by the Repair01 prompt."
+    },
+    {
+      "phase": "repair_implementation",
+      "commit": "d5b34be37108d173110ea4494418689141eb6717",
+      "summary": "Added exact pinned-shape parsing and rights compatibility for SBLGNT, MorphGNT, ASV, Source Serif, and WEB, plus canonical archive-root binding with a private explicit synthetic-test seam."
+    }
+  ],
+  "changed_implementation_paths": [
+    "src/bsl/infrastructure/source_transport.py",
+    "src/bsl/application/source_acquisition.py",
+    "tests/test_source_acquisition.py"
+  ],
+  "evaluations": [
+    {"criterion": "SBLGNT pinned TSV shape and exact verse", "status": "met"},
+    {"criterion": "MorphGNT multi-row scan, exact verb row, and rights", "status": "met"},
+    {"criterion": "ASV document-order XML with inline-note handling", "status": "met"},
+    {"criterion": "Source Serif ARR preamble and exact OFL 1.1", "status": "met"},
+    {"criterion": "WEB bounded markers and exact verse normalization", "status": "met"},
+    {"criterion": "bounded rights contradiction rejection", "status": "met"},
+    {"criterion": "canonical archive-root binding", "status": "met"},
+    {"criterion": "explicit private synthetic-root seam", "status": "met"},
+    {"criterion": "scope, regression, complexity, and access boundaries", "status": "met"},
+    {"criterion": "draft PR exact-head CI and completion comment", "status": "pending until post-handoff push"}
+  ],
+  "commands": [
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS; 20 packages checked and 21 lock entries resolved"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check .",
+      "result": "PASS; 86 files formatted and lint clean"
+    },
+    {
+      "command": "uv run ruff check --select C901,PLR0915 src/bsl/infrastructure/source_transport.py src/bsl/application/source_acquisition.py tests/test_source_acquisition.py",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run pyright",
+      "result": "PASS; 0 errors, 0 warnings, 0 information messages"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 186 tests and 90.19% branch coverage; 51 pre-existing macOS temporary-directory cleanup warnings"
+    },
+    {
+      "command": "git diff --check && git fsck --full",
+      "result": "PASS; fsck reported dangling objects only"
+    },
+    {
+      "command": "starting-head changed-path and protected-surface audit",
+      "result": "PASS; exactly the three authorized implementation/test paths changed and protected output was empty"
+    },
+    {
+      "command": "independent specification-conformance review after repair rounds",
+      "result": "CLEAN; all nine Repair01 DoD items met"
+    }
+  ],
+  "review_history": [
+    {
+      "round": 1,
+      "finding": "Source-specific rights negation gaps",
+      "resolution": "Added bounded source-specific rejection checks and exact regression counterexamples."
+    },
+    {
+      "round": 2,
+      "finding": "OFL grant-withdrawn and license-replaced variants",
+      "resolution": "Added bounded state-transition rejection and exact regression counterexamples."
+    },
+    {
+      "round": 3,
+      "result": "CLEAN"
+    }
+  ],
+  "artifacts": [
+    {"kind": "repair_implementation_head", "sha": "d5b34be37108d173110ea4494418689141eb6717"},
+    {"kind": "handoff", "path": "handoffs/VS01-T02/VS01-T02B-REPAIR01-SOL-20260821T184423Z.md"},
+    {"kind": "handoff", "path": "handoffs/VS01-T02/VS01-T02B-REPAIR01-SOL-20260821T184423Z.json"}
+  ],
+  "complexity_receipt": {
+    "substantive_production_added": 1211,
+    "substantive_production_removed": 5,
+    "substantive_test_added": 501,
+    "substantive_test_removed": 1,
+    "substantive_registry_added": 15,
+    "substantive_changed_lines": 1733,
+    "generated_schema_lines_unchanged": 1034,
+    "source_transport_nonblank_lines": 492,
+    "source_acquisition_nonblank_lines": 433,
+    "public_contracts_unchanged": ["FetchReceipt", "SourceSnapshot", "AdmissionDecision"],
+    "dependencies_added": [],
+    "migrations_added": [],
+    "waivers": [
+      "Owner-approved narrow Repair01 cumulative line-ceiling waiver above 1,500, limited to exact pinned-source compatibility and canonical archive-root binding."
+    ],
+    "simplicity_conformance": "PASS_WITH_APPROVED_NARROW_WAIVER"
+  },
+  "access_audit": {
+    "external_network_requests": 0,
+    "real_archive_reads": 0,
+    "real_archive_writes": 0,
+    "real_source_acquisitions": 0,
+    "real_source_bytes_committed": 0,
+    "lane_a_files_changed": 0,
+    "new_dependencies": 0,
+    "migrations": 0,
+    "billable_actions": 0
+  },
+  "known_risks": [
+    "Compatibility was proven with small pinned-shape structural excerpts only; no network or real archive access was authorized or performed.",
+    "The full pytest run emitted 51 pre-existing macOS temporary-directory cleanup warnings; all tests and the coverage gate passed.",
+    "The exact final handoff-only SHA and CI URL are supplied by the completion comment after exact-head CI."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "merge_performed": false,
+  "approval_submitted": false,
+  "pr_marked_ready": false,
+  "next_task_started": false,
+  "next_required_action": "PUSH_DRAFT_PR_CI_COMPLETION_COMMENT_THEN_CHATGPT_REVIEW"
+}
