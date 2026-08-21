@@ -42,6 +42,18 @@
 |---|---|---|---|---|
 | VS-01 | John 1:5 Translation Nuance Vertical Slice | APPROVED | 2026-08-17 | [`approved/VS-01-john-1-5-translation-nuance-vertical-slice.md`](approved/VS-01-john-1-5-translation-nuance-vertical-slice.md) |
 
+## Approved vertical-slice task designs
+
+| ID | Title | Status | Approved | File |
+|---|---|---|---|---|
+| VS01-T02 | Canonical Archive Bootstrap and Raw Source Admission | APPROVED | 2026-08-20 | [`approved/VS01-T02-canonical-archive-and-raw-source-admission.md`](approved/VS01-T02-canonical-archive-and-raw-source-admission.md) |
+
+## Approved archive profiles
+
+| ID | Title | Status | Approved | File |
+|---|---|---|---|---|
+| ARCHIVE-PROFILE-BSL-ARCHIVE-v1 | BSL-Archive canonical target | APPROVED | 2026-08-20 | [`../profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.json`](../profiles/archive/ARCHIVE-PROFILE-BSL-ARCHIVE-v1.json) |
+
 ## Approved governance packages
 
 | ID | Title | Status | Approved | File |
@@ -87,7 +99,7 @@
 
 ## Design-review status
 
-The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. `VS01-T01 — Local Archive and Source-Admission Foundation` is the active first biblical-product implementation task.
+The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. The archive profile and VS01-T02 are approved, and T02A-IMP is active without authority for real archive initialization or source acquisition.
 
 
 ## Preimplementation audits

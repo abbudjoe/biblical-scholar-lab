@@ -28,7 +28,10 @@ Explicitly absent from VS-01: model training, Lambda execution, vector search, L
 1. W00A1a and W00C are merged historical governance implementation.
 2. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
 3. Governance implementation is closed.
-4. `VS01-T01 — Local Archive and Source-Admission Foundation` is active under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
+4. `VS01-T01` and R02 are merged historical archive/source-admission foundation.
+5. `ARCHIVE-PROFILE-BSL-ARCHIVE-v1` and `VS01-T02` are approved.
+6. `T02A-IMP` is active for the archive bootstrap kernel using synthetic evidence only.
+7. No real archive initialization or source acquisition is authorized.
 
 ## Simplicity rule
 
@@ -36,4 +39,4 @@ Only contracts named by the active `ImplementationActivationManifest` may become
 
 ## Current implementation gate
 
-W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. `VS01-T01` is the active first biblical-product implementation task under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
+W00A1a and W00C are merged historical governance implementation. VS01-T01 and R02 are merged historical foundation. The archive profile and VS01-T02 design are approved, and T02A-IMP is active without authority for real archive initialization or source acquisition.

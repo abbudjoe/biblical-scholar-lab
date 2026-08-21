@@ -2,7 +2,7 @@
 
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is closed. Biblical-product implementation is active under the approved `VS01-T01 — Local Archive and Source-Admission Foundation` activation.
+Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` and `ARCHIVE-PROFILE-BSL-ARCHIVE-v1` are approved, and `T02A-IMP` is the active code-only implementation task.
 
 ## Authority
 
@@ -27,7 +27,10 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 
 - W00A1a and W00C are merged historical governance implementation; governance implementation is closed.
 - W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites.
-- `VS01-T01 — Local Archive and Source-Admission Foundation` is active under `ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1`.
+- `VS01-T01` and R02 are merged historical archive/source-admission foundation.
+- `ARCHIVE-PROFILE-BSL-ARCHIVE-v1` and `VS01-T02 — Canonical Archive Bootstrap and Raw Source Admission` are approved.
+- `T02A-IMP — Archive Bootstrap Kernel` is active for code, contracts, schemas, and synthetic tests only.
+- No real archive initialization or source acquisition is authorized.
 
 ## Current approved baseline
 
@@ -96,6 +99,6 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. W00C is merged and governance implementation is closed. `VS01-T01` is the active first biblical-product implementation task. Source acquisition and benchmark execution still require their later approved activations and verification gates.
+The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `ARCHIVE-PROFILE-BSL-ARCHIVE-v1` and `VS01-T02` are approved; `T02A-IMP` is active. Real archive initialization, source acquisition, and benchmark execution still require later approved activations and verification gates.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).
