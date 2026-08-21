@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1",
+  "task_id": "VS01-T02A-IMP-REPAIR01",
+  "turn_id": "VS01-T02A-IMP-REPAIR01-20260821T034139Z",
+  "codex_run_id": "codex-desktop-VS01-T02A-IMP-REPAIR01-20260821T034139Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t02a-archive-bootstrap-kernel",
+  "base_sha": "a0f7e76e99f63c0bdd0229a995733ebbe2e6bf7a",
+  "implementation_head_sha": "f180c0b26c4d4610705f967e119cddd923fa77f0",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/5",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t02a-archive-bootstrap-kernel",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Close P1-01, P1-02, and P2-01 on the existing VS01-T02A draft PR without changing the approved design, activation, profile, contracts, schemas, archive store, CLI, dependencies, workflow, source plan, or original handoff.",
+  "acceptance_criteria": [
+    "Bind the exact canonical mounted filesystem to the fresh approved volume UUID and the uniquely matched current APFS volume device before staging.",
+    "Treat the live parent device as transient current-correlation evidence rather than persistent approval identity.",
+    "Require the uniquely matched current APFS physical store to expose the exact stable DiskUUID while correlating its transient device identifier.",
+    "Use only sanitized injected fixtures and prove all mount, transient identity, stable DiskUUID, mismatch, corruption, idempotence, cleanup, CLI, schema, workflow, and source-plan guarantees.",
+    "Modify only the two permitted implementation files before the new handoff pair and preserve every protected surface byte-for-byte.",
+    "Keep cumulative handwritten active changes at or below 1,100 with no public contract, dependency, migration, or waiver.",
+    "Keep PR #5 open, draft, unapproved, unmerged, and stop after exact-head CI plus one completion comment."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-10",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "SOURCE-PLAN-01",
+      "VS01-T02",
+      "ARCHIVE-PROFILE-BSL-ARCHIVE-v1"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "starting_reviewed_head",
+      "commit": "6ff646cbd751b6214edb1139e59ba35713ece267",
+      "summary": "Exact ChatGPT-reviewed starting live PR head with REPAIR_REQUIRED disposition."
+    },
+    {
+      "phase": "repair_implementation",
+      "commit": "f180c0b26c4d4610705f967e119cddd923fa77f0",
+      "summary": "Replaced name-plus-is_mount checking with semantic mount-to-APFS binding, removed persistent equality for the transient parent, required stable current DiskUUID evidence, and consolidated synthetic tests within the cumulative hard cap."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/application/archive_initialization.py",
+      "focus": "fixed mount-info observation, exact mount-to-volume/device binding, transient-parent comparison removal, current DiskUUID correlation, and returned APFS volume device"
+    },
+    {
+      "path": "tests/test_archive_initialization.py",
+      "focus": "sanitized old/current transient-parent fixtures, mounted-root mismatch table, stable DiskUUID mismatch table, exact subprocess argv/timeout, and all retained initialization guarantees"
+    }
+  ],
+  "commands": [
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS at f180c0b26c4d4610705f967e119cddd923fa77f0"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; 81 files formatted, lint clean, 0 type errors"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 139 tests passed, total branch coverage 91.16%"
+    },
+    {
+      "command": "focused mounted_root, mount_info, transient_parent, and current_apfs selection",
+      "result": "PASS; 26 focused cases passed"
+    },
+    {
+      "command": "design/profile/activation checksums plus schema/registry regression",
+      "result": "PASS; all approved sidecars and existing registry hashes validate"
+    },
+    {
+      "command": "starting-head protected-byte and changed-path comparison",
+      "result": "PASS; exactly the two permitted implementation files changed and every protected surface, including the original handoff pair, is byte-identical"
+    },
+    {
+      "command": "DR-30 active-line, module, function, complexity, dependency, contract, and migration accounting",
+      "result": "PASS; 1,099 cumulative handwritten active changed lines, 465 production module SLOC, 385 repair test SLOC, 57 maximum function lines, complexity 10, no dependency/contract/migration change"
+    },
+    {
+      "command": "git diff --check a0f7e76e99f63c0bdd0229a995733ebbe2e6bf7a...f180c0b26c4d4610705f967e119cddd923fa77f0 && git fsck --full",
+      "result": "PASS; fsck reported only dangling unreachable objects"
+    },
+    {
+      "command": "no-network/no-private-evidence/no-real-archive audit",
+      "result": "PASS; real archive writes 0, owner-private evidence accesses 0, external source requests 0"
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "P1-01 exact canonical mount bound to approved current volume",
+      "status": "met"
+    },
+    {
+      "criterion": "P1-02 changed transient parent accepted while stable identities remain exact",
+      "status": "met"
+    },
+    {
+      "criterion": "P2-01 current physical store bound to stable DiskUUID",
+      "status": "met"
+    },
+    {
+      "criterion": "full regression, coverage, preservation, scope, and DR-30 gates",
+      "status": "met"
+    },
+    {
+      "criterion": "final live handoff SHA and exact-head GitHub CI",
+      "status": "recorded by the post-push completion comment because the containing commit and CI run do not exist until after this pair is committed"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "starting_live_head",
+      "sha": "6ff646cbd751b6214edb1139e59ba35713ece267"
+    },
+    {
+      "kind": "repair_implementation_head",
+      "sha": "f180c0b26c4d4610705f967e119cddd923fa77f0"
+    },
+    {
+      "kind": "exact_head_ci_status",
+      "path": "https://github.com/abbudjoe/biblical-scholar-lab/pull/5/checks"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T02/VS01-T02A-IMP-REPAIR01-20260821T034139Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T02/VS01-T02A-IMP-REPAIR01-20260821T034139Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 671,
+    "production_loc_removed": 6,
+    "test_loc_added": 397,
+    "test_loc_removed": 4,
+    "generated_loc": 419,
+    "production_files_added": 1,
+    "production_files_removed": 0,
+    "modules_added": [
+      "src/bsl/application/archive_initialization.py"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl archive initialize"
+    ],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "ApprovedArchiveProfile (unchanged from the original implementation)",
+      "ArchiveRootMarker (unchanged from the original implementation)",
+      "ArchiveInitializationReceipt (unchanged from the original implementation)"
+    ],
+    "abstractions": [
+      {
+        "name": "_Services.mount_info",
+        "purpose": "One private injected callable for exact logical-mount plist observation in production and sanitized evidence in tests."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Replaced is_mount directly, returned the existing matcher device value, and consolidated existing fixture builders and mismatch tables instead of adding a model, device abstraction, parser framework, storage service, or helper module."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "Live owner-private evidence and the real APFS archive remain intentionally untested until a separately authorized T02A-EXEC turn.",
+    "Pytest emits unrelated pre-existing temporary-directory cleanup warnings; all 139 tests and coverage gates pass."
+  ],
+  "decisions_required": [
+    "ChatGPT exact-head review of the final live PR head, followed by Joseph's explicit decision on that exact head."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
