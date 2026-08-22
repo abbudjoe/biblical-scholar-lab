@@ -27,8 +27,9 @@ from bsl.contracts.normalization import NormalizationReceipt
 from bsl.interfaces.cli import main
 
 IMPLEMENTATION_COMMIT = "a" * 40
-SOURCE_SNAPSHOTS = tuple(f"{index:064x}" for index in range(1, 7))
-SOURCE_CONTENT = tuple(f"{index:064x}" for index in range(11, 17))
+FINGERPRINT = "a" * 64
+SOURCE_SNAPSHOTS = tuple(evidence.EXACT_INPUT_AUTHORITY["source_snapshot_identities"])
+SOURCE_CONTENT = tuple(evidence.EXACT_INPUT_AUTHORITY["source_content_identities"])
 
 
 @pytest.fixture(autouse=True)
@@ -147,7 +148,12 @@ def _normalization_receipt(
 
 
 def _authority(root: Path) -> evidence._T03Authority:  # pyright: ignore[reportPrivateUsage]
-    return evidence._T03Authority(root, _fake_bundle(), _normalization_receipt(), "f" * 64)
+    return evidence._T03Authority(
+        root,
+        _fake_bundle(),
+        _normalization_receipt(),
+        evidence.EXACT_INPUT_AUTHORITY["normalization_receipt_file_sha256"],
+    )
 
 
 def _packet(root: Path) -> John15TranslationNuanceEvidencePacket:
@@ -207,9 +213,13 @@ def test_exact_t03_raw_json_loader_uses_only_minimum_authority_trio(
     monkeypatch.setattr(evidence, "BUNDLE_SHA256", bundle_sha)
     monkeypatch.setattr(evidence, "T03_OBJECT", object_path)
     receipt = _normalization_receipt(bundle_sha=bundle_sha)
+    receipt_bytes = rfc8785.dumps(receipt.model_dump(mode="json"))
+    expected_authority = dict(evidence.EXACT_INPUT_AUTHORITY)
+    expected_authority["normalization_receipt_file_sha256"] = hashlib.sha256(receipt_bytes).hexdigest()
+    monkeypatch.setattr(evidence, "EXACT_INPUT_AUTHORITY", expected_authority)
     _retain(root / object_path, bundle_bytes)
     _retain(root / evidence.T03_SNAPSHOT, bundle_bytes)
-    _retain(root / evidence.T03_RECEIPT, rfc8785.dumps(receipt.model_dump(mode="json")))
+    _retain(root / evidence.T03_RECEIPT, receipt_bytes)
     seen: list[Path] = []
     original = evidence._retained_bytes  # pyright: ignore[reportPrivateUsage]
 
@@ -301,6 +311,25 @@ def test_packet_canonical_bytes_and_identity_are_stable(tmp_path: Path) -> None:
     assert not {"generated_at", "receipt_identity", "hostname", "username"} & set(type(first).model_fields)
 
 
+@pytest.mark.parametrize("case", ("receipt-id", "receipt-sha", "snapshots", "content"))
+def test_packet_rejects_reidentified_t03_authority_after_identity_recomputation(tmp_path: Path, case: str) -> None:
+    data = _packet(tmp_path).model_dump(mode="json")
+    authority = data["input_authority"]
+    if case == "receipt-id":
+        authority["normalization_receipt_identity"] = "01900000-0000-7000-8000-000000000000"
+    elif case == "receipt-sha":
+        authority["normalization_receipt_file_sha256"] = "0" * 64
+    elif case == "snapshots":
+        authority["source_snapshot_identities"].reverse()
+    else:
+        authority["source_content_identities"][0] = "0" * 64
+    data["packet_identity"] = hashlib.sha256(
+        rfc8785.dumps({key: value for key, value in data.items() if key != "packet_identity"})
+    ).hexdigest()
+    with pytest.raises(ValueError, match="exact canonical authority"):
+        John15TranslationNuanceEvidencePacket.model_validate_json(rfc8785.dumps(data))
+
+
 @pytest.mark.parametrize("case", ("path", "state", "fingerprint"))
 def test_receipt_rejects_path_disposition_and_dry_run_mutations(tmp_path: Path, case: str) -> None:
     packet = _packet(tmp_path)
@@ -312,6 +341,14 @@ def test_receipt_rejects_path_disposition_and_dry_run_mutations(tmp_path: Path, 
     else:
         data["input_authority_fingerprint_after"] = "b" * 64
     with pytest.raises(ValueError):
+        John15TranslationNuanceEvidenceReceipt.model_validate_json(rfc8785.dumps(data))
+
+
+@pytest.mark.parametrize("disposition", ("PUBLISHED", "VERIFIED_EXISTING"))
+def test_receipt_rejects_changed_fingerprint_for_live_dispositions(tmp_path: Path, disposition: str) -> None:
+    data = _receipt(tmp_path, _packet(tmp_path), disposition).model_dump(mode="json")
+    data["input_authority_fingerprint_after"] = "b" * 64
+    with pytest.raises(ValueError, match="fingerprints differ"):
         John15TranslationNuanceEvidenceReceipt.model_validate_json(rfc8785.dumps(data))
 
 
@@ -350,6 +387,22 @@ def test_application_fixture_publication_is_receipt_last_and_idempotent(
     assert all(path.exists() for path in paths)
 
 
+def test_application_rechecks_authority_before_any_publication_write(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "archive"
+    root.mkdir()
+    authority = _authority(root)
+    monkeypatch.setattr(evidence, "load_t03_authority", lambda *_args, **_kwargs: authority)
+    fingerprints = iter(("a" * 64, "b" * 64))
+    monkeypatch.setattr(evidence, "canonical_input_fingerprint", lambda _authority: next(fingerprints))
+    with pytest.raises(ValueError, match="before publication"):
+        evidence.generate_john15_evidence(
+            root, dry_run=False, _expected_archive_root=root, _implementation_commit=IMPLEMENTATION_COMMIT
+        )
+    assert set(root.iterdir()) == set()
+
+
 @pytest.mark.parametrize(
     ("state", "retained", "disposition"),
     (
@@ -372,9 +425,9 @@ def test_receipt_last_publication_recovers_exact_states(
     payloads = (packet_bytes, packet_bytes, rfc8785.dumps(receipt.model_dump(mode="json")))
     for path, data in zip(paths[:retained], payloads[:retained], strict=True):
         _retain(path, data)
-    existing = evidence_store.prepare_publication(root, packet, packet_bytes)
+    existing = evidence_store.prepare_publication(root, packet, packet_bytes, FINGERPRINT)
     if existing is None:
-        evidence_store.publish_evidence(root, packet, receipt)
+        evidence_store.publish_evidence(root, packet, receipt, FINGERPRINT)
     assert ("VERIFIED_EXISTING" if existing else "PUBLISHED") == disposition
     assert all(path.exists() and stat.S_IMODE(path.stat().st_mode) == 0o444 for path in paths)
     assert paths[0].read_bytes() == paths[1].read_bytes() == packet_bytes
@@ -423,7 +476,7 @@ def test_publication_rejects_mismatches_without_replacement(tmp_path: Path, stat
     for path, data in retained:
         _retain(path, data)
     with pytest.raises(ValueError):
-        evidence_store.prepare_publication(root, packet, packet_bytes)
+        evidence_store.prepare_publication(root, packet, packet_bytes, FINGERPRINT)
     assert all(path.read_bytes() == data for path, data in retained)
 
 
@@ -443,8 +496,52 @@ def test_publication_cleans_exact_stale_stage_and_preserves_unrelated_incoming(t
         ("receipt", rfc8785.dumps(receipt.model_dump(mode="json"))),
     ):
         _retain(stage / name, data)
-    evidence_store.publish_evidence(root, packet, receipt)
+    evidence_store.publish_evidence(root, packet, receipt, FINGERPRINT)
     assert unrelated.read_bytes() == b"unrelated" and not stage.exists()
+
+
+@pytest.mark.parametrize("case", ("packet", "receipt", "fingerprint"))
+def test_invalid_new_receipt_creates_no_publication_paths(tmp_path: Path, case: str) -> None:
+    root = tmp_path / case
+    packet = _packet(root)
+    receipt = _receipt(root, packet)
+    fingerprint = FINGERPRINT
+    if case == "packet":
+        receipt = receipt.model_copy(update={"packet_identity": "0" * 64})
+    elif case == "receipt":
+        receipt = receipt.model_copy(update={"input_normalization_receipt_file_sha256": "0" * 64})
+    else:
+        receipt = receipt.model_copy(
+            update={"input_authority_fingerprint_before": "b" * 64, "input_authority_fingerprint_after": "b" * 64}
+        )
+    with pytest.raises(ValueError):
+        evidence_store.publish_evidence(root, packet, receipt, fingerprint)
+    assert not root.exists()
+
+
+@pytest.mark.parametrize("state", ("existing", "staged"))
+def test_existing_or_staged_wrong_fingerprint_is_preserved(tmp_path: Path, state: str) -> None:
+    root = tmp_path / state
+    (root / ".incoming").mkdir(parents=True)
+    packet = _packet(root)
+    receipt = _receipt(root, packet)
+    packet_bytes = evidence_store.canonical_packet_bytes(packet)
+    packet_sha = hashlib.sha256(packet_bytes).hexdigest()
+    base = (
+        tuple(root / path for path in evidence_store.publication_paths(packet_sha))
+        if state == "existing"
+        else (
+            evidence_store.evidence_stage_path(root, packet_sha) / "object",
+            evidence_store.evidence_stage_path(root, packet_sha) / "snapshot",
+            evidence_store.evidence_stage_path(root, packet_sha) / "receipt",
+        )
+    )
+    payloads = (packet_bytes, packet_bytes, rfc8785.dumps(receipt.model_dump(mode="json")))
+    for path, data in zip(base, payloads, strict=True):
+        _retain(path, data)
+    with pytest.raises(ValueError, match="authority"):
+        evidence_store.prepare_publication(root, packet, packet_bytes, "b" * 64)
+    assert all(path.read_bytes() == data for path, data in zip(base, payloads, strict=True))
 
 
 def test_cli_success_error_json_and_no_root_bypass(

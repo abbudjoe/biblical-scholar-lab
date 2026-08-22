@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from pydantic import BaseModel
 from uuid6 import uuid7
 
@@ -72,6 +74,27 @@ def test_schema_generation_has_no_drift_and_registry_hashes_match() -> None:
     for entry in registry["contracts"]:
         path = ROOT / entry["schema_path"]
         assert entry["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+@pytest.mark.parametrize("case", ("claim", "cognitive", "receipt", "source", "packet"))
+def test_evidence_packet_schema_rejects_frozen_mutations(tmp_path: Path, case: str) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is an external validation tool")
+    from test_evidence_packet import _packet
+
+    path = ROOT / "contracts/json-schema/evidence/john-15-translation-nuance-evidence-packet.schema.json"
+    validator = jsonschema.Draft202012Validator(json.loads(path.read_text()), format_checker=jsonschema.FormatChecker())
+    data = copy.deepcopy(_packet(tmp_path).model_dump(mode="json"))
+    if case == "claim":
+        data["claims"][0]["proposition"] = "changed"
+    elif case == "cognitive":
+        data["accepted_alternatives"][0]["epistemic_status"] = "DIRECTLY_ATTESTED"
+    elif case == "receipt":
+        data["input_authority"]["normalization_receipt_identity"] = "01900000-0000-7000-8000-000000000000"
+    elif case == "source":
+        data["input_authority"]["source_snapshot_identities"].reverse()
+    else:
+        data["packet_identity"] = "0" * 64
+    assert not validator.is_valid(data)
 
 
 def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:

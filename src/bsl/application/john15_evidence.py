@@ -19,6 +19,7 @@ from uuid6 import uuid7
 from bsl.contracts.archive import ArchiveInitializationReceipt, ArchiveRootMarker
 from bsl.contracts.evidence import (
     DESIGN_SHA256,
+    EXACT_INPUT_AUTHORITY,
     FROZEN_FIELDS,
     SPEC_SHA256,
     John15TranslationNuanceEvidencePacket,
@@ -107,7 +108,9 @@ def _require_root(root: Path, expected_root: Path) -> Path:
     return root
 
 
-def _validate_t03_receipt(root: Path, bundle: John15NormalizationBundle, receipt: NormalizationReceipt) -> None:
+def _validate_t03_receipt(
+    root: Path, bundle: John15NormalizationBundle, receipt: NormalizationReceipt, receipt_sha: str
+) -> None:
     expected_paths = (T03_OBJECT, T03_SNAPSHOT, T03_RECEIPT)
     expected = (
         receipt.disposition == "PUBLISHED",
@@ -123,6 +126,10 @@ def _validate_t03_receipt(root: Path, bundle: John15NormalizationBundle, receipt
         receipt.source_content_identities == tuple(source.content_identity for source in bundle.sources),
         len(set(receipt.source_snapshot_identities)) == 6,
         len(set(receipt.source_content_identities)) == 6,
+        str(receipt.receipt_identity) == EXACT_INPUT_AUTHORITY["normalization_receipt_identity"],
+        receipt_sha == EXACT_INPUT_AUTHORITY["normalization_receipt_file_sha256"],
+        list(receipt.source_snapshot_identities) == EXACT_INPUT_AUTHORITY["source_snapshot_identities"],
+        list(receipt.source_content_identities) == EXACT_INPUT_AUTHORITY["source_content_identities"],
         root.is_dir(),
     )
     if not all(expected):
@@ -148,7 +155,7 @@ def load_t03_authority(archive_root: Path, *, _expected_archive_root: Path = CAN
     )
     if not all(expected_bundle):
         raise ValueError("T03 normalization identity or specification differs")
-    _validate_t03_receipt(root, bundle, receipt)
+    _validate_t03_receipt(root, bundle, receipt, receipt_sha)
     return _T03Authority(root, bundle, receipt, receipt_sha)
 
 
@@ -328,18 +335,20 @@ def generate_john15_evidence(
             authority, packet, packet_sha, implementation_commit, "DRY_RUN_VALIDATED", before, after, _new_uuid, _now
         )
         return _EvidenceResult(packet, receipt, False, False)
-    existing = prepare_publication(authority.root, packet, packet_bytes)
     after = canonical_input_fingerprint(load_t03_authority(archive_root, _expected_archive_root=_expected_archive_root))
+    if after != before:
+        raise ValueError("T03 input authority changed before publication")
+    existing = prepare_publication(authority.root, packet, packet_bytes, before)
     disposition = "VERIFIED_EXISTING" if existing is not None else "PUBLISHED"
     receipt = _receipt(
         authority, packet, packet_sha, implementation_commit, disposition, before, after, _new_uuid, _now
     )
     if existing is not None:
         return _EvidenceResult(packet, receipt, False, True)
-    publish_evidence(authority.root, packet, receipt)
+    publish_evidence(authority.root, packet, receipt, before)
     actual_after = canonical_input_fingerprint(
         load_t03_authority(archive_root, _expected_archive_root=_expected_archive_root)
     )
-    if actual_after != after or evidence_stage_path(authority.root, packet_sha).exists():
+    if actual_after != before or evidence_stage_path(authority.root, packet_sha).exists():
         raise ValueError("publication changed T03 input authority or left its packet-bound stage")
     return _EvidenceResult(packet, receipt, True, False)

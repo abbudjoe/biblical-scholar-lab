@@ -50,17 +50,19 @@ def _exact_file(path: Path, expected: bytes) -> None:
         raise ValueError(f"existing evidence publication differs or is corrupt: {path.name}")
 
 
-def _validated_receipt(
-    path: Path,
+def _bound_receipt(
+    receipt: John15TranslationNuanceEvidenceReceipt,
     root: Path,
     packet: John15TranslationNuanceEvidencePacket,
     packet_sha256: str,
+    input_fingerprint: str,
 ) -> John15TranslationNuanceEvidenceReceipt:
     try:
-        receipt = John15TranslationNuanceEvidenceReceipt.model_validate_json(_regular_bytes(path))
-        _hash_file(path, require_read_only=True)
-    except (OSError, ValidationError, ValueError):
-        raise ValueError("existing evidence receipt is invalid") from None
+        receipt = John15TranslationNuanceEvidenceReceipt.model_validate_json(
+            rfc8785.dumps(receipt.model_dump(mode="json"))
+        )
+    except ValidationError:
+        raise ValueError("evidence receipt is invalid") from None
     authority = packet.input_authority
     expected = (
         receipt.disposition == "PUBLISHED",
@@ -71,14 +73,31 @@ def _validated_receipt(
         receipt.input_bundle_canonical_sha256 == authority.bundle_canonical_sha256,
         receipt.input_normalization_receipt_identity == authority.normalization_receipt_identity,
         receipt.input_normalization_receipt_file_sha256 == authority.normalization_receipt_file_sha256,
+        receipt.input_authority_fingerprint_before == input_fingerprint,
+        receipt.input_authority_fingerprint_after == input_fingerprint,
     )
     if not all(expected):
-        raise ValueError("existing evidence receipt does not bind the exact packet publication")
+        raise ValueError("evidence receipt does not bind the exact packet publication authority")
     return receipt
 
 
+def _validated_receipt(
+    path: Path,
+    root: Path,
+    packet: John15TranslationNuanceEvidencePacket,
+    packet_sha256: str,
+    input_fingerprint: str,
+) -> John15TranslationNuanceEvidenceReceipt:
+    try:
+        receipt = John15TranslationNuanceEvidenceReceipt.model_validate_json(_regular_bytes(path))
+        _hash_file(path, require_read_only=True)
+    except (OSError, ValidationError, ValueError):
+        raise ValueError("existing evidence receipt is invalid") from None
+    return _bound_receipt(receipt, root, packet, packet_sha256, input_fingerprint)
+
+
 def verify_existing(
-    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes
+    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes, input_fingerprint: str
 ) -> John15TranslationNuanceEvidenceReceipt | None:
     packet_sha = hashlib.sha256(packet_bytes).hexdigest()
     object_path, snapshot_path, receipt_path = tuple(root / value for value in publication_paths(packet_sha))
@@ -94,14 +113,18 @@ def verify_existing(
     _exact_file(object_path, packet_bytes)
     if states[1]:
         _exact_file(snapshot_path, packet_bytes)
-    return _validated_receipt(receipt_path, root, packet, packet_sha) if states[2] else None
+    return _validated_receipt(receipt_path, root, packet, packet_sha, input_fingerprint) if states[2] else None
 
 
-def _stage_receipt(path: Path, root: Path, packet: John15TranslationNuanceEvidencePacket, packet_sha: str) -> None:
-    _validated_receipt(path, root, packet, packet_sha)
+def _stage_receipt(
+    path: Path, root: Path, packet: John15TranslationNuanceEvidencePacket, packet_sha: str, input_fingerprint: str
+) -> None:
+    _validated_receipt(path, root, packet, packet_sha, input_fingerprint)
 
 
-def _validate_stage(root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes) -> Path | None:
+def _validate_stage(
+    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes, input_fingerprint: str
+) -> Path | None:
     packet_sha = hashlib.sha256(packet_bytes).hexdigest()
     stage = evidence_stage_path(root, packet_sha)
     if stage.is_symlink() or (stage.exists() and not stage.is_dir()):
@@ -115,12 +138,14 @@ def _validate_stage(root: Path, packet: John15TranslationNuanceEvidencePacket, p
         if name in contents:
             _exact_file(contents[name], packet_bytes)
     if "receipt" in contents:
-        _stage_receipt(contents["receipt"], root, packet, packet_sha)
+        _stage_receipt(contents["receipt"], root, packet, packet_sha, input_fingerprint)
     return stage
 
 
-def _clean_stage(root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes) -> None:
-    stage = _validate_stage(root, packet, packet_bytes)
+def _clean_stage(
+    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes, input_fingerprint: str
+) -> None:
+    stage = _validate_stage(root, packet, packet_bytes, input_fingerprint)
     if stage is None:
         return
     for name in ("object", "snapshot", "receipt"):
@@ -130,10 +155,10 @@ def _clean_stage(root: Path, packet: John15TranslationNuanceEvidencePacket, pack
 
 
 def prepare_publication(
-    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes
+    root: Path, packet: John15TranslationNuanceEvidencePacket, packet_bytes: bytes, input_fingerprint: str
 ) -> John15TranslationNuanceEvidenceReceipt | None:
-    existing = verify_existing(root, packet, packet_bytes)
-    _clean_stage(root, packet, packet_bytes)
+    existing = verify_existing(root, packet, packet_bytes, input_fingerprint)
+    _clean_stage(root, packet, packet_bytes, input_fingerprint)
     return existing
 
 
@@ -149,10 +174,12 @@ def publish_evidence(
     root: Path,
     packet: John15TranslationNuanceEvidencePacket,
     receipt: John15TranslationNuanceEvidenceReceipt,
+    input_fingerprint: str,
 ) -> None:
     packet_bytes = canonical_packet_bytes(packet)
     packet_sha = hashlib.sha256(packet_bytes).hexdigest()
-    if prepare_publication(root, packet, packet_bytes) is not None:
+    receipt = _bound_receipt(receipt, root, packet, packet_sha, input_fingerprint)
+    if prepare_publication(root, packet, packet_bytes, input_fingerprint) is not None:
         raise ValueError("evidence publication already exists")
     payloads = {
         "object": packet_bytes,
@@ -169,6 +196,6 @@ def publish_evidence(
     )
     for name, destination in zip(("object", "snapshot", "receipt"), destinations, strict=True):
         _link_no_overwrite(stage / name, destination)
-    if verify_existing(root, packet, packet_bytes) is None:
+    if verify_existing(root, packet, packet_bytes, input_fingerprint) is None:
         raise ValueError("evidence publication verification failed")
-    _clean_stage(root, packet, packet_bytes)
+    _clean_stage(root, packet, packet_bytes, input_fingerprint)

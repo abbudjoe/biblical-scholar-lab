@@ -59,12 +59,12 @@
     {
       "contract": "John15TranslationNuanceEvidencePacket", "schema_version": "1.0", "owning_design": "VS01-T04",
       "schema_path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-packet.schema.json",
-      "owning_task": "VS01-T04", "sha256": "cf2db865a201705b126d8225bfac87427a47eed66758f8d1a1fbe0492a257d4f"
+      "owning_task": "VS01-T04", "sha256": "855b27545de45fcc72bf4f6b6a587ed1c6d0e57bdeabc1a525316dedecec5aec"
     },
     {
       "contract": "John15TranslationNuanceEvidenceReceipt", "schema_version": "1.0", "owning_design": "VS01-T04",
       "schema_path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
-      "owning_task": "VS01-T04", "sha256": "785fa5d8470f62ddaddb72e265dfb60c4152f389a78c63d9a14d07a3f9a649c1"
+      "owning_task": "VS01-T04", "sha256": "d2e1e9802bf47485c850425393bb1b4a7dd4059db55fb4e55b03d76319c98520"
     }
   ]
 }

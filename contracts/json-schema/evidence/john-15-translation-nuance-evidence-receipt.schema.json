@@ -56,24 +56,16 @@
       "type": "string"
     },
     "input_normalization_receipt_file_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Input Normalization Receipt File Sha256",
-      "type": "string"
+      "const": "e4871e859481614da6d4f52e77fa41e35234884b9f5baacad68c4855e2ed6af2"
     },
     "input_normalization_receipt_identity": {
-      "format": "uuid",
-      "title": "Input Normalization Receipt Identity",
-      "type": "string"
+      "const": "01a02a37-79f8-7f29-abf7-a2dd9d7161ba"
     },
     "packet_canonical_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Packet Canonical Sha256",
-      "type": "string"
+      "const": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
     },
     "packet_identity": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Packet Identity",
-      "type": "string"
+      "const": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"
     },
     "publication_paths": {
       "maxItems": 3,
