@@ -93,36 +93,60 @@ def _require_expected_archive_root(root: Path, expected_root: Path) -> None:
         raise ValueError("archive root does not resolve to the canonical archive root")
 
 
+def _require_directory(path: Path, label: str) -> None:
+    if path.is_symlink():
+        raise ValueError(f"{label} must not be a symlink")
+    if not path.is_dir():
+        raise ValueError(f"{label} directory is missing")
+
+
+def _require_bindings(bindings: tuple[tuple[bool, str], ...]) -> None:
+    for valid, reason in bindings:
+        if not valid:
+            raise ValueError(reason)
+
+
 def _require_initialized_root(root: Path, expected_root: Path = _CANONICAL_ARCHIVE_ROOT) -> Path:
-    if root.is_symlink() or not root.is_dir():
-        raise ValueError("archive root must be an initialized real directory")
+    _require_directory(root, "archive root")
     root = root.resolve(strict=True)
     _require_expected_archive_root(root, expected_root)
     marker_path = root / ".bsl-archive-root.json"
     try:
         marker = ArchiveRootMarker.model_validate_json(_read_regular(marker_path, "archive marker"))
+    except (OSError, ValidationError, ValueError):
+        raise ValueError("archive root marker is missing or invalid") from None
+    try:
         marker_sha256, _ = _hash_file(marker_path, require_read_only=True)
         canary_sha256, _ = _hash_file(root / marker.canary_relative_path, require_read_only=True)
+    except (OSError, ValueError):
+        raise ValueError("archive marker or canary is missing, mutable, or invalid") from None
+    try:
         receipt_path = root / marker.initialization_receipt_relative_path
         receipt = ArchiveInitializationReceipt.model_validate_json(
             _read_regular(receipt_path, "initialization receipt")
         )
         _hash_file(receipt_path, require_read_only=True)
     except (OSError, ValidationError, ValueError):
-        raise ValueError("archive root lacks a valid initialized marker and retained evidence") from None
-    if (
-        canary_sha256 != marker.canary_sha256
-        or receipt.archive_id != marker.archive_id
-        or receipt.operation_id != marker.archive_id
-        or receipt.disposition != "INITIALIZED"
-        or receipt.marker_sha256 != marker_sha256
-        or marker.canonical_archive_root != str(_CANONICAL_ARCHIVE_ROOT)
-        or receipt.canonical_archive_root != marker.canonical_archive_root
-    ):
-        raise ValueError("archive marker evidence bindings are invalid")
+        raise ValueError("archive initialization receipt is missing, mutable, or invalid") from None
+    bindings = (
+        (canary_sha256 == marker.canary_sha256, "archive canary hash does not match the root marker"),
+        (receipt.archive_id == marker.archive_id, "archive receipt ID does not match the root marker"),
+        (receipt.operation_id == marker.archive_id, "archive receipt operation does not match the root marker"),
+        (receipt.disposition == "INITIALIZED", "archive receipt disposition is not INITIALIZED"),
+        (receipt.marker_sha256 == marker_sha256, "archive receipt does not bind the root marker hash"),
+        (
+            marker.canonical_archive_root == str(_CANONICAL_ARCHIVE_ROOT),
+            "archive root marker does not name the canonical archive root",
+        ),
+        (
+            receipt.canonical_archive_root == marker.canonical_archive_root,
+            "archive receipt root does not match the root marker",
+        ),
+    )
+    _require_bindings(bindings)
     required = ("objects/sha256", "manifests/source", "snapshots/source", "quarantine", ".incoming")
-    if any(not (root / path).is_dir() or (root / path).is_symlink() for path in required):
-        raise ValueError("initialized archive layout is incomplete")
+    for relative in required:
+        _require_directory(root / relative, f"archive layout path {relative}")
     return root
 
 
@@ -273,42 +297,72 @@ def _verify_authority(root: Path, snapshot: SourceSnapshot, context: _SourceCont
         receipt_path = root / snapshot.fetch_receipt_relative_path
         receipt_hash, _ = _hash_file(receipt_path, require_read_only=True)
         receipt = FetchReceipt.model_validate_json(_read_regular(receipt_path, "fetch receipt"))
+    except (OSError, ValidationError, ValueError):
+        raise ValueError("existing snapshot fetch receipt is missing, mutable, or invalid") from None
+    try:
         decision_path = root / snapshot.admission_decision_relative_path
         decision_hash, _ = _hash_file(decision_path, require_read_only=True)
         decision = AdmissionDecision.model_validate_json(_read_regular(decision_path, "admission decision"))
     except (OSError, ValidationError, ValueError):
-        raise ValueError("existing snapshot authority is missing or invalid") from None
-    expected = (snapshot.source_id, snapshot.admission_attempt_id, context.spec_sha256)
-    if (receipt.source_id, receipt.attempt_id, receipt.source_spec_sha256) != expected:
-        raise ValueError("fetch receipt does not bind the existing snapshot")
-    if (decision.source_id, decision.attempt_id) != expected[:2] or decision.disposition != "ADMITTED":
-        raise ValueError("admission decision does not bind the existing snapshot")
+        raise ValueError("existing snapshot admission decision is missing, mutable, or invalid") from None
+    _require_bindings(
+        (
+            (receipt.source_id == snapshot.source_id, "fetch receipt source does not bind the existing snapshot"),
+            (
+                receipt.attempt_id == snapshot.admission_attempt_id,
+                "fetch receipt attempt does not bind the existing snapshot",
+            ),
+            (
+                receipt.source_spec_sha256 == context.spec_sha256,
+                "fetch receipt source specification does not bind the existing snapshot",
+            ),
+            (decision.source_id == snapshot.source_id, "admission decision source does not bind the existing snapshot"),
+            (
+                decision.attempt_id == snapshot.admission_attempt_id,
+                "admission decision attempt does not bind the existing snapshot",
+            ),
+            (decision.disposition == "ADMITTED", "existing snapshot admission decision is not ADMITTED"),
+        )
+    )
     admitted = tuple(dict.fromkeys(item.sha256 for item in snapshot.objects))
     exchanges = tuple(exchange.model_dump(mode="json") for exchange in receipt.exchanges)
     bindings = (
-        receipt_hash == snapshot.fetch_receipt_sha256,
-        decision_hash == snapshot.admission_decision_sha256,
-        decision.fetch_receipt_sha256 == receipt_hash,
-        decision.admitted_object_sha256 == admitted,
-        receipt.objects == snapshot.objects,
-        receipt.archive_inventory == snapshot.archive_inventory,
-        receipt.source_spec == context.plan == snapshot.source_spec,
-        receipt.generated_at == snapshot.acquired_at,
-        receipt.package_sha256 == snapshot.package_sha256,
-        tuple(exchange.final_url for exchange in receipt.exchanges) == snapshot.retrieval_urls,
-        hashlib.sha256(rfc8785.dumps(exchanges)).hexdigest() == snapshot.http_metadata_sha256,
-        receipt.objects_aggregate_sha256 == snapshot.objects_aggregate_sha256,
+        (receipt_hash == snapshot.fetch_receipt_sha256, "snapshot fetch receipt hash is inconsistent"),
+        (decision_hash == snapshot.admission_decision_sha256, "snapshot admission decision hash is inconsistent"),
+        (decision.fetch_receipt_sha256 == receipt_hash, "admission decision does not bind the fetch receipt hash"),
+        (decision.admitted_object_sha256 == admitted, "admission decision object hashes are inconsistent"),
+        (receipt.objects == snapshot.objects, "fetch receipt objects differ from the snapshot"),
+        (receipt.archive_inventory == snapshot.archive_inventory, "fetch receipt inventory differs from the snapshot"),
+        (
+            receipt.source_spec == context.plan == snapshot.source_spec,
+            "fetch receipt or snapshot source specification differs from the approved plan",
+        ),
+        (receipt.generated_at == snapshot.acquired_at, "fetch receipt time differs from the snapshot"),
+        (receipt.package_sha256 == snapshot.package_sha256, "fetch receipt package hash differs from the snapshot"),
+        (
+            tuple(exchange.final_url for exchange in receipt.exchanges) == snapshot.retrieval_urls,
+            "fetch receipt retrieval URLs differ from the snapshot",
+        ),
+        (
+            hashlib.sha256(rfc8785.dumps(exchanges)).hexdigest() == snapshot.http_metadata_sha256,
+            "fetch receipt HTTP metadata hash differs from the snapshot",
+        ),
+        (
+            receipt.objects_aggregate_sha256 == snapshot.objects_aggregate_sha256,
+            "fetch receipt object aggregate differs from the snapshot",
+        ),
     )
-    if not all(bindings):
-        raise ValueError("existing snapshot authority hashes are inconsistent")
+    _require_bindings(bindings)
 
 
 def _verify_objects(root: Path, snapshot: SourceSnapshot) -> None:
     for item in snapshot.objects:
         path = root / "objects" / "sha256" / item.sha256[:2] / item.sha256
         digest, size = _hash_file(path, require_read_only=True)
-        if (digest, size) != (item.sha256, item.byte_count):
-            raise ValueError("existing snapshot object is missing or corrupt")
+        if digest != item.sha256:
+            raise ValueError("existing snapshot object hash is inconsistent")
+        if size != item.byte_count:
+            raise ValueError("existing snapshot object byte count is inconsistent")
 
 
 def _promote(root: Path, data: bytes, expected_sha256: str, stage_id: UUID) -> None:
@@ -322,12 +376,12 @@ def _promote(root: Path, data: bytes, expected_sha256: str, stage_id: UUID) -> N
             os.link(stage, destination, follow_symlinks=False)
             _fsync_directory(destination_dir)
         except FileExistsError:
-            digest, size = _hash_file(destination, require_read_only=True)
-            if (digest, size) != (expected_sha256, len(data)):
-                raise ValueError("existing content-addressed object is corrupt") from None
+            pass
         digest, size = _hash_file(destination, require_read_only=True)
-        if (digest, size) != (expected_sha256, len(data)):
-            raise ValueError("promoted source object verification failed")
+        if digest != expected_sha256:
+            raise ValueError("promoted source object hash verification failed")
+        if size != len(data):
+            raise ValueError("promoted source object byte-count verification failed")
     finally:
         stage.unlink(missing_ok=True)
 

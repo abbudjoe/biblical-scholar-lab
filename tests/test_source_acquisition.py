@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import shutil
 import socket
@@ -18,6 +19,7 @@ from pydantic import ValidationError
 
 import bsl.application.source_acquisition as acquisition
 import bsl.infrastructure.source_transport as source_transport
+import bsl.infrastructure.source_validation as source_validation
 import bsl.interfaces.cli as cli
 from bsl.application.source_acquisition import acquire_source
 from bsl.contracts.archive import (
@@ -73,7 +75,9 @@ COMPONENTS: dict[str, dict[str, bytes]] = {
         ),
     },
     "SP01-SRC-005": {
-        "abbott-smith.tei.xml": "<TEI xmlns='u'><entry><form><orth>καταλαμβάνω</orth></form></entry></TEI>".encode(),
+        "abbott-smith.tei.xml": (
+            "<TEI xmlns='u'><entry n='καταλαμβάνω|G2638'><form><orth>κατα-λαμβάνω</orth></form></entry></TEI>"
+        ).encode(),
         "README.md": b"The TEI lexicon is public domain; the PDF is restricted.",
     },
     "SP01-SRC-006": {
@@ -143,17 +147,20 @@ def archive_root(tmp_path: Path) -> Path:
 def web_zip(
     *,
     extra: tuple[str | zipfile.ZipInfo, bytes] | None = None,
+    john_name: str = "eng-web/43JHNeng-web.usfm",
     john_text: str = (
         "\\id JHN World English Bible\n\\c 1\n"
         "\\v 5 The light shines in the darkness, \\f + \\fr 1:5 \\ft synthetic note \\f* "
         "and the darkness hasn’t overcome it.\n"
     ),
+    rights_name: str = "eng-web/README.txt",
+    rights_text: str = "World English Bible eng-web is public domain.",
 ) -> bytes:
     stream = BytesIO()
     with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("eng-web/", b"")
-        archive.writestr("eng-web/43JHNeng-web.usfm", john_text)
-        archive.writestr("eng-web/README.txt", "World English Bible eng-web is public domain.")
+        archive.writestr(john_name, john_text)
+        archive.writestr(rights_name, rights_text)
         if extra is not None:
             archive.writestr(*extra)
     return stream.getvalue()
@@ -208,10 +215,10 @@ def test_every_approved_source_admits_synthetic_bytes(archive_root: Path, source
 
 
 def test_morphgnt_exact_seven_column_target_is_accepted() -> None:
-    content, rights = source_transport._morphgnt_checks(COMPONENTS["SP01-SRC-002"])
+    content_error, rights_error = source_validation._morphgnt_checks(COMPONENTS["SP01-SRC-002"])
 
-    assert content is True
-    assert rights is True
+    assert content_error is None
+    assert rights_error is None
 
 
 @pytest.mark.parametrize(
@@ -229,10 +236,104 @@ def test_morphgnt_target_column_mismatches_are_rejected(target_row: str) -> None
     files = COMPONENTS["SP01-SRC-002"] | {
         "64-Jn-morphgnt.txt": f"040105 C- -------- καὶ καί καί\n{target_row}\n".encode()
     }
-    content, rights = source_transport._morphgnt_checks(files)
+    content_error, rights_error = source_validation._morphgnt_checks(files)
 
-    assert content is False
-    assert rights is True
+    assert content_error == "MORPHGNT_TARGET_ROW_NOT_FOUND"
+    assert rights_error is None
+
+
+@pytest.mark.parametrize(
+    ("source_id", "path", "body", "reason"),
+    (
+        (
+            "SP01-SRC-001",
+            "data/sblgnt/text/John.txt",
+            b"John 1:4\tmissing target\n",
+            "SBLGNT_JOHN_1_5_NOT_FOUND",
+        ),
+        (
+            "SP01-SRC-001",
+            "data/sblgnt/text/John.txt",
+            COMPONENTS["SP01-SRC-001"]["data/sblgnt/text/John.txt"] * 2,
+            "SBLGNT_JOHN_1_5_AMBIGUOUS",
+        ),
+        (
+            "SP01-SRC-001",
+            "data/sblgnt/text/John.txt",
+            b"John 1:5\tchanged target\n",
+            "SBLGNT_JOHN_1_5_CONTENT_MISMATCH",
+        ),
+        (
+            "SP01-SRC-002",
+            "64-Jn-morphgnt.txt",
+            COMPONENTS["SP01-SRC-002"]["64-Jn-morphgnt.txt"] * 2,
+            "MORPHGNT_TARGET_ROW_AMBIGUOUS",
+        ),
+        (
+            "SP01-SRC-003",
+            "usx/43-JHN.usx",
+            b"<usx><chapter number='1'/><verse number='4'/>missing target</usx>",
+            "ASV_JOHN_1_5_NOT_FOUND",
+        ),
+        (
+            "SP01-SRC-003",
+            "usx/43-JHN.usx",
+            b"<usx><chapter number='1'/><verse number='5'/>first<verse number='5'/>second</usx>",
+            "ASV_JOHN_1_5_AMBIGUOUS",
+        ),
+        (
+            "SP01-SRC-003",
+            "usx/43-JHN.usx",
+            b"<usx><chapter number='1'/><verse number='5'/>changed target</usx>",
+            "ASV_JOHN_1_5_CONTENT_MISMATCH",
+        ),
+    ),
+)
+def test_source_content_failure_reasons_are_distinct(source_id: str, path: str, body: bytes, reason: str) -> None:
+    content_error, rights_error = source_validation._GITHUB_CHECKS[source_id](COMPONENTS[source_id] | {path: body})
+    assert content_error == reason
+    assert rights_error is None
+
+
+def test_abbott_smith_uses_canonical_entry_identifier() -> None:
+    content_error, rights_error = source_validation._abbott_smith_checks(COMPONENTS["SP01-SRC-005"])
+    assert content_error is None
+    assert rights_error is None
+
+    display_variant = COMPONENTS["SP01-SRC-005"] | {
+        "abbott-smith.tei.xml": (
+            "<TEI xmlns='u'><entry n='καταλαμβάνω|G2638'><form><orth>display variant</orth></form></entry></TEI>"
+        ).encode()
+    }
+    assert source_validation._abbott_smith_checks(display_variant)[0] is None
+
+    missing = COMPONENTS["SP01-SRC-005"] | {"abbott-smith.tei.xml": b"<TEI xmlns='u'><entry n='other|G0'/></TEI>"}
+    duplicate = COMPONENTS["SP01-SRC-005"] | {
+        "abbott-smith.tei.xml": (
+            "<TEI xmlns='u'><entry n='καταλαμβάνω|G2638'/><entry n='καταλαμβάνω|G2638'/></TEI>"
+        ).encode()
+    }
+    assert source_validation._abbott_smith_checks(missing)[0] == "ABBOTT_SMITH_ENTRY_NOT_FOUND"
+    assert source_validation._abbott_smith_checks(duplicate)[0] == "ABBOTT_SMITH_ENTRY_AMBIGUOUS"
+
+
+def test_source_serif_font_failures_are_distinct() -> None:
+    valid = bytearray(synthetic_sfnt(b"font"))
+    bad_signature = bytearray(valid)
+    bad_signature[:4] = b"OTTO"
+    low_count = b"\0\1\0\0\0\3" + b"\0" * 6
+    truncated_directory = b"\0\1\0\0\0\4" + b"\0" * 6
+    missing_table = bytearray(valid)
+    missing_table[12:16] = b"TEST"
+    invalid_bounds = bytearray(valid)
+    invalid_bounds[20:24] = b"\0\0\0\0"
+
+    assert source_validation._sfnt_error(b"short") == "SOURCE_SERIF_FONT_TRUNCATED"
+    assert source_validation._sfnt_error(bytes(bad_signature)) == "SOURCE_SERIF_FONT_SIGNATURE_INVALID"
+    assert source_validation._sfnt_error(low_count) == "SOURCE_SERIF_FONT_TABLE_COUNT_INVALID"
+    assert source_validation._sfnt_error(truncated_directory) == "SOURCE_SERIF_FONT_DIRECTORY_TRUNCATED"
+    assert source_validation._sfnt_error(bytes(missing_table)) == "SOURCE_SERIF_FONT_REQUIRED_TABLE_MISSING"
+    assert source_validation._sfnt_error(bytes(invalid_bounds)) == "SOURCE_SERIF_FONT_TABLE_BOUNDS_INVALID"
 
 
 @pytest.mark.parametrize("case", ("unknown", "duplicate", "reordered", "changed-revision"))
@@ -290,55 +391,108 @@ def test_missing_rights_oversize_and_unexpected_final_path_are_rejected(
 
 
 @pytest.mark.parametrize(
-    ("source_id", "path", "rights"),
+    ("source_id", "path", "rights", "reason"),
     (
-        ("SP01-SRC-001", "LICENSE", b"Attribution 3.0 International"),
-        ("SP01-SRC-001", "LICENSE", b"Attribution 4.0 International\nlicense withdrawn"),
+        (
+            "SP01-SRC-001",
+            "LICENSE",
+            b"Attribution 3.0 International",
+            "SBLGNT_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
+        (
+            "SP01-SRC-001",
+            "LICENSE",
+            b"Attribution 4.0 International\nlicense withdrawn",
+            "SBLGNT_RIGHTS_EVIDENCE_CONTRADICTED",
+        ),
         (
             "SP01-SRC-001",
             "LICENSE",
             b"This work is not licensed under the Creative Commons Attribution 4.0 International License.",
+            "SBLGNT_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
-        ("SP01-SRC-002", "README.md", b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/4.0/"),
+        (
+            "SP01-SRC-002",
+            "README.md",
+            b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/4.0/",
+            "MORPHGNT_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
         (
             "SP01-SRC-002",
             "README.md",
             b"Not licensed under the CC-BY-SA License. https://creativecommons.org/licenses/by-sa/3.0/",
+            "MORPHGNT_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
         (
             "SP01-SRC-002",
             "README.md",
             b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/3.0/\nlicense replaced",
+            "MORPHGNT_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
-        ("SP01-SRC-006", "LICENSE.md", b"Copyright 2014 Adobe. All Rights Reserved.\nApache License 2.0"),
+        (
+            "SP01-SRC-003",
+            "License.html",
+            b"No rights statement.",
+            "ASV_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
+        (
+            "SP01-SRC-003",
+            "License.html",
+            b"The American Standard Version is not in the public domain.",
+            "ASV_RIGHTS_EVIDENCE_CONTRADICTED",
+        ),
+        (
+            "SP01-SRC-005",
+            "README.md",
+            b"No rights statement.",
+            "ABBOTT_SMITH_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
+        (
+            "SP01-SRC-005",
+            "README.md",
+            b"The TEI lexicon is not in the public domain.",
+            "ABBOTT_SMITH_RIGHTS_EVIDENCE_CONTRADICTED",
+        ),
+        (
+            "SP01-SRC-006",
+            "LICENSE.md",
+            b"Copyright 2014 Adobe. All Rights Reserved.\nApache License 2.0",
+            "SOURCE_SERIF_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
         (
             "SP01-SRC-006",
             "LICENSE.md",
             b"All Rights Reserved.\nSIL Open Font License\nVersion 1.1\nSIL Open Font License grant is withdrawn",
+            "SOURCE_SERIF_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
         (
             "SP01-SRC-006",
             "LICENSE.md",
             b"This software is not distributed under the SIL Open Font License Version 1.1.",
+            "SOURCE_SERIF_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
         (
             "SP01-SRC-006",
             "LICENSE.md",
             b"SIL Open Font License\nVersion 1.1\nThe SIL Open Font License grant has been withdrawn.",
+            "SOURCE_SERIF_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
         (
             "SP01-SRC-006",
             "LICENSE.md",
             b"SIL Open Font License\nVersion 1.1\nThis license has been replaced by Apache 2.0.",
+            "SOURCE_SERIF_RIGHTS_EVIDENCE_CONTRADICTED",
         ),
     ),
 )
 def test_source_specific_rights_failures_are_rejected(
-    archive_root: Path, source_id: str, path: str, rights: bytes
+    archive_root: Path, source_id: str, path: str, rights: bytes, reason: str
 ) -> None:
     transport = FakeTransport(source_id)
     transport.body_updates[path] = rights
-    assert _acquire(archive_root, source_id, transport).decision.disposition == "REJECTED"
+    result = _acquire(archive_root, source_id, transport)
+    assert result.decision.disposition == "REJECTED"
+    assert result.decision.reasons == (reason,)
 
 
 def test_identical_rerun_verifies_and_changed_rerun_does_not_replace(archive_root: Path) -> None:
@@ -387,6 +541,92 @@ def _encrypted(package: bytes) -> bytes:
             changed[index + offset : index + offset + 2] = flags.to_bytes(2, "little")
             start = index + 4
     return bytes(changed)
+
+
+def _web_rejection_reason(archive_root: Path, package: bytes) -> str:
+    result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
+    assert result.decision.disposition == "REJECTED"
+    assert len(result.decision.reasons) == 1
+    return result.decision.reasons[0]
+
+
+def test_web_content_identity_accepts_exact_source_shaped_names(archive_root: Path) -> None:
+    package = web_zip(
+        john_name="73-JHNeng-web.usfm",
+        john_text=(
+            "\\id JHN World English Bible\n\\c 1\n"
+            '\\v 5 \\w The|strong="G1722"\\w* \\w light|strong="G5457"\\w* \\w shines|strong="G5316"\\w* '
+            '\\w in|strong="G1722"\\w* \\w the|strong="G1722"\\w* \\w darkness|strong="G4653"\\w*, '
+            '\\w and|strong="G2532"\\w* \\w the|strong="G1722"\\w* \\w darkness|strong="G4653"\\w* '
+            'hasn’t \\w overcome|strong="G3588"\\w* \\w it|strong="G2532"\\w*. \\p\n'
+        ),
+        rights_name="copr.htm",
+        rights_text="World English Bible is public domain and is not copyrighted.",
+    )
+    result = _acquire(archive_root, "SP01-SRC-004", FakeTransport("SP01-SRC-004", package=package))
+    assert result.decision.disposition == "ADMITTED"
+
+
+def test_web_filename_only_john_match_does_not_establish_identity(archive_root: Path) -> None:
+    package = web_zip(
+        john_name="73-JHNeng-web.usfm",
+        john_text=(
+            "\\id GEN World English Bible\n\\c 1\n"
+            "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
+        ),
+    )
+    assert _web_rejection_reason(archive_root, package) == "WEB_JOHN_COMPONENT_NOT_FOUND"
+
+
+def test_web_candidate_and_rights_failures_are_distinct(archive_root: Path) -> None:
+    john_text = (
+        "\\id JHN World English Bible\n\\c 1\n"
+        "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
+    )
+    cases = (
+        (
+            web_zip(john_text=john_text, extra=("second.sfm", john_text.encode())),
+            "WEB_JOHN_COMPONENT_AMBIGUOUS",
+        ),
+        (
+            web_zip(john_text=john_text, rights_text="World English Bible rights statement."),
+            "WEB_RIGHTS_EVIDENCE_NOT_FOUND",
+        ),
+        (
+            web_zip(
+                john_text=john_text.replace(" World English Bible", ""),
+                rights_text="This translation is public domain.",
+            ),
+            "WEB_TRANSLATION_IDENTITY_NOT_FOUND",
+        ),
+        (
+            web_zip(john_text=john_text, rights_text="World English Bible is public domain. All rights reserved."),
+            "WEB_RIGHTS_EVIDENCE_CONTRADICTED",
+        ),
+    )
+    for package, reason in cases:
+        assert _web_rejection_reason(archive_root, package) == reason
+
+
+def test_web_john_content_failures_are_distinct(archive_root: Path) -> None:
+    missing = web_zip(john_text="\\id JHN World English Bible\n\\c 1\n\\v 4 Different verse.\n")
+    ambiguous = web_zip(
+        john_text=(
+            "\\id JHN World English Bible\n\\c 1\n"
+            "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
+            "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
+        )
+    )
+    mismatch = web_zip(john_text="\\id JHN World English Bible\n\\c 1\n\\v 5 Different text.\n")
+    assert _web_rejection_reason(archive_root, missing) == "WEB_JOHN_1_5_NOT_FOUND"
+    assert _web_rejection_reason(archive_root, ambiguous) == "WEB_JOHN_1_5_AMBIGUOUS"
+    assert _web_rejection_reason(archive_root, mismatch) == "WEB_JOHN_1_5_CONTENT_MISMATCH"
+
+
+def test_web_component_discovery_does_not_reconflate_john_and_rights() -> None:
+    source = inspect.getsource(source_transport._web_components)
+    assert "len(john) != 1 or not rights" not in source
+    assert "WEB package lacks one John component or rights evidence" not in source
 
 
 def _unix_entry(name: str, mode: int, data: bytes = b"ordinary text") -> tuple[zipfile.ZipInfo, bytes]:
@@ -460,9 +700,9 @@ def test_uninitialized_or_unverified_archive_fails_closed(archive_root: Path, tm
     changed = initialization.model_copy(update={"disposition": "VERIFIED_EXISTING"})
     receipt_path.chmod(0o644)
     _immutable(receipt_path, rfc8785.dumps(changed.model_dump(mode="json")))
-    with pytest.raises(ValueError, match="initialized"):
+    with pytest.raises(ValueError, match="initialization receipt"):
         _acquire(archive_root, "SP01-SRC-003")
-    with pytest.raises(ValueError, match="initialized"):
+    with pytest.raises(ValueError, match="root marker"):
         acquire_source(
             "SP01-SRC-003",
             MANIFEST,
@@ -536,8 +776,103 @@ def test_response_metadata_failures_are_explicit(response: HttpResponse) -> None
     )
     with pytest.raises(ValueError, match="approved host"):
         source_transport._checked_response(outside, source_transport.WEB_PACKAGE_URL, 10, allow_redirects=True)
-    with pytest.raises(ValueError, match="unsafe"):
+    with pytest.raises(ValueError, match="approved host"):
         source_transport._BoundedRedirectHandler().redirect_request(None, None, 302, "", {}, "https://outside.test")
+
+
+def test_redirect_diagnostics_are_distinct() -> None:
+    handler = source_transport._BoundedRedirectHandler()
+    handler.history = [source_transport.WEB_PACKAGE_URL] * source_transport.MAX_REDIRECTS
+    with pytest.raises(ValueError, match="exceeds the limit"):
+        handler.redirect_request(None, None, 302, "", {}, source_transport.WEB_PACKAGE_URL)
+    with pytest.raises(ValueError, match="not HTTPS"):
+        source_transport._BoundedRedirectHandler().redirect_request(None, None, 302, "", {}, "http://ebible.org")
+
+
+@pytest.mark.parametrize(
+    ("repository", "reason"),
+    (
+        (None, "lacks a repository"),
+        ("http://github.com/owner/repository", "not HTTPS"),
+        ("https://example.test/owner/repository", "unapproved host"),
+        ("https://github.com/owner/repository/", "not canonical"),
+        ("https://github.com/owner", "must contain owner and repository"),
+        ("https://github.com/./repository", "unsafe path component"),
+    ),
+)
+def test_repository_identity_diagnostics_are_distinct(repository: str | None, reason: str) -> None:
+    with pytest.raises(ValueError, match=reason):
+        source_transport._repository_parts(repository)
+
+
+def test_request_binding_and_metadata_shape_diagnostics_are_distinct() -> None:
+    response = HttpResponse("https://requested.test", "https://requested.test", 200, (), b"")
+    with pytest.raises(ValueError, match="request URL is not HTTPS"):
+        source_transport._checked_response(response, "http://requested.test", 10)
+    with pytest.raises(ValueError, match="does not match"):
+        source_transport._checked_response(response, "https://different.test", 10)
+
+    source = acquisition._source(MANIFEST, "SP01-SRC-001").plan
+
+    def metadata(body: bytes):
+        def fetch(url: str, _limit: int) -> HttpResponse:
+            return HttpResponse(url, url, 200, (), body)
+
+        return fetch
+
+    with pytest.raises(ValueError, match="invalid JSON"):
+        source_transport._metadata_revision(source, "owner", "repository", metadata(b"{"))
+    with pytest.raises(ValueError, match="not an object"):
+        source_transport._metadata_revision(source, "owner", "repository", metadata(b"[]"))
+    with pytest.raises(ValueError, match="not UTF-8"):
+        source_validation._text({"component": b"\xff"}, "component")
+
+
+@pytest.mark.parametrize(
+    ("name", "reason"),
+    (
+        ("", "empty path"),
+        ("/absolute", "absolute path"),
+        ("C:\\absolute", "absolute path"),
+        ("directory\\file", "non-POSIX path"),
+        ("directory//file", "nondeterministic path"),
+        ("directory/../file", "path traversal"),
+    ),
+)
+def test_zip_path_diagnostics_are_distinct(name: str, reason: str) -> None:
+    with pytest.raises(ValueError, match=reason):
+        source_transport._validate_zip_path(name)
+
+
+def test_empty_zip_and_text_decoding_diagnostics_are_distinct() -> None:
+    stream = BytesIO()
+    with zipfile.ZipFile(stream, "w"):
+        pass
+    with pytest.raises(ValueError, match="no ZIP members"):
+        source_transport._web_components(stream.getvalue())
+
+    stream = BytesIO()
+    with zipfile.ZipFile(stream, "w") as archive:
+        archive.writestr("directory/", b"")
+    with pytest.raises(ValueError, match="no files"):
+        source_transport._web_components(stream.getvalue())
+
+    files, _inventory = source_transport._web_components(web_zip(extra=("undecodable.txt", b"\xff")))
+    assert files
+    with pytest.raises(ValueError, match="WEB_JOHN_COMPONENT_NOT_UTF8"):
+        source_transport._validate_web_evidence(b"\xff", ())
+    with pytest.raises(ValueError, match="unmatched inline note terminator"):
+        source_transport._without_usfm_notes("\\f*")
+
+
+def test_web_source_identity_diagnostics_are_distinct() -> None:
+    source = acquisition._source(MANIFEST, "SP01-SRC-004").plan
+    with pytest.raises(ValueError, match="package URL"):
+        source_transport.fetch_web(
+            source.model_copy(update={"package": "https://ebible.org/other.zip"}), FakeTransport("SP01-SRC-004")
+        )
+    with pytest.raises(ValueError, match="revision policy"):
+        source_transport.fetch_web(source.model_copy(update={"revision": "changed"}), FakeTransport("SP01-SRC-004"))
 
 
 def test_https_transport_success_and_failure_are_bounded(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -574,7 +909,6 @@ def test_unresolved_transport_retains_decision(archive_root: Path) -> None:
 def test_web_bad_zip_identity_and_content_failures(archive_root: Path) -> None:
     cases = (
         b"not-a-zip",
-        web_zip(extra=("eng-web/44JHN-copy.usfm", b"\\v 5 duplicate")),
         web_zip(
             john_text="\\id GEN World English Bible\n\\c 1\n"
             "\\v 5 The light shines in the darkness, and the darkness hasn't overcome it.\n"
