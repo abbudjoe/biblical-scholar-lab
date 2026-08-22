@@ -92,8 +92,9 @@
 | ACT-W00C-GOVERNANCE-CLOSURE-v2 | Lean governance closure repair and repository-status alignment | COMPLETED HISTORICAL W00C AUTHORIZATION | 2026-08-20 | [`../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json`](../activations/ACT-W00C-GOVERNANCE-CLOSURE-v2.json) | `5ab9183e11c1a1716435ce3e1057306c089b932b` |
 | ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1 | Local archive and source-admission foundation | COMPLETED HISTORICAL T01 AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json`](../activations/ACT-VS01-T01-ARCHIVE-SOURCE-FOUNDATION-v1.json) | `b157c300df240b4383341e1285a6f96103be2d40` |
 | ACT-VS01-T01-APFS-PLIST-COMPAT-v1 | APFS plist compatibility | COMPLETED HISTORICAL R02 AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json`](../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json) | `3e9673640f08542279189d2f50c872a0723d5ca4` |
-| ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1 | Canonical archive bootstrap kernel | ACTIVE | 2026-08-20 | [`../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json`](../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
-| ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1 | Source-admission kernel | ACTIVE | 2026-08-21 | [`../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json`](../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
+| ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1 | Canonical archive bootstrap kernel | COMPLETED HISTORICAL T02A AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json`](../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
+| ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1 | Source-admission kernel | COMPLETED HISTORICAL T02B AUTHORIZATION | 2026-08-21 | [`../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json`](../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
+| ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1 | John 1:5 source normalization | ACTIVE | 2026-08-21 | [`../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json`](../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json) | `042573bfcf650d1f125736a8ed8f5dc75bd25a30` |
 
 ## Documentation normalization
 
@@ -101,7 +102,7 @@
 
 ## Design-review status
 
-The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. The archive profile and VS01-T02 are approved, and T02A-IMP is active without authority for real archive initialization or source acquisition.
+The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. VS01-T02 is complete, and VS01-T03 is active under `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` for normalization implementation and read-only dry-run evidence only.
 
 
 ## Preimplementation audits

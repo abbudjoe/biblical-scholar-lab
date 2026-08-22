@@ -1,0 +1,166 @@
+{
+  "schema_version": "1.0",
+  "activation_id": "ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1",
+  "status": "APPROVED",
+  "approved_design_commit": "042573bfcf650d1f125736a8ed8f5dc75bd25a30",
+  "approved_design_ids": [
+    "DR-04",
+    "DR-05",
+    "DR-07",
+    "DR-09",
+    "DR-10",
+    "DR-28",
+    "DR-30",
+    "VS-01",
+    "SOURCE-PLAN-01",
+    "VS01-T02",
+    "VS01-T03"
+  ],
+  "root_turn": {
+    "task_id": "VS01-T03",
+    "title": "John 1:5 source normalization",
+    "model": "gpt-5.6",
+    "reasoning_effort": "high",
+    "base_branch": "main",
+    "task_branch": "codex/vs01-t03-john-1-5-normalization",
+    "luna_delegation_allowed": false
+  },
+  "objective": "Implement one deterministic John 1:5 normalization path that verifies the six exact authoritative source snapshots, derives a source-bound Greek, morphology, translation, lexical, and page-dependency bundle, emits a normalization receipt, supports a no-write dry run, and proves compatibility against the real canonical archive before review.",
+  "vertical_slice_id": "VS-01",
+  "activated_user_visible_capability": "The local CLI can deterministically assemble a reproducible, citation-ready John 1:5 source normalization bundle from the six admitted snapshots without yet making any interpretive translation-nuance claim.",
+  "activated_invariants": [
+    "The implementation starts from exact main 042573bfcf650d1f125736a8ed8f5dc75bd25a30.",
+    "The task branch is exactly codex/vs01-t03-john-1-5-normalization.",
+    "The canonical archive root is exactly /Volumes/BSL-Archive/BiblicalScholarLab.",
+    "Exactly six authoritative SourceSnapshot records, SP01-SRC-001 through SP01-SRC-006, must be present and valid before normalization.",
+    "Every source snapshot, fetch receipt, admission decision, and referenced object is verified read-only with exact hashes, byte counts, source IDs, source specifications, rights metadata, and authority bindings.",
+    "SBLGNT is the sole authoritative Greek wording; MorphGNT is annotation and alignment evidence only.",
+    "MorphGNT token alignment must cover the authoritative SBLGNT verse deterministically without fuzzy matching, silent token replacement, or unapproved textual normalization.",
+    "The target MorphGNT record remains a source-form record: third person, singular, aorist, active, indicative; it does not establish aspectual interpretation, contextual sense, translator intent, or theology.",
+    "ASV and WEB normalization includes only canonical John 1:5 verse text; notes, headings, cross-references, and paratext do not become canonical translation evidence.",
+    "Abbott-Smith normalization is limited to the unique entry identified by entry@n=\"καταλαμβάνω|G2638\" and preserves exact source wording, ordered structural divisions, source locator evidence, and provenance without deciding contextual sense.",
+    "Source Serif is represented only as an exact later page-rendering dependency binding and never as scholarly evidence.",
+    "Exactly John15NormalizationBundle and NormalizationReceipt are added as public contracts.",
+    "The bundle is deterministic and contains no wall-clock timestamp or random identifier in its semantic identity.",
+    "Canonical JSON uses RFC 8785 and SHA-256 identities; raw-source, normalized-view, source-snapshot, and output hashes remain distinct and explicit.",
+    "The implementation turn performs no live normalization publication and no canonical archive write.",
+    "A real-archive dry run is mandatory after the implementation commit; synthetic tests alone are insufficient completion evidence.",
+    "Two real-archive dry runs over unchanged inputs must produce the same bundle identity and bundle SHA-256.",
+    "The real-archive authority fingerprint must be identical before and after the dry run, and normalization publication paths must remain absent.",
+    "No network request, source refresh, source acquisition, source replacement, raw snapshot mutation, quarantine mutation, database, model, benchmark, cloud, or billable action occurs.",
+    "The PR remains draft, unapproved, and unmerged and ends with one handoff-only commit."
+  ],
+  "activated_paths": [
+    "activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json",
+    "activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.sha256",
+    "README.md",
+    "design/PACKAGE_STATUS.md",
+    "design/DECISION_INDEX.md",
+    "contracts/registry.json",
+    "contracts/json-schema/normalization/",
+    "src/bsl/contracts/normalization.py",
+    "src/bsl/application/john15_normalization.py",
+    "src/bsl/infrastructure/normalization_store.py",
+    "src/bsl/infrastructure/source_validation.py",
+    "src/bsl/application/source_acquisition.py",
+    "src/bsl/interfaces/cli.py",
+    "tests/",
+    "handoffs/VS01-T03/"
+  ],
+  "activated_contracts": [
+    "John15NormalizationBundle",
+    "NormalizationReceipt"
+  ],
+  "activated_interfaces": [
+    "bsl normalize john-1-5 --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --dry-run",
+    "bsl normalize john-1-5 --archive-root /Volumes/BSL-Archive/BiblicalScholarLab",
+    "unchanged vs01-t01-ci workflow"
+  ],
+  "activated_data_stores": [
+    "Git for the activation, status updates, contracts, schemas, normalization code, tests, and final handoff.",
+    "Temporary pytest archive fixtures for publication and idempotency tests.",
+    "Read-only canonical archive access at /Volumes/BSL-Archive/BiblicalScholarLab for the mandatory exact-artifact dry run.",
+    "Future live publication, tested only in temporary fixtures during this turn: content-addressed bundle object, snapshots/normalization/john-1-5.json, and manifests/normalization/john-1-5/normalization-receipt.json.",
+    "Ignored local dry-run evidence under .local/evidence/VS01-T03 or a temporary directory."
+  ],
+  "activated_adapters": [
+    "Existing strict SourceSnapshot, FetchReceipt, AdmissionDecision, archive-store, and source-validation logic.",
+    "One narrow read-only authoritative-source loader; existing verification logic is reused or minimally extracted rather than duplicated.",
+    "Pure source-specific normalizers for SBLGNT, MorphGNT, ASV USX, WEB USFM, Abbott-Smith TEI, and Source Serif dependency binding.",
+    "One narrow normalization publisher using existing immutable content-addressed storage primitives, exercised only against temporary fixtures during implementation."
+  ],
+  "required_tests": [
+    "The source snapshot set must be exactly SP01-SRC-001 through SP01-SRC-006; missing, extra, duplicate, mutable, corrupt, or mismatched records fail with precise reasons.",
+    "Every referenced receipt, decision, and object is validated for contract shape, source binding, hash, byte count, rights metadata, and read-only state.",
+    "SBLGNT John 1:5 resolves once; exact source and NFC display views are distinct fields with independently reproducible hashes.",
+    "MorphGNT John 1:5 rows preserve all source-native columns, align exactly to SBLGNT, identify exactly one target record, and reject any token, order, lemma, parsing, or coverage mismatch.",
+    "The target MorphGNT record derives only the approved grammatical features and no contextual sense or aspect claim.",
+    "ASV John 1:5 extraction excludes note content and paratext while preserving canonical wording and source-object binding.",
+    "WEB John 1:5 extraction excludes bounded notes, cross-references, word-span markup, and paragraph markers while preserving the source punctuation in the normalized output.",
+    "Abbott-Smith extraction identifies exactly one canonical entry, preserves an exact source entry span and hash, and emits ordered source-derived structural records and locators without interpretive adjudication.",
+    "Source Serif contributes only snapshot, object, rights, and role bindings; no font-derived scholarly claim is possible.",
+    "John15NormalizationBundle identity and canonical bytes are stable across repeated runs with unchanged inputs.",
+    "NormalizationReceipt binds the bundle, implementation identity, all six snapshot identities, dry-run/publication disposition, and exact intended publication paths.",
+    "Dry-run mode writes nothing to the archive and does not create normalization directories.",
+    "Temporary-fixture live mode publishes atomically to the fixed normalization paths, verifies an identical rerun without mutation, and rejects a changed existing bundle without replacement.",
+    "The CLI emits machine-readable success and error JSON and exposes no bypass of the canonical archive root in production.",
+    "Tests use small source-shaped excerpts and never commit full source files or font binaries.",
+    "No test or CI process accesses the network or the real canonical archive.",
+    "The full suite passes with branch coverage at least 90 percent and all DR-30 function, complexity, nesting, class, module, file, and PR limits satisfied.",
+    "The exact real-archive dry run succeeds twice at the implementation commit with identical bundle identity and SHA-256, zero writes, and unchanged archive authority fingerprint."
+  ],
+  "required_evidence": [
+    "Exact activation, implementation, handoff, live PR-head, base, tree, and CI identities.",
+    "Two generated schema hashes and updated contract-registry verification.",
+    "Status/navigation changes marking VS01-T02 complete and VS01-T03 active without rewriting approved design history.",
+    "A redacted six-source verification summary containing source IDs, snapshot identities, content identities, selected object hashes, and rights/operation bindings but no source bodies or private archive identity.",
+    "The exact real dry-run command, exit status, output path and SHA-256, bundle identity, bundle SHA-256, and receipt disposition.",
+    "A second dry-run result proving identical bundle identity and bundle SHA-256.",
+    "A pre/post archive authority fingerprint proving no source, authority, object, quarantine, or normalization-path mutation.",
+    "Synthetic publication, exact-rerun, changed-rerun, rollback, and no-partial-publication test evidence.",
+    "External network requests zero, canonical archive writes zero, source acquisitions zero, normalization publications zero, migrations zero, new dependencies zero, and later-task work zero.",
+    "DR-30 substantive-line, production-file, public-contract, function, class, module, complexity, and nesting receipt.",
+    "One final append-only Markdown/JSON handoff pair and one public-safe completion comment."
+  ],
+  "explicit_non_goals": [
+    "No live normalization publication during the implementation turn.",
+    "No source acquisition, refresh, substitution, revision change, raw snapshot edit, quarantine cleanup, or full-source redistribution.",
+    "No evidence packet, translation-difference diagnosis, contextual-sense adjudication, translator-intent claim, textual-variant conclusion, scholarly-consensus claim, or theology.",
+    "No PostgreSQL, migration, ORM, index, embedding, retrieval, model adapter, inference, training, benchmark execution, synthetic page, OCR, VLM, web UI, cloud, Lambda, Luna, evaluation, or billable action.",
+    "No VS01-T04 or later-stage implementation."
+  ],
+  "prohibited_scaffolding": [
+    "No generalized ETL framework, provider plugin system, repository abstraction, workflow engine, service container, custom ORM, generic normalization DSL, or catch-all manager/base/helper module.",
+    "No placeholder contracts, future passage generalization, full-Bible normalizer, full-lexicon materialization, full-corpus export, TODO, feature flag, or unused public type.",
+    "No fuzzy matching, approximate text similarity, model-generated correction, silent token substitution, or punctuation-insensitive scholarly comparison.",
+    "No duplication of source authority verification when a narrow reuse or extraction is possible.",
+    "No source bytes, complete lexical entry corpus, WEB ZIP, or Source Serif binary committed to Git.",
+    "No minification, generated-file accounting evasion, or split intended only to evade DR-30."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 1100,
+    "substantive_changed_lines_hard_limit": 1500,
+    "handwritten_production_files_hard_limit": 8,
+    "new_public_contracts_hard_limit": 2,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0
+  },
+  "completion_criteria": [
+    "The exact approved activation is validated and committed as the first task commit.",
+    "Stale status/navigation records are minimally corrected to mark T02 complete and T03 active.",
+    "Exactly two public contracts and their schemas are added and registry hashes pass.",
+    "The deterministic CLI and source-specific normalization path are complete without unactivated capability.",
+    "All six source roles and authority boundaries match SOURCE-PLAN-01 and VS-01.",
+    "Synthetic tests pass, including no-write dry run and temporary-fixture publication/idempotency behavior.",
+    "The implementation is committed before the mandatory real-archive dry runs.",
+    "Two read-only real-archive dry runs succeed with identical bundle identity and SHA-256, no archive mutation, and no network request.",
+    "No live normalization snapshot, receipt, or object is published during the root turn.",
+    "The final commit contains only the required VS01-T03 handoff pair.",
+    "The draft PR remains unapproved and unmerged for ChatGPT exact-head review."
+  ],
+  "owner_approval": {
+    "owner": "Joseph Abbud",
+    "status": "APPROVED",
+    "approved_at": "2026-08-21T23:35:18-04:00"
+  }
+}
