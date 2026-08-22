@@ -1,0 +1,313 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1",
+  "task_id": "VS01-T04",
+  "turn_id": "VS01-T04-SOL-20260822T190253Z",
+  "codex_run_id": "VS01-T04-SOL-20260822T190253Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t04-john-1-5-translation-nuance-evidence",
+  "base_sha": "5a558f9ff1049295985da88096d36542283b4e50",
+  "implementation_head_sha": "07cc5cd840928b2b6c87b8af1fa3d200c0dc897f",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/new/codex/vs01-t04-john-1-5-translation-nuance-evidence",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t04-john-1-5-translation-nuance-evidence",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Implement only ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1: verify the published T03 authority trio, materialize the exact frozen John 1:5 claim/evidence graph into two deterministic contracts, provide dry-run and fixture-only receipt-last publication behavior, and prove two exact canonical-archive dry runs without mutation, raw-source access, network access, or model use.",
+  "acceptance_criteria": [
+    "Persist the byte-exact frozen design and activation plus the minimal decision-index update as the first task commit.",
+    "Read only archive governance, the exact T03 object/snapshot/receipt trio, and the committed frozen T04 claim/evidence specification.",
+    "Verify the exact T03 Greek, morphology, ASV, WEB Classic, and Abbott-Smith evidence while enforcing Source Serif and prohibited-inference boundaries.",
+    "Add exactly John15TranslationNuanceEvidencePacket and John15TranslationNuanceEvidenceReceipt with generated schemas and registry hashes.",
+    "Expose only bsl evidence john-1-5-translation-nuance --archive-root PATH [--dry-run], with no production-root bypass flag.",
+    "Implement no-write dry run and fixture-only immutable, receipt-last, idempotent publication and recovery behavior.",
+    "Pass schema, formatting, lint, typing, complete regression, branch coverage, Git integrity, and DR-30 gates.",
+    "Freeze the implementation before two exact real-archive dry runs and prove stable packet semantics and zero archive mutation.",
+    "Create one handoff-only final commit, one draft PR, exact-head CI, and one public-safe completion comment."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1",
+      "VS01-T04-john-1-5-translation-nuance-evidence-packet",
+      "VS01-T04-claim-evidence-spec",
+      "DR-02-scholarly-epistemology-and-methodology",
+      "DR-05-textual-history-and-provenance-graph",
+      "DR-06-translation-nuance-core",
+      "DR-07-linguistic-representation",
+      "DR-09-scholarship-and-citation-model",
+      "DR-10-rights-lineage-and-release-architecture",
+      "DR-28-integrated-logical-architecture-and-contract-registry",
+      "DR-30-implementation-readiness-simplicity-and-anti-slop-contract",
+      "VS-01-john-1-5-translation-nuance-vertical-slice",
+      "SOURCE-PLAN-01-john-1-5-source-admission-plan"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "authority_persistence",
+      "commit": "0ccb3f883542c5fc87924d6eb01a5370da0e1698",
+      "summary": "Committed only the six byte-exact frozen design/activation files and the minimal decision-index authority update."
+    },
+    {
+      "phase": "implementation",
+      "commit": "07cc5cd840928b2b6c87b8af1fa3d200c0dc897f",
+      "tree": "007da501bc796629201b410f7fb1fa70bf500878",
+      "summary": "Added exactly two evidence contracts and schemas, exact T03 authority/evidence verification, deterministic frozen graph construction, one CLI command, a narrow receipt-last store, direct regressions, and minimal current-status updates."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/application/john15_evidence.py",
+      "focus": "Exact T03 authority trio, prohibited reads, source-derived verification, frozen-spec hash, deterministic packet construction, dry-run, and input fingerprint."
+    },
+    {
+      "path": "src/bsl/contracts/evidence.py",
+      "focus": "Exactly two strict public contracts, exact graph/status/source-role constraints, RFC 8785 packet identity, and receipt identities/paths."
+    },
+    {
+      "path": "src/bsl/infrastructure/evidence_store.py",
+      "focus": "Receipt-last immutable publication, exact recovery/idempotency, mismatch refusal, read-only modes, and unrelated-stage preservation."
+    },
+    {
+      "path": "tests/test_evidence_packet.py",
+      "focus": "Minimal-authority archive, evidence conformance, prohibited inference/source-role rejection, deterministic bytes, CLI, publication/recovery, access denial, and no-write tests."
+    }
+  ],
+  "commands": [
+    {
+      "command": "validate supplied artifact hashes and activation against governance/schemas/implementation-activation.schema.json",
+      "result": "PASS; all supplied frozen hashes exact and activation schema-valid; no approved input regenerated or repaired"
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS"
+    },
+    {
+      "command": "schema drift and contracts/registry.json hash validation",
+      "result": "PASS; exactly two new registry entries"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; formatting and lint clean, 0 pyright errors and 0 warnings"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 360 passed, combined branch-aware coverage 90.52%"
+    },
+    {
+      "command": "git diff --check 5a558f9ff1049295985da88096d36542283b4e50...HEAD && git fsck --full",
+      "result": "PASS; fsck reported only dangling objects"
+    },
+    {
+      "command": "uv run bsl evidence john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --dry-run > .local/evidence/VS01-T04/dry-run-01.json",
+      "result": "PASS at implementation commit 07cc5cd840928b2b6c87b8af1fa3d200c0dc897f; valid success JSON proves the CLI returned normally; a later shell-only assignment to zsh's reserved status variable failed and did not affect the CLI or artifact"
+    },
+    {
+      "command": "uv run bsl evidence john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --dry-run > .local/evidence/VS01-T04/dry-run-02.json",
+      "result": "PASS with directly captured exit 0 at the same implementation commit; packet semantic bytes and identities match run 01"
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "exact T03 raw-JSON authority and publication bindings",
+      "status": "met",
+      "bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+      "bundle_canonical_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+      "receipt_identity": "01a02a37-79f8-7f29-abf7-a2dd9d7161ba",
+      "receipt_file_sha256": "e4871e859481614da6d4f52e77fa41e35234884b9f5baacad68c4855e2ed6af2"
+    },
+    {
+      "criterion": "minimum archive and prohibited read boundary",
+      "status": "met",
+      "forbidden_raw_source_reads": 0,
+      "notes": "Packet generation succeeds with raw source snapshots, manifests, quarantine, and raw source objects absent."
+    },
+    {
+      "criterion": "claim/evidence graph conformance",
+      "status": "met",
+      "evidence_items": 12,
+      "claims": 16,
+      "claim_evidence_links": 34,
+      "diagnoses": 3,
+      "accepted_alternatives": 3,
+      "prohibited_inferences": 17
+    },
+    {
+      "criterion": "Greek, morphology, ASV, WEB Classic, Abbott-Smith, status-asymmetry, source-role, and Source Serif boundaries",
+      "status": "met",
+      "notes": "Every source-derived item is verified against the T03 bundle; project synthesis is not direct attestation; Abbott-Smith John 1:5 remains sense 2 and absent from sense 3; Source Serif has no scholarly-evidence role."
+    },
+    {
+      "criterion": "exactly two public contracts and stable schemas",
+      "status": "met"
+    },
+    {
+      "criterion": "stable canonical packet semantics and identity over both real dry runs",
+      "status": "met",
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
+    },
+    {
+      "criterion": "pre/post T03 authority and unrelated incoming inventory unchanged",
+      "status": "met",
+      "authority_fingerprint": "0e1b30603fee8a45b867825f24b541d8c2fa05f2147f8c5ef98e5e0bd90161bd",
+      "canonical_archive_writes": 0
+    },
+    {
+      "criterion": "fixture-only receipt-last publication and recovery",
+      "status": "met",
+      "notes": "Covers object-only, object+snapshot, complete publication with stale exact own stage, idempotency, mismatch refusal, read-only modes, and unrelated-stage preservation."
+    },
+    {
+      "criterion": "network/model/database/retrieval/benchmark/live-publication denial",
+      "status": "met",
+      "external_network_requests": 0,
+      "model_invocations": 0,
+      "database_operations": 0,
+      "retrieval_operations": 0,
+      "benchmark_operations": 0,
+      "live_t04_publications": 0
+    },
+    {
+      "criterion": "draft PR exact-head CI and completion comment",
+      "status": "pending until post-handoff push",
+      "required_ci": "vs01-t01-ci"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "frozen_design",
+      "path": "design/approved/VS01-T04-john-1-5-translation-nuance-evidence-packet.md",
+      "sha256": "d979e04221bebba70671fa73311a07347058e652592cefaa424d4bb4675b3188"
+    },
+    {
+      "kind": "frozen_claim_evidence_spec",
+      "path": "design/approved/VS01-T04-claim-evidence-spec.json",
+      "sha256": "48254fb7a8f68bfe6baf09f8fe33781c2dd5bf848a7fd2eb782fbc8da9588936"
+    },
+    {
+      "kind": "activation",
+      "path": "activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json",
+      "sha256": "d5dad79253cd461bf9582c1737eb5e7b06c29e60f053da265233ebc90c841c8a"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-packet.schema.json",
+      "sha256": "cf2db865a201705b126d8225bfac87427a47eed66758f8d1a1fbe0492a257d4f"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
+      "sha256": "785fa5d8470f62ddaddb72e265dfb60c4152f389a78c63d9a14d07a3f9a649c1"
+    },
+    {
+      "kind": "ignored_redacted_t03_authority_fingerprint",
+      "path": ".local/evidence/VS01-T04/t03-authority-before.json",
+      "semantic_fingerprint": "0e1b30603fee8a45b867825f24b541d8c2fa05f2147f8c5ef98e5e0bd90161bd",
+      "contains_source_bodies": false,
+      "contains_private_device_identity": false
+    },
+    {
+      "kind": "ignored_redacted_t03_authority_fingerprint",
+      "path": ".local/evidence/VS01-T04/t03-authority-after.json",
+      "semantic_fingerprint": "0e1b30603fee8a45b867825f24b541d8c2fa05f2147f8c5ef98e5e0bd90161bd",
+      "contains_source_bodies": false,
+      "contains_private_device_identity": false
+    },
+    {
+      "kind": "ignored_dry_run_output",
+      "path": ".local/evidence/VS01-T04/dry-run-01.json",
+      "sha256": "1fff557e81146c200345c936372a7411aa015e270c8343d0b2dc695c7447e941"
+    },
+    {
+      "kind": "ignored_dry_run_output",
+      "path": ".local/evidence/VS01-T04/dry-run-02.json",
+      "sha256": "12fd384b8d415fc66eb1d4a6876d580a906d53a0ed9912c90199166b26424ef8"
+    },
+    {
+      "kind": "ignored_public_safe_summary",
+      "path": ".local/evidence/VS01-T04/real-dry-run-summary.json",
+      "contains_full_packet_prose": false,
+      "contains_private_archive_identity": false,
+      "contains_unrelated_stage_names": false
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T04/VS01-T04-SOL-20260822T190253Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T04/VS01-T04-SOL-20260822T190253Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 732,
+    "production_loc_removed": 0,
+    "test_loc_added": 485,
+    "test_loc_removed": 0,
+    "generated_loc": 375,
+    "production_files_added": 3,
+    "production_files_removed": 0,
+    "modules_added": [
+      "src/bsl/contracts/evidence.py",
+      "src/bsl/application/john15_evidence.py",
+      "src/bsl/infrastructure/evidence_store.py"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl evidence john-1-5-translation-nuance"
+    ],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "John15TranslationNuanceEvidencePacket",
+      "John15TranslationNuanceEvidenceReceipt"
+    ],
+    "abstractions": [
+      {
+        "name": "evidence_store",
+        "reason": "Narrow evidence-specific authority adapter for the activated receipt-last publication contract."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Reused the existing canonical archive-root authority check, T03 public contracts, and immutable/fsync primitives.",
+      "Kept passage-specific direct functions instead of introducing a generic claim graph service, TNC engine, evidence framework, repository abstraction, workflow DSL, prompt layer, or future-passage generalization."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The full pytest run emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 360 tests and the coverage gate passed.",
+    "The first exact CLI invocation succeeded and emitted a contract-valid artifact, but its surrounding diagnostic shell later failed assigning zsh's reserved status variable; the second invocation's exit was captured directly as zero.",
+    "The ignored CLI outputs contain the contracted frozen packet; this committed handoff contains only public-safe identities, hashes, counts, and boundary statements.",
+    "The live PR URL and exact-head CI URL are necessarily created after this mandated handoff-only commit; the completion comment binds the final identities."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live draft-PR head after exact-head CI completes.",
+    "Joseph must separately decide whether to approve that exact head after a clean ChatGPT review."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
