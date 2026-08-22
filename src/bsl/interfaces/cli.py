@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import NoReturn
 
 from bsl.application.archive_initialization import initialize_archive
+from bsl.application.john15_evidence import generate_john15_evidence
 from bsl.application.john15_normalization import normalize_john15
 from bsl.application.source_acquisition import acquire_source
 from bsl.application.source_admission import compile_source_plan
@@ -51,6 +52,11 @@ def _parser() -> JsonArgumentParser:
     john = normalize_commands.add_parser("john-1-5")
     john.add_argument("--archive-root", required=True, type=Path)
     john.add_argument("--dry-run", action="store_true")
+    evidence = commands.add_parser("evidence")
+    evidence_commands = evidence.add_subparsers(dest="evidence_command", required=True)
+    nuance = evidence_commands.add_parser("john-1-5-translation-nuance")
+    nuance.add_argument("--archive-root", required=True, type=Path)
+    nuance.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -103,6 +109,20 @@ def _normalize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _evidence(args: argparse.Namespace) -> int:
+    if args.evidence_command != "john-1-5-translation-nuance":
+        return _emit_error("INVALID_CLI_INPUT", "unsupported evidence command")
+    result = generate_john15_evidence(args.archive_root, dry_run=args.dry_run)
+    output = {
+        "packet": result.packet.model_dump(mode="json"),
+        "receipt": result.receipt.model_dump(mode="json"),
+        "published": result.published,
+        "verified_existing": result.verified_existing,
+    }
+    print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     try:
         args = _parser().parse_args(argv)
@@ -116,6 +136,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _source(args)
         if args.command == "normalize":
             return _normalize(args)
+        if args.command == "evidence":
+            return _evidence(args)
         return _emit_error("INVALID_CLI_INPUT", "unsupported command")
     except CliInputError as exc:
         return _emit_error("INVALID_CLI_INPUT", str(exc))

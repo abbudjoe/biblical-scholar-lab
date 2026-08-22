@@ -17,6 +17,10 @@ from bsl.contracts.archive import (
     ArchiveReadiness,
     ArchiveRootMarker,
 )
+from bsl.contracts.evidence import (
+    John15TranslationNuanceEvidencePacket,
+    John15TranslationNuanceEvidenceReceipt,
+)
 from bsl.contracts.normalization import John15NormalizationBundle, NormalizationReceipt
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.interfaces.cli import main
@@ -43,6 +47,14 @@ SCHEMAS = (
         John15NormalizationBundle,
     ),
     (ROOT / "contracts/json-schema/normalization/normalization-receipt.schema.json", NormalizationReceipt),
+    (
+        ROOT / "contracts/json-schema/evidence/john-15-translation-nuance-evidence-packet.schema.json",
+        John15TranslationNuanceEvidencePacket,
+    ),
+    (
+        ROOT / "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
+        John15TranslationNuanceEvidenceReceipt,
+    ),
 )
 
 

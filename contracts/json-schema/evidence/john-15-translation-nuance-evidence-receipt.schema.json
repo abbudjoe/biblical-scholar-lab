@@ -1,0 +1,139 @@
+{
+  "additionalProperties": false,
+  "description": "Operational receipt for dry-run validation or receipt-last packet publication.",
+  "properties": {
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "contract": {
+      "const": "John15TranslationNuanceEvidenceReceipt",
+      "default": "John15TranslationNuanceEvidenceReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "PUBLISHED",
+        "VERIFIED_EXISTING"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "input_authority_fingerprint_after": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Authority Fingerprint After",
+      "type": "string"
+    },
+    "input_authority_fingerprint_before": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Authority Fingerprint Before",
+      "type": "string"
+    },
+    "input_bundle_canonical_sha256": {
+      "const": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+      "title": "Input Bundle Canonical Sha256",
+      "type": "string"
+    },
+    "input_bundle_identity": {
+      "const": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+      "title": "Input Bundle Identity",
+      "type": "string"
+    },
+    "input_normalization_receipt_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Normalization Receipt File Sha256",
+      "type": "string"
+    },
+    "input_normalization_receipt_identity": {
+      "format": "uuid",
+      "title": "Input Normalization Receipt Identity",
+      "type": "string"
+    },
+    "packet_canonical_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Packet Canonical Sha256",
+      "type": "string"
+    },
+    "packet_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Packet Identity",
+      "type": "string"
+    },
+    "publication_paths": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "minLength": 1,
+          "type": "string"
+        }
+      ],
+      "title": "Publication Paths",
+      "type": "array"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "receipt_identity": {
+      "format": "uuid",
+      "title": "Receipt Identity",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "receipt_identity",
+    "generated_at",
+    "implementation_commit",
+    "archive_root",
+    "disposition",
+    "dry_run",
+    "input_bundle_identity",
+    "input_bundle_canonical_sha256",
+    "input_normalization_receipt_identity",
+    "input_normalization_receipt_file_sha256",
+    "packet_identity",
+    "packet_canonical_sha256",
+    "publication_paths",
+    "input_authority_fingerprint_before",
+    "input_authority_fingerprint_after",
+    "published",
+    "verified_existing"
+  ],
+  "title": "John15TranslationNuanceEvidenceReceipt",
+  "type": "object"
+}

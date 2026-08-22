@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "_InputAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_canonical_sha256": {
+          "const": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+          "title": "Bundle Canonical Sha256",
+          "type": "string"
+        },
+        "bundle_identity": {
+          "const": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+          "title": "Bundle Identity",
+          "type": "string"
+        },
+        "contract": {
+          "const": "John15NormalizationBundle",
+          "title": "Contract",
+          "type": "string"
+        },
+        "normalization_receipt_file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Normalization Receipt File Sha256",
+          "type": "string"
+        },
+        "normalization_receipt_identity": {
+          "format": "uuid",
+          "title": "Normalization Receipt Identity",
+          "type": "string"
+        },
+        "normalization_specification_id": {
+          "const": "ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1",
+          "title": "Normalization Specification Id",
+          "type": "string"
+        },
+        "normalization_specification_sha256": {
+          "const": "ef3f8bd34d727a89bab5942c550006f0eda408d1f472ba2782fc2ccd519597e9",
+          "title": "Normalization Specification Sha256",
+          "type": "string"
+        },
+        "source_content_identities": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "title": "Source Content Identities",
+          "type": "array"
+        },
+        "source_snapshot_identities": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "title": "Source Snapshot Identities",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract",
+        "bundle_identity",
+        "bundle_canonical_sha256",
+        "normalization_specification_id",
+        "normalization_specification_sha256",
+        "normalization_receipt_identity",
+        "normalization_receipt_file_sha256",
+        "source_snapshot_identities",
+        "source_content_identities"
+      ],
+      "title": "_InputAuthority",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Exact frozen John 1:5 claim/evidence graph bound to published T03 authority.",
+  "properties": {
+    "accepted_alternatives": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Accepted Alternatives",
+      "type": "array"
+    },
+    "claim_evidence_links": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Claim Evidence Links",
+      "type": "array"
+    },
+    "claims": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "comparison_frame": {
+      "additionalProperties": true,
+      "title": "Comparison Frame",
+      "type": "object"
+    },
+    "contract": {
+      "const": "John15TranslationNuanceEvidencePacket",
+      "default": "John15TranslationNuanceEvidencePacket",
+      "title": "Contract",
+      "type": "string"
+    },
+    "diagnoses": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Diagnoses",
+      "type": "array"
+    },
+    "difference_unit": {
+      "additionalProperties": true,
+      "title": "Difference Unit",
+      "type": "object"
+    },
+    "evidence_items": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Evidence Items",
+      "type": "array"
+    },
+    "evidence_sufficiency": {
+      "additionalProperties": true,
+      "title": "Evidence Sufficiency",
+      "type": "object"
+    },
+    "frozen_claim_evidence_spec_id": {
+      "const": "VS01-T04-CLAIM-EVIDENCE-SPEC-v1",
+      "title": "Frozen Claim Evidence Spec Id",
+      "type": "string"
+    },
+    "frozen_claim_evidence_spec_sha256": {
+      "const": "48254fb7a8f68bfe6baf09f8fe33781c2dd5bf848a7fd2eb782fbc8da9588936",
+      "title": "Frozen Claim Evidence Spec Sha256",
+      "type": "string"
+    },
+    "frozen_design_id": {
+      "const": "VS01-T04",
+      "title": "Frozen Design Id",
+      "type": "string"
+    },
+    "frozen_design_sha256": {
+      "const": "d979e04221bebba70671fa73311a07347058e652592cefaa424d4bb4675b3188",
+      "title": "Frozen Design Sha256",
+      "type": "string"
+    },
+    "input_authority": {
+      "$ref": "#/$defs/_InputAuthority"
+    },
+    "known_limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Known Limitations",
+      "type": "array"
+    },
+    "packet_id": {
+      "const": "SP01-DER-001",
+      "title": "Packet Id",
+      "type": "string"
+    },
+    "packet_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Packet Identity",
+      "type": "string"
+    },
+    "prohibited_inferences": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Prohibited Inferences",
+      "type": "array"
+    },
+    "public_display_constraints": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Public Display Constraints",
+      "type": "array"
+    },
+    "review_vector": {
+      "additionalProperties": true,
+      "title": "Review Vector",
+      "type": "object"
+    },
+    "rights_projection": {
+      "additionalProperties": true,
+      "title": "Rights Projection",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "packet_id",
+    "frozen_design_id",
+    "frozen_design_sha256",
+    "frozen_claim_evidence_spec_id",
+    "frozen_claim_evidence_spec_sha256",
+    "input_authority",
+    "comparison_frame",
+    "difference_unit",
+    "evidence_items",
+    "claims",
+    "claim_evidence_links",
+    "diagnoses",
+    "accepted_alternatives",
+    "evidence_sufficiency",
+    "review_vector",
+    "rights_projection",
+    "public_display_constraints",
+    "known_limitations",
+    "prohibited_inferences",
+    "packet_identity"
+  ],
+  "title": "John15TranslationNuanceEvidencePacket",
+  "type": "object"
+}
