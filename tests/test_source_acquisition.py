@@ -62,7 +62,19 @@ COMPONENTS: dict[str, dict[str, bytes]] = {
     "SP01-SRC-002": {
         "README.md": b"CC-BY-SA License\nhttps://creativecommons.org/licenses/by-sa/3.0/",
         "64-Jn-morphgnt.txt": (
-            "040105 C- -------- καὶ καί καί\n040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε(ν) καταλαμβάνω\n"
+            "040105 C- -------- καὶ καὶ καί καί\n"
+            "040105 RA ----NSN- τὸ τὸ τό ὁ\n"
+            "040105 N- ----NSN- φῶς φῶς φῶς φῶς\n"
+            "040105 P- -------- ἐν ἐν ἐν ἐν\n"
+            "040105 RA ----DSF- τῇ τῇ τῇ ὁ\n"
+            "040105 N- ----DSF- σκοτίᾳ σκοτίᾳ σκοτίᾳ σκοτία\n"
+            "040105 V- 3PAI-S-- φαίνει, φαίνει φαίνει φαίνω\n"
+            "040105 C- -------- καὶ καὶ καί καί\n"
+            "040105 RA ----NSF- ἡ ἡ ἡ ὁ\n"
+            "040105 N- ----NSF- σκοτία σκοτία σκοτία σκοτία\n"
+            "040105 RP ----ASN- αὐτὸ αὐτὸ αὐτό αὐτός\n"
+            "040105 D- -------- οὐ οὐ οὐ οὐ\n"
+            "040105 V- 3AAI-S-- κατέλαβεν. κατέλαβεν κατέλαβε(ν) καταλαμβάνω\n"
         ).encode(),
     },
     "SP01-SRC-003": {
@@ -76,7 +88,9 @@ COMPONENTS: dict[str, dict[str, bytes]] = {
     },
     "SP01-SRC-005": {
         "abbott-smith.tei.xml": (
-            "<TEI xmlns='u'><entry n='καταλαμβάνω|G2638'><form><orth>κατα-λαμβάνω</orth></form></entry></TEI>"
+            '<TEI><entry n="καταλαμβάνω|G2638"><form><orth>κατα-λαμβάνω</orth></form>'
+            '<sense n="1"><gloss>lay hold of</gloss><ref osisRef="John.1.5">Jn 1:5</ref></sense>'
+            '<sense n="2"><gloss>understand</gloss><xr>see also</xr></sense></entry></TEI>'
         ).encode(),
         "README.md": b"The TEI lexicon is public domain; the PDF is restricted.",
     },
@@ -150,8 +164,11 @@ def web_zip(
     john_name: str = "eng-web/43JHNeng-web.usfm",
     john_text: str = (
         "\\id JHN World English Bible\n\\c 1\n"
-        "\\v 5 The light shines in the darkness, \\f + \\fr 1:5 \\ft synthetic note \\f* "
-        "and the darkness hasn’t overcome it.\n"
+        '\\p\n\\v 5 \\w The|strong="G1722"\\w* \\w light|strong="G5457"\\w* '
+        '\\w shines|strong="G5316"\\w* \\w in|strong="G1722"\\w* \\w the|strong="G1722"\\w* '
+        '\\w darkness|strong="G4653"\\w*, \\w and|strong="G2532"\\w* \\w the|strong="G1722"\\w* '
+        '\\w darkness|strong="G4653"\\w* hasn’\\w t|strong="G3588"\\w* overcome'
+        '\\f + \\fr 1:5 \\ft synthetic note \\f* \\w it|strong="G2532"\\w*. \\x + hidden \\x*\n'
     ),
     rights_name: str = "eng-web/README.txt",
     rights_text: str = "World English Bible eng-web is public domain.",

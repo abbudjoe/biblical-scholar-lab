@@ -45,6 +45,16 @@
       "contract": "AdmissionDecision", "schema_version": "1.0", "owning_design": "VS01-T02",
       "schema_path": "contracts/json-schema/acquisition/admission-decision.schema.json",
       "owning_task": "VS01-T02B", "sha256": "d1526aeebbcdb1b94281ccf22d0f8d7c23f7cbd0c7f19670aefb7f46e9db2779"
+    },
+    {
+      "contract": "John15NormalizationBundle", "schema_version": "1.0", "owning_design": "VS-01",
+      "schema_path": "contracts/json-schema/normalization/john-15-normalization-bundle.schema.json",
+      "owning_task": "VS01-T03", "sha256": "5b51106bf9a80576242983f0a24f779a9072e40a64489879d086967bd0b16f6c"
+    },
+    {
+      "contract": "NormalizationReceipt", "schema_version": "1.0", "owning_design": "VS-01",
+      "schema_path": "contracts/json-schema/normalization/normalization-receipt.schema.json",
+      "owning_task": "VS01-T03", "sha256": "9270ebd0415807b5f4c3aaae1a6b5649b106473b91c154f39ad23bc6fb5debfb"
     }
   ]
 }
