@@ -28,9 +28,10 @@ from bsl.contracts.source_admission import APPROVED_SOURCE_IDS, SourceSnapshot
 from bsl.infrastructure.archive_store import _hash_file  # pyright: ignore[reportPrivateUsage]
 from bsl.infrastructure.normalization_store import (
     canonical_bundle_bytes,
+    normalization_stage_path,
+    prepare_publication,
     publication_paths,
     publish_normalization,
-    verify_existing,
 )
 from bsl.infrastructure.source_transport import (  # pyright: ignore[reportPrivateUsage]
     _usfm_ids,  # pyright: ignore[reportPrivateUsage]
@@ -378,7 +379,15 @@ def authority_fingerprint(
         )
         for item in snapshot.objects:
             relative = f"objects/sha256/{item.sha256[:2]}/{item.sha256}"
-            objects[relative] = {"relative_path": relative, "sha256": item.sha256, "byte_count": item.byte_count}
+            actual_sha256, actual_byte_count = _hash_file(root / relative, require_read_only=True)
+            if (actual_sha256, actual_byte_count) != (item.sha256, item.byte_count):
+                raise ValueError(f"source object differs from snapshot authority: {snapshot.source_id}")
+            objects[relative] = {
+                "relative_path": relative,
+                "sha256": actual_sha256,
+                "byte_count": actual_byte_count,
+                "read_only_verified": True,
+            }
     actual_present = ((root / "snapshots/normalization").exists(), (root / "manifests/normalization").exists())
     payload: dict[str, Any] = {
         "root_marker_sha256": _hash_file(root / ".bsl-archive-root.json", require_read_only=True)[0],
@@ -438,6 +447,34 @@ def _receipt(
     )
 
 
+def _dry_run_result(
+    root: Path,
+    snapshots: tuple[SourceSnapshot, ...],
+    bundle: John15NormalizationBundle,
+    bundle_sha256: str,
+    implementation_commit: str,
+    new_uuid: NewUuid,
+    now: Now,
+) -> _NormalizationResult:
+    before_record = authority_fingerprint(root, snapshots)
+    if not before_record["incoming_empty"]:
+        raise ValueError("archive .incoming must be empty before normalization dry run")
+    before = cast(str, before_record["semantic_fingerprint"])
+    after = cast(str, authority_fingerprint(root, snapshots)["semantic_fingerprint"])
+    receipt = _receipt(
+        bundle=bundle,
+        bundle_sha256=bundle_sha256,
+        root=root,
+        implementation_commit=implementation_commit,
+        disposition="DRY_RUN_VALIDATED",
+        before=before,
+        after=after,
+        new_uuid=new_uuid,
+        now=now,
+    )
+    return _NormalizationResult(bundle, receipt, False, False)
+
+
 def normalize_john15(
     archive_root: Path,
     *,
@@ -448,29 +485,14 @@ def normalize_john15(
     _now: Now = lambda: datetime.now(UTC),
 ) -> _NormalizationResult:
     root, snapshots = _load_authoritative_sources(archive_root, _expected_archive_root)
-    before_record = authority_fingerprint(root, snapshots)
-    if not before_record["incoming_empty"]:
-        raise ValueError("archive .incoming must be empty before normalization")
-    before = cast(str, before_record["semantic_fingerprint"])
     bundle = _build_bundle(root, snapshots)
     bundle_bytes = canonical_bundle_bytes(bundle)
     bundle_sha256 = _sha(bundle_bytes)
     implementation_commit = _implementation_commit or _git_head()
     if dry_run:
-        after = cast(str, authority_fingerprint(root, snapshots)["semantic_fingerprint"])
-        receipt = _receipt(
-            bundle=bundle,
-            bundle_sha256=bundle_sha256,
-            root=root,
-            implementation_commit=implementation_commit,
-            disposition="DRY_RUN_VALIDATED",
-            before=before,
-            after=after,
-            new_uuid=_new_uuid,
-            now=_now,
-        )
-        return _NormalizationResult(bundle, receipt, False, False)
-    existing = verify_existing(root, bundle, bundle_bytes)
+        return _dry_run_result(root, snapshots, bundle, bundle_sha256, implementation_commit, _new_uuid, _now)
+    existing = prepare_publication(root, bundle, bundle_bytes)
+    before = cast(str, authority_fingerprint(root, snapshots)["semantic_fingerprint"])
     if existing is not None:
         after = cast(str, authority_fingerprint(root, snapshots)["semantic_fingerprint"])
         receipt = _receipt(
@@ -499,8 +521,8 @@ def normalize_john15(
         new_uuid=_new_uuid,
         now=_now,
     )
-    publish_normalization(root, bundle, receipt, _new_uuid())
+    publish_normalization(root, bundle, receipt)
     actual_after = cast(str, authority_fingerprint(root, snapshots)["semantic_fingerprint"])
-    if actual_after != expected_after or any((root / ".incoming").iterdir()):
+    if actual_after != expected_after or normalization_stage_path(root, bundle_sha256).exists():
         raise ValueError("published normalization does not match the expected archive authority state")
     return _NormalizationResult(bundle, receipt, True, False)

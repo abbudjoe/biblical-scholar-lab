@@ -182,7 +182,82 @@ class _PageDependency(BaseModel):
     scholarly_evidence: Literal[False]
 
 
+def _source_map(sources: tuple[_SourceBinding, ...]) -> dict[SourceId, _SourceBinding]:
+    if tuple(source.source_id for source in sources) != APPROVED_SOURCE_IDS:
+        raise ValueError("bundle sources must match the exact six-source order")
+    if len({source.snapshot_identity for source in sources}) != 6:
+        raise ValueError("bundle source snapshot identities must be unique")
+    if len({source.content_identity for source in sources}) != 6:
+        raise ValueError("bundle source content identities must be unique")
+    for source in sources:
+        paths = tuple(item.relative_path for item in source.objects)
+        hashes = tuple(item.sha256 for item in source.objects)
+        if len(set(paths)) != len(paths) or len(set(hashes)) != len(hashes):
+            raise ValueError(f"bundle source objects must be unique: {source.source_id}")
+    return {source.source_id: source for source in sources}
+
+
+def _require_object(source: _SourceBinding, path: str, sha256: str) -> None:
+    if not any(item.relative_path == path and item.sha256 == sha256 for item in source.objects):
+        raise ValueError(f"evidence object does not bind to {source.source_id}")
+
+
+def _validate_evidence(bundle: John15NormalizationBundle, sources: dict[SourceId, _SourceBinding]) -> None:
+    _require_object(
+        sources["SP01-SRC-001"], bundle.sblgnt.source_object_relative_path, bundle.sblgnt.source_object_sha256
+    )
+    _require_object(
+        sources["SP01-SRC-002"], bundle.morphgnt.source_object_relative_path, bundle.morphgnt.source_object_sha256
+    )
+    _require_object(sources["SP01-SRC-003"], bundle.asv.source_object_relative_path, bundle.asv.source_object_sha256)
+    _require_object(
+        sources["SP01-SRC-004"], bundle.web_classic.source_object_relative_path, bundle.web_classic.source_object_sha256
+    )
+    _require_object(
+        sources["SP01-SRC-005"],
+        bundle.abbott_smith.source_object_relative_path,
+        bundle.abbott_smith.source_object_sha256,
+    )
+    if bundle.asv.source_id != "SP01-SRC-003" or bundle.web_classic.source_id != "SP01-SRC-004":
+        raise ValueError("translation evidence source identifiers are incorrect")
+    web_package = sources["SP01-SRC-004"].package_sha256
+    if web_package is None or bundle.web_classic.package_sha256 != web_package:
+        raise ValueError("WEB evidence does not bind its admitted package")
+    serif = bundle.source_serif
+    expected = (
+        (serif.regular_font, "TTF/SourceSerif4-Regular.ttf", False),
+        (serif.italic_font, "TTF/SourceSerif4-It.ttf", False),
+        (serif.license_object, "LICENSE.md", True),
+    )
+    for item, path, rights_evidence in expected:
+        if item.relative_path != path or item.rights_evidence is not rights_evidence:
+            raise ValueError("Source Serif dependency path or rights-evidence role is incorrect")
+        _require_object(sources["SP01-SRC-006"], item.relative_path, item.sha256)
+
+
+def _validate_morphology(bundle: John15NormalizationBundle) -> None:
+    text = bundle.sblgnt.exact_source_view.text
+    cursor = 0
+    for token in bundle.morphgnt.tokens:
+        gap = text[cursor : token.sblgnt_start]
+        if token.sblgnt_start < cursor or gap.strip():
+            raise ValueError("MorphGNT spans are not ordered exact whitespace-delimited coverage")
+        if text[token.sblgnt_start : token.sblgnt_end] != token.text_alignment:
+            raise ValueError("MorphGNT span does not resolve to the exact SBLGNT substring")
+        cursor = token.sblgnt_end
+    if text[cursor:].strip():
+        raise ValueError("MorphGNT spans do not cover the complete SBLGNT source view")
+    target = bundle.morphgnt.target_verb
+    if target.token_index >= len(bundle.morphgnt.tokens):
+        raise ValueError("MorphGNT target token index is out of range")
+    token = bundle.morphgnt.tokens[target.token_index]
+    if (token.word, token.lemma, token.parsing_code) != (target.source_form, target.lemma, target.parsing_code):
+        raise ValueError("MorphGNT target does not bind its token record")
+
+
 class John15NormalizationBundle(BaseModel):
+    """Deterministic John 1:5 evidence graph with atomic source and alignment cross-validation."""
+
     model_config = STRICT
 
     schema_version: Literal["1.0"] = "1.0"
@@ -203,8 +278,9 @@ class John15NormalizationBundle(BaseModel):
 
     @model_validator(mode="after")
     def semantic_identity(self) -> Self:
-        if tuple(source.source_id for source in self.sources) != APPROVED_SOURCE_IDS:
-            raise ValueError("bundle sources must match the exact six-source order")
+        sources = _source_map(self.sources)
+        _validate_evidence(self, sources)
+        _validate_morphology(self)
         payload = self.model_dump(mode="json", exclude={"bundle_identity"})
         if self.bundle_identity != hashlib.sha256(rfc8785.dumps(payload)).hexdigest():
             raise ValueError("bundle identity differs from canonical semantic fields")
@@ -212,6 +288,8 @@ class John15NormalizationBundle(BaseModel):
 
 
 class NormalizationReceipt(BaseModel):
+    """Operational receipt with disposition, identity, and derived publication-path cross-validation."""
+
     model_config = STRICT
 
     schema_version: Literal["1.0"] = "1.0"
@@ -246,4 +324,15 @@ class NormalizationReceipt(BaseModel):
             raise ValueError("receipt state contradicts its disposition")
         if self.dry_run and self.archive_authority_fingerprint_before != self.archive_authority_fingerprint_after:
             raise ValueError("dry run changed the archive authority fingerprint")
+        expected_paths = (
+            f"objects/sha256/{self.bundle_canonical_sha256[:2]}/{self.bundle_canonical_sha256}",
+            "snapshots/normalization/john-1-5.json",
+            "manifests/normalization/john-1-5/normalization-receipt.json",
+        )
+        if self.publication_paths != expected_paths:
+            raise ValueError("receipt publication paths do not derive from the bundle SHA-256")
+        if len(set(self.source_snapshot_identities)) != 6:
+            raise ValueError("receipt source snapshot identities must be unique")
+        if len(set(self.source_content_identities)) != 6:
+            raise ValueError("receipt source content identities must be unique")
         return self

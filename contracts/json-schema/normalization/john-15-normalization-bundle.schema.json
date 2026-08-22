@@ -538,6 +538,7 @@
     }
   },
   "additionalProperties": false,
+  "description": "Deterministic John 1:5 evidence graph with atomic source and alignment cross-validation.",
   "properties": {
     "abbott_smith": {
       "$ref": "#/$defs/_LexicalEvidence"

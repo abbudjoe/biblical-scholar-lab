@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Operational receipt with disposition, identity, and derived publication-path cross-validation.",
   "properties": {
     "archive_authority_fingerprint_after": {
       "pattern": "^[0-9a-f]{64}$",

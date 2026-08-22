@@ -49,12 +49,12 @@
     {
       "contract": "John15NormalizationBundle", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/normalization/john-15-normalization-bundle.schema.json",
-      "owning_task": "VS01-T03", "sha256": "5b51106bf9a80576242983f0a24f779a9072e40a64489879d086967bd0b16f6c"
+      "owning_task": "VS01-T03", "sha256": "bef77fa44ce8d729ef3253012fbb24f203c4e5306c8b9f5c8b3868edd7ebe229"
     },
     {
       "contract": "NormalizationReceipt", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/normalization/normalization-receipt.schema.json",
-      "owning_task": "VS01-T03", "sha256": "9270ebd0415807b5f4c3aaae1a6b5649b106473b91c154f39ad23bc6fb5debfb"
+      "owning_task": "VS01-T03", "sha256": "ab6efc8d49e119aecbf3892b3ace2925a9517f03f8a628d1941f833f4795877b"
     }
   ]
 }
