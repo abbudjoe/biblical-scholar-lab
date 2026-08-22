@@ -55,6 +55,16 @@
       "contract": "NormalizationReceipt", "schema_version": "1.0", "owning_design": "VS-01",
       "schema_path": "contracts/json-schema/normalization/normalization-receipt.schema.json",
       "owning_task": "VS01-T03", "sha256": "ab6efc8d49e119aecbf3892b3ace2925a9517f03f8a628d1941f833f4795877b"
+    },
+    {
+      "contract": "John15TranslationNuanceEvidencePacket", "schema_version": "1.0", "owning_design": "VS01-T04",
+      "schema_path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-packet.schema.json",
+      "owning_task": "VS01-T04", "sha256": "855b27545de45fcc72bf4f6b6a587ed1c6d0e57bdeabc1a525316dedecec5aec"
+    },
+    {
+      "contract": "John15TranslationNuanceEvidenceReceipt", "schema_version": "1.0", "owning_design": "VS01-T04",
+      "schema_path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
+      "owning_task": "VS01-T04", "sha256": "d2e1e9802bf47485c850425393bb1b4a7dd4059db55fb4e55b03d76319c98520"
     }
   ]
 }

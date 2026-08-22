@@ -2,7 +2,7 @@
 
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` is active under `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` for normalization implementation and dry-run evidence; live normalization publication has not been executed.
+Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` is complete and canonically published with bundle identity `9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32` and canonical SHA-256 `397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6`. `VS01-T04` is active under `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` for implementation and read-only dry-run evidence; live T04 packet publication has not been executed, and raw-source reparsing is prohibited.
 
 ## Authority
 
@@ -30,8 +30,9 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 - `VS01-T01` and R02 are merged historical archive/source-admission foundation.
 - `VS01-T02 — Canonical Archive Bootstrap and Raw Source Admission` is complete; the canonical archive is initialized with six authoritative source snapshots.
 - Source acquisition is closed for VS-01.
-- `VS01-T03` is active under `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` for normalization implementation and dry-run evidence.
-- Live normalization publication has not been executed.
+- `VS01-T03` is complete and canonically published: bundle identity `9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32`, canonical SHA-256 `397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6`.
+- `VS01-T04` is active under `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` for implementation and read-only dry-run evidence.
+- Live T04 packet publication has not been executed; raw-source reparsing is prohibited.
 
 ## Current approved baseline
 
@@ -100,10 +101,11 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-VS01-T01-APFS-PLIST-COMPAT-v1` — completed historical R02 compatibility authorization
 - `ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1` — completed historical T02A authorization
 - `ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1` — completed historical T02B authorization
-- `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` — active normalization implementation and dry-run authorization; no live normalization publication
+- `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` — completed historical T03 authorization; normalization is canonically published
+- `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` — active T04 implementation and read-only dry-run authorization; no live T04 packet publication
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` is active for normalization implementation and dry-run evidence; live normalization publication and benchmark execution have not occurred.
+The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` is complete and canonically published. `VS01-T04` is active for implementation and read-only dry-run evidence; live T04 packet publication and benchmark execution have not occurred, and raw-source reparsing is prohibited.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

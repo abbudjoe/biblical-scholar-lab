@@ -1,0 +1,28 @@
+{
+  "package_id": "BSL-VS01-T04-FROZEN-DESIGN",
+  "design_id": "VS01-T04",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T04_DESIGN",
+  "approval_date": "2026-08-22",
+  "base_main_sha": "5a558f9ff1049295985da88096d36542283b4e50",
+  "base_tree_sha": "b9003b206c740dac2b68b99f5270c8bcd3cb85e9",
+  "required_input": {
+    "bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+    "bundle_canonical_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6"
+  },
+  "claim_spec_sha256": "48254fb7a8f68bfe6baf09f8fe33781c2dd5bf848a7fd2eb782fbc8da9588936",
+  "implementation_authorized": false,
+  "archive_publication_authorized": false,
+  "files": [
+    {
+      "path": "VS01-T04-john-1-5-translation-nuance-evidence-packet.md",
+      "sha256": "d979e04221bebba70671fa73311a07347058e652592cefaa424d4bb4675b3188",
+      "bytes": 16162
+    },
+    {
+      "path": "VS01-T04-claim-evidence-spec.json",
+      "sha256": "48254fb7a8f68bfe6baf09f8fe33781c2dd5bf848a7fd2eb782fbc8da9588936",
+      "bytes": 37783
+    }
+  ]
+}
