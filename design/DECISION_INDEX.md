@@ -47,6 +47,7 @@
 | ID | Title | Status | Approved | File |
 |---|---|---|---|---|
 | VS01-T02 | Canonical Archive Bootstrap and Raw Source Admission | APPROVED | 2026-08-20 | [`approved/VS01-T02-canonical-archive-and-raw-source-admission.md`](approved/VS01-T02-canonical-archive-and-raw-source-admission.md) |
+| VS01-T04 | John 1:5 Translation Nuance Evidence Packet | APPROVED — FROZEN DESIGN | 2026-08-22 | [`approved/VS01-T04-john-1-5-translation-nuance-evidence-packet.md`](approved/VS01-T04-john-1-5-translation-nuance-evidence-packet.md); [`approved/VS01-T04-claim-evidence-spec.json`](approved/VS01-T04-claim-evidence-spec.json) |
 
 ## Approved archive profiles
 
@@ -94,7 +95,8 @@
 | ACT-VS01-T01-APFS-PLIST-COMPAT-v1 | APFS plist compatibility | COMPLETED HISTORICAL R02 AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json`](../activations/ACT-VS01-T01-APFS-PLIST-COMPAT-v1.json) | `3e9673640f08542279189d2f50c872a0723d5ca4` |
 | ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1 | Canonical archive bootstrap kernel | COMPLETED HISTORICAL T02A AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json`](../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
 | ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1 | Source-admission kernel | COMPLETED HISTORICAL T02B AUTHORIZATION | 2026-08-21 | [`../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json`](../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
-| ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1 | John 1:5 source normalization | ACTIVE | 2026-08-21 | [`../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json`](../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json) | `042573bfcf650d1f125736a8ed8f5dc75bd25a30` |
+| ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1 | John 1:5 source normalization | COMPLETED HISTORICAL T03 AUTHORIZATION | 2026-08-21 | [`../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json`](../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json) | `042573bfcf650d1f125736a8ed8f5dc75bd25a30` |
+| ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1 | John 1:5 translation nuance evidence packet | ACTIVE | 2026-08-22 | [`../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json`](../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json) | `5a558f9ff1049295985da88096d36542283b4e50` |
 
 ## Documentation normalization
 
@@ -102,7 +104,7 @@
 
 ## Design-review status
 
-The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. VS01-T02 is complete, and VS01-T03 is active under `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` for normalization implementation and read-only dry-run evidence only.
+The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. VS01-T02 is complete. VS01-T03 is complete and canonically published. VS01-T04 is active under `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` for evidence-packet implementation and read-only dry-run evidence only.
 
 
 ## Preimplementation audits

@@ -1,0 +1,973 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "VS01-T04-CLAIM-EVIDENCE-SPEC-v1",
+  "design_id": "VS01-T04",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T04_DESIGN",
+  "approval_date": "2026-08-22",
+  "base_main_sha": "5a558f9ff1049295985da88096d36542283b4e50",
+  "base_tree_sha": "b9003b206c740dac2b68b99f5270c8bcd3cb85e9",
+  "packet_id": "SP01-DER-001",
+  "input_normalization": {
+    "contract": "John15NormalizationBundle",
+    "bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+    "bundle_canonical_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+    "snapshot_path": "snapshots/normalization/john-1-5.json",
+    "receipt_path": "manifests/normalization/john-1-5/normalization-receipt.json",
+    "receipt_required_disposition": "PUBLISHED",
+    "normalization_implementation_commit": "5a558f9ff1049295985da88096d36542283b4e50",
+    "raw_source_reparsing": "PROHIBITED"
+  },
+  "public_contracts": [
+    {
+      "contract": "John15TranslationNuanceEvidencePacket",
+      "identity_rule": "SHA-256 of RFC 8785 canonical semantic fields excluding packet_identity",
+      "nondeterministic_fields_allowed": [],
+      "required_sections": [
+        "input_authority",
+        "comparison_frame",
+        "difference_unit",
+        "evidence_items",
+        "claims",
+        "claim_evidence_links",
+        "diagnoses",
+        "accepted_alternatives",
+        "evidence_sufficiency",
+        "review_vector",
+        "rights_projection",
+        "public_display_constraints",
+        "known_limitations",
+        "prohibited_inferences",
+        "packet_identity"
+      ]
+    },
+    {
+      "contract": "John15TranslationNuanceEvidenceReceipt",
+      "identity_rule": "UUIDv7 receipt plus exact packet/input/publication bindings",
+      "allowed_dispositions": [
+        "DRY_RUN_VALIDATED",
+        "PUBLISHED",
+        "VERIFIED_EXISTING"
+      ],
+      "required_bindings": [
+        "implementation_commit",
+        "archive_root",
+        "input bundle identity and SHA-256",
+        "input normalization receipt identity and SHA-256",
+        "packet identity and SHA-256",
+        "fixed publication paths",
+        "input authority fingerprint before and after",
+        "published and verified_existing flags"
+      ]
+    }
+  ],
+  "comparison_frame": {
+    "comparison_frame_id": "CF-VS01-T04-JOHN-1-5-ASV-WEB-v1",
+    "passage_identity": "John 1:5",
+    "comparison_purpose": "EXPLAIN_TRANSLATION_DIFFERENCE",
+    "source_reference": "SP01-SRC-001 SBLGNT controlled Greek wording",
+    "target_realizations": [
+      "SP01-SRC-003 ASV",
+      "SP01-SRC-004 WEB Classic"
+    ],
+    "included_layers": [
+      "CANONICAL_GREEK_TEXT",
+      "MORPHOLOGY",
+      "CANONICAL_TRANSLATION_TEXT",
+      "LEXICAL_ENTRY"
+    ],
+    "excluded_layers": [
+      "FOOTNOTE",
+      "SECTION_HEADING",
+      "CROSS_REFERENCE",
+      "STUDY_NOTE",
+      "APPARATUS",
+      "TRANSLATOR_DOCUMENTATION"
+    ],
+    "actual_translation_project_source_base_status": "SOURCE_BASE_NOT_ESTABLISHED"
+  },
+  "difference_unit": {
+    "difference_unit_id": "TDU-VS01-T04-JOHN-1-5-FINAL-CLAUSE-v1",
+    "source_selector": "SP01-SRC-001#John.1.5:κατέλαβεν",
+    "target_selectors": {
+      "SP01-SRC-003": "apprehended it not",
+      "SP01-SRC-004": "hasn’t overcome it"
+    },
+    "difference_scope": [
+      "LEXICAL",
+      "SEMANTIC"
+    ],
+    "materiality": "POTENTIAL_NUANCE_DIFFERENCE",
+    "creation_method": "CHATGPT_FROZEN_EDITORIAL_DESIGN"
+  },
+  "evidence_items": [
+    {
+      "evidence_id": "EV-T04-NORM-001",
+      "kind": "NORMALIZATION_AUTHORITY",
+      "source_role": "AUTHORITATIVE_DERIVED_INPUT",
+      "selector": "John15NormalizationBundle@published",
+      "expected_bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+      "expected_bundle_canonical_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+      "supports": [
+        "input identity",
+        "source bindings",
+        "rights bindings",
+        "normalized evidence integrity"
+      ],
+      "prohibited_use": [
+        "independent scholarly authority",
+        "replacement for underlying source identity"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-GRK-001",
+      "kind": "NORMALIZED_PRIMARY_TEXT",
+      "source_role": "GREEK_TEXT_AUTHORITY",
+      "source_id": "SP01-SRC-001",
+      "selector": "sblgnt.exact_source_view#final-clause",
+      "exact_excerpt": "καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.",
+      "supports": [
+        "exact Greek wording",
+        "target source-form identity"
+      ],
+      "prohibited_use": [
+        "complete textual-critical state",
+        "translation-project source-base identity"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-MORPH-001",
+      "kind": "NORMALIZED_LINGUISTIC_ANNOTATION",
+      "source_role": "MORPHOLOGY_AND_LEMMA",
+      "source_id": "SP01-SRC-002",
+      "selector": "morphgnt.target_verb",
+      "structured_value": {
+        "source_form": "κατέλαβεν",
+        "lemma": "καταλαμβάνω",
+        "person": "third",
+        "number": "singular",
+        "tense_form": "aorist",
+        "voice_form": "active",
+        "mood_form": "indicative"
+      },
+      "supports": [
+        "target-token alignment",
+        "lemma",
+        "morphological form"
+      ],
+      "prohibited_use": [
+        "contextual sense adjudication",
+        "aspectual interpretation",
+        "translator intent",
+        "theology"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-ASV-001",
+      "kind": "NORMALIZED_TRANSLATION_REALIZATION",
+      "source_role": "ENGLISH_TRANSLATION_A",
+      "source_id": "SP01-SRC-003",
+      "selector": "asv.canonical_realization",
+      "exact_excerpt": "And the light shineth in the darkness; and the darkness apprehended it not.",
+      "salient_target_span": "apprehended it not",
+      "supports": [
+        "exact ASV wording",
+        "surface comparison"
+      ],
+      "prohibited_use": [
+        "Greek morphology",
+        "manuscript attestation",
+        "translator intent"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-WEB-001",
+      "kind": "NORMALIZED_TRANSLATION_REALIZATION",
+      "source_role": "ENGLISH_TRANSLATION_B",
+      "source_id": "SP01-SRC-004",
+      "selector": "web_classic.canonical_realization",
+      "exact_excerpt": "The light shines in the darkness, and the darkness hasn’t overcome it.",
+      "salient_target_span": "hasn’t overcome it",
+      "supports": [
+        "exact WEB Classic wording",
+        "surface comparison"
+      ],
+      "prohibited_use": [
+        "Greek morphology",
+        "manuscript attestation",
+        "translator intent"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-LEX-000",
+      "kind": "NORMALIZED_LEXICAL_ENTRY",
+      "source_role": "LEXICAL_RANGE_AND_ENTRY_STRUCTURE",
+      "source_id": "SP01-SRC-005",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"",
+      "supports": [
+        "entry identity",
+        "ordered sense structure",
+        "bounded lexical range"
+      ],
+      "prohibited_use": [
+        "final contextual sense by lookup",
+        "modern scholarly consensus"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-LEX-001",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE",
+      "source_id": "SP01-SRC-005",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"1.\"",
+      "exact_excerpt": "to lay hold of; seize; appropriate",
+      "supports": [
+        "grasping or seizing lexical family"
+      ],
+      "prohibited_use": [
+        "claim that sense 1 is the contextual sense of John 1:5"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-LEX-002",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE_AND_PASSAGE_LOCATOR",
+      "source_id": "SP01-SRC-005",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"2.\"",
+      "exact_excerpt": "to overtake",
+      "passage_locators": [
+        "John.1.5",
+        "John.12.35"
+      ],
+      "supports": [
+        "overtaking lexical effect",
+        "Abbott-Smith association of John 1:5 with sense 2"
+      ],
+      "prohibited_use": [
+        "claim of final specialist consensus",
+        "translator intent"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-LEX-003",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE_WITH_NON_TARGET_CONTEXTS",
+      "source_id": "SP01-SRC-005",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"3.\"",
+      "exact_excerpt": "Of mental action: to apprehend; comprehend",
+      "passage_locators": [
+        "Eph.3.18",
+        "Acts.4.13",
+        "Acts.10.34",
+        "Acts.25.25"
+      ],
+      "target_passage_present": false,
+      "supports": [
+        "mental-action sense elsewhere in the lexeme’s attested range"
+      ],
+      "prohibited_use": [
+        "claim that Abbott-Smith assigns John 1:5 to sense 3"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-METHOD-001",
+      "kind": "NORMATIVE_METHOD_RULE",
+      "source_role": "SOURCE_FITNESS_AND_EPISTEMIC_METHOD",
+      "selector": "DR-02#source-fitness+epistemic-status",
+      "supports": [
+        "morphology/lexicon limits",
+        "typed epistemic status",
+        "source-role compatibility"
+      ],
+      "prohibited_use": [
+        "replacement for passage evidence"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-METHOD-002",
+      "kind": "NORMATIVE_METHOD_RULE",
+      "source_role": "TRANSLATION_NUANCE_METHOD",
+      "selector": "DR-06#textual-variation-not-translation-variation+effect-not-intent",
+      "supports": [
+        "translation-versus-textual-state distinction",
+        "effect/intent separation",
+        "alternative diagnoses"
+      ],
+      "prohibited_use": [
+        "replacement for source evidence"
+      ]
+    },
+    {
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "kind": "APPROVED_SCOPE_BOUNDARY",
+      "source_role": "WITHHELD_EVIDENCE_AND_NON_GOALS",
+      "selector": "SOURCE-PLAN-01#SP01-DER-001+exclusions",
+      "supports": [
+        "apparatus exclusion",
+        "modern-scholarship exclusion",
+        "translator-documentation absence",
+        "REV-P1 boundary"
+      ],
+      "prohibited_use": [
+        "positive claim beyond the boundary"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "CLM-T04-001",
+      "claim_class": "SOURCE_IDENTITY",
+      "proposition": "The sole scholarly-data input is the published VS01-T03 John 1:5 normalization bundle 9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32 with canonical SHA-256 397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "SYSTEM_SYNTHESIS",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": []
+    },
+    {
+      "claim_id": "CLM-T04-010",
+      "claim_class": "SOURCE_IDENTITY",
+      "proposition": "The controlled SBLGNT wording of the final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "SBLGNT is the controlled reference text, not proof of each translation project’s complete base edition."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-011",
+      "claim_class": "PHILOLOGICAL",
+      "proposition": "The target form is κατέλαβεν, from καταλαμβάνω, parsed as third-person singular aorist active indicative.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "This is a formal morphology record."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-012",
+      "claim_class": "PHILOLOGICAL",
+      "proposition": "Morphology alone does not establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": []
+    },
+    {
+      "claim_id": "CLM-T04-020",
+      "claim_class": "SOURCE_IDENTITY",
+      "proposition": "The approved ASV realization is “And the light shineth in the darkness; and the darkness apprehended it not.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "Edition identity must remain visible."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-021",
+      "claim_class": "SOURCE_IDENTITY",
+      "proposition": "The approved WEB Classic realization is “The light shines in the darkness, and the darkness hasn’t overcome it.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "Edition and acquisition-frozen package identity must remain visible."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-022",
+      "claim_class": "TRANSLATION_CONTRAST",
+      "proposition": "The salient final-clause surface contrast is “apprehended it not” versus “hasn’t overcome it.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "SYSTEM_SYNTHESIS",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "Surface contrast is not yet causal diagnosis."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-030",
+      "claim_class": "PHILOLOGICAL",
+      "proposition": "Abbott-Smith’s entry distinguishes a grasping/seizing sense, an overtaking sense, and a separate mental-action apprehend/comprehend sense.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "The entry records uses across contexts; it is not itself contextual adjudication."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-031",
+      "claim_class": "PHILOLOGICAL",
+      "proposition": "Abbott-Smith explicitly lists John 1:5 under sense 2, “to overtake.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "This is Abbott-Smith’s entry structure, not current specialist consensus."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-032",
+      "claim_class": "PHILOLOGICAL",
+      "proposition": "Abbott-Smith’s mental-action “apprehend/comprehend” sense is attested elsewhere in the entry and is not directly assigned there to John 1:5.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "assertion_origin": "IMPORTED_ANNOTATION",
+      "review_tier": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+      "required_qualifications": [
+        "This does not make a cognitive construal impossible; it limits what this lexicon directly attests for the target verse."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-040",
+      "claim_class": "TRANSLATION_CAUSAL",
+      "proposition": "The difference between the two English realizations does not by itself prove that the translations were based on different Greek manuscripts.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "Translation wording is not manuscript attestation."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-041",
+      "claim_class": "TRANSLATION_CAUSAL",
+      "proposition": "Within this controlled comparison, no different Greek source reading is required to explain the observed English contrast.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "This is a bounded explanatory claim, not a declaration that no variant exists in the manuscript tradition."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-042",
+      "claim_class": "TEXTUAL_STATE_LIMIT",
+      "proposition": "Whether the ASV and WEB projects used identical complete Greek base editions is not established by this packet.",
+      "epistemic_status": "UNKNOWN",
+      "assertion_origin": "SYSTEM_SYNTHESIS",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "No translation-project source documentation was admitted."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-043",
+      "claim_class": "TEXTUAL_STATE_LIMIT",
+      "proposition": "The broader textual-critical state of John 1:5 is not established by this packet because apparatus and witness evidence are absent.",
+      "epistemic_status": "UNKNOWN",
+      "assertion_origin": "SYSTEM_SYNTHESIS",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "Do not render UNKNOWN as “no textual variant.”"
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-050",
+      "claim_class": "PHILOLOGICAL_METHOD",
+      "proposition": "The lexicon’s several senses are context-specific possibilities; they are not all simultaneously active in this occurrence merely because they appear in one entry.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "The packet does not select one final contextual sense."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-060",
+      "claim_class": "TRANSLATION_CAUSAL",
+      "proposition": "The strongest bounded packet-level assessment is a translation-choice contrast associated with lexical construal and interpretive effect, not a demonstrated textual-state difference.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "review_tier": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+      "required_qualifications": [
+        "No claim of translator intent, final specialist preference, or current consensus."
+      ]
+    }
+  ],
+  "claim_evidence_links": [
+    {
+      "link_id": "LNK-T04-001-A",
+      "claim_id": "CLM-T04-001",
+      "evidence_id": "EV-T04-NORM-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-010-A",
+      "claim_id": "CLM-T04-010",
+      "evidence_id": "EV-T04-GRK-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-010-B",
+      "claim_id": "CLM-T04-010",
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "role": "QUALIFIES"
+    },
+    {
+      "link_id": "LNK-T04-011-A",
+      "claim_id": "CLM-T04-011",
+      "evidence_id": "EV-T04-MORPH-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-012-A",
+      "claim_id": "CLM-T04-012",
+      "evidence_id": "EV-T04-MORPH-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-012-B",
+      "claim_id": "CLM-T04-012",
+      "evidence_id": "EV-T04-METHOD-001",
+      "role": "DEFINES_METHOD"
+    },
+    {
+      "link_id": "LNK-T04-020-A",
+      "claim_id": "CLM-T04-020",
+      "evidence_id": "EV-T04-ASV-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-021-A",
+      "claim_id": "CLM-T04-021",
+      "evidence_id": "EV-T04-WEB-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-022-A",
+      "claim_id": "CLM-T04-022",
+      "evidence_id": "EV-T04-ASV-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-022-B",
+      "claim_id": "CLM-T04-022",
+      "evidence_id": "EV-T04-WEB-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-030-A",
+      "claim_id": "CLM-T04-030",
+      "evidence_id": "EV-T04-LEX-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-030-B",
+      "claim_id": "CLM-T04-030",
+      "evidence_id": "EV-T04-LEX-002",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-030-C",
+      "claim_id": "CLM-T04-030",
+      "evidence_id": "EV-T04-LEX-003",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-031-A",
+      "claim_id": "CLM-T04-031",
+      "evidence_id": "EV-T04-LEX-002",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-032-A",
+      "claim_id": "CLM-T04-032",
+      "evidence_id": "EV-T04-LEX-003",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-032-B",
+      "claim_id": "CLM-T04-032",
+      "evidence_id": "EV-T04-LEX-002",
+      "role": "QUALIFIES"
+    },
+    {
+      "link_id": "LNK-T04-040-A",
+      "claim_id": "CLM-T04-040",
+      "evidence_id": "EV-T04-ASV-001",
+      "role": "NO_SUPPORT"
+    },
+    {
+      "link_id": "LNK-T04-040-B",
+      "claim_id": "CLM-T04-040",
+      "evidence_id": "EV-T04-WEB-001",
+      "role": "NO_SUPPORT"
+    },
+    {
+      "link_id": "LNK-T04-040-C",
+      "claim_id": "CLM-T04-040",
+      "evidence_id": "EV-T04-METHOD-002",
+      "role": "DEFINES_METHOD"
+    },
+    {
+      "link_id": "LNK-T04-041-A",
+      "claim_id": "CLM-T04-041",
+      "evidence_id": "EV-T04-GRK-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-041-B",
+      "claim_id": "CLM-T04-041",
+      "evidence_id": "EV-T04-ASV-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-041-C",
+      "claim_id": "CLM-T04-041",
+      "evidence_id": "EV-T04-WEB-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-041-D",
+      "claim_id": "CLM-T04-041",
+      "evidence_id": "EV-T04-LEX-002",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-041-E",
+      "claim_id": "CLM-T04-041",
+      "evidence_id": "EV-T04-METHOD-002",
+      "role": "DEFINES_METHOD"
+    },
+    {
+      "link_id": "LNK-T04-042-A",
+      "claim_id": "CLM-T04-042",
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "role": "LIMITS"
+    },
+    {
+      "link_id": "LNK-T04-043-A",
+      "claim_id": "CLM-T04-043",
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "role": "LIMITS"
+    },
+    {
+      "link_id": "LNK-T04-043-B",
+      "claim_id": "CLM-T04-043",
+      "evidence_id": "EV-T04-METHOD-002",
+      "role": "DEFINES_METHOD"
+    },
+    {
+      "link_id": "LNK-T04-050-A",
+      "claim_id": "CLM-T04-050",
+      "evidence_id": "EV-T04-LEX-000",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-050-B",
+      "claim_id": "CLM-T04-050",
+      "evidence_id": "EV-T04-METHOD-001",
+      "role": "DEFINES_METHOD"
+    },
+    {
+      "link_id": "LNK-T04-060-A",
+      "claim_id": "CLM-T04-060",
+      "evidence_id": "EV-T04-GRK-001",
+      "role": "SUPPLIES_PRIMARY_EVIDENCE"
+    },
+    {
+      "link_id": "LNK-T04-060-B",
+      "claim_id": "CLM-T04-060",
+      "evidence_id": "EV-T04-ASV-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-060-C",
+      "claim_id": "CLM-T04-060",
+      "evidence_id": "EV-T04-WEB-001",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-060-D",
+      "claim_id": "CLM-T04-060",
+      "evidence_id": "EV-T04-LEX-002",
+      "role": "DIRECTLY_SUPPORTS"
+    },
+    {
+      "link_id": "LNK-T04-060-E",
+      "claim_id": "CLM-T04-060",
+      "evidence_id": "EV-T04-METHOD-002",
+      "role": "DEFINES_METHOD"
+    }
+  ],
+  "diagnoses": [
+    {
+      "diagnosis_id": "DIA-T04-LEXICAL-POLYSEMY",
+      "cause_axes": {
+        "source_textual_state": "SOURCE_BASE_NOT_ESTABLISHED",
+        "source_language_construal": "LEXICAL_POLYSEMY",
+        "transfer_operation": "UNKNOWN_TRANSFER_OPERATION",
+        "target_constraint": "TARGET_CONSTRAINT_UNKNOWN"
+      },
+      "packet_status": "STRONGLY_SUPPORTED",
+      "summary": "Lexical construal and target realization can explain the controlled contrast without positing a different Greek reading.",
+      "evidence_ids": [
+        "EV-T04-GRK-001",
+        "EV-T04-ASV-001",
+        "EV-T04-WEB-001",
+        "EV-T04-LEX-001",
+        "EV-T04-LEX-002",
+        "EV-T04-LEX-003"
+      ]
+    },
+    {
+      "diagnosis_id": "DIA-T04-DIFFERENT-SOURCE-READING",
+      "cause_axes": {
+        "source_textual_state": "DIFFERENT_SOURCE_READING"
+      },
+      "packet_status": "UNSUPPORTED",
+      "summary": "The packet contains no apparatus, witness, or translation-project source-base evidence establishing a different Greek reading.",
+      "evidence_ids": [
+        "EV-T04-ASV-001",
+        "EV-T04-WEB-001",
+        "EV-T04-METHOD-002",
+        "EV-T04-BOUNDARY-001"
+      ],
+      "scope_note": "UNSUPPORTED means not supported by this packet; it does not mean disproved in the broader manuscript tradition."
+    },
+    {
+      "diagnosis_id": "DIA-T04-TRANSLATOR-INTENT",
+      "cause_axes": {
+        "translation_lineage": "LINEAGE_CAUSE_UNKNOWN"
+      },
+      "packet_status": "UNKNOWN",
+      "summary": "Translator intent and documented translation policy are not established.",
+      "evidence_ids": [
+        "EV-T04-BOUNDARY-001",
+        "EV-T04-METHOD-002"
+      ]
+    }
+  ],
+  "accepted_alternatives": [
+    {
+      "alternative_id": "ALT-T04-COGNITIVE",
+      "effect_family": "COGNITIVE_OR_EPISTEMIC_EFFECT",
+      "proposition": "The ASV wording can make an apprehension or grasping construal salient, including a cognitive reading.",
+      "epistemic_status": "PLAUSIBLE",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "evidence_ids": [
+        "EV-T04-ASV-001",
+        "EV-T04-LEX-003"
+      ],
+      "required_qualifications": [
+        "Abbott-Smith does not directly assign John 1:5 to its mental-action sense.",
+        "The packet contains no historical target-language study of ASV “apprehended.”",
+        "No translator-intent claim is permitted."
+      ]
+    },
+    {
+      "alternative_id": "ALT-T04-CONFLICT",
+      "effect_family": "CONFLICT_OR_DEFEAT_EFFECT",
+      "proposition": "The WEB Classic wording foregrounds a conflict or defeat effect in which the darkness does not overcome the light.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "evidence_ids": [
+        "EV-T04-WEB-001",
+        "EV-T04-LEX-002"
+      ],
+      "required_qualifications": [
+        "This is an interpretive effect, not a claim about translator intent.",
+        "Abbott-Smith is source evidence for its own entry, not current scholarly consensus."
+      ]
+    },
+    {
+      "alternative_id": "ALT-T04-DOUBLE-RESONANCE",
+      "effect_family": "AMBIGUITY_OR_DOUBLE_RESONANCE_POSSIBLE",
+      "proposition": "More than one apprehension, grasping, overtaking, or defeat resonance may remain relevant to interpretation.",
+      "epistemic_status": "PLAUSIBLE",
+      "assertion_origin": "EXPERT_PROJECT_ANNOTATION",
+      "evidence_ids": [
+        "EV-T04-GRK-001",
+        "EV-T04-LEX-001",
+        "EV-T04-LEX-002",
+        "EV-T04-LEX-003"
+      ],
+      "required_qualifications": [
+        "The packet does not establish that every sense is simultaneously active.",
+        "The Greek must not be said to “literally mean both.”",
+        "No final specialist-preferred rendering is established."
+      ]
+    }
+  ],
+  "evidence_sufficiency": {
+    "completeness": "SUFFICIENT_WITH_QUALIFICATION",
+    "can_support": [
+      "exact source and translation wording",
+      "exact target morphology",
+      "bounded lexical range and Abbott-Smith entry structure",
+      "surface wording comparison",
+      "translation wording does not prove different manuscripts",
+      "no different Greek reading is required for this controlled explanation",
+      "bounded cognitive/apprehension and conflict/defeat effects with asymmetric evidence strength",
+      "correct lexical-fallacy warning",
+      "claim-level source-role-compatible citations"
+    ],
+    "cannot_support": [
+      "identical complete base editions",
+      "broader textual-critical state or absence of variants",
+      "translator intent or policy",
+      "historical target-language semantics of ASV “apprehended”",
+      "one final contextual sense or specialist-preferred rendering",
+      "current scholarly consensus",
+      "theological conclusion"
+    ],
+    "withheld_or_absent": [
+      "critical apparatus and witness evidence",
+      "modern specialist scholarship",
+      "ASV and WEB translation committee documentation",
+      "historical English semantic evidence for “apprehended”",
+      "broader Johannine context and discourse study",
+      "SME adjudication"
+    ]
+  },
+  "review_vector": {
+    "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+    "design_authority": "CHATGPT_DESIGNED",
+    "owner_design_state": "OWNER_APPROVED_FROZEN_DESIGN",
+    "source_verification_state_at_generation": "SOURCE_VERIFIED_FROM_PUBLISHED_T03",
+    "methodology_review_state": "CHATGPT_METHODOLOGY_REVIEWED",
+    "sme_review_state": "SME_REVIEW_PENDING_NOT_REQUIRED_FOR_BOUNDED_REV_P1",
+    "training_eligibility": "NOT_AUTHORIZED",
+    "benchmark_role": "FIXED_EVIDENCE_INPUT_ONLY_REQUIRES_SEPARATE_EXECUTION_AUTHORIZATION",
+    "public_release_state": "PUBLIC_SAFE_CANDIDATE_BOUNDED_EXCERPTS_ONLY_REQUIRES_RELEASE_REVIEW"
+  },
+  "rights_projection": {
+    "purpose": "INTERNAL_NONCOMMERCIAL_RESEARCH",
+    "permitted_operations": [
+      "PARSE_NORMALIZED_INPUT",
+      "CREATE_DERIVED_PACKET",
+      "EXACT_RUNTIME_LOOKUP",
+      "BOUNDED_QUOTE_OR_DISPLAY_EXCERPT",
+      "PRIVATE_EVALUATION"
+    ],
+    "not_authorized": [
+      "FULL_SOURCE_REDISTRIBUTION",
+      "EMBEDDING_OR_VECTOR_INDEX",
+      "CPT",
+      "SFT",
+      "PREFERENCE_TRAINING",
+      "PUBLIC_BENCHMARK_EXECUTION_WITHOUT_SEPARATE_AUTHORIZATION"
+    ],
+    "attribution_required": true,
+    "public_excerpt_boundary": "John 1:5 plus short Abbott-Smith sense excerpts only"
+  },
+  "public_display_constraints": [
+    "Every quotation retains exact source and edition identity.",
+    "Only bounded John 1:5 text and short lexical excerpts may be rendered.",
+    "Epistemic status and material qualification must travel with each interpretive claim.",
+    "UNKNOWN and UNSUPPORTED may not be rendered as positive conclusions.",
+    "Interpretive effect must not be rendered as translator intent.",
+    "Source Serif must never appear as scholarly evidence."
+  ],
+  "known_limitations": [
+    "This is a bounded source-verifiable packet, not comprehensive Johannine scholarship.",
+    "Abbott-Smith is historical lexical evidence and not a current-consensus source.",
+    "The packet contains no apparatus, translation documentation, or modern specialist scholarship.",
+    "The cognitive alternative is weaker within this packet than the conflict/overtaking alternative.",
+    "Double resonance remains possible rather than established.",
+    "The packet does not settle a final contextual sense or preferred translation."
+  ],
+  "prohibited_inferences": [
+    "Different English wording proves different Greek manuscripts.",
+    "The ASV and WEB used identical complete Greek base editions.",
+    "No textual variant exists anywhere in the manuscript tradition at John 1:5.",
+    "The Greek literally means both.",
+    "All senses or glosses in the lexicon are simultaneously active in John 1:5.",
+    "Abbott-Smith assigns John 1:5 directly to its mental-action sense.",
+    "Morphology proves “understand,” “apprehend,” or “overcome.”",
+    "The aorist proves a once-for-all action.",
+    "The ASV translators intended a cognitive reading.",
+    "The WEB translators intended a conflict reading.",
+    "One rendering is definitively correct or specialist-preferred.",
+    "The packet establishes current scholarly consensus.",
+    "The lexicon settles the contextual meaning of the verse.",
+    "Translation frequency counts as manuscript or independent scholarly evidence.",
+    "A theological conclusion follows from this packet.",
+    "Source Serif is scholarly evidence.",
+    "Model-generated text can replace any source evidence."
+  ],
+  "deterministic_publication": {
+    "cli": "bsl evidence john-1-5-translation-nuance --archive-root <path> [--dry-run]",
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab",
+    "input_paths": [
+      "objects/sha256/39/397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+      "snapshots/normalization/john-1-5.json",
+      "manifests/normalization/john-1-5/normalization-receipt.json"
+    ],
+    "output_paths": {
+      "object": "objects/sha256/<prefix>/<packet-sha256>",
+      "snapshot": "snapshots/evidence/john-1-5-translation-nuance.json",
+      "receipt": "manifests/evidence/john-1-5-translation-nuance/evidence-packet-receipt.json",
+      "stage": ".incoming/john-1-5-translation-nuance-<packet-sha256>.evidence-stage"
+    },
+    "commit_marker": "receipt linked last",
+    "recoverable_states": [
+      "object only",
+      "object plus snapshot",
+      "complete plus stale own stage"
+    ],
+    "fail_closed_states": [
+      "mismatched object",
+      "mismatched snapshot",
+      "receipt without prerequisites",
+      "mismatched own stage",
+      "changed existing packet"
+    ],
+    "unrelated_incoming_policy": "preserve and ignore; never incorporate or delete",
+    "implementation_turn_real_archive_mode": "TWO_READ_ONLY_DRY_RUNS_ONLY",
+    "live_publication_authorization": "SEPARATE_OWNER_OPERATIONAL_AUTHORIZATION_REQUIRED"
+  },
+  "implementation_tests": [
+    "Validate the exact published T03 bundle and receipt identity, SHA-256, disposition, paths, and implementation commit.",
+    "Deny all reads from snapshots/source, manifests/source, quarantine, and raw source objects during packet generation.",
+    "Require the exact comparison frame, difference unit, evidence inventory, 16 claims, links, diagnoses, alternatives, review vector, limitations, and prohibited inferences.",
+    "Require every claim and alternative to reference only existing evidence and every claim to have at least one claim/evidence link.",
+    "Require direct source claims to use DIRECTLY_ATTESTED and project inferences to use calibrated non-direct statuses.",
+    "Reject any packet that marks the cognitive alternative DIRECTLY_ATTESTED or says Abbott-Smith assigns John 1:5 to sense 3.",
+    "Reject any packet that weakens the conflict alternative below its direct John 1:5 sense-2 evidence without a design change.",
+    "Reject textual-variant, complete-base-edition, translator-intent, consensus, all-glosses, aorist, or theology overclaims.",
+    "Require claim/evidence source-role compatibility and exact locators.",
+    "Require stable RFC 8785 packet bytes and identity across repeated runs.",
+    "Dry run writes nothing and does not create evidence publication paths.",
+    "Temporary-fixture publication uses receipt-last recovery and preserves unrelated .incoming evidence.",
+    "Identical live rerun verifies existing content; changed packet never replaces it.",
+    "No network, model, database, retrieval, benchmark execution, source acquisition, or raw-source reparsing occurs.",
+    "Run two exact real-archive dry runs against the published T03 packet with identical packet identity/SHA and unchanged T03 authority fingerprint."
+  ],
+  "required_evidence": [
+    "Exact design and claim-spec SHA-256 values.",
+    "Exact activation, implementation, handoff, PR-head, tree, and CI identities after later implementation authorization.",
+    "T03 input bundle/receipt verification and no-raw-source-access audit.",
+    "Claim/evidence matrix conformance and adversarial semantic mutation tests.",
+    "Two generated schema hashes and registry result.",
+    "Two real-archive dry-run outputs with identical packet identity and canonical SHA-256.",
+    "Pre/post T03 authority fingerprint equality and zero canonical archive writes.",
+    "DR-30 complexity receipt and zero dependency/migration receipt."
+  ],
+  "budgets": {
+    "substantive_changed_lines_target": 950,
+    "substantive_changed_lines_hard_limit": 1400,
+    "handwritten_production_files_hard_limit": 6,
+    "new_public_contracts_hard_limit": 2,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0,
+    "function_logical_lines_hard_limit": 60,
+    "cyclomatic_complexity_hard_limit": 10,
+    "nesting_hard_limit": 3,
+    "production_class_logical_lines_hard_limit": 250,
+    "production_module_logical_lines_hard_limit": 500
+  },
+  "non_goals": [
+    "No Codex implementation or activation in this design turn.",
+    "No live packet generation or archive publication.",
+    "No raw-source reparsing, source acquisition, refresh, replacement, or cleanup.",
+    "No final user-facing answer generation or LLM inference.",
+    "No synthetic page, OCR, VLM, web UI, or benchmark execution.",
+    "No PostgreSQL, migration, retrieval, embedding, model adapter, cloud, Lambda, training, evaluation, or billable action.",
+    "No current-consensus claim, translator-intent claim, theological conclusion, or final contextual-sense adjudication.",
+    "No VS01-T05 or later implementation."
+  ]
+}
