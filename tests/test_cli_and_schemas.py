@@ -17,6 +17,7 @@ from bsl.contracts.archive import (
     ArchiveReadiness,
     ArchiveRootMarker,
 )
+from bsl.contracts.normalization import John15NormalizationBundle, NormalizationReceipt
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.interfaces.cli import main
 
@@ -37,6 +38,11 @@ SCHEMAS = (
     (ROOT / "contracts/json-schema/acquisition/fetch-receipt.schema.json", FetchReceipt),
     (ROOT / "contracts/json-schema/acquisition/source-snapshot.schema.json", SourceSnapshot),
     (ROOT / "contracts/json-schema/acquisition/admission-decision.schema.json", AdmissionDecision),
+    (
+        ROOT / "contracts/json-schema/normalization/john-15-normalization-bundle.schema.json",
+        John15NormalizationBundle,
+    ),
+    (ROOT / "contracts/json-schema/normalization/normalization-receipt.schema.json", NormalizationReceipt),
 )
 
 

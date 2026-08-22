@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1",
+  "task_id": "VS01-T03",
+  "turn_id": "VS01-T03-SOL-20260822T111001Z",
+  "codex_run_id": "VS01-T03-SOL-20260822T111001Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t03-john-1-5-normalization",
+  "base_sha": "042573bfcf650d1f125736a8ed8f5dc75bd25a30",
+  "implementation_head_sha": "6cd1126890fdd925a587a87b2566fe811a8577d8",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/new/codex/vs01-t03-john-1-5-normalization",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t03-john-1-5-normalization",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Implement only ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1: verify and normalize the six admitted John 1:5 source snapshots into two deterministic contracts, provide dry-run and atomic fixture-only publication behavior, and prove the exact canonical archive dry run twice without mutation or network access.",
+  "acceptance_criteria": [
+    "Commit the byte-exact activation and minimal status-authority update as the first task commit.",
+    "Characterize and verify exactly SP01-SRC-001 through SP01-SRC-006 from the canonical archive before finalizing parsers.",
+    "Add exactly John15NormalizationBundle and NormalizationReceipt as strict frozen public contracts with generated schemas and registry hashes.",
+    "Normalize SBLGNT, MorphGNT, ASV, WEB Classic, Abbott-Smith, and Source Serif within their approved evidence roles and without semantic adjudication.",
+    "Expose only bsl normalize john-1-5 --archive-root PATH [--dry-run], with no production-root bypass flag.",
+    "Implement dry-run no-write behavior and fixture-only atomic, immutable, idempotent publication behavior.",
+    "Pass all schema, formatting, lint, typing, regression, coverage, Git integrity, and DR-30 gates.",
+    "Freeze implementation before two exact real-archive dry runs, then prove identical bundle identity and zero archive mutation.",
+    "Create one handoff-only final commit, one draft PR, exact-head CI, and one public-safe completion comment."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "VS-01-john-1-5-translation-nuance-vertical-slice",
+      "SOURCE-PLAN-01-john-1-5-source-admission-plan",
+      "SOURCE-PLAN-01-source-admission-manifest",
+      "VS01-T02-canonical-archive-and-raw-source-admission",
+      "DR-04-canon-reference-and-versification-model",
+      "DR-05-textual-history-and-provenance-graph",
+      "DR-07-linguistic-representation",
+      "DR-09-scholarship-and-citation-model",
+      "DR-10-rights-lineage-and-release-architecture",
+      "DR-28-integrated-logical-architecture-and-contract-registry",
+      "DR-30-implementation-readiness-simplicity-and-anti-slop-contract"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "activation",
+      "commit": "35c742dee4da0c06effd9427aacb34b12828ecf0",
+      "summary": "Committed only the byte-exact activation, matching SHA-256 sidecar, and minimal decision-index authority update."
+    },
+    {
+      "phase": "implementation",
+      "commit": "6cd1126890fdd925a587a87b2566fe811a8577d8",
+      "tree": "29ce22951185507a975c5d5b39ad47a9bd5ea786",
+      "summary": "Added the two contracts and schemas, exact six-source normalization, one CLI command, fixture-only atomic publication support, source-shaped regressions, and minimal package-status updates."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/application/john15_normalization.py",
+      "focus": "Exact authority verification, six role-bounded normalizers, canonical bundle identity, dry-run behavior, and authority fingerprint."
+    },
+    {
+      "path": "src/bsl/contracts/normalization.py",
+      "focus": "Exactly two exported strict frozen contracts and semantic/receipt identity boundaries."
+    },
+    {
+      "path": "src/bsl/infrastructure/normalization_store.py",
+      "focus": "Stage-only-under-.incoming publication, no-overwrite authority paths, rollback, read-only modes, and exact-existing verification."
+    },
+    {
+      "path": "tests/test_normalization.py",
+      "focus": "Source-shaped authority, parser, determinism, CLI, no-write, publication, rollback, and network-denial regressions."
+    }
+  ],
+  "commands": [
+    {
+      "command": "validate activation against governance/schemas/implementation-activation.schema.json and verify sha256sum sidecar",
+      "result": "PASS; schema-valid and exact SHA-256 ef3f8bd34d727a89bab5942c550006f0eda408d1f472ba2782fc2ccd519597e9"
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS"
+    },
+    {
+      "command": "schema drift and contracts/registry.json hash validation",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; formatting and lint clean, 0 pyright errors and 0 warnings"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 288 passed, combined branch-aware coverage 91.03%"
+    },
+    {
+      "command": "git diff --check 042573bfcf650d1f125736a8ed8f5dc75bd25a30...HEAD && git fsck --full",
+      "result": "PASS; fsck reported only unreachable dangling objects"
+    },
+    {
+      "command": "uv run bsl normalize john-1-5 --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --dry-run > .local/evidence/VS01-T03/dry-run-01.json",
+      "result": "PASS at implementation commit 6cd1126890fdd925a587a87b2566fe811a8577d8; DRY_RUN_VALIDATED, published=false, verified_existing=false"
+    },
+    {
+      "command": "uv run bsl normalize john-1-5 --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --dry-run > .local/evidence/VS01-T03/dry-run-02.json",
+      "result": "PASS at the same implementation commit; identical bundle identity and canonical SHA-256"
+    }
+  ],
+  "evaluations": [
+    {"criterion": "exact six-source snapshot set and complete authority bindings", "status": "met", "source_count": 6, "verified_object_count": 17},
+    {"criterion": "source-specific role boundaries and parser shapes", "status": "met", "notes": "One SBLGNT target, 13 MorphGNT rows with one 3AAI-S-- target, one ASV USX target, one canonical WEB JHN target, one Abbott-Smith entry span, and two Source Serif TTF bindings plus license."},
+    {"criterion": "exactly two public contracts and stable canonical schemas", "status": "met"},
+    {"criterion": "bundle semantic identity stable over repeated construction", "status": "met", "bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32", "bundle_canonical_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6"},
+    {"criterion": "dry-run creates no normalization directory and writes no archive bytes", "status": "met", "canonical_archive_writes": 0},
+    {"criterion": "temporary publication is atomic, immutable, idempotent, read-only, and fail-closed", "status": "met"},
+    {"criterion": "archive authority fingerprint unchanged across both real dry runs", "status": "met", "fingerprint": "99243d68f289967a941787caf4f8ea458659e7ed1f46d694ffc6039207935a30"},
+    {"criterion": "external requests and live publications", "status": "met", "external_source_requests": 0, "live_normalization_publications": 0},
+    {"criterion": "draft PR exact-head CI and completion comment", "status": "pending until post-handoff push", "required_ci": "vs01-t01-ci"}
+  ],
+  "artifacts": [
+    {"kind": "generated_schema", "path": "contracts/json-schema/normalization/john-15-normalization-bundle.schema.json", "sha256": "5b51106bf9a80576242983f0a24f779a9072e40a64489879d086967bd0b16f6c"},
+    {"kind": "generated_schema", "path": "contracts/json-schema/normalization/normalization-receipt.schema.json", "sha256": "9270ebd0415807b5f4c3aaae1a6b5649b106473b91c154f39ad23bc6fb5debfb"},
+    {"kind": "ignored_redacted_exact_source_characterization", "path": ".local/evidence/VS01-T03/exact-source-characterization.json", "source_count": 6, "contains_source_bodies": false, "contains_private_archive_identity": false},
+    {"kind": "ignored_redacted_archive_fingerprint", "path": ".local/evidence/VS01-T03/archive-before.json", "sha256_semantic": "99243d68f289967a941787caf4f8ea458659e7ed1f46d694ffc6039207935a30"},
+    {"kind": "ignored_redacted_archive_fingerprint", "path": ".local/evidence/VS01-T03/archive-after.json", "sha256_semantic": "99243d68f289967a941787caf4f8ea458659e7ed1f46d694ffc6039207935a30"},
+    {"kind": "ignored_dry_run_output", "path": ".local/evidence/VS01-T03/dry-run-01.json", "sha256": "6490e42f4b7ca95ae20eb62cd5291cf13ed84bf0562315155a7d405fa8af0432"},
+    {"kind": "ignored_dry_run_output", "path": ".local/evidence/VS01-T03/dry-run-02.json", "sha256": "78598d42b42b07aecdff6f9fb9aabc5092a7c14de66a5270b1277dceebb25305"},
+    {"kind": "ignored_redacted_dry_run_summary", "path": ".local/evidence/VS01-T03/dry-run-summary.json", "contains_source_bodies": false, "contains_private_archive_identity": false},
+    {"kind": "handoff", "path": "handoffs/VS01-T03/VS01-T03-SOL-20260822T111001Z.json"},
+    {"kind": "handoff", "path": "handoffs/VS01-T03/VS01-T03-SOL-20260822T111001Z.md"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 918,
+    "production_loc_removed": 0,
+    "test_loc_added": 282,
+    "test_loc_removed": 4,
+    "generated_loc": 771,
+    "production_files_added": 3,
+    "production_files_removed": 0,
+    "modules_added": [
+      "src/bsl/contracts/normalization.py",
+      "src/bsl/application/john15_normalization.py",
+      "src/bsl/infrastructure/normalization_store.py"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": ["bsl normalize john-1-5"],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": ["John15NormalizationBundle", "NormalizationReceipt"],
+    "abstractions": [
+      {"name": "normalization_store", "reason": "Narrow authority-bound adapter for the activated atomic publication contract."}
+    ],
+    "simpler_alternatives_considered": [
+      "Reused the existing proven source-snapshot authority verifier and USX/USFM primitives instead of duplicating acquisition validation.",
+      "Kept passage-specific direct functions rather than introducing an ETL framework, normalization DSL, repository abstraction, or future-passage generalization."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The full pytest run emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 288 tests and the coverage gate passed.",
+    "The ignored CLI dry-run outputs necessarily contain the contracted normalized evidence bundle; only redacted identities and counts are included in this committed handoff.",
+    "The live PR URL and exact-head CI URL are necessarily created after this mandated handoff-only commit; the completion comment supplies both final identities."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live draft-PR head after exact-head CI completes.",
+    "Joseph must separately decide whether to approve that exact head after a clean ChatGPT review."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

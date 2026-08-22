@@ -1,0 +1,137 @@
+{
+  "additionalProperties": false,
+  "description": "Operational receipt with disposition, identity, and derived publication-path cross-validation.",
+  "properties": {
+    "archive_authority_fingerprint_after": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Authority Fingerprint After",
+      "type": "string"
+    },
+    "archive_authority_fingerprint_before": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Authority Fingerprint Before",
+      "type": "string"
+    },
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "bundle_canonical_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Canonical Sha256",
+      "type": "string"
+    },
+    "bundle_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "NormalizationReceipt",
+      "default": "NormalizationReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "PUBLISHED",
+        "VERIFIED_EXISTING"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "publication_paths": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "minLength": 1,
+          "type": "string"
+        }
+      ],
+      "title": "Publication Paths",
+      "type": "array"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "receipt_identity": {
+      "format": "uuid",
+      "title": "Receipt Identity",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_content_identities": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "title": "Source Content Identities",
+      "type": "array"
+    },
+    "source_snapshot_identities": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "title": "Source Snapshot Identities",
+      "type": "array"
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "receipt_identity",
+    "generated_at",
+    "implementation_commit",
+    "archive_root",
+    "disposition",
+    "dry_run",
+    "bundle_identity",
+    "bundle_canonical_sha256",
+    "source_snapshot_identities",
+    "source_content_identities",
+    "publication_paths",
+    "archive_authority_fingerprint_before",
+    "archive_authority_fingerprint_after",
+    "published",
+    "verified_existing"
+  ],
+  "title": "NormalizationReceipt",
+  "type": "object"
+}

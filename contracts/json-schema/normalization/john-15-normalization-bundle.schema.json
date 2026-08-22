@@ -1,0 +1,636 @@
+{
+  "$defs": {
+    "_GrammaticalForm": {
+      "additionalProperties": false,
+      "properties": {
+        "lemma": {
+          "const": "\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9",
+          "title": "Lemma",
+          "type": "string"
+        },
+        "mood": {
+          "const": "indicative",
+          "title": "Mood",
+          "type": "string"
+        },
+        "number": {
+          "const": "singular",
+          "title": "Number",
+          "type": "string"
+        },
+        "parsing_code": {
+          "const": "3AAI-S--",
+          "title": "Parsing Code",
+          "type": "string"
+        },
+        "person": {
+          "const": "third",
+          "title": "Person",
+          "type": "string"
+        },
+        "source_form": {
+          "const": "\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd",
+          "title": "Source Form",
+          "type": "string"
+        },
+        "tense": {
+          "const": "aorist",
+          "title": "Tense",
+          "type": "string"
+        },
+        "token_index": {
+          "minimum": 0,
+          "title": "Token Index",
+          "type": "integer"
+        },
+        "voice": {
+          "const": "active",
+          "title": "Voice",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token_index",
+        "source_form",
+        "lemma",
+        "parsing_code",
+        "person",
+        "number",
+        "tense",
+        "voice",
+        "mood"
+      ],
+      "title": "_GrammaticalForm",
+      "type": "object"
+    },
+    "_LexicalElement": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "parent_order": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Order"
+        },
+        "tag": {
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        },
+        "tail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tail"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        }
+      },
+      "required": [
+        "order",
+        "tag",
+        "attributes",
+        "text",
+        "tail"
+      ],
+      "title": "_LexicalElement",
+      "type": "object"
+    },
+    "_LexicalEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "locators": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Locators",
+          "type": "array"
+        },
+        "ordered_structure": {
+          "items": {
+            "$ref": "#/$defs/_LexicalElement"
+          },
+          "minItems": 1,
+          "title": "Ordered Structure",
+          "type": "array"
+        },
+        "selector": {
+          "const": "entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"",
+          "title": "Selector",
+          "type": "string"
+        },
+        "source_entry_byte_count": {
+          "exclusiveMinimum": 0,
+          "title": "Source Entry Byte Count",
+          "type": "integer"
+        },
+        "source_entry_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Entry Sha256",
+          "type": "string"
+        },
+        "source_entry_utf8": {
+          "title": "Source Entry Utf8",
+          "type": "string"
+        },
+        "source_object_relative_path": {
+          "minLength": 1,
+          "title": "Source Object Relative Path",
+          "type": "string"
+        },
+        "source_object_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Object Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_object_sha256",
+        "source_object_relative_path",
+        "selector",
+        "source_entry_utf8",
+        "source_entry_sha256",
+        "source_entry_byte_count",
+        "ordered_structure",
+        "locators"
+      ],
+      "title": "_LexicalEvidence",
+      "type": "object"
+    },
+    "_MorphToken": {
+      "additionalProperties": false,
+      "properties": {
+        "bcv": {
+          "const": "040105",
+          "title": "Bcv",
+          "type": "string"
+        },
+        "lemma": {
+          "title": "Lemma",
+          "type": "string"
+        },
+        "normalized_word": {
+          "title": "Normalized Word",
+          "type": "string"
+        },
+        "parsing_code": {
+          "title": "Parsing Code",
+          "type": "string"
+        },
+        "part_of_speech": {
+          "title": "Part Of Speech",
+          "type": "string"
+        },
+        "sblgnt_end": {
+          "exclusiveMinimum": 0,
+          "title": "Sblgnt End",
+          "type": "integer"
+        },
+        "sblgnt_start": {
+          "minimum": 0,
+          "title": "Sblgnt Start",
+          "type": "integer"
+        },
+        "text_alignment": {
+          "title": "Text Alignment",
+          "type": "string"
+        },
+        "word": {
+          "title": "Word",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bcv",
+        "part_of_speech",
+        "parsing_code",
+        "text_alignment",
+        "word",
+        "normalized_word",
+        "lemma",
+        "sblgnt_start",
+        "sblgnt_end"
+      ],
+      "title": "_MorphToken",
+      "type": "object"
+    },
+    "_MorphologyEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "source_object_relative_path": {
+          "minLength": 1,
+          "title": "Source Object Relative Path",
+          "type": "string"
+        },
+        "source_object_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Object Sha256",
+          "type": "string"
+        },
+        "target_verb": {
+          "$ref": "#/$defs/_GrammaticalForm"
+        },
+        "tokens": {
+          "items": {
+            "$ref": "#/$defs/_MorphToken"
+          },
+          "minItems": 1,
+          "title": "Tokens",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_object_sha256",
+        "source_object_relative_path",
+        "tokens",
+        "target_verb"
+      ],
+      "title": "_MorphologyEvidence",
+      "type": "object"
+    },
+    "_ObjectBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "rights_evidence": {
+          "title": "Rights Evidence",
+          "type": "boolean"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "byte_count",
+        "rights_evidence"
+      ],
+      "title": "_ObjectBinding",
+      "type": "object"
+    },
+    "_PageDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "italic_font": {
+          "$ref": "#/$defs/_ObjectBinding"
+        },
+        "license_object": {
+          "$ref": "#/$defs/_ObjectBinding"
+        },
+        "regular_font": {
+          "$ref": "#/$defs/_ObjectBinding"
+        },
+        "scholarly_evidence": {
+          "const": false,
+          "title": "Scholarly Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "regular_font",
+        "italic_font",
+        "license_object",
+        "scholarly_evidence"
+      ],
+      "title": "_PageDependency",
+      "type": "object"
+    },
+    "_SblgntEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "exact_source_view": {
+          "$ref": "#/$defs/_TextView"
+        },
+        "source_object_relative_path": {
+          "minLength": 1,
+          "title": "Source Object Relative Path",
+          "type": "string"
+        },
+        "source_object_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Object Sha256",
+          "type": "string"
+        },
+        "unicode_nfc_display_view": {
+          "$ref": "#/$defs/_TextView"
+        }
+      },
+      "required": [
+        "source_object_sha256",
+        "source_object_relative_path",
+        "exact_source_view",
+        "unicode_nfc_display_view"
+      ],
+      "title": "_SblgntEvidence",
+      "type": "object"
+    },
+    "_SourceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_operations": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Operations",
+          "type": "array"
+        },
+        "attribution": {
+          "minLength": 1,
+          "title": "Attribution",
+          "type": "string"
+        },
+        "content_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Identity",
+          "type": "string"
+        },
+        "edition_identity": {
+          "minLength": 1,
+          "title": "Edition Identity",
+          "type": "string"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/_ObjectBinding"
+          },
+          "minItems": 1,
+          "title": "Objects",
+          "type": "array"
+        },
+        "package_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Package Sha256"
+        },
+        "snapshot_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Identity",
+          "type": "string"
+        },
+        "source_id": {
+          "enum": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-003",
+            "SP01-SRC-004",
+            "SP01-SRC-005",
+            "SP01-SRC-006"
+          ],
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_spec_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Spec Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "snapshot_identity",
+        "content_identity",
+        "source_spec_sha256",
+        "package_sha256",
+        "objects",
+        "allowed_operations",
+        "attribution",
+        "edition_identity"
+      ],
+      "title": "_SourceBinding",
+      "type": "object"
+    },
+    "_TextView": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "minimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "utf8_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Utf8 Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "utf8_sha256",
+        "byte_count"
+      ],
+      "title": "_TextView",
+      "type": "object"
+    },
+    "_TranslationEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_realization": {
+          "$ref": "#/$defs/_TextView"
+        },
+        "package_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Package Sha256"
+        },
+        "source_id": {
+          "enum": [
+            "SP01-SRC-003",
+            "SP01-SRC-004"
+          ],
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_object_relative_path": {
+          "minLength": 1,
+          "title": "Source Object Relative Path",
+          "type": "string"
+        },
+        "source_object_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Object Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_object_sha256",
+        "source_object_relative_path",
+        "package_sha256",
+        "canonical_realization"
+      ],
+      "title": "_TranslationEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Deterministic John 1:5 evidence graph with atomic source and alignment cross-validation.",
+  "properties": {
+    "abbott_smith": {
+      "$ref": "#/$defs/_LexicalEvidence"
+    },
+    "asv": {
+      "$ref": "#/$defs/_TranslationEvidence"
+    },
+    "bundle_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "John15NormalizationBundle",
+      "default": "John15NormalizationBundle",
+      "title": "Contract",
+      "type": "string"
+    },
+    "deterministic_limitations": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Deterministic Limitations",
+      "type": "array"
+    },
+    "morphgnt": {
+      "$ref": "#/$defs/_MorphologyEvidence"
+    },
+    "normalization_methods": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Normalization Methods",
+      "type": "array"
+    },
+    "normalization_specification_id": {
+      "const": "ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1",
+      "title": "Normalization Specification Id",
+      "type": "string"
+    },
+    "normalization_specification_sha256": {
+      "const": "ef3f8bd34d727a89bab5942c550006f0eda408d1f472ba2782fc2ccd519597e9",
+      "title": "Normalization Specification Sha256",
+      "type": "string"
+    },
+    "passage_identity": {
+      "const": "John 1:5",
+      "title": "Passage Identity",
+      "type": "string"
+    },
+    "sblgnt": {
+      "$ref": "#/$defs/_SblgntEvidence"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_serif": {
+      "$ref": "#/$defs/_PageDependency"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/_SourceBinding"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "title": "Sources",
+      "type": "array"
+    },
+    "web_classic": {
+      "$ref": "#/$defs/_TranslationEvidence"
+    }
+  },
+  "required": [
+    "normalization_specification_id",
+    "normalization_specification_sha256",
+    "passage_identity",
+    "sources",
+    "sblgnt",
+    "morphgnt",
+    "asv",
+    "web_classic",
+    "abbott_smith",
+    "source_serif",
+    "normalization_methods",
+    "deterministic_limitations",
+    "bundle_identity"
+  ],
+  "title": "John15NormalizationBundle",
+  "type": "object"
+}
