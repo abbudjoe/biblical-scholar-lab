@@ -1,0 +1,29 @@
+{
+  "package_id": "BSL-VS01-T05-FROZEN-DESIGN",
+  "design_id": "VS01-T05",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T05_DESIGN",
+  "approval_date": "2026-08-22",
+  "base_main_sha": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+  "base_tree_sha": "7c120218ebd04331a476a374bd3bf3786d0ca5a3",
+  "required_input": {
+    "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+    "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
+  },
+  "runtime_spec_sha256": "06e97f36db1071d9085688ceb33dbc66f02dd0349889ab4df4d0fa280801d9e5",
+  "implementation_authorized": false,
+  "runtime_execution_authorized": false,
+  "database_migration_execution_authorized": false,
+  "files": [
+    {
+      "path": "VS01-T05-deterministic-study-runtime-answer-audit.md",
+      "sha256": "398acbe88647ae16c58e5a648ae5d6eee01f77a11b162230816394d3911b2129",
+      "bytes": 26002
+    },
+    {
+      "path": "VS01-T05-runtime-spec.json",
+      "sha256": "06e97f36db1071d9085688ceb33dbc66f02dd0349889ab4df4d0fa280801d9e5",
+      "bytes": 71968
+    }
+  ]
+}

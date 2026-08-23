@@ -1,0 +1,1570 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "VS01-T05-RUNTIME-SPEC-v1",
+  "design_id": "VS01-T05",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T05_DESIGN",
+  "approval_date": "2026-08-22",
+  "base_main_sha": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+  "base_tree_sha": "7c120218ebd04331a476a374bd3bf3786d0ca5a3",
+  "required_input": {
+    "contract": "John15TranslationNuanceEvidencePacket",
+    "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+    "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+    "object_path": "objects/sha256/9f/9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+    "snapshot_path": "snapshots/evidence/john-1-5-translation-nuance.json",
+    "receipt_path": "manifests/evidence/john-1-5-translation-nuance/evidence-packet-receipt.json",
+    "required_receipt_disposition": "PUBLISHED",
+    "required_receipt_implementation_commit": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+    "receipt_identity_and_file_sha256": "READ_EXACTLY_FROM_PUBLISHED_RECEIPT_AND_BIND_IN_EVERY_RUNTIME_RECORD",
+    "t03_and_raw_source_access": "PROHIBITED"
+  },
+  "public_contracts": [
+    {
+      "contract": "John15StudyRequest",
+      "purpose": "Exact immutable user request revision and correction lineage.",
+      "identity_rule": "SHA-256 of RFC 8785 canonical fields excluding request_identity."
+    },
+    {
+      "contract": "John15StudyExecutionRecord",
+      "purpose": "Deterministic resolved task, plan, evidence ledger, claim ledger, answer candidate, verification report, and state sequence.",
+      "identity_rule": "SHA-256 of RFC 8785 canonical fields excluding execution_record_identity."
+    },
+    {
+      "contract": "John15StudyAnswerArtifact",
+      "purpose": "One verified BRIEF or STUDY rendering from the shared verified claim ledger.",
+      "identity_rule": "SHA-256 of RFC 8785 canonical fields excluding answer_identity."
+    },
+    {
+      "contract": "John15RuntimeAuditReceipt",
+      "purpose": "Operational receipt binding request, packet, execution, artifacts, persistence, costs, and correction lineage.",
+      "identity_rule": "UUIDv7 receipt identity plus canonical content SHA-256; timestamps are operational and excluded from deterministic upstream artifacts."
+    }
+  ],
+  "canonical_request": {
+    "session_fixture_id": "SESSION-VS01-T05-CORRECTION-v1",
+    "initial_request": {
+      "request_revision": 1,
+      "exact_user_text": "Using the World English Bible Classic as the primary translation and the American Standard Version as the comparison, explain why John 1:5 says “the darkness hasn’t overcome it” in WEB Classic but “the darkness apprehended it not” in the ASV. Does this difference require a different Greek manuscript? Give me a Study-mode answer with sources and make the uncertainty clear.",
+      "passage": "John 1:5",
+      "primary_edition": "SP01-SRC-004_WEB_CLASSIC",
+      "comparison_edition": "SP01-SRC-003_ASV",
+      "requested_answer_depth": "STUDY",
+      "answer_language": "en",
+      "request_identity": "782f577a42001df95b1f2094b7c44a075102bd3c54ee157e809828853352ec80"
+    },
+    "correction": {
+      "correction_text": "Use the American Standard Version as the primary translation instead; keep the World English Bible Classic as the comparison.",
+      "supersedes_request_identity": "782f577a42001df95b1f2094b7c44a075102bd3c54ee157e809828853352ec80",
+      "new_primary_edition": "SP01-SRC-003_ASV",
+      "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+      "correction_identity": "bfd475b96f4e0296396b6e3771767194b9210e841643bc66ab3657e995d0d97d"
+    },
+    "active_request": {
+      "request_revision": 2,
+      "exact_user_text": "Using the American Standard Version as the primary translation and the World English Bible Classic as the comparison, explain why John 1:5 says “the darkness apprehended it not” in the ASV but “the darkness hasn’t overcome it” in WEB Classic. Does this difference require a different Greek manuscript? Give me a Study-mode answer with sources and make the uncertainty clear.",
+      "passage": "John 1:5",
+      "primary_edition": "SP01-SRC-003_ASV",
+      "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+      "requested_answer_depth": "STUDY",
+      "answer_language": "en",
+      "supersedes_request_identity": "782f577a42001df95b1f2094b7c44a075102bd3c54ee157e809828853352ec80",
+      "correction_identity": "bfd475b96f4e0296396b6e3771767194b9210e841643bc66ab3657e995d0d97d",
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef"
+    },
+    "canonical_runtime_input": "active_request",
+    "correction_rule": "The correction creates a new immutable request revision and later run; it never overwrites revision 1."
+  },
+  "resolved_task": {
+    "domain": "BIBLICAL_STUDIES",
+    "intent": "TRANSLATION_NUANCE_DIAGNOSIS",
+    "task_types": [
+      "TRANSLATION_COMPARISON",
+      "TRANSLATION_NUANCE_DIAGNOSIS",
+      "ORIGINAL_LANGUAGE_ANALYSIS"
+    ],
+    "assurance_class": "A2_SCHOLARLY_RESEARCH",
+    "passage": "John 1:5",
+    "primary_edition": "SP01-SRC-003_ASV",
+    "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+    "answer_language": "en",
+    "answer_depth_requested": "STUDY",
+    "rendered_modes": [
+      "BRIEF",
+      "STUDY"
+    ],
+    "clarification_required": false,
+    "risk": "ORDINARY",
+    "scope": "CORE_IN_SCOPE"
+  },
+  "research_execution_plan": {
+    "plan_id": "PLAN-VS01-T05-JOHN-1-5-ASV-WEB-v1",
+    "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+    "task_types": [
+      "TRANSLATION_COMPARISON",
+      "TRANSLATION_NUANCE_DIAGNOSIS",
+      "ORIGINAL_LANGUAGE_ANALYSIS"
+    ],
+    "assurance_class": "A2_SCHOLARLY_RESEARCH",
+    "execution_mode": "DETERMINISTIC_ONLY",
+    "answer_depths": [
+      "BRIEF",
+      "STUDY"
+    ],
+    "answer_language": "en",
+    "passage": "John 1:5",
+    "primary_edition": "SP01-SRC-003_ASV",
+    "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+    "evidence_contract": "EC-VS01-03-COMPLETE-TNC",
+    "required_input": {
+      "contract": "John15TranslationNuanceEvidencePacket",
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+      "receipt_path": "manifests/evidence/john-1-5-translation-nuance/evidence-packet-receipt.json",
+      "receipt_disposition": "PUBLISHED"
+    },
+    "tool_plan": [
+      {
+        "operation": "load_published_t04_packet",
+        "maximum_calls": 1,
+        "network": false,
+        "read_scope": [
+          ".bsl-archive-root.json",
+          "objects/sha256/9f/9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+          "snapshots/evidence/john-1-5-translation-nuance.json",
+          "manifests/evidence/john-1-5-translation-nuance/evidence-packet-receipt.json"
+        ]
+      }
+    ],
+    "forbidden_reads": [
+      "snapshots/normalization/",
+      "manifests/normalization/",
+      "snapshots/source/",
+      "manifests/source/",
+      "quarantine/",
+      "raw source objects"
+    ],
+    "model_route": "NONE",
+    "reasoning_mode": "NONE",
+    "model_invocation_budget": 0,
+    "network_request_budget": 0,
+    "tool_call_budget": 1,
+    "repair_attempt_budget": 0,
+    "database_write_budget_dry_run": 0,
+    "database_write_budget_live": {
+      "study_run": 1,
+      "runtime_artifact": 5,
+      "runtime_event": 11
+    },
+    "evidence_sufficiency_required": "SUFFICIENT_WITH_QUALIFICATION",
+    "verification_suite": [
+      "STRUCTURAL",
+      "PACKET_AND_RECEIPT_IDENTITY",
+      "CLAIM_LEDGER_EXACTNESS",
+      "QUOTATION_AND_LOCATOR",
+      "EPISTEMIC_STATUS",
+      "CLAIM_EVIDENCE_ENTAILMENT",
+      "PROHIBITED_INFERENCE",
+      "BRIEF_STUDY_CONSISTENCY",
+      "RIGHTS_AND_DISPLAY",
+      "NO_MODEL_NO_NETWORK"
+    ],
+    "stop_conditions": [
+      "packet or receipt mismatch",
+      "missing or changed frozen runtime spec",
+      "unrecognized claim/evidence/citation ID",
+      "quotation mismatch",
+      "prohibited inference",
+      "material Brief/Study inconsistency",
+      "model or network attempt",
+      "database schema mismatch",
+      "persistence transaction failure"
+    ]
+  },
+  "runtime_state_machine": {
+    "execution_mode": "DETERMINISTIC_ONLY",
+    "principal_sequence": [
+      "RECEIVED",
+      "NORMALIZED",
+      "CLASSIFIED",
+      "IDENTITIES_RESOLVED",
+      "PLAN_FROZEN",
+      "EVIDENCE_ASSESSED",
+      "CANDIDATE_RECEIVED",
+      "VERIFYING",
+      "RENDERED",
+      "AUDITED",
+      "COMPLETE"
+    ],
+    "skipped_by_design": [
+      "EVIDENCE_ACQUIRING",
+      "CONTEXT_COMPOSED",
+      "MODEL_EXECUTING",
+      "REPAIRING"
+    ],
+    "skip_reasons": {
+      "EVIDENCE_ACQUIRING": "The exact T04 evidence packet is already published and immutable.",
+      "CONTEXT_COMPOSED": "No model invocation occurs; the executor reads one fixed packet.",
+      "MODEL_EXECUTING": "The reference executor is deterministic and model-free.",
+      "REPAIRING": "The frozen candidate either verifies exactly or the run fails closed; no generative repair loop exists."
+    },
+    "terminal_failures": [
+      "BLOCKED_BY_ACCESS",
+      "BLOCKED_BY_EVIDENCE",
+      "BLOCKED_BY_RIGHTS",
+      "VERIFICATION_FAILURE",
+      "FAILED"
+    ]
+  },
+  "evidence_ledger": [
+    {
+      "evidence_id": "EV-T04-NORM-001",
+      "kind": "NORMALIZATION_AUTHORITY",
+      "source_role": "AUTHORITATIVE_DERIVED_INPUT",
+      "selector": "John15NormalizationBundle@published",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-GRK-001",
+      "kind": "NORMALIZED_PRIMARY_TEXT",
+      "source_role": "GREEK_TEXT_AUTHORITY",
+      "selector": "sblgnt.exact_source_view#final-clause",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-MORPH-001",
+      "kind": "NORMALIZED_LINGUISTIC_ANNOTATION",
+      "source_role": "MORPHOLOGY_AND_LEMMA",
+      "selector": "morphgnt.target_verb",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-ASV-001",
+      "kind": "NORMALIZED_TRANSLATION_REALIZATION",
+      "source_role": "ENGLISH_TRANSLATION_A",
+      "selector": "asv.canonical_realization",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-WEB-001",
+      "kind": "NORMALIZED_TRANSLATION_REALIZATION",
+      "source_role": "ENGLISH_TRANSLATION_B",
+      "selector": "web_classic.canonical_realization",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-LEX-000",
+      "kind": "NORMALIZED_LEXICAL_ENTRY",
+      "source_role": "LEXICAL_RANGE_AND_ENTRY_STRUCTURE",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-LEX-001",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"1.\"",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-LEX-002",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE_AND_PASSAGE_LOCATOR",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"2.\"",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-LEX-003",
+      "kind": "LEXICAL_SENSE_EXCERPT",
+      "source_role": "LEXICAL_RANGE_WITH_NON_TARGET_CONTEXTS",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"3.\"",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-METHOD-001",
+      "kind": "NORMATIVE_METHOD_RULE",
+      "source_role": "SOURCE_FITNESS_AND_EPISTEMIC_METHOD",
+      "selector": "DR-02#source-fitness+epistemic-status",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-METHOD-002",
+      "kind": "NORMATIVE_METHOD_RULE",
+      "source_role": "TRANSLATION_NUANCE_METHOD",
+      "selector": "DR-06#textual-variation-not-translation-variation+effect-not-intent",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    },
+    {
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "kind": "APPROVED_SCOPE_BOUNDARY",
+      "source_role": "WITHHELD_EVIDENCE_AND_NON_GOALS",
+      "selector": "SOURCE-PLAN-01#SP01-DER-001+exclusions",
+      "state": "SELECTED",
+      "selection_reason": "Required by the frozen T04 packet or runtime verification boundary.",
+      "rights_state": "BOUND_BY_T04_RIGHTS_PROJECTION",
+      "display_state": "BOUNDED_EXCERPT_OR_METADATA_ONLY"
+    }
+  ],
+  "claim_ledger": [
+    {
+      "claim_id": "CLM-T04-001",
+      "exact_proposition": "The sole scholarly-data input is the published VS01-T03 John 1:5 normalization bundle 9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32 with canonical SHA-256 397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "INTERNAL_ONLY",
+      "required_qualifications": []
+    },
+    {
+      "claim_id": "CLM-T04-010",
+      "exact_proposition": "The controlled SBLGNT wording of the final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "SBLGNT is the controlled reference text, not proof of each translation project’s complete base edition."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-011",
+      "exact_proposition": "The target form is κατέλαβεν, from καταλαμβάνω, parsed as third-person singular aorist active indicative.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "This is a formal morphology record."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-012",
+      "exact_proposition": "Morphology alone does not establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": []
+    },
+    {
+      "claim_id": "CLM-T04-020",
+      "exact_proposition": "The approved ASV realization is “And the light shineth in the darkness; and the darkness apprehended it not.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "Edition identity must remain visible."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-021",
+      "exact_proposition": "The approved WEB Classic realization is “The light shines in the darkness, and the darkness hasn’t overcome it.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "Edition and acquisition-frozen package identity must remain visible."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-022",
+      "exact_proposition": "The salient final-clause surface contrast is “apprehended it not” versus “hasn’t overcome it.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "Surface contrast is not yet causal diagnosis."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-030",
+      "exact_proposition": "Abbott-Smith’s entry distinguishes a grasping/seizing sense, an overtaking sense, and a separate mental-action apprehend/comprehend sense.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "The entry records uses across contexts; it is not itself contextual adjudication."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-031",
+      "exact_proposition": "Abbott-Smith explicitly lists John 1:5 under sense 2, “to overtake.”",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "This is Abbott-Smith’s entry structure, not current specialist consensus."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-032",
+      "exact_proposition": "Abbott-Smith’s mental-action “apprehend/comprehend” sense is attested elsewhere in the entry and is not directly assigned there to John 1:5.",
+      "epistemic_status": "DIRECTLY_ATTESTED",
+      "verification_outcome": "VERIFIED",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "This does not make a cognitive construal impossible; it limits what this lexicon directly attests for the target verse."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-040",
+      "exact_proposition": "The difference between the two English realizations does not by itself prove that the translations were based on different Greek manuscripts.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "INTERNAL_ONLY",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "Translation wording is not manuscript attestation."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-041",
+      "exact_proposition": "Within this controlled comparison, no different Greek source reading is required to explain the observed English contrast.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "This is a bounded explanatory claim, not a declaration that no variant exists in the manuscript tradition."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-042",
+      "exact_proposition": "Whether the ASV and WEB projects used identical complete Greek base editions is not established by this packet.",
+      "epistemic_status": "UNKNOWN",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "No translation-project source documentation was admitted."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-043",
+      "exact_proposition": "The broader textual-critical state of John 1:5 is not established by this packet because apparatus and witness evidence are absent.",
+      "epistemic_status": "UNKNOWN",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "Do not render UNKNOWN as “no textual variant.”"
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-050",
+      "exact_proposition": "The lexicon’s several senses are context-specific possibilities; they are not all simultaneously active in this occurrence merely because they appear in one entry.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "The packet does not select one final contextual sense."
+      ]
+    },
+    {
+      "claim_id": "CLM-T04-060",
+      "exact_proposition": "The strongest bounded packet-level assessment is a translation-choice contrast associated with lexical construal and interpretive effect, not a demonstrated textual-state difference.",
+      "epistemic_status": "STRONGLY_SUPPORTED",
+      "verification_outcome": "VERIFIED_WITH_QUALIFICATION",
+      "brief_rendering": "VISIBLE",
+      "study_rendering": "VISIBLE",
+      "required_qualifications": [
+        "No claim of translator intent, final specialist preference, or current consensus."
+      ]
+    }
+  ],
+  "citation_records": [
+    {
+      "citation_id": "CIT-T05-001",
+      "evidence_id": "EV-T04-ASV-001",
+      "source_label": "American Standard Version (1901), approved openbibleinfo digital USX edition",
+      "selector": "asv.canonical_realization",
+      "quoted_span": "And the light shineth in the darkness; and the darkness apprehended it not.",
+      "display_role": "PRIMARY_TRANSLATION"
+    },
+    {
+      "citation_id": "CIT-T05-002",
+      "evidence_id": "EV-T04-WEB-001",
+      "source_label": "World English Bible Classic, acquisition-frozen approved edition",
+      "selector": "web_classic.canonical_realization",
+      "quoted_span": "The light shines in the darkness, and the darkness hasn’t overcome it.",
+      "display_role": "COMPARISON_TRANSLATION"
+    },
+    {
+      "citation_id": "CIT-T05-003",
+      "evidence_id": "EV-T04-GRK-001",
+      "source_label": "SBL Greek New Testament, controlled John 1:5 text",
+      "selector": "sblgnt.exact_source_view#final-clause",
+      "quoted_span": "καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.",
+      "display_role": "GREEK_TEXT_AUTHORITY"
+    },
+    {
+      "citation_id": "CIT-T05-004",
+      "evidence_id": "EV-T04-MORPH-001",
+      "source_label": "MorphGNT SBLGNT annotation for John 1:5",
+      "selector": "morphgnt.target_verb",
+      "quoted_span": null,
+      "display_role": "MORPHOLOGY_AND_LEMMA"
+    },
+    {
+      "citation_id": "CIT-T05-005",
+      "evidence_id": "EV-T04-LEX-001",
+      "source_label": "Abbott-Smith Greek Lexicon, καταλαμβάνω|G2638, sense 1",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"1.\"",
+      "quoted_span": "to lay hold of; seize; appropriate",
+      "display_role": "LEXICAL_RANGE"
+    },
+    {
+      "citation_id": "CIT-T05-006",
+      "evidence_id": "EV-T04-LEX-002",
+      "source_label": "Abbott-Smith Greek Lexicon, καταλαμβάνω|G2638, sense 2",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"2.\"",
+      "quoted_span": "to overtake",
+      "display_role": "LEXICAL_RANGE_AND_TARGET_LOCATOR"
+    },
+    {
+      "citation_id": "CIT-T05-007",
+      "evidence_id": "EV-T04-LEX-003",
+      "source_label": "Abbott-Smith Greek Lexicon, καταλαμβάνω|G2638, sense 3",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"/sense@n=\"3.\"",
+      "quoted_span": "Of mental action: to apprehend; comprehend",
+      "display_role": "LEXICAL_RANGE_NON_TARGET_CONTEXTS"
+    },
+    {
+      "citation_id": "CIT-T05-008",
+      "evidence_id": "EV-T04-METHOD-002",
+      "source_label": "Approved Translation Nuance method boundary",
+      "selector": "DR-06#textual-variation-not-translation-variation+effect-not-intent",
+      "quoted_span": null,
+      "display_role": "METHOD"
+    },
+    {
+      "citation_id": "CIT-T05-009",
+      "evidence_id": "EV-T04-BOUNDARY-001",
+      "source_label": "SOURCE-PLAN-01 bounded evidence and exclusions",
+      "selector": "SOURCE-PLAN-01#SP01-DER-001+exclusions",
+      "quoted_span": null,
+      "display_role": "LIMITATION_BOUNDARY"
+    },
+    {
+      "citation_id": "CIT-T05-010",
+      "evidence_id": "EV-T04-LEX-000",
+      "source_label": "Abbott-Smith Greek Lexicon, complete normalized καταλαμβάνω|G2638 entry",
+      "selector": "abbott_smith#entry@n=\"καταλαμβάνω|G2638\"",
+      "quoted_span": null,
+      "display_role": "LEXICAL_ENTRY_STRUCTURE"
+    }
+  ],
+  "structured_answer_candidate": {
+    "candidate_id": "CAND-VS01-T05-DETERMINISTIC-v1",
+    "origin": "DETERMINISTIC_REFERENCE_EXECUTOR",
+    "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+    "plan_id": "PLAN-VS01-T05-JOHN-1-5-ASV-WEB-v1",
+    "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+    "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+    "evidence_sufficiency": "SUFFICIENT_WITH_QUALIFICATION",
+    "claim_ids": [
+      "CLM-T04-010",
+      "CLM-T04-011",
+      "CLM-T04-012",
+      "CLM-T04-020",
+      "CLM-T04-021",
+      "CLM-T04-022",
+      "CLM-T04-030",
+      "CLM-T04-031",
+      "CLM-T04-032",
+      "CLM-T04-040",
+      "CLM-T04-041",
+      "CLM-T04-042",
+      "CLM-T04-043",
+      "CLM-T04-050",
+      "CLM-T04-060"
+    ],
+    "alternative_ids": [
+      "ALT-T04-CONFLICT",
+      "ALT-T04-COGNITIVE",
+      "ALT-T04-DOUBLE-RESONANCE"
+    ],
+    "citation_ids": [
+      "CIT-T05-001",
+      "CIT-T05-002",
+      "CIT-T05-003",
+      "CIT-T05-004",
+      "CIT-T05-005",
+      "CIT-T05-006",
+      "CIT-T05-007",
+      "CIT-T05-008",
+      "CIT-T05-009",
+      "CIT-T05-010"
+    ],
+    "brief_blocks": [
+      {
+        "block_id": "BRIEF-DIRECT",
+        "heading": null,
+        "text": "The difference is best explained here as a translation choice around the Greek verb κατέλαβεν, not as a different Greek reading required for this controlled comparison. The ASV says “apprehended it not,” while WEB Classic says “hasn’t overcome it.”",
+        "claim_ids": [
+          "CLM-T04-022",
+          "CLM-T04-041",
+          "CLM-T04-060"
+        ],
+        "citation_ids": [
+          "CIT-T05-001",
+          "CIT-T05-002",
+          "CIT-T05-003",
+          "CIT-T05-008"
+        ]
+      },
+      {
+        "block_id": "BRIEF-EVIDENCE",
+        "heading": null,
+        "text": "κατέλαβεν is the third-person singular aorist active indicative of καταλαμβάνω, but that morphology does not by itself choose the contextual English sense. Abbott-Smith explicitly lists John 1:5 under “to overtake,” so the conflict or overtaking effect has stronger direct support in this packet. A cognitive or apprehension effect and possible double resonance remain plausible.",
+        "claim_ids": [
+          "CLM-T04-011",
+          "CLM-T04-012",
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-050"
+        ],
+        "alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "citation_ids": [
+          "CIT-T05-004",
+          "CIT-T05-006",
+          "CIT-T05-007",
+          "CIT-T05-010"
+        ]
+      },
+      {
+        "block_id": "BRIEF-LIMITS",
+        "heading": null,
+        "text": "This evidence does not establish that the two projects used identical complete Greek base editions, does not establish the broader textual-critical state of the verse, and does not establish translator intent, current scholarly consensus, or one final preferred rendering.",
+        "claim_ids": [
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "citation_ids": [
+          "CIT-T05-008",
+          "CIT-T05-009"
+        ]
+      }
+    ],
+    "study_blocks": [
+      {
+        "block_id": "STUDY-DIRECT",
+        "heading": "Direct answer",
+        "text": "No different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference.",
+        "claim_ids": [
+          "CLM-T04-041",
+          "CLM-T04-060"
+        ],
+        "citation_ids": [
+          "CIT-T05-003",
+          "CIT-T05-008",
+          "CIT-T05-009"
+        ]
+      },
+      {
+        "block_id": "STUDY-TEXTS",
+        "heading": "The two approved renderings",
+        "text": "The approved ASV reads, “And the light shineth in the darkness; and the darkness apprehended it not.” The approved WEB Classic reads, “The light shines in the darkness, and the darkness hasn’t overcome it.” The salient final-clause contrast is therefore “apprehended it not” versus “hasn’t overcome it.”",
+        "claim_ids": [
+          "CLM-T04-020",
+          "CLM-T04-021",
+          "CLM-T04-022"
+        ],
+        "citation_ids": [
+          "CIT-T05-001",
+          "CIT-T05-002"
+        ]
+      },
+      {
+        "block_id": "STUDY-GREEK",
+        "heading": "The Greek form",
+        "text": "The controlled SBLGNT final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.” The target form, κατέλαβεν, comes from καταλαμβάνω and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology.",
+        "claim_ids": [
+          "CLM-T04-010",
+          "CLM-T04-011",
+          "CLM-T04-012"
+        ],
+        "citation_ids": [
+          "CIT-T05-003",
+          "CIT-T05-004"
+        ]
+      },
+      {
+        "block_id": "STUDY-LEXICON",
+        "heading": "What the lexical evidence contributes",
+        "text": "Abbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action “apprehend/comprehend” sense. It explicitly lists John 1:5 under sense 2, “to overtake.” Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry.",
+        "claim_ids": [
+          "CLM-T04-030",
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-050"
+        ],
+        "citation_ids": [
+          "CIT-T05-005",
+          "CIT-T05-006",
+          "CIT-T05-007",
+          "CIT-T05-010"
+        ]
+      },
+      {
+        "block_id": "STUDY-ALTERNATIVES",
+        "heading": "Defensible effects and possibilities",
+        "text": "The conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under “to overtake.” A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek “literally means both.”",
+        "claim_ids": [
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-050"
+        ],
+        "alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "citation_ids": [
+          "CIT-T05-001",
+          "CIT-T05-002",
+          "CIT-T05-005",
+          "CIT-T05-006",
+          "CIT-T05-007",
+          "CIT-T05-010"
+        ]
+      },
+      {
+        "block_id": "STUDY-TEXTUAL-STATE",
+        "heading": "What this does and does not say about manuscripts",
+        "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent.",
+        "claim_ids": [
+          "CLM-T04-040",
+          "CLM-T04-041",
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "citation_ids": [
+          "CIT-T05-001",
+          "CIT-T05-002",
+          "CIT-T05-003",
+          "CIT-T05-008",
+          "CIT-T05-009"
+        ]
+      },
+      {
+        "block_id": "STUDY-ASSESSMENT",
+        "heading": "Assessment and limits",
+        "text": "The strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion.",
+        "claim_ids": [
+          "CLM-T04-060",
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "citation_ids": [
+          "CIT-T05-006",
+          "CIT-T05-007",
+          "CIT-T05-008",
+          "CIT-T05-009"
+        ]
+      }
+    ],
+    "missing_evidence": [
+      "critical apparatus and witness evidence",
+      "translation-project source-base documentation",
+      "translator documentation",
+      "modern specialist scholarship",
+      "historical English semantic evidence for ASV “apprehended”"
+    ],
+    "abstention_requested": false,
+    "repair_requested": false,
+    "concise_rationale": "The exact T04 packet is sufficient with qualification for a deterministic source-verifiable explanation; no model or additional evidence acquisition is needed for the frozen request."
+  },
+  "answer_artifacts": {
+    "brief": {
+      "rendering_mode": "BRIEF",
+      "language": "en",
+      "primary_edition": "SP01-SRC-003_ASV",
+      "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+      "blocks": [
+        {
+          "block_id": "BRIEF-DIRECT",
+          "heading": null,
+          "text": "The difference is best explained here as a translation choice around the Greek verb κατέλαβεν, not as a different Greek reading required for this controlled comparison. The ASV says “apprehended it not,” while WEB Classic says “hasn’t overcome it.”",
+          "claim_ids": [
+            "CLM-T04-022",
+            "CLM-T04-041",
+            "CLM-T04-060"
+          ],
+          "citation_ids": [
+            "CIT-T05-001",
+            "CIT-T05-002",
+            "CIT-T05-003",
+            "CIT-T05-008"
+          ]
+        },
+        {
+          "block_id": "BRIEF-EVIDENCE",
+          "heading": null,
+          "text": "κατέλαβεν is the third-person singular aorist active indicative of καταλαμβάνω, but that morphology does not by itself choose the contextual English sense. Abbott-Smith explicitly lists John 1:5 under “to overtake,” so the conflict or overtaking effect has stronger direct support in this packet. A cognitive or apprehension effect and possible double resonance remain plausible.",
+          "claim_ids": [
+            "CLM-T04-011",
+            "CLM-T04-012",
+            "CLM-T04-031",
+            "CLM-T04-032",
+            "CLM-T04-050"
+          ],
+          "alternative_ids": [
+            "ALT-T04-CONFLICT",
+            "ALT-T04-COGNITIVE",
+            "ALT-T04-DOUBLE-RESONANCE"
+          ],
+          "citation_ids": [
+            "CIT-T05-004",
+            "CIT-T05-006",
+            "CIT-T05-007",
+            "CIT-T05-010"
+          ]
+        },
+        {
+          "block_id": "BRIEF-LIMITS",
+          "heading": null,
+          "text": "This evidence does not establish that the two projects used identical complete Greek base editions, does not establish the broader textual-critical state of the verse, and does not establish translator intent, current scholarly consensus, or one final preferred rendering.",
+          "claim_ids": [
+            "CLM-T04-042",
+            "CLM-T04-043"
+          ],
+          "citation_ids": [
+            "CIT-T05-008",
+            "CIT-T05-009"
+          ]
+        }
+      ],
+      "markdown": "The difference is best explained here as a translation choice around the Greek verb κατέλαβεν, not as a different Greek reading required for this controlled comparison. The ASV says “apprehended it not,” while WEB Classic says “hasn’t overcome it.” [CIT-T05-001] [CIT-T05-002] [CIT-T05-003] [CIT-T05-008]\n\nκατέλαβεν is the third-person singular aorist active indicative of καταλαμβάνω, but that morphology does not by itself choose the contextual English sense. Abbott-Smith explicitly lists John 1:5 under “to overtake,” so the conflict or overtaking effect has stronger direct support in this packet. A cognitive or apprehension effect and possible double resonance remain plausible. [CIT-T05-004] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\nThis evidence does not establish that the two projects used identical complete Greek base editions, does not establish the broader textual-critical state of the verse, and does not establish translator intent, current scholarly consensus, or one final preferred rendering. [CIT-T05-008] [CIT-T05-009]",
+      "visible_claim_ids": [
+        "CLM-T04-011",
+        "CLM-T04-012",
+        "CLM-T04-022",
+        "CLM-T04-031",
+        "CLM-T04-032",
+        "CLM-T04-041",
+        "CLM-T04-042",
+        "CLM-T04-043",
+        "CLM-T04-050",
+        "CLM-T04-060"
+      ],
+      "material_uncertainty_claim_ids": [
+        "CLM-T04-042",
+        "CLM-T04-043"
+      ],
+      "alternative_ids": [
+        "ALT-T04-CONFLICT",
+        "ALT-T04-COGNITIVE",
+        "ALT-T04-DOUBLE-RESONANCE"
+      ]
+    },
+    "study": {
+      "rendering_mode": "STUDY",
+      "language": "en",
+      "primary_edition": "SP01-SRC-003_ASV",
+      "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+      "blocks": [
+        {
+          "block_id": "STUDY-DIRECT",
+          "heading": "Direct answer",
+          "text": "No different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference.",
+          "claim_ids": [
+            "CLM-T04-041",
+            "CLM-T04-060"
+          ],
+          "citation_ids": [
+            "CIT-T05-003",
+            "CIT-T05-008",
+            "CIT-T05-009"
+          ]
+        },
+        {
+          "block_id": "STUDY-TEXTS",
+          "heading": "The two approved renderings",
+          "text": "The approved ASV reads, “And the light shineth in the darkness; and the darkness apprehended it not.” The approved WEB Classic reads, “The light shines in the darkness, and the darkness hasn’t overcome it.” The salient final-clause contrast is therefore “apprehended it not” versus “hasn’t overcome it.”",
+          "claim_ids": [
+            "CLM-T04-020",
+            "CLM-T04-021",
+            "CLM-T04-022"
+          ],
+          "citation_ids": [
+            "CIT-T05-001",
+            "CIT-T05-002"
+          ]
+        },
+        {
+          "block_id": "STUDY-GREEK",
+          "heading": "The Greek form",
+          "text": "The controlled SBLGNT final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.” The target form, κατέλαβεν, comes from καταλαμβάνω and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology.",
+          "claim_ids": [
+            "CLM-T04-010",
+            "CLM-T04-011",
+            "CLM-T04-012"
+          ],
+          "citation_ids": [
+            "CIT-T05-003",
+            "CIT-T05-004"
+          ]
+        },
+        {
+          "block_id": "STUDY-LEXICON",
+          "heading": "What the lexical evidence contributes",
+          "text": "Abbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action “apprehend/comprehend” sense. It explicitly lists John 1:5 under sense 2, “to overtake.” Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry.",
+          "claim_ids": [
+            "CLM-T04-030",
+            "CLM-T04-031",
+            "CLM-T04-032",
+            "CLM-T04-050"
+          ],
+          "citation_ids": [
+            "CIT-T05-005",
+            "CIT-T05-006",
+            "CIT-T05-007",
+            "CIT-T05-010"
+          ]
+        },
+        {
+          "block_id": "STUDY-ALTERNATIVES",
+          "heading": "Defensible effects and possibilities",
+          "text": "The conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under “to overtake.” A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek “literally means both.”",
+          "claim_ids": [
+            "CLM-T04-031",
+            "CLM-T04-032",
+            "CLM-T04-050"
+          ],
+          "alternative_ids": [
+            "ALT-T04-CONFLICT",
+            "ALT-T04-COGNITIVE",
+            "ALT-T04-DOUBLE-RESONANCE"
+          ],
+          "citation_ids": [
+            "CIT-T05-001",
+            "CIT-T05-002",
+            "CIT-T05-005",
+            "CIT-T05-006",
+            "CIT-T05-007",
+            "CIT-T05-010"
+          ]
+        },
+        {
+          "block_id": "STUDY-TEXTUAL-STATE",
+          "heading": "What this does and does not say about manuscripts",
+          "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent.",
+          "claim_ids": [
+            "CLM-T04-040",
+            "CLM-T04-041",
+            "CLM-T04-042",
+            "CLM-T04-043"
+          ],
+          "citation_ids": [
+            "CIT-T05-001",
+            "CIT-T05-002",
+            "CIT-T05-003",
+            "CIT-T05-008",
+            "CIT-T05-009"
+          ]
+        },
+        {
+          "block_id": "STUDY-ASSESSMENT",
+          "heading": "Assessment and limits",
+          "text": "The strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion.",
+          "claim_ids": [
+            "CLM-T04-060",
+            "CLM-T04-042",
+            "CLM-T04-043"
+          ],
+          "alternative_ids": [
+            "ALT-T04-CONFLICT",
+            "ALT-T04-COGNITIVE",
+            "ALT-T04-DOUBLE-RESONANCE"
+          ],
+          "citation_ids": [
+            "CIT-T05-006",
+            "CIT-T05-007",
+            "CIT-T05-008",
+            "CIT-T05-009"
+          ]
+        }
+      ],
+      "markdown": "## Direct answer\n\nNo different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference. [CIT-T05-003] [CIT-T05-008] [CIT-T05-009]\n\n## The two approved renderings\n\nThe approved ASV reads, “And the light shineth in the darkness; and the darkness apprehended it not.” The approved WEB Classic reads, “The light shines in the darkness, and the darkness hasn’t overcome it.” The salient final-clause contrast is therefore “apprehended it not” versus “hasn’t overcome it.” [CIT-T05-001] [CIT-T05-002]\n\n## The Greek form\n\nThe controlled SBLGNT final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.” The target form, κατέλαβεν, comes from καταλαμβάνω and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology. [CIT-T05-003] [CIT-T05-004]\n\n## What the lexical evidence contributes\n\nAbbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action “apprehend/comprehend” sense. It explicitly lists John 1:5 under sense 2, “to overtake.” Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry. [CIT-T05-005] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\n## Defensible effects and possibilities\n\nThe conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under “to overtake.” A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek “literally means both.” [CIT-T05-001] [CIT-T05-002] [CIT-T05-005] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\n## What this does and does not say about manuscripts\n\nThe English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent. [CIT-T05-001] [CIT-T05-002] [CIT-T05-003] [CIT-T05-008] [CIT-T05-009]\n\n## Assessment and limits\n\nThe strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion. [CIT-T05-006] [CIT-T05-007] [CIT-T05-008] [CIT-T05-009]",
+      "visible_claim_ids": [
+        "CLM-T04-010",
+        "CLM-T04-011",
+        "CLM-T04-012",
+        "CLM-T04-020",
+        "CLM-T04-021",
+        "CLM-T04-022",
+        "CLM-T04-030",
+        "CLM-T04-031",
+        "CLM-T04-032",
+        "CLM-T04-040",
+        "CLM-T04-041",
+        "CLM-T04-042",
+        "CLM-T04-043",
+        "CLM-T04-050",
+        "CLM-T04-060"
+      ],
+      "material_uncertainty_claim_ids": [
+        "CLM-T04-042",
+        "CLM-T04-043"
+      ],
+      "alternative_ids": [
+        "ALT-T04-CONFLICT",
+        "ALT-T04-COGNITIVE",
+        "ALT-T04-DOUBLE-RESONANCE"
+      ]
+    },
+    "consistency_rule": "Brief visible claims are a subset of Study visible claims; both preserve the same direct conclusion, all three alternatives, and both material UNKNOWN claims."
+  },
+  "verification_rules": [
+    {
+      "rule_id": "VR-T05-001",
+      "name": "Exact published T04 authority",
+      "requirement": "Object and snapshot bytes match, hash to the exact packet SHA, validate as the exact packet, and the receipt is mode 0444, PUBLISHED, and binds exact packet/path/root identities.",
+      "failure": "BLOCKED_BY_EVIDENCE"
+    },
+    {
+      "rule_id": "VR-T05-002",
+      "name": "Exact request and correction lineage",
+      "requirement": "The canonical run uses request revision 2 and exact request identity; the correction supersedes revision 1 without mutation.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-003",
+      "name": "Plan conformance",
+      "requirement": "The plan equals the frozen deterministic A2 plan, uses one packet-load call, and has zero model/network/repair budget.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-004",
+      "name": "Evidence ledger exactness",
+      "requirement": "All and only the 12 T04 evidence IDs appear once with source roles and selectors matching the packet.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-005",
+      "name": "Claim ledger exactness",
+      "requirement": "All and only the 16 T04 claims appear once with exact propositions, epistemic states, qualifications, and frozen rendering visibility.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-006",
+      "name": "Quotation and locator verification",
+      "requirement": "Every quoted span and selector in the nine citation records exactly matches its T04 evidence item.",
+      "failure": "CITATION_OR_QUOTATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-007",
+      "name": "Claim/evidence entailment",
+      "requirement": "Every answer block claim and citation pair is supported by an existing T04 ClaimEvidenceLink or an explicitly frozen qualifying/method relation.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-008",
+      "name": "Epistemic calibration",
+      "requirement": "Conflict remains STRONGLY_SUPPORTED; cognitive and double resonance remain PLAUSIBLE; complete-base and broader textual state remain UNKNOWN.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-009",
+      "name": "Prohibited inference exclusion",
+      "requirement": "No answer block, candidate, or artifact asserts or implies any of the 17 T04 prohibited inferences.",
+      "failure": "REJECTED_HARD_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-010",
+      "name": "Brief/Study consistency",
+      "requirement": "Both modes share the same direct conclusion, packet identity, core claims, alternatives, and material uncertainty; Brief may omit derivation only.",
+      "failure": "VERIFICATION_FAILURE"
+    },
+    {
+      "rule_id": "VR-T05-011",
+      "name": "No model or hidden route",
+      "requirement": "Executor is DETERMINISTIC_REFERENCE; model route is NONE; adapter is not instantiated; model calls and network requests equal zero.",
+      "failure": "BLOCKED_BY_CAPABILITY"
+    },
+    {
+      "rule_id": "VR-T05-012",
+      "name": "Persistence authority",
+      "requirement": "Live persistence uses the exact migrated bsl_runtime schema in one transaction; artifact hashes and event chain are verified after commit.",
+      "failure": "FAILED"
+    }
+  ],
+  "verification_report": {
+    "required_overall_outcome": "VERIFIED_WITH_QUALIFICATION",
+    "rule_ids": [
+      "VR-T05-001",
+      "VR-T05-002",
+      "VR-T05-003",
+      "VR-T05-004",
+      "VR-T05-005",
+      "VR-T05-006",
+      "VR-T05-007",
+      "VR-T05-008",
+      "VR-T05-009",
+      "VR-T05-010",
+      "VR-T05-011",
+      "VR-T05-012"
+    ],
+    "claim_outcomes": {
+      "DIRECTLY_ATTESTED": "VERIFIED",
+      "STRONGLY_SUPPORTED": "VERIFIED_WITH_QUALIFICATION",
+      "PLAUSIBLE": "VERIFIED_WITH_QUALIFICATION",
+      "UNKNOWN": "VERIFIED_WITH_QUALIFICATION"
+    },
+    "unsupported_claim_behavior": "Remove, qualify, or fail; never render unsupported prose.",
+    "repair_iterations": 0
+  },
+  "audit_receipt_boundary": {
+    "contract": "John15RuntimeAuditReceipt",
+    "receipt_identity": "UUIDv7",
+    "generated_at": "offset-aware timestamp",
+    "dispositions": [
+      "DRY_RUN_VALIDATED",
+      "PERSISTED",
+      "VERIFIED_EXISTING"
+    ],
+    "required_bindings": [
+      "implementation commit and runtime spec SHA-256",
+      "exact active request and correction lineage",
+      "exact T04 packet identity, SHA-256, receipt identity, and receipt-file SHA-256",
+      "research plan and execution record identities",
+      "Brief and Study answer identities and SHA-256 values",
+      "verification outcome and rule set",
+      "database schema revision and run/session IDs when persisted",
+      "executor kind DETERMINISTIC_REFERENCE",
+      "model route NONE and model calls 0",
+      "one packet-load tool call",
+      "network requests 0",
+      "archive writes 0",
+      "database rows written or verified",
+      "terminal state COMPLETE",
+      "latency and actual cost USD 0"
+    ],
+    "private_chain_of_thought": "NOT_COLLECTED_OR_STORED"
+  },
+  "model_adapter_boundary": {
+    "name": "ScholarModelAdapter",
+    "kind": "typing.Protocol",
+    "method": "propose_candidate(request, plan, packet) -> structured candidate",
+    "implementation_in_t05": "NONE",
+    "registration": "NONE",
+    "provider_dependency": "NONE",
+    "invocation_budget": 0,
+    "runtime_rule": "The deterministic reference executor must reject any non-null adapter in T05.",
+    "future_activation": "A later design and owner approval are required before any adapter implementation or invocation."
+  },
+  "postgresql_boundary": {
+    "engine": "PostgreSQL",
+    "reference_major": 18,
+    "patch_and_image_digest_freeze": "IMPLEMENTATION_ACTIVATION",
+    "schema": "bsl_runtime",
+    "migration_count": 1,
+    "migration_path": "migrations/0001_vs01_t05_runtime.sql",
+    "migration_execution": "SEPARATE_OWNER_AUTHORIZATION_AFTER_MERGE",
+    "orm": "NONE",
+    "migration_framework": "NONE_FOR_T05_REVIEWED_SQL_ONLY",
+    "direct_dependency": "psycopg[binary]",
+    "direct_dependency_count": 1,
+    "tables": [
+      {
+        "table": "bsl_runtime.study_run",
+        "purpose": "Immutable root row for one request revision and packet-bound deterministic execution.",
+        "columns": [
+          [
+            "run_id",
+            "uuid",
+            "primary key; application-generated UUIDv7"
+          ],
+          [
+            "session_id",
+            "uuid",
+            "not null; application-generated UUIDv7"
+          ],
+          [
+            "request_revision",
+            "integer",
+            "not null; >= 1"
+          ],
+          [
+            "supersedes_run_id",
+            "uuid",
+            "nullable self foreign key"
+          ],
+          [
+            "request_identity",
+            "char(64)",
+            "not null"
+          ],
+          [
+            "run_key_sha256",
+            "char(64)",
+            "not null unique idempotency key"
+          ],
+          [
+            "packet_identity",
+            "char(64)",
+            "not null; exact aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"
+          ],
+          [
+            "packet_sha256",
+            "char(64)",
+            "not null; exact 9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
+          ],
+          [
+            "packet_receipt_identity",
+            "uuid",
+            "not null; exact published T04 receipt UUID"
+          ],
+          [
+            "packet_receipt_file_sha256",
+            "char(64)",
+            "not null; exact published T04 receipt file hash"
+          ],
+          [
+            "runtime_spec_sha256",
+            "char(64)",
+            "not null; exact frozen T05 spec"
+          ],
+          [
+            "executor_kind",
+            "text",
+            "not null; DETERMINISTIC_REFERENCE only"
+          ],
+          [
+            "created_at",
+            "timestamptz",
+            "not null"
+          ]
+        ],
+        "constraints": [
+          "unique(session_id, request_revision)",
+          "unique(run_key_sha256)",
+          "SHA-256 format checks",
+          "no UPDATE or DELETE trigger"
+        ]
+      },
+      {
+        "table": "bsl_runtime.runtime_artifact",
+        "purpose": "Immutable content-addressed request, execution, answer, and audit records.",
+        "columns": [
+          [
+            "artifact_sha256",
+            "char(64)",
+            "primary key; RFC 8785 JSON hash"
+          ],
+          [
+            "run_id",
+            "uuid",
+            "not null foreign key study_run"
+          ],
+          [
+            "artifact_type",
+            "text",
+            "REQUEST | EXECUTION_RECORD | ANSWER_BRIEF | ANSWER_STUDY | AUDIT_RECEIPT"
+          ],
+          [
+            "contract_name",
+            "text",
+            "not null"
+          ],
+          [
+            "artifact_json",
+            "jsonb",
+            "not null"
+          ],
+          [
+            "created_at",
+            "timestamptz",
+            "not null"
+          ]
+        ],
+        "constraints": [
+          "unique(run_id, artifact_type)",
+          "SHA-256 format check",
+          "no UPDATE or DELETE trigger"
+        ]
+      },
+      {
+        "table": "bsl_runtime.runtime_event",
+        "purpose": "Append-only hash-chained runtime state transitions.",
+        "columns": [
+          [
+            "event_id",
+            "uuid",
+            "primary key; application-generated UUIDv7"
+          ],
+          [
+            "run_id",
+            "uuid",
+            "not null foreign key study_run"
+          ],
+          [
+            "stream_sequence",
+            "smallint",
+            "not null"
+          ],
+          [
+            "state",
+            "text",
+            "exact T05 state vocabulary"
+          ],
+          [
+            "artifact_sha256",
+            "char(64)",
+            "nullable foreign key runtime_artifact"
+          ],
+          [
+            "event_json",
+            "jsonb",
+            "not null"
+          ],
+          [
+            "previous_event_sha256",
+            "char(64)",
+            "nullable for first event"
+          ],
+          [
+            "event_sha256",
+            "char(64)",
+            "not null; canonical envelope hash"
+          ],
+          [
+            "created_at",
+            "timestamptz",
+            "not null"
+          ]
+        ],
+        "constraints": [
+          "unique(run_id, stream_sequence)",
+          "unique(run_id, event_sha256)",
+          "SHA-256 format checks",
+          "no UPDATE or DELETE trigger"
+        ]
+      }
+    ],
+    "transaction": {
+      "live_run_behavior": "Insert one study_run, five runtime_artifact rows, and the exact state-event chain in one transaction.",
+      "rollback": "Any failure rolls back all rows.",
+      "idempotency": "Unique run_key_sha256; identical retry verifies existing immutable rows and returns VERIFIED_EXISTING.",
+      "correction": "A correction inserts a new study_run with request_revision + 1 and supersedes_run_id; prior rows remain unchanged.",
+      "outbox": "NOT_ACTIVATED",
+      "row_level_security": "NOT_ACTIVATED because T05 stores only a fixed public-safe development fixture; required before private user sessions."
+    },
+    "ci": {
+      "service": "PostgreSQL 18 reference service pinned by exact image digest in implementation activation",
+      "workflow": "one task-specific VS01-T05 CI workflow",
+      "tests": [
+        "migration applies to empty database",
+        "schema and constraints match frozen boundary",
+        "append-only triggers reject update/delete",
+        "transaction rollback leaves zero rows",
+        "identical run returns verified existing without mutation",
+        "correction creates a new immutable revision"
+      ]
+    }
+  },
+  "cli_and_execution": {
+    "command": "bsl study john-1-5-translation-nuance --archive-root <path> --render both [--dry-run]",
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab",
+    "fixed_request_revision": 2,
+    "fixed_request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+    "render_values": [
+      "brief",
+      "study",
+      "both"
+    ],
+    "production_root_bypass": "NONE",
+    "database_url": {
+      "source": "BSL_DATABASE_URL environment variable",
+      "allowed_use": "local deployment coordinate only; never part of semantic identity or output",
+      "required": "live persistence only",
+      "forbidden": "CLI argument, committed config, output, audit plaintext"
+    },
+    "dry_run_output": [
+      "request",
+      "execution_record",
+      "brief_answer",
+      "study_answer",
+      "audit_receipt",
+      "persisted=false",
+      "verified_existing=false"
+    ],
+    "live_output": [
+      "same artifacts",
+      "persisted=true or verified_existing=true",
+      "run_id",
+      "session_id",
+      "database_schema_revision"
+    ],
+    "dry_run_behavior": [
+      "Validate exact T04 packet and receipt.",
+      "Build all four public contract instances.",
+      "Render exact Brief and Study artifacts.",
+      "Emit DRY_RUN_VALIDATED audit receipt.",
+      "Write neither archive nor PostgreSQL."
+    ],
+    "live_behavior": [
+      "Require a separately applied exact migration and BSL_DATABASE_URL.",
+      "Reload and reverify T04 authority before transaction.",
+      "Insert immutable run, five artifacts, and 11 hash-chained events in one transaction.",
+      "Verify persisted rows and return PERSISTED.",
+      "An identical run key returns VERIFIED_EXISTING without mutation."
+    ],
+    "implementation_turn_real_execution": "TWO_REAL_ARCHIVE_DRY_RUNS_ONLY; NO_DATABASE_WRITE; NO_LIVE_RUNTIME_RUN",
+    "post_merge_execution_authority": "SEPARATE_OWNER_AUTHORIZATION_REQUIRED_FOR_MIGRATION_AND_ONE_CANONICAL_RUN"
+  },
+  "implementation_topology": {
+    "preferred_files": [
+      "src/bsl/contracts/runtime.py",
+      "src/bsl/application/john15_study_runtime.py",
+      "src/bsl/infrastructure/runtime_persistence.py",
+      "src/bsl/interfaces/cli.py",
+      "migrations/0001_vs01_t05_runtime.sql",
+      "tests/test_study_runtime.py",
+      "tests/test_runtime_postgres.py",
+      ".github/workflows/vs01-t05-ci.yml"
+    ],
+    "reuse": [
+      "John15TranslationNuanceEvidencePacket",
+      "John15TranslationNuanceEvidenceReceipt",
+      "canonical archive-root verification",
+      "RFC 8785 hashing",
+      "UUIDv7 utilities"
+    ],
+    "prohibited_scaffolding": [
+      "LangGraph integration",
+      "OpenAI Agents SDK integration",
+      "generic runtime engine",
+      "generic claim graph framework",
+      "generic renderer or template DSL",
+      "provider/model registry",
+      "retrieval layer",
+      "background worker or outbox",
+      "ORM or Alembic",
+      "web API or UI",
+      "future-passage generalization"
+    ]
+  },
+  "implementation_tests": [
+    "Exact T04 object/snapshot/receipt raw-byte validation; wrong hash, mode, path, receipt disposition, packet identity, or implementation commit fails.",
+    "Packet generation reads only the root marker and exact T04 authority trio; T03, raw-source, quarantine, and source-object reads are denied.",
+    "The exact canonical request revision 2 and its request identity validate; any wording, passage, edition, depth, language, correction, or lineage change fails.",
+    "The exact deterministic A2 plan validates and contains one tool call, zero model calls, zero network calls, and zero repairs.",
+    "The evidence ledger contains exactly the 12 packet evidence items with matching roles and selectors.",
+    "The claim ledger contains exactly the 16 packet claims with exact propositions, statuses, qualifications, and rendering states.",
+    "The nine citations match exact packet evidence selectors and excerpts; wrong edition, quote, selector, or source role fails.",
+    "Every answer-block claim/citation relation is compatible with the T04 link graph and method/qualification relations.",
+    "The structured candidate contains only frozen blocks, claims, alternatives, citations, uncertainty, and no extra prose.",
+    "The Brief and Study Markdown renderings match the exact frozen outputs byte-for-byte.",
+    "Brief and Study use the same core conclusion and material uncertainty; removing an unknown or alternative from Brief fails.",
+    "Any T04 prohibited inference, translator-intent statement, textual-variant overclaim, all-glosses claim, aorist overclaim, consensus claim, final-preference claim, or theology fails.",
+    "The deterministic executor rejects a non-null ScholarModelAdapter and records model invocations zero.",
+    "Request, execution record, and answer artifact identities are stable across repeated construction.",
+    "Dry run writes neither PostgreSQL nor the archive and requires no database URL.",
+    "The SQL migration applies to a clean PostgreSQL 18 reference service and produces exactly schema bsl_runtime, three tables, one mutation-rejection trigger function, required triggers, constraints, and indexes.",
+    "UPDATE and DELETE on every T05 table fail; a correction creates a new run and leaves prior rows byte-for-byte unchanged.",
+    "A live fixture run inserts one run, five artifacts, and 11 events atomically; injected failure rolls the entire transaction back.",
+    "An identical live fixture rerun verifies existing rows without mutation; a changed artifact under the same run key fails closed.",
+    "The event stream has exact state order, contiguous sequence, correct previous hashes, and a valid terminal COMPLETE event.",
+    "Two exact real-archive dry runs after the implementation commit produce identical deterministic artifact identities, unchanged T04 authority fingerprint, zero archive writes, zero database writes, zero network, and zero model calls.",
+    "Full regression, schema drift, Ruff, Pyright, branch coverage >= 90%, migration conformance, and all DR-30 gates pass."
+  ],
+  "required_exact_artifact_evidence": [
+    "Exact T04 packet object/snapshot/receipt identities, hashes, paths, modes, and PUBLISHED disposition.",
+    "No-read receipt proving only the root marker and T04 authority trio were accessed.",
+    "Exact runtime spec SHA-256 and contract schema hashes.",
+    "Exact request, plan, ledger, candidate, answer, verification, and audit identities from two real dry runs.",
+    "Byte-identical Brief and Study Markdown across both dry runs.",
+    "Equal pre/post T04 authority fingerprints and zero archive writes.",
+    "Zero T03/raw-source reads, zero network requests, zero model invocations, and zero database writes.",
+    "PostgreSQL migration conformance against an ephemeral PostgreSQL 18 service.",
+    "Atomic persistence, append-only, idempotency, correction, and event-chain test receipts.",
+    "DR-30 complexity and separate generated/design/migration accounting."
+  ],
+  "budgets": {
+    "handwritten_active_implementation_target": 1300,
+    "handwritten_active_implementation_hard_limit": 1800,
+    "handwritten_production_files_hard_limit": 7,
+    "new_public_contracts_hard_limit": 4,
+    "new_direct_dependencies_hard_limit": 1,
+    "migrations_hard_limit": 1,
+    "new_workflows_hard_limit": 1,
+    "postgres_schemas": 1,
+    "postgres_tables": 3,
+    "function_logical_lines_hard_limit": 60,
+    "cyclomatic_complexity_hard_limit": 10,
+    "nesting_hard_limit": 3,
+    "production_class_logical_lines_hard_limit": 250,
+    "production_module_logical_lines_hard_limit": 500
+  },
+  "status_update_required_in_later_activation": [
+    "VS01-T04 complete and canonically published.",
+    "VS01-T05 active under its approved activation.",
+    "T04 packet is the immutable runtime input.",
+    "T03 and raw-source reparsing are prohibited.",
+    "No live T05 database migration or runtime execution has occurred."
+  ],
+  "non_goals": [
+    "No Codex implementation or activation in this design turn.",
+    "No runtime answer execution.",
+    "No model invocation or adapter implementation.",
+    "No database creation, migration execution, or persistent row write.",
+    "No T04 packet modification or republication.",
+    "No T03, raw-source, source-acquisition, quarantine, or archive-cleanup operation.",
+    "No synthetic page or page-region work.",
+    "No benchmark execution or benchmark-content change.",
+    "No web UI, FastAPI service, retrieval, embedding, LangGraph, Agents SDK, cloud, Lambda, training, evaluation, or billable action.",
+    "No VS01-T06 or later implementation."
+  ],
+  "freeze_statement": "VS01-T05 is frozen as a passage-specific, deterministic, model-free Study runtime that consumes only the published T04 packet, produces one exact verified claim ledger and two consistent answer depths, persists immutable runtime records through a three-table append-only PostgreSQL boundary only after separate execution authorization, preserves user corrections as new revisions, and emits an auditable receipt without reparsing upstream evidence or inventing scholarly claims."
+}

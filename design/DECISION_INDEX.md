@@ -48,6 +48,7 @@
 |---|---|---|---|---|
 | VS01-T02 | Canonical Archive Bootstrap and Raw Source Admission | APPROVED | 2026-08-20 | [`approved/VS01-T02-canonical-archive-and-raw-source-admission.md`](approved/VS01-T02-canonical-archive-and-raw-source-admission.md) |
 | VS01-T04 | John 1:5 Translation Nuance Evidence Packet | APPROVED — FROZEN DESIGN | 2026-08-22 | [`approved/VS01-T04-john-1-5-translation-nuance-evidence-packet.md`](approved/VS01-T04-john-1-5-translation-nuance-evidence-packet.md); [`approved/VS01-T04-claim-evidence-spec.json`](approved/VS01-T04-claim-evidence-spec.json) |
+| VS01-T05 | Deterministic Study Runtime, Answer Artifact, and Audit Receipt | APPROVED — ACTIVE IMPLEMENTATION | 2026-08-22 | [`approved/VS01-T05-deterministic-study-runtime-answer-audit.md`](approved/VS01-T05-deterministic-study-runtime-answer-audit.md); [`approved/VS01-T05-runtime-spec.json`](approved/VS01-T05-runtime-spec.json); [`approved/VS01-T05-ERRATA-01-citation-count.md`](approved/VS01-T05-ERRATA-01-citation-count.md) |
 
 ## Approved archive profiles
 
@@ -96,7 +97,8 @@
 | ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1 | Canonical archive bootstrap kernel | COMPLETED HISTORICAL T02A AUTHORIZATION | 2026-08-20 | [`../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json`](../activations/ACT-VS01-T02A-ARCHIVE-BOOTSTRAP-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
 | ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1 | Source-admission kernel | COMPLETED HISTORICAL T02B AUTHORIZATION | 2026-08-21 | [`../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json`](../activations/ACT-VS01-T02B-SOURCE-ADMISSION-KERNEL-v1.json) | `1affe7ea5f78a8b4260ea1f44a20629826ecf9a7` |
 | ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1 | John 1:5 source normalization | COMPLETED HISTORICAL T03 AUTHORIZATION | 2026-08-21 | [`../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json`](../activations/ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1.json) | `042573bfcf650d1f125736a8ed8f5dc75bd25a30` |
-| ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1 | John 1:5 translation nuance evidence packet | ACTIVE | 2026-08-22 | [`../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json`](../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json) | `5a558f9ff1049295985da88096d36542283b4e50` |
+| ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1 | John 1:5 translation nuance evidence packet | COMPLETED HISTORICAL T04 AUTHORIZATION | 2026-08-22 | [`../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json`](../activations/ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1.json) | `5a558f9ff1049295985da88096d36542283b4e50` |
+| ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1 | Deterministic Study Runtime, Answer Artifact, and Audit Receipt | ACTIVE | 2026-08-22 | [`../activations/ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1.json`](../activations/ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1.json) | `7db0ff4a1ade89c043a9330b89de90467dba612c` |
 
 ## Documentation normalization
 
@@ -104,7 +106,7 @@
 
 ## Design-review status
 
-The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. VS01-T02 is complete. VS01-T03 is complete and canonically published. VS01-T04 is active under `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` for evidence-packet implementation and read-only dry-run evidence only.
+The design baseline is approved. W00A1a and W00C are merged historical governance implementation, and governance implementation is closed. W00A1b, W00A2, W00B, and the dummy W01 proof are retired or canceled as VS-01 prerequisites. VS01-T01 and R02 are merged historical foundation. VS01-T02 is complete. VS01-T03 is complete and canonically published. VS01-T04 is complete and canonically published. VS01-T05 implementation and read-only real-archive dry runs are active under `ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1`.
 
 
 ## Preimplementation audits
