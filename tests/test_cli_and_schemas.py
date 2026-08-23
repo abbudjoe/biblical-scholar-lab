@@ -10,6 +10,8 @@ import pytest
 from pydantic import BaseModel
 from uuid6 import uuid7
 
+import bsl.application.john15_study_runtime as study_runtime
+import bsl.contracts.runtime as runtime_contracts
 import bsl.interfaces.cli as cli
 from bsl.contracts.archive import (
     ApprovedArchiveProfile,
@@ -24,6 +26,12 @@ from bsl.contracts.evidence import (
     John15TranslationNuanceEvidenceReceipt,
 )
 from bsl.contracts.normalization import John15NormalizationBundle, NormalizationReceipt
+from bsl.contracts.runtime import (
+    John15RuntimeAuditReceipt,
+    John15StudyAnswerArtifact,
+    John15StudyExecutionRecord,
+    John15StudyRequest,
+)
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.interfaces.cli import main
 
@@ -56,6 +64,19 @@ SCHEMAS = (
     (
         ROOT / "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
         John15TranslationNuanceEvidenceReceipt,
+    ),
+    (ROOT / "contracts/json-schema/runtime/john-15-study-request.schema.json", John15StudyRequest),
+    (
+        ROOT / "contracts/json-schema/runtime/john-15-study-execution-record.schema.json",
+        John15StudyExecutionRecord,
+    ),
+    (
+        ROOT / "contracts/json-schema/runtime/john-15-study-answer-artifact.schema.json",
+        John15StudyAnswerArtifact,
+    ),
+    (
+        ROOT / "contracts/json-schema/runtime/john-15-runtime-audit-receipt.schema.json",
+        John15RuntimeAuditReceipt,
     ),
 )
 
@@ -97,6 +118,43 @@ def test_evidence_packet_schema_rejects_frozen_mutations(tmp_path: Path, case: s
     assert not validator.is_valid(data)
 
 
+@pytest.mark.parametrize("case", ("request", "execution", "brief", "study"))
+def test_runtime_schemas_reject_frozen_mutations(case: str) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is an external validation tool")
+    values = {
+        "request": runtime_contracts._request_payload(2),  # pyright: ignore[reportPrivateUsage]
+        "execution": runtime_contracts._execution_payload(),  # pyright: ignore[reportPrivateUsage]
+        "brief": runtime_contracts._answer_payload("BRIEF"),  # pyright: ignore[reportPrivateUsage]
+        "study": runtime_contracts._answer_payload("STUDY"),  # pyright: ignore[reportPrivateUsage]
+    }
+    names = {
+        "request": "john-15-study-request.schema.json",
+        "execution": "john-15-study-execution-record.schema.json",
+        "brief": "john-15-study-answer-artifact.schema.json",
+        "study": "john-15-study-answer-artifact.schema.json",
+    }
+    value = copy.deepcopy(values[case])
+    if case == "request":
+        value["exact_user_text"] = "changed"
+    elif case == "execution":
+        value["claim_ledger"][12]["epistemic_status"] = "DIRECTLY_ATTESTED"
+    else:
+        value["markdown"] = "changed"
+    schema = json.loads((ROOT / "contracts/json-schema/runtime" / names[case]).read_text())
+    validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
+    assert not validator.is_valid(value)
+
+
+def test_audit_schema_has_typed_operations_and_no_open_count_objects() -> None:
+    schema = John15RuntimeAuditReceipt.model_json_schema()
+    assert schema["additionalProperties"] is False
+    assert schema["properties"]["receipt_identity"]["format"] == "uuid"
+    assert schema["properties"]["generated_at"]["format"] == "date-time"
+    assert schema["properties"]["latency_ms"]["type"] == "integer"
+    for field in ("database_rows_written", "database_rows_verified"):
+        assert all("const" in choice for choice in schema["properties"][field]["oneOf"])
+
+
 def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:
     workflow = (ROOT / ".github/workflows/vs01-t01-ci.yml").read_text()
     assert "ref: ${{ github.event.pull_request.head.sha }}" in workflow
@@ -105,6 +163,44 @@ def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:
     assert 'test "$(git rev-parse HEAD)" = "$HEAD_SHA"' in workflow
     assert 'git diff --check "${BASE_SHA}...${HEAD_SHA}"' in workflow
     assert "      - run: git diff --check\n" not in workflow
+
+
+def test_t05_workflow_binds_exact_database_and_pr_head() -> None:
+    workflow = (ROOT / ".github/workflows/vs01-t05-ci.yml").read_text()
+    assert "postgres:18.6-bookworm@sha256:7d2695c3aa88e792e8b3b233e7e4adb296a20412c6c0ca361e3edaaacfada108" in workflow
+    assert "postgresql://bsl_test:bsl_test@localhost:5432/bsl_test" in workflow
+    assert "pg_isready -U bsl_test -d bsl_test" in workflow
+    assert "SHOW server_version_num" in workflow
+    assert "ref: ${{ github.event.pull_request.head.sha }}" in workflow
+    assert "persist-credentials: false" in workflow
+
+
+@pytest.mark.parametrize("render", ("brief", "study", "both"))
+def test_study_cli_is_machine_readable_and_dry_run_never_exposes_database_url(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], render: str
+) -> None:
+    from test_study_runtime import _authority
+
+    monkeypatch.setattr(study_runtime, "load_t04_authority", lambda *_args, **_kwargs: _authority(tmp_path))
+    monkeypatch.setenv("BSL_DATABASE_URL", "postgresql://must-not-appear")
+    code = main(
+        [
+            "study",
+            "john-1-5-translation-nuance",
+            "--archive-root",
+            str(tmp_path),
+            "--render",
+            render,
+            "--dry-run",
+        ]
+    )
+    raw = capsys.readouterr().out
+    output = json.loads(raw)
+    assert code == 0 and "must-not-appear" not in raw
+    assert output["audit_receipt"]["disposition"] == "DRY_RUN_VALIDATED"
+    assert output["persisted"] is output["verified_existing"] is False
+    assert (output["brief_answer"] is not None) == (render in {"brief", "both"})
+    assert (output["study_answer"] is not None) == (render in {"study", "both"})
 
 
 def test_cli_plan_and_invalid_input_are_machine_readable(capsys) -> None:

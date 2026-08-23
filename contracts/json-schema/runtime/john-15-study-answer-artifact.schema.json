@@ -1,0 +1,422 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "const": {
+        "alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "answer_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+        "blocks": [
+          {
+            "block_id": "BRIEF-DIRECT",
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002",
+              "CIT-T05-003",
+              "CIT-T05-008"
+            ],
+            "claim_ids": [
+              "CLM-T04-022",
+              "CLM-T04-041",
+              "CLM-T04-060"
+            ],
+            "heading": null,
+            "text": "The difference is best explained here as a translation choice around the Greek verb \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd, not as a different Greek reading required for this controlled comparison. The ASV says \u201capprehended it not,\u201d while WEB Classic says \u201chasn\u2019t overcome it.\u201d"
+          },
+          {
+            "alternative_ids": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ],
+            "block_id": "BRIEF-EVIDENCE",
+            "citation_ids": [
+              "CIT-T05-004",
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-010"
+            ],
+            "claim_ids": [
+              "CLM-T04-011",
+              "CLM-T04-012",
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-050"
+            ],
+            "heading": null,
+            "text": "\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd is the third-person singular aorist active indicative of \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9, but that morphology does not by itself choose the contextual English sense. Abbott-Smith explicitly lists John 1:5 under \u201cto overtake,\u201d so the conflict or overtaking effect has stronger direct support in this packet. A cognitive or apprehension effect and possible double resonance remain plausible."
+          },
+          {
+            "block_id": "BRIEF-LIMITS",
+            "citation_ids": [
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ],
+            "claim_ids": [
+              "CLM-T04-042",
+              "CLM-T04-043"
+            ],
+            "heading": null,
+            "text": "This evidence does not establish that the two projects used identical complete Greek base editions, does not establish the broader textual-critical state of the verse, and does not establish translator intent, current scholarly consensus, or one final preferred rendering."
+          }
+        ],
+        "citation_records": [
+          {
+            "citation_id": "CIT-T05-001",
+            "display_role": "PRIMARY_TRANSLATION",
+            "evidence_id": "EV-T04-ASV-001",
+            "quoted_span": "And the light shineth in the darkness; and the darkness apprehended it not.",
+            "selector": "asv.canonical_realization",
+            "source_label": "American Standard Version (1901), approved openbibleinfo digital USX edition"
+          },
+          {
+            "citation_id": "CIT-T05-002",
+            "display_role": "COMPARISON_TRANSLATION",
+            "evidence_id": "EV-T04-WEB-001",
+            "quoted_span": "The light shines in the darkness, and the darkness hasn\u2019t overcome it.",
+            "selector": "web_classic.canonical_realization",
+            "source_label": "World English Bible Classic, acquisition-frozen approved edition"
+          },
+          {
+            "citation_id": "CIT-T05-003",
+            "display_role": "GREEK_TEXT_AUTHORITY",
+            "evidence_id": "EV-T04-GRK-001",
+            "quoted_span": "\u03ba\u03b1\u1f76 \u1f21 \u03c3\u03ba\u03bf\u03c4\u03af\u03b1 \u03b1\u1f50\u03c4\u1f78 \u03bf\u1f50 \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd.",
+            "selector": "sblgnt.exact_source_view#final-clause",
+            "source_label": "SBL Greek New Testament, controlled John 1:5 text"
+          },
+          {
+            "citation_id": "CIT-T05-004",
+            "display_role": "MORPHOLOGY_AND_LEMMA",
+            "evidence_id": "EV-T04-MORPH-001",
+            "quoted_span": null,
+            "selector": "morphgnt.target_verb",
+            "source_label": "MorphGNT SBLGNT annotation for John 1:5"
+          },
+          {
+            "citation_id": "CIT-T05-006",
+            "display_role": "LEXICAL_RANGE_AND_TARGET_LOCATOR",
+            "evidence_id": "EV-T04-LEX-002",
+            "quoted_span": "to overtake",
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"/sense@n=\"2.\"",
+            "source_label": "Abbott-Smith Greek Lexicon, \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638, sense 2"
+          },
+          {
+            "citation_id": "CIT-T05-007",
+            "display_role": "LEXICAL_RANGE_NON_TARGET_CONTEXTS",
+            "evidence_id": "EV-T04-LEX-003",
+            "quoted_span": "Of mental action: to apprehend; comprehend",
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"/sense@n=\"3.\"",
+            "source_label": "Abbott-Smith Greek Lexicon, \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638, sense 3"
+          },
+          {
+            "citation_id": "CIT-T05-008",
+            "display_role": "METHOD",
+            "evidence_id": "EV-T04-METHOD-002",
+            "quoted_span": null,
+            "selector": "DR-06#textual-variation-not-translation-variation+effect-not-intent",
+            "source_label": "Approved Translation Nuance method boundary"
+          },
+          {
+            "citation_id": "CIT-T05-009",
+            "display_role": "LIMITATION_BOUNDARY",
+            "evidence_id": "EV-T04-BOUNDARY-001",
+            "quoted_span": null,
+            "selector": "SOURCE-PLAN-01#SP01-DER-001+exclusions",
+            "source_label": "SOURCE-PLAN-01 bounded evidence and exclusions"
+          },
+          {
+            "citation_id": "CIT-T05-010",
+            "display_role": "LEXICAL_ENTRY_STRUCTURE",
+            "evidence_id": "EV-T04-LEX-000",
+            "quoted_span": null,
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"",
+            "source_label": "Abbott-Smith Greek Lexicon, complete normalized \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638 entry"
+          }
+        ],
+        "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+        "contract": "John15StudyAnswerArtifact",
+        "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+        "language": "en",
+        "markdown": "The difference is best explained here as a translation choice around the Greek verb \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd, not as a different Greek reading required for this controlled comparison. The ASV says \u201capprehended it not,\u201d while WEB Classic says \u201chasn\u2019t overcome it.\u201d [CIT-T05-001] [CIT-T05-002] [CIT-T05-003] [CIT-T05-008]\n\n\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd is the third-person singular aorist active indicative of \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9, but that morphology does not by itself choose the contextual English sense. Abbott-Smith explicitly lists John 1:5 under \u201cto overtake,\u201d so the conflict or overtaking effect has stronger direct support in this packet. A cognitive or apprehension effect and possible double resonance remain plausible. [CIT-T05-004] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\nThis evidence does not establish that the two projects used identical complete Greek base editions, does not establish the broader textual-critical state of the verse, and does not establish translator intent, current scholarly consensus, or one final preferred rendering. [CIT-T05-008] [CIT-T05-009]",
+        "material_uncertainty_claim_ids": [
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+        "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+        "packet_receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4",
+        "packet_receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+        "primary_edition": "SP01-SRC-003_ASV",
+        "rendering_mode": "BRIEF",
+        "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+        "schema_version": "1.0",
+        "visible_claim_ids": [
+          "CLM-T04-011",
+          "CLM-T04-012",
+          "CLM-T04-022",
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-041",
+          "CLM-T04-042",
+          "CLM-T04-043",
+          "CLM-T04-050",
+          "CLM-T04-060"
+        ]
+      }
+    },
+    {
+      "const": {
+        "alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+        "blocks": [
+          {
+            "block_id": "STUDY-DIRECT",
+            "citation_ids": [
+              "CIT-T05-003",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ],
+            "claim_ids": [
+              "CLM-T04-041",
+              "CLM-T04-060"
+            ],
+            "heading": "Direct answer",
+            "text": "No different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference."
+          },
+          {
+            "block_id": "STUDY-TEXTS",
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002"
+            ],
+            "claim_ids": [
+              "CLM-T04-020",
+              "CLM-T04-021",
+              "CLM-T04-022"
+            ],
+            "heading": "The two approved renderings",
+            "text": "The approved ASV reads, \u201cAnd the light shineth in the darkness; and the darkness apprehended it not.\u201d The approved WEB Classic reads, \u201cThe light shines in the darkness, and the darkness hasn\u2019t overcome it.\u201d The salient final-clause contrast is therefore \u201capprehended it not\u201d versus \u201chasn\u2019t overcome it.\u201d"
+          },
+          {
+            "block_id": "STUDY-GREEK",
+            "citation_ids": [
+              "CIT-T05-003",
+              "CIT-T05-004"
+            ],
+            "claim_ids": [
+              "CLM-T04-010",
+              "CLM-T04-011",
+              "CLM-T04-012"
+            ],
+            "heading": "The Greek form",
+            "text": "The controlled SBLGNT final clause is \u201c\u03ba\u03b1\u1f76 \u1f21 \u03c3\u03ba\u03bf\u03c4\u03af\u03b1 \u03b1\u1f50\u03c4\u1f78 \u03bf\u1f50 \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd.\u201d The target form, \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd, comes from \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9 and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology."
+          },
+          {
+            "block_id": "STUDY-LEXICON",
+            "citation_ids": [
+              "CIT-T05-005",
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-010"
+            ],
+            "claim_ids": [
+              "CLM-T04-030",
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-050"
+            ],
+            "heading": "What the lexical evidence contributes",
+            "text": "Abbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action \u201capprehend/comprehend\u201d sense. It explicitly lists John 1:5 under sense 2, \u201cto overtake.\u201d Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry."
+          },
+          {
+            "alternative_ids": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ],
+            "block_id": "STUDY-ALTERNATIVES",
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002",
+              "CIT-T05-005",
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-010"
+            ],
+            "claim_ids": [
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-050"
+            ],
+            "heading": "Defensible effects and possibilities",
+            "text": "The conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under \u201cto overtake.\u201d A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek \u201cliterally means both.\u201d"
+          },
+          {
+            "block_id": "STUDY-TEXTUAL-STATE",
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002",
+              "CIT-T05-003",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ],
+            "claim_ids": [
+              "CLM-T04-040",
+              "CLM-T04-041",
+              "CLM-T04-042",
+              "CLM-T04-043"
+            ],
+            "heading": "What this does and does not say about manuscripts",
+            "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent."
+          },
+          {
+            "alternative_ids": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ],
+            "block_id": "STUDY-ASSESSMENT",
+            "citation_ids": [
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ],
+            "claim_ids": [
+              "CLM-T04-060",
+              "CLM-T04-042",
+              "CLM-T04-043"
+            ],
+            "heading": "Assessment and limits",
+            "text": "The strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion."
+          }
+        ],
+        "citation_records": [
+          {
+            "citation_id": "CIT-T05-001",
+            "display_role": "PRIMARY_TRANSLATION",
+            "evidence_id": "EV-T04-ASV-001",
+            "quoted_span": "And the light shineth in the darkness; and the darkness apprehended it not.",
+            "selector": "asv.canonical_realization",
+            "source_label": "American Standard Version (1901), approved openbibleinfo digital USX edition"
+          },
+          {
+            "citation_id": "CIT-T05-002",
+            "display_role": "COMPARISON_TRANSLATION",
+            "evidence_id": "EV-T04-WEB-001",
+            "quoted_span": "The light shines in the darkness, and the darkness hasn\u2019t overcome it.",
+            "selector": "web_classic.canonical_realization",
+            "source_label": "World English Bible Classic, acquisition-frozen approved edition"
+          },
+          {
+            "citation_id": "CIT-T05-003",
+            "display_role": "GREEK_TEXT_AUTHORITY",
+            "evidence_id": "EV-T04-GRK-001",
+            "quoted_span": "\u03ba\u03b1\u1f76 \u1f21 \u03c3\u03ba\u03bf\u03c4\u03af\u03b1 \u03b1\u1f50\u03c4\u1f78 \u03bf\u1f50 \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd.",
+            "selector": "sblgnt.exact_source_view#final-clause",
+            "source_label": "SBL Greek New Testament, controlled John 1:5 text"
+          },
+          {
+            "citation_id": "CIT-T05-004",
+            "display_role": "MORPHOLOGY_AND_LEMMA",
+            "evidence_id": "EV-T04-MORPH-001",
+            "quoted_span": null,
+            "selector": "morphgnt.target_verb",
+            "source_label": "MorphGNT SBLGNT annotation for John 1:5"
+          },
+          {
+            "citation_id": "CIT-T05-005",
+            "display_role": "LEXICAL_RANGE",
+            "evidence_id": "EV-T04-LEX-001",
+            "quoted_span": "to lay hold of; seize; appropriate",
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"/sense@n=\"1.\"",
+            "source_label": "Abbott-Smith Greek Lexicon, \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638, sense 1"
+          },
+          {
+            "citation_id": "CIT-T05-006",
+            "display_role": "LEXICAL_RANGE_AND_TARGET_LOCATOR",
+            "evidence_id": "EV-T04-LEX-002",
+            "quoted_span": "to overtake",
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"/sense@n=\"2.\"",
+            "source_label": "Abbott-Smith Greek Lexicon, \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638, sense 2"
+          },
+          {
+            "citation_id": "CIT-T05-007",
+            "display_role": "LEXICAL_RANGE_NON_TARGET_CONTEXTS",
+            "evidence_id": "EV-T04-LEX-003",
+            "quoted_span": "Of mental action: to apprehend; comprehend",
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"/sense@n=\"3.\"",
+            "source_label": "Abbott-Smith Greek Lexicon, \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638, sense 3"
+          },
+          {
+            "citation_id": "CIT-T05-008",
+            "display_role": "METHOD",
+            "evidence_id": "EV-T04-METHOD-002",
+            "quoted_span": null,
+            "selector": "DR-06#textual-variation-not-translation-variation+effect-not-intent",
+            "source_label": "Approved Translation Nuance method boundary"
+          },
+          {
+            "citation_id": "CIT-T05-009",
+            "display_role": "LIMITATION_BOUNDARY",
+            "evidence_id": "EV-T04-BOUNDARY-001",
+            "quoted_span": null,
+            "selector": "SOURCE-PLAN-01#SP01-DER-001+exclusions",
+            "source_label": "SOURCE-PLAN-01 bounded evidence and exclusions"
+          },
+          {
+            "citation_id": "CIT-T05-010",
+            "display_role": "LEXICAL_ENTRY_STRUCTURE",
+            "evidence_id": "EV-T04-LEX-000",
+            "quoted_span": null,
+            "selector": "abbott_smith#entry@n=\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638\"",
+            "source_label": "Abbott-Smith Greek Lexicon, complete normalized \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9|G2638 entry"
+          }
+        ],
+        "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+        "contract": "John15StudyAnswerArtifact",
+        "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+        "language": "en",
+        "markdown": "## Direct answer\n\nNo different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference. [CIT-T05-003] [CIT-T05-008] [CIT-T05-009]\n\n## The two approved renderings\n\nThe approved ASV reads, \u201cAnd the light shineth in the darkness; and the darkness apprehended it not.\u201d The approved WEB Classic reads, \u201cThe light shines in the darkness, and the darkness hasn\u2019t overcome it.\u201d The salient final-clause contrast is therefore \u201capprehended it not\u201d versus \u201chasn\u2019t overcome it.\u201d [CIT-T05-001] [CIT-T05-002]\n\n## The Greek form\n\nThe controlled SBLGNT final clause is \u201c\u03ba\u03b1\u1f76 \u1f21 \u03c3\u03ba\u03bf\u03c4\u03af\u03b1 \u03b1\u1f50\u03c4\u1f78 \u03bf\u1f50 \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd.\u201d The target form, \u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd, comes from \u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9 and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology. [CIT-T05-003] [CIT-T05-004]\n\n## What the lexical evidence contributes\n\nAbbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action \u201capprehend/comprehend\u201d sense. It explicitly lists John 1:5 under sense 2, \u201cto overtake.\u201d Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry. [CIT-T05-005] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\n## Defensible effects and possibilities\n\nThe conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under \u201cto overtake.\u201d A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek \u201cliterally means both.\u201d [CIT-T05-001] [CIT-T05-002] [CIT-T05-005] [CIT-T05-006] [CIT-T05-007] [CIT-T05-010]\n\n## What this does and does not say about manuscripts\n\nThe English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent. [CIT-T05-001] [CIT-T05-002] [CIT-T05-003] [CIT-T05-008] [CIT-T05-009]\n\n## Assessment and limits\n\nThe strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion. [CIT-T05-006] [CIT-T05-007] [CIT-T05-008] [CIT-T05-009]",
+        "material_uncertainty_claim_ids": [
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+        "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+        "packet_receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4",
+        "packet_receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+        "primary_edition": "SP01-SRC-003_ASV",
+        "rendering_mode": "STUDY",
+        "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+        "schema_version": "1.0",
+        "visible_claim_ids": [
+          "CLM-T04-010",
+          "CLM-T04-011",
+          "CLM-T04-012",
+          "CLM-T04-020",
+          "CLM-T04-021",
+          "CLM-T04-022",
+          "CLM-T04-030",
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-040",
+          "CLM-T04-041",
+          "CLM-T04-042",
+          "CLM-T04-043",
+          "CLM-T04-050",
+          "CLM-T04-060"
+        ]
+      }
+    }
+  ],
+  "title": "John15StudyAnswerArtifact"
+}

@@ -65,6 +65,26 @@
       "contract": "John15TranslationNuanceEvidenceReceipt", "schema_version": "1.0", "owning_design": "VS01-T04",
       "schema_path": "contracts/json-schema/evidence/john-15-translation-nuance-evidence-receipt.schema.json",
       "owning_task": "VS01-T04", "sha256": "d2e1e9802bf47485c850425393bb1b4a7dd4059db55fb4e55b03d76319c98520"
+    },
+    {
+      "contract": "John15StudyRequest", "schema_version": "1.0", "owning_design": "VS01-T05",
+      "schema_path": "contracts/json-schema/runtime/john-15-study-request.schema.json",
+      "owning_task": "VS01-T05", "sha256": "7fb0c60243f4b115072ce0849f3311b961114d4521bcc718afd39af807397cbc"
+    },
+    {
+      "contract": "John15StudyExecutionRecord", "schema_version": "1.0", "owning_design": "VS01-T05",
+      "schema_path": "contracts/json-schema/runtime/john-15-study-execution-record.schema.json",
+      "owning_task": "VS01-T05", "sha256": "6badf62737fb0252b729082238087f0c5e98ef6c0dbbc740b3e158aa39d4fc80"
+    },
+    {
+      "contract": "John15StudyAnswerArtifact", "schema_version": "1.0", "owning_design": "VS01-T05",
+      "schema_path": "contracts/json-schema/runtime/john-15-study-answer-artifact.schema.json",
+      "owning_task": "VS01-T05", "sha256": "8dda069c987f7a37fd0d195168029908f924d5d261e7316d1a51fab74a60c231"
+    },
+    {
+      "contract": "John15RuntimeAuditReceipt", "schema_version": "1.0", "owning_design": "VS01-T05",
+      "schema_path": "contracts/json-schema/runtime/john-15-runtime-audit-receipt.schema.json",
+      "owning_task": "VS01-T05", "sha256": "ae52fc813c671037e85eae07428a3f90da03fca6c73274cc68e34631c94d9ab6"
     }
   ]
 }
