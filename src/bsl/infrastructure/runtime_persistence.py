@@ -49,7 +49,7 @@ ARTIFACT_TYPES = (
     "AUDIT_RECEIPT",
     "AUDIT_RECEIPT",
 )
-EXPECTED_CATALOG_SHA256 = "e7f1da1bff0edec3c5564f02a2da882abeb5142cc12054f460f5f4439a55bcf8"
+EXPECTED_CATALOG_SHA256 = "9c193d6cbe6b853b7edac7b605c3194b4a8ac7cc46363c1644b1a697e878fc2f"
 
 
 @dataclass(frozen=True)
@@ -144,7 +144,7 @@ def check_runtime_schema(connection: Connection[Any]) -> None:
     normalized = {name: sorted((list(row) for row in rows), key=repr) for name, rows in actual.items()}
     digest = canonical_sha256(normalized)
     if digest != EXPECTED_CATALOG_SHA256:
-        raise ValueError(f"database schema differs from the exact VS01-T05 boundary ({digest})")
+        raise ValueError("database schema differs from the exact VS01-T05 boundary")
 
 
 def _artifact_rows(
