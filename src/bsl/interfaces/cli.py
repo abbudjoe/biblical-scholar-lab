@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -10,6 +11,7 @@ from typing import NoReturn
 from bsl.application.archive_initialization import initialize_archive
 from bsl.application.john15_evidence import generate_john15_evidence
 from bsl.application.john15_normalization import normalize_john15
+from bsl.application.john15_study_runtime import execute_john15_study
 from bsl.application.source_acquisition import acquire_source
 from bsl.application.source_admission import compile_source_plan
 from bsl.contracts.archive import ArchiveReadiness
@@ -57,6 +59,12 @@ def _parser() -> JsonArgumentParser:
     nuance = evidence_commands.add_parser("john-1-5-translation-nuance")
     nuance.add_argument("--archive-root", required=True, type=Path)
     nuance.add_argument("--dry-run", action="store_true")
+    study = commands.add_parser("study")
+    study_commands = study.add_subparsers(dest="study_command", required=True)
+    john_study = study_commands.add_parser("john-1-5-translation-nuance")
+    john_study.add_argument("--archive-root", required=True, type=Path)
+    john_study.add_argument("--render", required=True, choices=("brief", "study", "both"))
+    john_study.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -72,6 +80,16 @@ def _archive(volume_name: str) -> int:
     PRIVATE_RECEIPT.write_text(f"{rendered}\n", encoding="utf-8")
     print(rendered)
     return int(receipt.readiness in {ArchiveReadiness.UNSUPPORTED_HOST, ArchiveReadiness.INSPECTION_FAILED})
+
+
+def _archive_command(args: argparse.Namespace) -> int:
+    if args.archive_command == "inspect":
+        return _archive(args.volume_name)
+    if args.archive_command == "initialize":
+        receipt = initialize_archive(args.profile, args.private_receipt, args.private_apfs_snapshot, args.root)
+        print(receipt.model_dump_json(indent=2))
+        return 0
+    return _emit_error("INVALID_CLI_INPUT", "unsupported archive command")
 
 
 def _source_acquire(source_id: str, manifest: Path, archive_root: Path) -> int:
@@ -123,21 +141,37 @@ def _evidence(args: argparse.Namespace) -> int:
     return 0
 
 
+def _study(args: argparse.Namespace) -> int:
+    if args.study_command != "john-1-5-translation-nuance":
+        return _emit_error("INVALID_CLI_INPUT", "unsupported study command")
+    database_url = None if args.dry_run else os.environ.get("BSL_DATABASE_URL")
+    result = execute_john15_study(args.archive_root, dry_run=args.dry_run, database_url=database_url)
+    output = {
+        "request": result.request.model_dump(mode="json"),
+        "execution_record": result.execution_record.model_dump(mode="json"),
+        "brief_answer": result.brief_answer.model_dump(mode="json") if args.render in {"brief", "both"} else None,
+        "study_answer": result.study_answer.model_dump(mode="json") if args.render in {"study", "both"} else None,
+        "audit_receipt": result.audit_receipt.model_dump(mode="json"),
+        "persisted": result.persisted,
+        "verified_existing": result.verified_existing,
+    }
+    print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     try:
         args = _parser().parse_args(argv)
-        if args.command == "archive" and args.archive_command == "inspect":
-            return _archive(args.volume_name)
-        if args.command == "archive" and args.archive_command == "initialize":
-            receipt = initialize_archive(args.profile, args.private_receipt, args.private_apfs_snapshot, args.root)
-            print(receipt.model_dump_json(indent=2))
-            return 0
+        if args.command == "archive":
+            return _archive_command(args)
         if args.command == "source":
             return _source(args)
         if args.command == "normalize":
             return _normalize(args)
         if args.command == "evidence":
             return _evidence(args)
+        if args.command == "study":
+            return _study(args)
         return _emit_error("INVALID_CLI_INPUT", "unsupported command")
     except CliInputError as exc:
         return _emit_error("INVALID_CLI_INPUT", str(exc))

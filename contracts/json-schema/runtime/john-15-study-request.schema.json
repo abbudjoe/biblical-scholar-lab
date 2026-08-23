@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "const": {
+        "answer_language": "en",
+        "comparison_edition": "SP01-SRC-003_ASV",
+        "exact_user_text": "Using the World English Bible Classic as the primary translation and the American Standard Version as the comparison, explain why John 1:5 says \u201cthe darkness hasn\u2019t overcome it\u201d in WEB Classic but \u201cthe darkness apprehended it not\u201d in the ASV. Does this difference require a different Greek manuscript? Give me a Study-mode answer with sources and make the uncertainty clear.",
+        "passage": "John 1:5",
+        "primary_edition": "SP01-SRC-004_WEB_CLASSIC",
+        "request_identity": "782f577a42001df95b1f2094b7c44a075102bd3c54ee157e809828853352ec80",
+        "request_revision": 1,
+        "requested_answer_depth": "STUDY"
+      }
+    },
+    {
+      "const": {
+        "answer_language": "en",
+        "comparison_edition": "SP01-SRC-004_WEB_CLASSIC",
+        "correction_identity": "bfd475b96f4e0296396b6e3771767194b9210e841643bc66ab3657e995d0d97d",
+        "exact_user_text": "Using the American Standard Version as the primary translation and the World English Bible Classic as the comparison, explain why John 1:5 says \u201cthe darkness apprehended it not\u201d in the ASV but \u201cthe darkness hasn\u2019t overcome it\u201d in WEB Classic. Does this difference require a different Greek manuscript? Give me a Study-mode answer with sources and make the uncertainty clear.",
+        "passage": "John 1:5",
+        "primary_edition": "SP01-SRC-003_ASV",
+        "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+        "request_revision": 2,
+        "requested_answer_depth": "STUDY",
+        "supersedes_request_identity": "782f577a42001df95b1f2094b7c44a075102bd3c54ee157e809828853352ec80"
+      }
+    }
+  ],
+  "title": "John15StudyRequest"
+}
