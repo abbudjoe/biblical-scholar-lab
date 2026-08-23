@@ -101,12 +101,12 @@ def _catalog(connection: Connection[Any]) -> dict[str, set[tuple[Any, ...]]]:
                   JOIN pg_attribute a ON a.attrelid=con.confrelid AND a.attnum=k.attnum ORDER BY k.ord),
             CASE WHEN con.contype='f' THEN con.confupdtype::text END, CASE WHEN con.contype='f'
             THEN con.confdeltype::text END, CASE WHEN con.contype='f' THEN con.confmatchtype::text END,
-            con.condeferrable,con.condeferred,con.convalidated,con.connoinherit
+            con.condeferrable,con.condeferred,con.convalidated,con.connoinherit,con.conenforced
             FROM pg_constraint con JOIN pg_class r ON r.oid=con.conrelid
             JOIN pg_namespace n ON n.oid=r.relnamespace LEFT JOIN pg_class rr ON rr.oid=con.confrelid
             WHERE n.nspname='bsl_runtime' AND con.contype IN ('p','u','f')""",
         "checks": """/* checks */ SELECT r.relname,con.conname,pg_get_expr(con.conbin,con.conrelid,true),
-            con.convalidated,con.connoinherit FROM pg_constraint con
+            con.convalidated,con.connoinherit,con.conenforced FROM pg_constraint con
             JOIN pg_class r ON r.oid=con.conrelid JOIN pg_namespace n ON n.oid=r.relnamespace
             WHERE n.nspname='bsl_runtime' AND con.contype='c'""",
         "indexes": """/* indexes */ SELECT r.relname,i.relname,am.amname,x.indisunique,x.indisprimary,
@@ -116,7 +116,8 @@ def _catalog(connection: Connection[Any]) -> dict[str, set[tuple[Any, ...]]]:
             pg_get_expr(x.indpred,x.indrelid,true),pg_get_expr(x.indexprs,x.indrelid,true) FROM pg_index x
             JOIN pg_class r ON r.oid=x.indrelid JOIN pg_namespace n ON n.oid=r.relnamespace JOIN pg_class i
             ON i.oid=x.indexrelid JOIN pg_am am ON am.oid=i.relam WHERE n.nspname='bsl_runtime'""",
-        "triggers": """/* triggers */ SELECT r.relname,t.tgname,t.tgtype::int,pn.nspname,p.proname
+        "triggers": """/* triggers */ SELECT r.relname,t.tgname,t.tgtype::int,pn.nspname,p.proname,
+            t.tgenabled,pg_get_expr(t.tgqual,t.tgrelid,true)
             FROM pg_trigger t JOIN pg_class r ON r.oid=t.tgrelid JOIN pg_namespace n ON n.oid=r.relnamespace
             JOIN pg_proc p ON p.oid=t.tgfoid JOIN pg_namespace pn ON pn.oid=p.pronamespace
             WHERE n.nspname='bsl_runtime' AND NOT t.tgisinternal""",
@@ -142,8 +143,7 @@ def check_runtime_schema(connection: Connection[Any]) -> None:
     actual = _catalog(connection)
     actual["checks"] = {(*row[:2], _normalize_check(row[2]), *row[3:]) for row in actual["checks"]}
     normalized = {name: sorted((list(row) for row in rows), key=repr) for name, rows in actual.items()}
-    digest = canonical_sha256(normalized)
-    if digest != EXPECTED_CATALOG_SHA256:
+    if canonical_sha256(normalized) != EXPECTED_CATALOG_SHA256:
         raise ValueError("database schema differs from the exact VS01-T05 boundary")
 
 

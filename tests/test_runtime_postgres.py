@@ -24,13 +24,11 @@ def _models():
     execution = John15StudyExecutionRecord.model_validate_json(
         rfc8785.dumps(contracts._execution_payload())  # pyright: ignore[reportPrivateUsage]
     )
-    brief = John15StudyAnswerArtifact.model_validate_json(
-        rfc8785.dumps(contracts._answer_payload("BRIEF"))  # pyright: ignore[reportPrivateUsage]
-    )
-    study = John15StudyAnswerArtifact.model_validate_json(
-        rfc8785.dumps(contracts._answer_payload("STUDY"))  # pyright: ignore[reportPrivateUsage]
-    )
-    return request, execution, brief, study
+    answers = [
+        John15StudyAnswerArtifact.model_validate_json(rfc8785.dumps(contracts._answer_payload(depth)))
+        for depth in ("BRIEF", "STUDY")  # pyright: ignore[reportPrivateUsage]
+    ]
+    return request, execution, *answers
 
 
 @pytest.fixture(autouse=True)
@@ -61,6 +59,10 @@ def test_migration_has_exact_catalog_boundary() -> None:
     assert DATABASE_URL is not None
     with psycopg.connect(DATABASE_URL) as connection:
         assert connection.execute("SHOW server_version_num").fetchone()[0] == "180006"
+        catalog = persistence._catalog(connection)  # pyright: ignore[reportPrivateUsage]
+        catalog["checks"] = {(*row[:2], persistence._normalize_check(row[2]), *row[3:]) for row in catalog["checks"]}  # pyright: ignore[reportPrivateUsage]
+        normalized = {name: sorted((list(row) for row in rows), key=repr) for name, rows in catalog.items()}
+        print(contracts.canonical_sha256(normalized))
         persistence.check_runtime_schema(connection)
 
 
@@ -69,11 +71,8 @@ def test_migration_has_exact_catalog_boundary() -> None:
 def test_every_table_rejects_update_and_delete(table: str, operation: str) -> None:
     _persist()
     assert DATABASE_URL is not None
-    statement = (
-        f"{operation} FROM bsl_runtime.{table}"
-        if operation == "DELETE"
-        else (f"UPDATE bsl_runtime.{table} SET created_at=created_at")
-    )
+    target = f"bsl_runtime.{table}"
+    statement = f"DELETE FROM {target}" if operation == "DELETE" else f"UPDATE {target} SET created_at=created_at"
     with (
         psycopg.connect(DATABASE_URL, autocommit=True) as connection,
         pytest.raises(psycopg.errors.RaiseException, match="append-only"),
@@ -126,6 +125,13 @@ def test_identical_replay_verifies_all_rows_without_writing() -> None:
             "CREATE TRIGGER extra_trigger BEFORE UPDATE ON bsl_runtime.study_run "
             "FOR EACH ROW EXECUTE FUNCTION bsl_runtime.reject_mutation()",
         ),
+        ("ALTER TABLE bsl_runtime.study_run DISABLE TRIGGER study_run_reject_mutation",),
+        (
+            "DROP TRIGGER study_run_reject_mutation ON bsl_runtime.study_run",
+            "CREATE TRIGGER study_run_reject_mutation BEFORE UPDATE OR DELETE ON bsl_runtime.study_run "
+            "FOR EACH ROW WHEN (false) EXECUTE FUNCTION bsl_runtime.reject_mutation()",
+        ),
+        ("ALTER TABLE bsl_runtime.runtime_artifact ALTER CONSTRAINT runtime_artifact_run_id_fkey NOT ENFORCED",),
     ),
 )
 def test_schema_gate_rejects_catalog_adversaries_before_insert(statements: tuple[str, ...]) -> None:
@@ -144,10 +150,8 @@ def _seed_existing_adversary(mutation: str) -> None:
 
     audit = _audit(execution, brief, study, "PERSISTED", "a" * 40, time.monotonic_ns(), run_id, session_id)
     audit_json = audit.model_dump(mode="json")
-    if mutation == "audit_run":
-        audit_json["run_id"] = str(uuid7())
-    elif mutation == "audit_session":
-        audit_json["session_id"] = str(uuid7())
+    if mutation in {"audit_run", "audit_session"}:
+        audit_json[mutation.removeprefix("audit_")] = str(uuid7())
     elif mutation == "authority":
         audit_json["packet_receipt_file_sha256"] = "0" * 64
     elif mutation == "implementation":
@@ -157,13 +161,7 @@ def _seed_existing_adversary(mutation: str) -> None:
         audit_json["receipt_canonical_sha256"] = contracts.canonical_sha256(
             {key: value for key, value in audit_json.items() if key != "receipt_canonical_sha256"}
         )
-        artifacts[-1] = (
-            contracts.canonical_sha256(audit_json),
-            run_id,
-            "AUDIT_RECEIPT",
-            audit.contract,
-            Jsonb(audit_json),
-        )
+        artifacts[-1] = (contracts.canonical_sha256(audit_json), *artifacts[-1][1:4], Jsonb(audit_json))
     if mutation == "contract":
         artifacts[0] = (*artifacts[0][:3], "WrongContract", artifacts[0][4])
     elif mutation == "changed_artifact":
