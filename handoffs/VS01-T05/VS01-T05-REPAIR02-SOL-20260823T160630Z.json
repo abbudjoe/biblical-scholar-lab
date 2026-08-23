@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+  "task_id": "VS01-T05",
+  "turn_id": "VS01-T05-REPAIR02-SOL-20260823T160630Z",
+  "codex_run_id": "VS01-T05-REPAIR02-SOL-20260823T160630Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t05-deterministic-study-runtime",
+  "base_sha": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+  "implementation_head_sha": "911839d0047adf464dd4d6092db613d570c21741",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/14",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/edb9201b91b06e44989e1e04fd02e14e2da15a08...911839d0047adf464dd4d6092db613d570c21741",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Repair only PR #14's PostgreSQL catalog enforcement-state fingerprint under APPROVE_VS01_T05_REPAIR02 by binding constraint enforcement, trigger enablement, and deparsed trigger qualification without changing the frozen migration or any public/scholarly contract.",
+  "acceptance_criteria": [
+    "Add pg_constraint.conenforced to existing key and CHECK catalog projections.",
+    "Add pg_trigger.tgenabled and deparsed pg_get_expr(tgqual, tgrelid, true) to the existing trigger projection while preserving SQL NULL.",
+    "Derive the new exact catalog SHA-256 from repeated pristine PostgreSQL 18.6 migrations and keep mismatch errors stable and redacted.",
+    "Reject a disabled required trigger, an always-false required trigger WHEN condition, and the required runtime_artifact foreign key changed to NOT ENFORCED before insertion.",
+    "Preserve all Repair01 schema, append-only, transaction, replay, relational, event-chain, correction, redaction, and T04 reload tests.",
+    "Pass the complete local suite and all PostgreSQL tests with zero skips at no more than 1,800 cumulative substantive lines.",
+    "Freeze implementation before exactly two canonical-archive dry runs and prove unchanged deterministic artifacts and pre/post T04 authority.",
+    "Commit one append-only Repair02 handoff pair, update the existing draft PR, wait for both exact-final-head workflows, comment once, and stop."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+      "APPROVE_VS01_T05_REPAIR01",
+      "APPROVE_VS01_T05_REPAIR02",
+      "VS01-T05-deterministic-study-runtime-answer-audit",
+      "VS01-T05-RUNTIME-SPEC-v1",
+      "VS01-T05-ERRATA-01-citation-count"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "repair02_implementation",
+      "starting_head": "edb9201b91b06e44989e1e04fd02e14e2da15a08",
+      "starting_tree": "a9993729ba12d64acfe4afe6d1d862e542ae68c5",
+      "repair01_implementation_head": "4033581da30d349d0aa0211d41bd864f607556d2",
+      "repair01_implementation_tree": "2ef0d213e82aa87337c59f4a3402252e9ddfe480",
+      "commits": [
+        "e1dd072a0054759ecd92a4ec036f73547574f151",
+        "911839d0047adf464dd4d6092db613d570c21741"
+      ],
+      "implementation_head": "911839d0047adf464dd4d6092db613d570c21741",
+      "implementation_tree": "f6750cbec0a267258efa6672c956b2932d56d4e7",
+      "summary": "Extended the one existing catalog fingerprint with conenforced, tgenabled, and deparsed nullable tgqual, updated the pristine PostgreSQL 18.6 digest, and added three isolated enforcement-state adversaries."
+    },
+    {
+      "phase": "handoff_only",
+      "files": [
+        "handoffs/VS01-T05/VS01-T05-REPAIR02-SOL-20260823T160630Z.json",
+        "handoffs/VS01-T05/VS01-T05-REPAIR02-SOL-20260823T160630Z.md"
+      ],
+      "final_head_note": "The handoff commit cannot contain its own Git object identity; the exact final handoff-only head and tree are recorded in the PR completion comment and final report."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/infrastructure/runtime_persistence.py",
+      "focus": "Key/CHECK conenforced, trigger tgenabled and nullable deparsed tgqual, exact pristine catalog digest, and unchanged generic mismatch error."
+    },
+    {
+      "path": "tests/test_runtime_postgres.py",
+      "focus": "Disabled-trigger, false-WHEN, and NOT-ENFORCED-FK adversaries added to the existing isolated catalog mutation matrix while every Repair01 test remains."
+    }
+  ],
+  "commands": [
+    {
+      "command": "Repair02 exact branch/head/tree/remote/PR/auth/token/ancestry/policy preflight",
+      "result": "PASS; live head edb9201b91b06e44989e1e04fd02e14e2da15a08, tree a9993729ba12d64acfe4afe6d1d862e542ae68c5, sole parent 4033581da30d349d0aa0211d41bd864f607556d2/tree 2ef0d213e82aa87337c59f4a3402252e9ddfe480, open draft mergeable PR, clean tree, abbudjoe, no token overrides."
+    },
+    {
+      "command": "Pristine PostgreSQL 18.6 catalog derivation checkpoint",
+      "result": "PASS as derivation evidence; the first clean-migration test produced b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4 before any adversary. The temporary diagnostic was removed and no hostile digest was used or exposed by production."
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check && uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; 110 files formatted, Ruff clean, Pyright 0 errors/0 warnings."
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 403 passed, 36 skipped, branch-aware coverage 90.04%. Skips were 27 absent-local-PostgreSQL cases and 9 optional external-jsonschema cases."
+    },
+    {
+      "command": "git diff --check && git fsck --full",
+      "result": "PASS; fsck reported dangling objects only."
+    },
+    {
+      "command": "exact-head vs01-t05-ci on implementation head 911839d0047adf464dd4d6092db613d570c21741",
+      "result": "PASS; server_version_num 180006, 27/27 PostgreSQL tests with zero skips, migration/schema conformance and exact head/diff passed; https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/32650528765"
+    },
+    {
+      "command": "exact-head vs01-t01-ci on implementation head 911839d0047adf464dd4d6092db613d570c21741",
+      "result": "PASS; https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/32650528644"
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/repair02-dry-run-01.json",
+      "result": "PASS; exit 0, JSON-mode contract validation, DRY_RUN_VALIDATED, persisted false, verified_existing false, all external-operation counters zero."
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/repair02-dry-run-02.json",
+      "result": "PASS; exit 0, deterministic artifacts and Markdown byte-identical to run 01, only approved operational audit fields differed."
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "constraint enforcement projection",
+      "status": "met",
+      "evidence": "The existing key projection retains name/type/local and referenced columns/relation, FK actions/match, deferrability, initial/validation/inheritance states and adds conenforced. The existing CHECK projection retains table/name/normalized expression/validation/inheritance and adds conenforced."
+    },
+    {
+      "criterion": "trigger enforcement projection",
+      "status": "met",
+      "evidence": "The existing non-internal trigger projection retains relation/name/tgtype/function schema/name and adds tgenabled plus pg_get_expr(tgqual,tgrelid,true), preserving pristine NULL distinctly from false or empty text."
+    },
+    {
+      "criterion": "new exact PostgreSQL 18.6 catalog fingerprint",
+      "status": "met",
+      "catalog_sha256": "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4",
+      "evidence": "Derived from the first pristine byte-exact migration and accepted repeatedly by every fresh pristine fixture in the successful 27-test run. The generic mismatch message is unchanged."
+    },
+    {
+      "criterion": "disabled required trigger adversary",
+      "status": "met",
+      "mutation": "ALTER TABLE bsl_runtime.study_run DISABLE TRIGGER study_run_reject_mutation",
+      "result": "catalog rejected before persistence; counts 0/0/0"
+    },
+    {
+      "criterion": "always-false required trigger WHEN adversary",
+      "status": "met",
+      "result": "same name/table/timing/events/row/function with non-null deparsed false tgqual was rejected before persistence; counts 0/0/0"
+    },
+    {
+      "criterion": "NOT ENFORCED required foreign key adversary",
+      "status": "met",
+      "mutation": "ALTER TABLE bsl_runtime.runtime_artifact ALTER CONSTRAINT runtime_artifact_run_id_fkey NOT ENFORCED",
+      "result": "named FK remained present with unchanged columns and conenforced false; catalog rejected before persistence; counts 0/0/0"
+    },
+    {
+      "criterion": "all prior schema and persistence closures",
+      "status": "met",
+      "evidence": "UPDATE-only trigger, dropped unique, dropped CHECK, extra relation, extra trigger, all table UPDATE/DELETE rejection, 1/5/11 atomicity, rollback, replay, changed-existing rejection, relational/JSON adversaries, event chain, revision-2 correction scope, redacted database errors, and T04 second-load verification remain passing."
+    },
+    {
+      "criterion": "two repaired canonical-archive dry runs",
+      "status": "met",
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+      "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+      "brief_answer_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+      "study_answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+      "brief_markdown_sha256": "af13455c89f819ac999121b85ad611ef3e5ec9720f08a44856af00638bd3f2c0",
+      "study_markdown_sha256": "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6",
+      "audit_receipt_identities": [
+        "01a02f5e-b0b9-7daf-8567-1e34a6daa989",
+        "01a02f5e-c74b-7b45-b366-c66297522b8a"
+      ],
+      "allowed_actual_differences": [
+        "generated_at",
+        "receipt_canonical_sha256",
+        "receipt_identity"
+      ]
+    },
+    {
+      "criterion": "pre/post T04 authority and zero-operation boundary",
+      "status": "met",
+      "fingerprint_sha256": "ec0be5a72aec803b58935fe60d9c10c4362b3a62caa1c60403f45d848ea8f9e1",
+      "authority_changed": false,
+      "incoming_inventory_changed": false,
+      "archive_writes": 0,
+      "owner_database_connections": 0,
+      "owner_database_writes": 0,
+      "forbidden_reads": 0,
+      "network_requests": 0,
+      "model_invocations": 0,
+      "canonical_live_t05_executions": 0
+    },
+    {
+      "criterion": "final handoff-only exact head",
+      "status": "recorded after commit",
+      "note": "Git commit identity is self-referential to handoff contents; the exact final head/tree and both exact-final-head workflow URLs are recorded in the PR completion comment and final report."
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "repair02_implementation",
+      "commit": "911839d0047adf464dd4d6092db613d570c21741",
+      "tree": "f6750cbec0a267258efa6672c956b2932d56d4e7"
+    },
+    {
+      "kind": "ignored_private_evidence",
+      "path": ".local/evidence/VS01-T05/repair02-real-dry-run-summary.json",
+      "description": "Public-safe local summary; exact CLI captures and pre/post fingerprints remain ignored."
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-REPAIR02-SOL-20260823T160630Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-REPAIR02-SOL-20260823T160630Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 6,
+    "production_loc_removed": 6,
+    "test_loc_added": 17,
+    "test_loc_removed": 23,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [],
+    "abstractions": [],
+    "simpler_alternatives_considered": [
+      "Extended the existing catalog queries and adversary matrix in place rather than creating another checker or test framework.",
+      "Preserved nullable deparsed tgqual directly rather than comparing raw pg_node_tree text or coalescing NULL.",
+      "Removed duplicate test setup expressions while retaining every Repair01 category to keep the repair below the hard cap."
+    ],
+    "known_duplication_or_debt": [
+      "Cumulative handwritten active implementation is 1,794 nonblank substantive changed lines from the Repair01 counting baseline, six below the hard cap.",
+      "Request-level correction lineage remains implemented; cross-run correction persistence remains deferred and T05 claims no prior revision-1 runtime execution."
+    ],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The exact final handoff-only commit cannot encode its own SHA/tree; the PR comment and final report bind those live identities after the commit exists.",
+    "The local suite emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 403 executed tests passed.",
+    "The ignored dry-run captures contain exact frozen public answer artifacts; committed evidence contains only public-safe identities, hashes, counts, and booleans."
+  ],
+  "decisions_required": [
+    "ChatGPT must independently review the exact final live draft-PR head.",
+    "Joseph must decide whether to approve that exact head only after a clean ChatGPT review."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
