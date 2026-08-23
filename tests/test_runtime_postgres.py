@@ -59,10 +59,6 @@ def test_migration_has_exact_catalog_boundary() -> None:
     assert DATABASE_URL is not None
     with psycopg.connect(DATABASE_URL) as connection:
         assert connection.execute("SHOW server_version_num").fetchone()[0] == "180006"
-        catalog = persistence._catalog(connection)  # pyright: ignore[reportPrivateUsage]
-        catalog["checks"] = {(*row[:2], persistence._normalize_check(row[2]), *row[3:]) for row in catalog["checks"]}  # pyright: ignore[reportPrivateUsage]
-        normalized = {name: sorted((list(row) for row in rows), key=repr) for name, rows in catalog.items()}
-        print(contracts.canonical_sha256(normalized))
         persistence.check_runtime_schema(connection)
 
 
