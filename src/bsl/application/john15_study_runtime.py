@@ -63,6 +63,19 @@ class StudyRuntimeResult:
     verified_existing: bool
 
 
+def _authority_fingerprint(authority: _T04Authority) -> str:
+    packet_bytes = rfc8785.dumps(authority.packet.model_dump(mode="json"))
+    receipt_bytes = rfc8785.dumps(authority.receipt.model_dump(mode="json"))
+    return canonical_sha256(
+        {
+            "root": str(authority.root.resolve(strict=True)),
+            "packet_semantic_sha256": hashlib.sha256(packet_bytes).hexdigest(),
+            "receipt_file_sha256": authority.receipt_file_sha256,
+            "receipt_semantic_sha256": hashlib.sha256(receipt_bytes).hexdigest(),
+        }
+    )
+
+
 def _regular_0444(path: Path) -> tuple[bytes, str]:
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
     try:
@@ -314,6 +327,9 @@ def execute_john15_study(
         return StudyRuntimeResult(request, execution, brief, study, receipt, False, False)
     if not database_url:
         raise ValueError("BSL_DATABASE_URL is required for live persistence")
+    reloaded = load_t04_authority(archive_root, _expected_archive_root=_expected_archive_root)
+    if _authority_fingerprint(authority) != _authority_fingerprint(reloaded):
+        raise ValueError("T04 authority changed before persistence")
     from bsl.infrastructure.runtime_persistence import persist_runtime
 
     outcome = persist_runtime(database_url, request, execution, brief, study, commit, started_ns)

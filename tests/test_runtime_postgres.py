@@ -62,39 +62,6 @@ def test_migration_has_exact_catalog_boundary() -> None:
     with psycopg.connect(DATABASE_URL) as connection:
         assert connection.execute("SHOW server_version_num").fetchone()[0] == "180006"
         persistence.check_runtime_schema(connection)
-        tables = {
-            row[0]
-            for row in connection.execute(
-                "SELECT table_name FROM information_schema.tables WHERE table_schema='bsl_runtime'"
-            )
-        }
-        assert tables == persistence.TABLES
-        triggers = connection.execute(
-            "SELECT trigger_name,event_manipulation FROM information_schema.triggers WHERE trigger_schema='bsl_runtime'"
-        ).fetchall()
-        assert {row[0] for row in triggers} == persistence.TRIGGERS
-        assert {row[1] for row in triggers} == {"UPDATE", "DELETE"}
-        indexes = {
-            row[0] for row in connection.execute("SELECT indexname FROM pg_indexes WHERE schemaname='bsl_runtime'")
-        }
-        assert indexes == {
-            "study_run_pkey",
-            "study_run_run_key_sha256_key",
-            "study_run_session_id_request_revision_key",
-            "runtime_artifact_pkey",
-            "runtime_artifact_run_id_artifact_type_key",
-            "runtime_event_pkey",
-            "runtime_event_run_id_stream_sequence_key",
-            "runtime_event_run_id_event_sha256_key",
-        }
-        assert not connection.execute(
-            "SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
-            "WHERE n.nspname='bsl_runtime' AND c.relkind IN ('v','m','S')"
-        ).fetchall()
-        assert not connection.execute(
-            "SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
-            "WHERE n.nspname='bsl_runtime' AND c.relrowsecurity"
-        ).fetchall()
 
 
 @pytest.mark.parametrize("table", ("study_run", "runtime_artifact", "runtime_event"))
@@ -120,16 +87,19 @@ def test_atomic_counts_and_contiguous_previous_hash_chain() -> None:
     assert _counts() == (1, 5, 11)
     assert DATABASE_URL is not None
     with psycopg.connect(DATABASE_URL) as connection:
+        artifacts = dict(
+            connection.execute("SELECT artifact_type,artifact_sha256 FROM bsl_runtime.runtime_artifact").fetchall()
+        )
         rows = connection.execute(
-            "SELECT stream_sequence,state,event_sha256,event_json FROM bsl_runtime.runtime_event "
-            "ORDER BY stream_sequence"
+            "SELECT event_id,run_id,stream_sequence,state,artifact_sha256,event_json,previous_event_sha256,"
+            "event_sha256,created_at FROM bsl_runtime.runtime_event ORDER BY stream_sequence"
         ).fetchall()
-    persistence._validate_events(rows, outcome.run_id)  # pyright: ignore[reportPrivateUsage]
-    assert [row[1] for row in rows] == list(persistence.STATES)
+    persistence._validate_events(rows, outcome.run_id, artifacts)  # pyright: ignore[reportPrivateUsage]
+    assert [row[3] for row in rows] == list(persistence.STATES)
 
 
 def test_injected_failure_rolls_back_every_row() -> None:
-    with pytest.raises(RuntimeError, match="injected"):
+    with pytest.raises(ValueError, match="^database operation failed$"):
         _persist(_fail_after_artifacts=True)
     assert _counts() == (0, 0, 0)
 
@@ -141,60 +111,109 @@ def test_identical_replay_verifies_all_rows_without_writing() -> None:
     assert _counts() == (1, 5, 11)
 
 
-def test_changed_existing_artifact_under_same_run_key_fails_closed() -> None:
-    assert DATABASE_URL is not None
+@pytest.mark.parametrize(
+    "statements",
+    (
+        (
+            "DROP TRIGGER study_run_reject_mutation ON bsl_runtime.study_run",
+            "CREATE TRIGGER study_run_reject_mutation BEFORE UPDATE ON bsl_runtime.study_run "
+            "FOR EACH ROW EXECUTE FUNCTION bsl_runtime.reject_mutation()",
+        ),
+        ("ALTER TABLE bsl_runtime.study_run DROP CONSTRAINT study_run_run_key_sha256_key",),
+        ("ALTER TABLE bsl_runtime.study_run DROP CONSTRAINT study_run_request_revision_check",),
+        ("CREATE VIEW bsl_runtime.extra_relation AS SELECT 1 AS value",),
+        (
+            "CREATE TRIGGER extra_trigger BEFORE UPDATE ON bsl_runtime.study_run "
+            "FOR EACH ROW EXECUTE FUNCTION bsl_runtime.reject_mutation()",
+        ),
+    ),
+)
+def test_schema_gate_rejects_catalog_adversaries_before_insert(statements: tuple[str, ...]) -> None:
+    with psycopg.connect(DATABASE_URL, autocommit=True) as connection:
+        for statement in statements:
+            connection.execute(statement)
+    with pytest.raises(ValueError, match="schema differs"):
+        _persist()
+    assert _counts() == (0, 0, 0)
+
+
+def _seed_existing_adversary(mutation: str) -> None:
     request, execution, brief, study = _models()
     run_id, session_id, created_at = uuid7(), uuid7(), datetime.now(UTC)
     from bsl.application.john15_study_runtime import _audit
 
     audit = _audit(execution, brief, study, "PERSISTED", "a" * 40, time.monotonic_ns(), run_id, session_id)
-    artifacts = persistence._artifact_rows(  # pyright: ignore[reportPrivateUsage]
-        run_id, request, execution, brief, study, audit
-    )
-    changed = study.model_dump(mode="json") | {"markdown": "changed"}
-    artifacts[3] = (contracts.canonical_sha256(changed), run_id, "ANSWER_STUDY", study.contract, Jsonb(changed))
-    with psycopg.connect(DATABASE_URL) as connection, connection.transaction():
-        persistence._insert_run(  # pyright: ignore[reportPrivateUsage]
-            connection, run_id, session_id, request, created_at, None
+    audit_json = audit.model_dump(mode="json")
+    if mutation == "audit_run":
+        audit_json["run_id"] = str(uuid7())
+    elif mutation == "audit_session":
+        audit_json["session_id"] = str(uuid7())
+    elif mutation == "authority":
+        audit_json["packet_receipt_file_sha256"] = "0" * 64
+    elif mutation == "implementation":
+        audit_json["implementation_commit"] = "b" * 40
+    artifacts = persistence._artifact_rows(run_id, request, execution, brief, study, audit)  # pyright: ignore[reportPrivateUsage]
+    if mutation in {"audit_run", "audit_session", "authority", "implementation"}:
+        audit_json["receipt_canonical_sha256"] = contracts.canonical_sha256(
+            {key: value for key, value in audit_json.items() if key != "receipt_canonical_sha256"}
         )
+        artifacts[-1] = (
+            contracts.canonical_sha256(audit_json),
+            run_id,
+            "AUDIT_RECEIPT",
+            audit.contract,
+            Jsonb(audit_json),
+        )
+    if mutation == "contract":
+        artifacts[0] = (*artifacts[0][:3], "WrongContract", artifacts[0][4])
+    elif mutation == "changed_artifact":
+        changed = study.model_dump(mode="json") | {"markdown": "changed"}
+        artifacts[3] = (contracts.canonical_sha256(changed), run_id, "ANSWER_STUDY", study.contract, Jsonb(changed))
+    events = persistence._event_rows(run_id, artifacts, created_at)  # pyright: ignore[reportPrivateUsage]
+    if mutation == "event_artifact":
+        events[0] = (*events[0][:4], artifacts[1][0], *events[0][5:])
+    with psycopg.connect(DATABASE_URL) as connection, connection.transaction():
+        persistence._insert_run(connection, run_id, session_id, request, created_at)  # pyright: ignore[reportPrivateUsage]
         with connection.cursor() as cursor:
             cursor.executemany(
                 "INSERT INTO bsl_runtime.runtime_artifact VALUES (%s,%s,%s,%s,%s,%s)",
                 [(*row, created_at) for row in artifacts],
             )
-    with pytest.raises(ValueError, match="changed artifact"):
+        if mutation == "event_run":
+            alternate = uuid7()
+            connection.execute(
+                "INSERT INTO bsl_runtime.study_run SELECT %s,%s,99,NULL,request_identity,%s,packet_identity,"
+                "packet_sha256,packet_receipt_identity,packet_receipt_file_sha256,runtime_spec_sha256,"
+                "executor_kind,created_at FROM bsl_runtime.study_run WHERE run_id=%s",
+                (alternate, uuid7(), "f" * 64, run_id),
+            )
+            events[0] = (events[0][0], alternate, *events[0][2:])
+        with connection.cursor() as cursor:
+            cursor.executemany("INSERT INTO bsl_runtime.runtime_event VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)", events)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    "changed_artifact contract event_artifact event_run audit_run audit_session authority implementation".split(),  # noqa: E501, SIM905
+)
+def test_existing_run_rejects_relational_and_json_adversaries(mutation: str) -> None:
+    _seed_existing_adversary(mutation)
+    with pytest.raises(ValueError):
         _persist()
 
 
-def test_correction_preserves_revision_one_and_uses_supersession() -> None:
-    assert DATABASE_URL is not None
-    initial = John15StudyRequest.model_validate(contracts._request_payload(1))  # pyright: ignore[reportPrivateUsage]
-    run_id, session_id, created_at = uuid7(), uuid7(), datetime.now(UTC)
-    request_json = initial.model_dump(mode="json")
-    artifact_sha = contracts.canonical_sha256(request_json)
-    with psycopg.connect(DATABASE_URL) as connection, connection.transaction():
-        persistence._insert_run(  # pyright: ignore[reportPrivateUsage]
-            connection, run_id, session_id, initial, created_at, None
-        )
-        connection.execute(
-            "INSERT INTO bsl_runtime.runtime_artifact VALUES (%s,%s,'REQUEST','John15StudyRequest',%s,%s)",
-            (artifact_sha, run_id, Jsonb(request_json), created_at),
-        )
+def test_active_revision_two_preserves_request_lineage_without_fabricating_revision_one_run() -> None:
+    request, _execution, _brief, _study = _models()
+    spec = contracts.load_runtime_spec()
+    initial = John15StudyRequest.model_validate(spec["canonical_request"]["initial_request"])
+    outcome = _persist()
     with psycopg.connect(DATABASE_URL) as connection:
-        before = connection.execute("SELECT * FROM bsl_runtime.study_run WHERE run_id=%s", (run_id,)).fetchone()
-        before_artifact = connection.execute(
-            "SELECT * FROM bsl_runtime.runtime_artifact WHERE run_id=%s", (run_id,)
+        row = connection.execute(
+            "SELECT request_revision,supersedes_run_id,request_identity FROM bsl_runtime.study_run WHERE run_id=%s",
+            (outcome.run_id,),
         ).fetchone()
-    corrected = _persist(_session_id=session_id, _supersedes_run_id=run_id)
-    with psycopg.connect(DATABASE_URL) as connection:
-        after = connection.execute("SELECT * FROM bsl_runtime.study_run WHERE run_id=%s", (run_id,)).fetchone()
-        after_artifact = connection.execute(
-            "SELECT * FROM bsl_runtime.runtime_artifact WHERE run_id=%s", (run_id,)
-        ).fetchone()
-        revision_two = connection.execute(
-            "SELECT session_id,request_revision,supersedes_run_id FROM bsl_runtime.study_run WHERE run_id=%s",
-            (corrected.run_id,),
-        ).fetchone()
-    assert before == after and before_artifact == after_artifact
-    assert revision_two == (session_id, 2, run_id)
-    assert _counts() == (2, 6, 11)
+        revisions = connection.execute("SELECT request_revision FROM bsl_runtime.study_run").fetchall()
+    assert request.supersedes_request_identity == initial.request_identity
+    assert request.correction_identity == spec["canonical_request"]["correction"]["correction_identity"]
+    assert row == (2, None, request.request_identity)
+    assert revisions == [(2,)] and _counts() == (1, 5, 11)

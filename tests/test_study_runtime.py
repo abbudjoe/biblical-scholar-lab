@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import shutil
 import socket
 import time
+from contextlib import nullcontext
+from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest.mock import Mock
 from uuid import UUID
 
+import psycopg
 import pytest
 import rfc8785
 from uuid6 import uuid7
@@ -16,6 +21,7 @@ from uuid6 import uuid7
 import bsl.application.john15_study_runtime as runtime
 import bsl.contracts.runtime as contracts
 import bsl.infrastructure.runtime_persistence as persistence
+import bsl.interfaces.cli as cli
 from bsl.contracts.evidence import John15TranslationNuanceEvidenceReceipt
 from bsl.contracts.runtime import (
     PACKET_RECEIPT_SHA256,
@@ -233,7 +239,14 @@ def test_dry_run_rejects_adapter_and_performs_no_archive_or_database_write(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     authority = _authority(tmp_path)
-    monkeypatch.setattr(runtime, "load_t04_authority", lambda *_args, **_kwargs: authority)
+    loads = 0
+
+    def load(*_args, **_kwargs):
+        nonlocal loads
+        loads += 1
+        return authority
+
+    monkeypatch.setattr(runtime, "load_t04_authority", load)
     with pytest.raises(ValueError, match="rejects model adapters"):
         runtime.execute_john15_study(tmp_path, dry_run=True, model_adapter=object())  # type: ignore[arg-type]
     before = tuple(tmp_path.rglob("*"))
@@ -243,6 +256,7 @@ def test_dry_run_rejects_adapter_and_performs_no_archive_or_database_write(
     assert result.audit_receipt.database_connections == result.audit_receipt.archive_writes == 0
     assert result.audit_receipt.network_requests == result.audit_receipt.model_invocations == 0
     assert tuple(tmp_path.rglob("*")) == before
+    assert loads == 1
 
 
 def test_runtime_spec_hash_and_run_key_are_exact(tmp_path: Path) -> None:
@@ -259,7 +273,9 @@ def test_runtime_spec_hash_and_run_key_are_exact(tmp_path: Path) -> None:
     )
 
 
-def test_persistence_artifact_and_event_envelopes_verify_without_database(tmp_path: Path) -> None:
+def test_persistence_artifact_and_event_envelopes_verify_without_database(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     request, execution, brief, study = _artifacts(tmp_path)
     run_id, session_id, created = uuid7(), uuid7(), datetime.now(UTC)
     audit = runtime._audit(  # pyright: ignore[reportPrivateUsage]
@@ -269,182 +285,84 @@ def test_persistence_artifact_and_event_envelopes_verify_without_database(tmp_pa
         run_id, request, execution, brief, study, audit
     )
     events = persistence._event_rows(run_id, artifacts, created)  # pyright: ignore[reportPrivateUsage]
-    artifact_rows = [(row[2], row[0], row[4].obj) for row in artifacts]
-    event_rows = [(row[2], row[3], row[7], row[5].obj) for row in events]
-    assert (
-        persistence._validate_artifacts(  # pyright: ignore[reportPrivateUsage]
-            artifact_rows, request, execution, brief, study
-        )
-        == audit
+    artifact_rows = [(*row[:4], row[4].obj, created) for row in artifacts]
+    event_rows = [(*row[:5], row[5].obj, *row[6:]) for row in events]
+    _verified, hashes = persistence._validate_artifacts(  # pyright: ignore[reportPrivateUsage]
+        artifact_rows, run_id, session_id, created, request, execution, brief, study, "a" * 40
     )
-    persistence._validate_events(event_rows, run_id)  # pyright: ignore[reportPrivateUsage]
+    persistence._validate_events(event_rows, run_id, hashes)  # pyright: ignore[reportPrivateUsage]
     with pytest.raises(ValueError, match="count"):
-        persistence._validate_events(event_rows[1:], run_id)  # pyright: ignore[reportPrivateUsage]
-
-
-def test_schema_checker_and_existing_reload_use_exact_catalog_fakes(tmp_path: Path) -> None:
-    request, execution, brief, study = _artifacts(tmp_path)
-    run_id, session_id, created = uuid7(), uuid7(), datetime.now(UTC)
-    audit = runtime._audit(  # pyright: ignore[reportPrivateUsage]
-        execution, brief, study, "PERSISTED", "a" * 40, time.monotonic_ns(), run_id, session_id
+        persistence._validate_events(event_rows[1:], run_id, hashes)  # pyright: ignore[reportPrivateUsage]
+    connection = Mock()
+    connection.transaction.return_value = nullcontext()
+    monkeypatch.setattr(persistence, "check_runtime_schema", Mock())
+    monkeypatch.setattr(runtime, "_audit", Mock(return_value=audit))
+    monkeypatch.setattr(persistence, "_root_row", Mock(side_effect=(None, (run_id,))))
+    monkeypatch.setattr(persistence, "_insert_bundle", Mock())
+    monkeypatch.setattr(
+        persistence, "_existing", Mock(return_value=persistence.PersistenceOutcome(run_id, session_id, True, audit))
     )
-    artifacts = persistence._artifact_rows(  # pyright: ignore[reportPrivateUsage]
-        run_id, request, execution, brief, study, audit
+    outcome = persistence._persist_connected(  # pyright: ignore[reportPrivateUsage]
+        connection, request, execution, brief, study, "a" * 40, time.monotonic_ns(), False
     )
-    events = persistence._event_rows(run_id, artifacts, created)  # pyright: ignore[reportPrivateUsage]
-
-    class Result:
-        def __init__(self, rows):
-            self.rows = rows
-
-        def fetchone(self):
-            return self.rows[0] if self.rows else None
-
-        def fetchall(self):
-            return self.rows
-
-        def __iter__(self):
-            return iter(self.rows)
-
-    class Connection:
-        def execute(self, statement, _parameters=None):
-            if statement.startswith("SHOW"):
-                return Result([("180006",)])
-            if "information_schema.tables" in statement:
-                return Result([(name,) for name in persistence.TABLES])
-            if "pg_proc" in statement:
-                return Result([("reject_mutation",)])
-            if "information_schema.triggers" in statement:
-                return Result([(name,) for name in persistence.TRIGGERS])
-            if "runtime_artifact" in statement:
-                return Result([(row[2], row[0], row[4].obj) for row in artifacts])
-            return Result([(row[2], row[3], row[7], row[5].obj) for row in events])
-
-    connection = Connection()
-    persistence.check_runtime_schema(connection)  # type: ignore[arg-type]
-    outcome = persistence._existing(  # pyright: ignore[reportPrivateUsage]
-        connection,
-        (run_id, session_id, 2, request.request_identity),
-        request,
-        execution,
-        brief,
-        study,  # type: ignore[arg-type]
-    )
-    assert outcome.verified_existing and outcome.audit_receipt == audit
-
-
-def test_live_application_maps_persisted_and_verified_existing_without_owner_database(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    authority = _authority(tmp_path)
-    monkeypatch.setattr(runtime, "load_t04_authority", lambda *_args, **_kwargs: authority)
-    request, execution, brief, study = _artifacts(tmp_path)
-    run_id, session_id = uuid7(), uuid7()
-    stored = runtime._audit(  # pyright: ignore[reportPrivateUsage]
-        execution, brief, study, "PERSISTED", "a" * 40, time.monotonic_ns(), run_id, session_id
-    )
-    outcomes = iter(
-        (
-            persistence.PersistenceOutcome(run_id, session_id, False, stored),
-            persistence.PersistenceOutcome(run_id, session_id, True, stored),
-        )
-    )
-    monkeypatch.setattr(persistence, "persist_runtime", lambda *_args, **_kwargs: next(outcomes))
-    first = runtime.execute_john15_study(
-        tmp_path, dry_run=False, database_url="ephemeral-test-coordinate", _implementation_commit="a" * 40
-    )
-    second = runtime.execute_john15_study(
-        tmp_path, dry_run=False, database_url="ephemeral-test-coordinate", _implementation_commit="a" * 40
-    )
-    assert first.persisted and first.audit_receipt.disposition == "PERSISTED"
-    assert second.verified_existing and second.audit_receipt.disposition == "VERIFIED_EXISTING"
-
-
-def test_persistence_transaction_coordinator_builds_exact_atomic_bundle(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    request, execution, brief, study = _artifacts(tmp_path)
-
-    class Result:
-        def __init__(self, rows=()):
-            self.rows = rows
-
-        def fetchone(self):
-            return self.rows[0] if self.rows else None
-
-        def fetchall(self):
-            return self.rows
-
-        def __iter__(self):
-            return iter(self.rows)
-
-    class Context:
-        def __init__(self, connection):
-            self.connection = connection
-
-        def __enter__(self):
-            return self.connection
-
-        def __exit__(self, *_args):
-            return False
-
-    class Cursor:
-        def __init__(self, batches):
-            self.batches = batches
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-        def executemany(self, statement, rows):
-            self.batches.append((statement, list(rows)))
-
-    class Connection:
-        def __init__(self):
-            self.batches = []
-            self.run_inserts = 0
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-        def execute(self, statement, _parameters=None):
-            if statement.startswith("SHOW"):
-                return Result([("180006",)])
-            if "information_schema.tables" in statement:
-                return Result([(name,) for name in persistence.TABLES])
-            if "pg_proc" in statement:
-                return Result([("reject_mutation",)])
-            if "information_schema.triggers" in statement:
-                return Result([(name,) for name in persistence.TRIGGERS])
-            if "FROM bsl_runtime.runtime_artifact" in statement:
-                rows = self.batches[0][1]
-                return Result([(row[2], row[0], row[4].obj) for row in rows])
-            if "FROM bsl_runtime.runtime_event" in statement:
-                rows = self.batches[1][1]
-                return Result([(row[2], row[3], row[7], row[5].obj) for row in rows])
-            if statement.startswith("INSERT INTO bsl_runtime.study_run"):
-                self.run_inserts += 1
-            return Result()
-
-        def commit(self):
-            return None
-
-        def cursor(self):
-            return Cursor(self.batches)
-
-        def transaction(self):
-            return Context(self)
-
-    connection = Connection()
-    monkeypatch.setattr(persistence.psycopg, "connect", lambda _url: Context(connection))
-    outcome = persistence.persist_runtime(
-        "ephemeral-test-coordinate", request, execution, brief, study, "a" * 40, time.monotonic_ns()
-    )
+    parameters = connection.execute.call_args.args[1]
+    root = (*parameters[:3], None, *parameters[3:7], UUID(parameters[7]), *parameters[8:])
+    persistence._validate_run(root, request)  # pyright: ignore[reportPrivateUsage]
     assert not outcome.verified_existing
-    assert connection.run_inserts == 1
-    assert [len(rows) for _statement, rows in connection.batches] == [5, 11]
+
+
+def test_schema_checker_uses_normalized_catalog_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert persistence._normalize_check("((value::text=ANY(ARRAY['x'::text])))") == "valueIN('x')"
+    catalog_connection = Mock()
+    catalog_connection.execute.return_value = [("record",)]
+    assert len(persistence._catalog(catalog_connection)) == 7  # pyright: ignore[reportPrivateUsage]
+    connection = Mock()
+    connection.execute.return_value.fetchone.return_value = ("180006",)
+    empty = {name: set() for name in ("relations", "columns", "keys", "checks", "indexes", "triggers", "functions")}
+    monkeypatch.setattr(persistence, "_catalog", lambda _connection: empty)
+    monkeypatch.setattr(persistence, "EXPECTED_CATALOG_SHA256", canonical_sha256({name: [] for name in empty}))
+    persistence.check_runtime_schema(connection)
+
+
+def test_live_application_reloads_authority_before_any_database_access(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    first = _authority(tmp_path)
+    changed = replace(first, receipt=first.receipt.model_copy(update={"implementation_commit": "b" * 40}))
+    persist, connect = Mock(), Mock()
+    authorities = iter((first, changed))
+    monkeypatch.setattr(runtime, "load_t04_authority", lambda *_args, **_kwargs: next(authorities))
+    monkeypatch.setattr(persistence, "persist_runtime", persist)
+    monkeypatch.setattr(persistence.psycopg, "connect", connect)
+    with pytest.raises(ValueError, match="T04 authority changed before persistence"):
+        runtime.execute_john15_study(tmp_path, dry_run=False, database_url="unused", _implementation_commit="a" * 40)
+    persist.assert_not_called()
+    connect.assert_not_called()
+
+
+@pytest.mark.parametrize("stage", ("connect", "transaction"))
+def test_database_provider_errors_are_stably_redacted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stage: str
+) -> None:
+    request, execution, brief, study = _artifacts(tmp_path)
+    secret = "postgresql://owner:fake-secret@private-host/db SELECT secret"
+    failure = Mock(side_effect=psycopg.OperationalError(secret))
+    if stage == "connect":
+        monkeypatch.setattr(persistence.psycopg, "connect", failure)
+    else:
+        monkeypatch.setattr(persistence.psycopg, "connect", lambda _url: nullcontext(object()))
+        monkeypatch.setattr(persistence, "_persist_connected", failure)
+    with pytest.raises(ValueError, match="^database operation failed$"):
+        persistence.persist_runtime("hidden-dsn", request, execution, brief, study, "a" * 40, 0)
+
+
+def test_cli_redacts_database_provider_failure(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    secret = "postgresql://owner:fake-secret@private-host/db SELECT secret provider detail"
+    monkeypatch.setattr(cli, "execute_john15_study", Mock(side_effect=ValueError("database operation failed")))
+    result = cli.main(("study", "john-1-5-translation-nuance", "--archive-root", "/unused", "--render", "both"))
+    output = capsys.readouterr().out
+    assert result == 2
+    assert json.loads(output) == {"error": {"code": "OPERATION_FAILED", "message": "database operation failed"}}
+    assert all(value not in output for value in (secret, "fake-secret", "SELECT", "provider detail"))
