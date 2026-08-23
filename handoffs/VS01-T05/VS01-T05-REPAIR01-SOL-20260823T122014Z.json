@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+  "task_id": "VS01-T05",
+  "turn_id": "VS01-T05-REPAIR01-SOL-20260823T122014Z",
+  "codex_run_id": "VS01-T05-REPAIR01-SOL-20260823T122014Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t05-deterministic-study-runtime",
+  "base_sha": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+  "implementation_head_sha": "4033581da30d349d0aa0211d41bd864f607556d2",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/14",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/7db0ff4a1ade89c043a9330b89de90467dba612c...4033581da30d349d0aa0211d41bd864f607556d2",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Repair PR #14 live-persistence integrity under APPROVE_VS01_T05_REPAIR01 without changing frozen authority, public contracts, schemas, migration, dependencies, workflows, scholarly semantics, or exact answer artifacts.",
+  "acceptance_criteria": [
+    "Reload and compare exact T04 authority after deterministic artifact verification and before any live database connection.",
+    "Replace the name-only schema check with one exact PostgreSQL 18.6 normalized catalog fingerprint gate.",
+    "Accept VERIFIED_EXISTING only after complete study_run, artifact, audit, and event relational/JSON cross-verification.",
+    "Persist only the complete active revision-2 canonical run with null supersedes_run_id and no fabricated revision-1 execution.",
+    "Translate psycopg provider failures to the stable redacted database operation failed boundary without masking project ValueError failures.",
+    "Pass the full local branch-aware coverage suite and the PostgreSQL 18.6 zero-skip adversary suite within 1,800 cumulative substantive lines.",
+    "Freeze implementation before exactly two canonical-archive dry runs and prove unchanged deterministic artifacts and T04 authority.",
+    "Commit only one new Repair01 handoff pair, update draft PR #14, wait for both exact-head workflows, comment once, and stop."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+      "APPROVE_VS01_T05_REPAIR01",
+      "VS01-T05-deterministic-study-runtime-answer-audit",
+      "VS01-T05-RUNTIME-SPEC-v1",
+      "VS01-T05-ERRATA-01-citation-count"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "repair_implementation",
+      "starting_head": "836543e325983b74e2da8773e69df78d010fcff8",
+      "commits": [
+        "7866dc1fe890703f8a30ab4f906d9a1f00a29ee3",
+        "4033581da30d349d0aa0211d41bd864f607556d2"
+      ],
+      "implementation_head": "4033581da30d349d0aa0211d41bd864f607556d2",
+      "implementation_tree": "2ef0d213e82aa87337c59f4a3402252e9ddfe480",
+      "summary": "Repaired the pre-persistence authority gate, exact catalog gate, complete replay verification, active-revision-only persistence, and stable provider-error boundary in the four approved production/test paths."
+    },
+    {
+      "phase": "handoff_only",
+      "files": [
+        "handoffs/VS01-T05/VS01-T05-REPAIR01-SOL-20260823T122014Z.json",
+        "handoffs/VS01-T05/VS01-T05-REPAIR01-SOL-20260823T122014Z.md"
+      ],
+      "final_head_note": "The handoff commit cannot contain its own Git object identity; the exact final handoff-only head is recorded in the PR completion comment and final report."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/application/john15_study_runtime.py",
+      "focus": "One narrow semantic authority fingerprint and two-load live sequence before persistence, with one-load dry-run behavior."
+    },
+    {
+      "path": "src/bsl/infrastructure/runtime_persistence.py",
+      "focus": "Exact PostgreSQL catalog fingerprint, complete existing-row cross-binding, revision-2-only insertion, and redacted psycopg errors."
+    },
+    {
+      "path": "tests/test_study_runtime.py",
+      "focus": "Zero-connection authority-change adversary, dry-run load count, catalog normalization, provider redaction, and machine-readable CLI failure."
+    },
+    {
+      "path": "tests/test_runtime_postgres.py",
+      "focus": "Schema adversaries, relational/JSON replay adversaries, rollback, append-only triggers, 1/5/11 atomicity, and lean correction scope."
+    }
+  ],
+  "commands": [
+    {
+      "command": "Repair01 exact start-state, GitHub-auth, token-override, policy, and line-budget preflight",
+      "result": "PASS; branch/local remote/PR head 836543e325983b74e2da8773e69df78d010fcff8, draft PR #14, base exact, clean tree, abbudjoe, no token overrides."
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check && uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; 109 files formatted, Ruff clean, Pyright 0 errors/0 warnings."
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 403 passed, 33 skipped, branch-aware coverage 90.04%. The skips were 24 absent-local-PostgreSQL cases and 9 optional external-jsonschema cases; no executed test failed."
+    },
+    {
+      "command": "git diff --check 7db0ff4a1ade89c043a9330b89de90467dba612c...4033581da30d349d0aa0211d41bd864f607556d2 && git fsck --full",
+      "result": "PASS; fsck reported dangling objects only."
+    },
+    {
+      "command": "exact-head vs01-t05-ci on PostgreSQL 18.6 for implementation head 4033581da30d349d0aa0211d41bd864f607556d2",
+      "result": "PASS; server_version_num 180006, 24/24 database tests passed with zero skips, migration/schema conformance passed, exact head/diff passed; https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/32638923201"
+    },
+    {
+      "command": "exact-head vs01-t01-ci for implementation head 4033581da30d349d0aa0211d41bd864f607556d2",
+      "result": "PASS; https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/32638923202"
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/repair01-dry-run-01.json",
+      "result": "PASS; exit 0, JSON-mode contract validation, DRY_RUN_VALIDATED, persisted false, verified_existing false, and all external-operation counters zero."
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/repair01-dry-run-02.json",
+      "result": "PASS; exit 0, deterministic contract/Markdown bytes equal run 01, with only approved operational audit differences."
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "T04 authority reload before persistence",
+      "status": "met",
+      "evidence": "Live execution loads/verifies authority, builds/verifies deterministic artifacts, reloads/verifies authority, compares resolved root plus canonical packet/receipt semantic hashes and receipt file hash, and only then imports/calls persistence. A changed second authority raises T04 authority changed before persistence with zero persistence calls and zero connection attempts. Dry run loads once."
+    },
+    {
+      "criterion": "exact PostgreSQL schema boundary",
+      "status": "met",
+      "catalog_sha256": "9c193d6cbe6b853b7edac7b605c3194b4a8ac7cc46363c1644b1a697e878fc2f",
+      "evidence": "One normalized PostgreSQL 18.6 catalog gate covers exact relations/RLS, ordered typed/nullability columns, PK/unique/FK/CHECK constraints, complete index definitions/access methods, triggers, and trigger function behavior. UPDATE-only trigger, removed unique, removed CHECK, extra view, and extra trigger adversaries all fail before insertion."
+    },
+    {
+      "criterion": "complete VERIFIED_EXISTING relational verification",
+      "status": "met",
+      "evidence": "All study_run fields, five artifact relational/content/time bindings, stored PERSISTED audit authority/implementation bindings, and eleven complete event relational/JSON/hash-chain bindings are reloaded and checked. Wrong artifact content/contract, event artifact column, event run, audit run/session, packet/receipt authority, and implementation commit are rejected."
+    },
+    {
+      "criterion": "correction-lineage scope clarification",
+      "status": "met",
+      "evidence": "Request-level revision-1 lineage and exact correction identity remain in the frozen revision-2 contracts. Persistence creates only one complete active revision-2 1/5/11 run with supersedes_run_id null. No revision-1 runtime execution is fabricated; cross-run correction persistence is deferred."
+    },
+    {
+      "criterion": "stable redacted database errors",
+      "status": "met",
+      "evidence": "Connection and transaction psycopg errors become ValueError(database operation failed) from None; schema/authority ValueError remains project-owned. CLI output is exactly OPERATION_FAILED/database operation failed and excludes fake secrets, DSN, SQL, and provider text. Transaction failure rolls back to 0/0/0."
+    },
+    {
+      "criterion": "PostgreSQL atomicity, idempotency, append-only, and event chain",
+      "status": "met",
+      "server_version_num": 180006,
+      "tests": "24 passed, zero skipped",
+      "evidence": "Exact 1/5/11 transaction, rollback, exact replay, changed-existing refusal, all three UPDATE/DELETE triggers, contiguous sequence and previous-hash chain, correction scope, and every required schema/replay adversary passed in pinned CI."
+    },
+    {
+      "criterion": "two repaired canonical-archive dry runs",
+      "status": "met",
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+      "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+      "brief_answer_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+      "study_answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+      "brief_markdown_sha256": "af13455c89f819ac999121b85ad611ef3e5ec9720f08a44856af00638bd3f2c0",
+      "study_markdown_sha256": "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6",
+      "audit_receipt_identities": [
+        "01a02e8f-0d48-7a1f-a85b-1e2db13a0ee5",
+        "01a02e8f-1d0f-79c5-8d2e-eb2597288a09"
+      ],
+      "allowed_actual_differences": [
+        "generated_at",
+        "receipt_canonical_sha256",
+        "receipt_identity"
+      ]
+    },
+    {
+      "criterion": "pre/post T04 authority and zero-operation boundary",
+      "status": "met",
+      "fingerprint_sha256": "6e8573d123fd2423f87688327d8c9e94a5d3d7fa835d5f73da4903abe99f3fec",
+      "authority_changed": false,
+      "archive_writes": 0,
+      "owner_database_connections": 0,
+      "owner_database_writes": 0,
+      "forbidden_reads": 0,
+      "network_requests": 0,
+      "model_invocations": 0,
+      "canonical_live_t05_executions": 0
+    },
+    {
+      "criterion": "final handoff-only exact head",
+      "status": "recorded after commit",
+      "note": "Git commit identity is self-referential to handoff contents; the exact final SHA and both exact-final-head workflow URLs are recorded in the PR completion comment and final report."
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "repair_implementation",
+      "commit": "4033581da30d349d0aa0211d41bd864f607556d2",
+      "tree": "2ef0d213e82aa87337c59f4a3402252e9ddfe480"
+    },
+    {
+      "kind": "ignored_private_evidence",
+      "path": ".local/evidence/VS01-T05/repair01-real-dry-run-summary.json",
+      "description": "Public-safe local summary; raw CLI captures and pre/post fingerprints remain ignored."
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-REPAIR01-SOL-20260823T122014Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-REPAIR01-SOL-20260823T122014Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 256,
+    "production_loc_removed": 133,
+    "test_loc_added": 184,
+    "test_loc_removed": 247,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [],
+    "abstractions": [
+      {
+        "name": "T04 authority fingerprint",
+        "reason": "The single narrow private identity required to compare two verified authority loads before persistence."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Replaced the existing name-only checker in place with one catalog fingerprint rather than adding a parallel checker.",
+      "Removed incomplete revision-1 seeding and private supersession injection controls rather than extending speculative correction machinery.",
+      "Used direct relational reload comparison and existing frozen Pydantic contracts rather than adding an ORM, repository framework, or generic provenance layer."
+    ],
+    "known_duplication_or_debt": [
+      "Cumulative handwritten active implementation is exactly 1,800 nonblank substantive changed lines from the PR base; the Repair01 net replacement is 65 lines.",
+      "Request-level correction lineage is implemented. Complete cross-run correction persistence is explicitly deferred and T05 claims no prior revision-1 runtime execution."
+    ],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The exact final handoff-only commit cannot encode its own SHA; the PR comment and final report bind that live SHA after the commit exists.",
+    "The local suite emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 403 executed tests passed.",
+    "The ignored dry-run captures contain the exact frozen public answer artifacts; the committed handoff contains only public-safe identities, hashes, counts, and booleans."
+  ],
+  "decisions_required": [
+    "ChatGPT must independently review the exact final live draft-PR head.",
+    "Joseph must decide whether to approve that exact head only after a clean ChatGPT review."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
