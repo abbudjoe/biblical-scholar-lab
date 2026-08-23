@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+  "task_id": "VS01-T05",
+  "turn_id": "VS01-T05-SOL-20260823T020216Z",
+  "codex_run_id": "VS01-T05-SOL-20260823T020216Z",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t05-deterministic-study-runtime",
+  "base_sha": "7db0ff4a1ade89c043a9330b89de90467dba612c",
+  "implementation_head_sha": "2f1bf8e28b8542e1f65b54a330deb01f0b491439",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/new/codex/vs01-t05-deterministic-study-runtime",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t05-deterministic-study-runtime",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Implement only ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1: consume the exact published T04 packet and receipt through a minimum read-only authority boundary, construct and verify the frozen deterministic John 1:5 request, execution, Brief and Study answer artifacts, emit an operational audit receipt, and provide an append-only PostgreSQL 18.6 persistence boundary without executing live mode against the canonical archive or an owner database.",
+  "acceptance_criteria": [
+    "Persist the byte-exact frozen design, runtime specification, manifest, checksum file, citation-count erratum, activation, and sidecar as the first task commit.",
+    "Characterize and consume only the canonical archive marker and exact T04 object, snapshot, and receipt without mutation or upstream/raw-source reads.",
+    "Add exactly four strict public Pydantic contracts, four generated Draft 2020-12 schemas, and four registry entries.",
+    "Enforce exact request revision and correction lineage, plan, state sequence, 12 evidence records, 16 claims, ten citations, frozen candidate, 12 verification rules, and exact Brief and Study bytes.",
+    "Add only psycopg[binary]==3.3.4 and one reviewed SQL migration producing exactly one schema, three tables, one trigger function, and three append-only triggers.",
+    "Provide parameterized direct psycopg persistence with atomic 1/5/11 rows, fail-closed replay, immutable correction, and exact event-chain verification.",
+    "Expose only the activated bsl study john-1-5-translation-nuance command, with no production root bypass and no database coordinate argument.",
+    "Pass dependency, schema drift, formatting, lint, typing, regression, coverage, integrity, DR-30, and exact-head PostgreSQL 18.6 CI gates.",
+    "Freeze implementation before two exact canonical-archive dry runs and prove deterministic artifacts plus unchanged pre/post T04 authority.",
+    "Create one handoff-only final commit, one draft PR, two exact-head CI results, and one public-safe completion comment."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1",
+      "VS01-T05-deterministic-study-runtime-answer-audit",
+      "VS01-T05-RUNTIME-SPEC-v1",
+      "VS01-T05-ERRATA-01-citation-count",
+      "DR-02-scholarly-epistemology-and-methodology",
+      "DR-04-canon-reference-and-versification-model",
+      "DR-05-textual-history-and-provenance-graph",
+      "DR-06-translation-nuance-core",
+      "DR-07-linguistic-representation",
+      "DR-09-scholarship-and-citation-model",
+      "DR-10-rights-lineage-and-release-architecture",
+      "DR-15-long-context-and-context-composer-design",
+      "DR-16-runtime-scholar-harness",
+      "DR-26-user-experience-and-answer-contract",
+      "DR-28-integrated-logical-architecture-and-contract-registry",
+      "DR-30-implementation-readiness-simplicity-and-anti-slop-contract",
+      "VS-01-john-1-5-translation-nuance-vertical-slice"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "phase": "authority_persistence",
+      "commit": "952c4b7ae90ab747ad7ed69a1cf9e60f4d1537d8",
+      "summary": "Committed only the seven byte-exact frozen authority files and the minimal decision-index update."
+    },
+    {
+      "phase": "implementation",
+      "commit": "2f1bf8e28b8542e1f65b54a330deb01f0b491439",
+      "tree": "c03e00cef9e4a8082a99b0dec294bd082a80391d",
+      "summary": "Added the exact four contracts and schemas, deterministic packet-bound runtime, direct append-only PostgreSQL persistence, one migration, one CLI command, one pinned CI workflow, tests, and minimal current-status updates."
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "src/bsl/contracts/runtime.py",
+      "focus": "Four strict frozen public contracts, RFC 8785 identities, portable exact schemas, operational audit typing, and disposition-consistent database bindings."
+    },
+    {
+      "path": "src/bsl/application/john15_study_runtime.py",
+      "focus": "Minimum T04 authority reads, exact packet projection checks, candidate verification, deterministic Brief/Study construction, adapter rejection, and dry/live boundary."
+    },
+    {
+      "path": "src/bsl/infrastructure/runtime_persistence.py",
+      "focus": "Direct psycopg transaction, schema identity, run key, 1/5/11 insertion, immediate reload verification, idempotency, and hash chain."
+    },
+    {
+      "path": "migrations/0001_vs01_t05_runtime.sql",
+      "focus": "Exact one-schema/three-table boundary, constraints, unique indexes, shared mutation-rejection function, and three triggers."
+    },
+    {
+      "path": "tests/test_study_runtime.py",
+      "focus": "Frozen semantics, exact bytes and identities, adversarial mutation rejection, minimum archive, zero-operation dry run, and persistence control-plane tests."
+    },
+    {
+      "path": "tests/test_runtime_postgres.py",
+      "focus": "PostgreSQL 18.6 catalog conformance, append-only behavior, atomic rollback, replay, changed-existing refusal, correction, and event chain."
+    },
+    {
+      "path": ".github/workflows/vs01-t05-ci.yml",
+      "focus": "Exact image digest, PostgreSQL version 180006, ephemeral test coordinate, zero-skip database suite, migration conformance, and exact PR head."
+    }
+  ],
+  "commands": [
+    {
+      "command": "preflight base/branch/tree/clean/remote/PR/auth/token state and validate supplied artifact hashes plus activation schema",
+      "result": "PASS; all exact repository and authority gates matched before branch creation"
+    },
+    {
+      "command": "uv sync --frozen && uv lock --check",
+      "result": "PASS; exactly one new direct dependency, psycopg[binary]==3.3.4"
+    },
+    {
+      "command": "schema drift and contracts/registry.json hash validation",
+      "result": "PASS; exactly four new schemas and registry entries"
+    },
+    {
+      "command": "uv run --with=jsonschema==4.25.1 pytest -q tests/test_cli_and_schemas.py -k 'runtime_schemas or audit_schema'",
+      "result": "PASS; 5 strict portable-schema tests passed"
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run pyright",
+      "result": "PASS; 108 files formatted, lint clean, 0 pyright errors and 0 warnings"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90",
+      "result": "PASS; 401 passed, 21 skipped, branch-aware coverage 90.30%; skips are 12 absent-local-PostgreSQL tests and 9 optional external-jsonschema tests"
+    },
+    {
+      "command": "git diff --check 7db0ff4a1ade89c043a9330b89de90467dba612c...HEAD && git fsck --full",
+      "result": "PASS; fsck reported dangling objects only"
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/dry-run-01.json",
+      "result": "PASS; exit 0, JSON-mode contract validation, DRY_RUN_VALIDATED, no persistence or external operations"
+    },
+    {
+      "command": "uv run bsl study john-1-5-translation-nuance --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --render both --dry-run > .local/evidence/VS01-T05/dry-run-02.json",
+      "result": "PASS; exit 0, deterministic artifacts byte-identical to run 01, only approved audit operational fields differ"
+    }
+  ],
+  "evaluations": [
+    {
+      "criterion": "exact T04 raw-byte authority",
+      "status": "met",
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+      "receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+      "receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4",
+      "disposition": "PUBLISHED",
+      "implementation_commit": "7db0ff4a1ade89c043a9330b89de90467dba612c"
+    },
+    {
+      "criterion": "minimum archive and forbidden-read boundary",
+      "status": "met",
+      "forbidden_reads": 0,
+      "notes": "A minimum temporary archive containing root authority plus the T04 object/snapshot/receipt is sufficient; T03, normalization, source, quarantine, admission, and raw source paths are absent and never read."
+    },
+    {
+      "criterion": "request, plan, ledgers, candidate, and verification conformance",
+      "status": "met",
+      "request_revision": 2,
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+      "evidence_records": 12,
+      "claims": 16,
+      "citations": 10,
+      "candidate_claims": 15,
+      "accepted_alternatives": 3,
+      "verification_rules": 12
+    },
+    {
+      "criterion": "exact Brief and Study artifacts",
+      "status": "met",
+      "brief_visible_claims": 10,
+      "brief_unique_citations": 9,
+      "study_visible_claims": 15,
+      "study_unique_citations": 10,
+      "brief_markdown_sha256": "af13455c89f819ac999121b85ad611ef3e5ec9720f08a44856af00638bd3f2c0",
+      "study_markdown_sha256": "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6"
+    },
+    {
+      "criterion": "two real canonical-archive dry runs",
+      "status": "met",
+      "deterministic_artifacts_byte_identical": true,
+      "audit_allowed_difference_fields": [
+        "generated_at",
+        "latency_ms",
+        "receipt_canonical_sha256",
+        "receipt_identity"
+      ],
+      "archive_writes": 0,
+      "database_connections": 0,
+      "network_requests": 0,
+      "model_invocations": 0
+    },
+    {
+      "criterion": "pre/post T04 authority and unrelated incoming inventory unchanged",
+      "status": "met",
+      "fingerprint_sha256": "22df93eafae4f4b6ba0ebb25d2f2b121a83dfdca5b88bab69038228c0559081e",
+      "authority_changed": false
+    },
+    {
+      "criterion": "ephemeral PostgreSQL 18.6 atomicity, idempotency, correction, append-only, and event-chain evidence",
+      "status": "pending exact-head vs01-t05-ci",
+      "local_reason": "Docker and a local PostgreSQL service were unavailable; no substitute database was installed or used."
+    },
+    {
+      "criterion": "draft PR exact-head CI and completion comment",
+      "status": "pending until post-handoff push",
+      "required_ci": [
+        "vs01-t01-ci",
+        "vs01-t05-ci"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "frozen_design",
+      "path": "design/approved/VS01-T05-deterministic-study-runtime-answer-audit.md",
+      "sha256": "398acbe88647ae16c58e5a648ae5d6eee01f77a11b162230816394d3911b2129"
+    },
+    {
+      "kind": "frozen_runtime_spec",
+      "path": "design/approved/VS01-T05-runtime-spec.json",
+      "sha256": "06e97f36db1071d9085688ceb33dbc66f02dd0349889ab4df4d0fa280801d9e5"
+    },
+    {
+      "kind": "citation_count_erratum",
+      "path": "design/approved/VS01-T05-ERRATA-01-citation-count.md",
+      "sha256": "a1388f344377eb12000379d148959bed8d39427a6a9e5eadbe8d08d187ffc4d7"
+    },
+    {
+      "kind": "activation",
+      "path": "activations/ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1.json",
+      "sha256": "63379d578faea93b01e88f344e72f8e63b956f021b3eab2659a531c7beb49896"
+    },
+    {
+      "kind": "migration",
+      "path": "migrations/0001_vs01_t05_runtime.sql",
+      "sha256": "a773a82c71b1aec4640f8550eb914acf6c28fd206762ecdde1eb9ac262d469d6"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/runtime/john-15-study-request.schema.json",
+      "sha256": "7fb0c60243f4b115072ce0849f3311b961114d4521bcc718afd39af807397cbc"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/runtime/john-15-study-execution-record.schema.json",
+      "sha256": "6badf62737fb0252b729082238087f0c5e98ef6c0dbbc740b3e158aa39d4fc80"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/runtime/john-15-study-answer-artifact.schema.json",
+      "sha256": "8dda069c987f7a37fd0d195168029908f924d5d261e7316d1a51fab74a60c231"
+    },
+    {
+      "kind": "generated_schema",
+      "path": "contracts/json-schema/runtime/john-15-runtime-audit-receipt.schema.json",
+      "sha256": "ae52fc813c671037e85eae07428a3f90da03fca6c73274cc68e34631c94d9ab6"
+    },
+    {
+      "kind": "ignored_redacted_t04_authority_fingerprint",
+      "path": ".local/evidence/VS01-T05/t04-authority-before.json",
+      "sha256": "22df93eafae4f4b6ba0ebb25d2f2b121a83dfdca5b88bab69038228c0559081e"
+    },
+    {
+      "kind": "ignored_redacted_t04_authority_fingerprint",
+      "path": ".local/evidence/VS01-T05/t04-authority-after.json",
+      "sha256": "22df93eafae4f4b6ba0ebb25d2f2b121a83dfdca5b88bab69038228c0559081e"
+    },
+    {
+      "kind": "ignored_dry_run_output",
+      "path": ".local/evidence/VS01-T05/dry-run-01.json",
+      "sha256": "71cbf8f7048d2093ee7e942fa2f4b1a05e2ac845fe059483ecb16f11d014aa98"
+    },
+    {
+      "kind": "ignored_dry_run_output",
+      "path": ".local/evidence/VS01-T05/dry-run-02.json",
+      "sha256": "4a8ff13713393524f0f852de881612f75d58969ae22b9dea4ef8d6a201819734"
+    },
+    {
+      "kind": "ignored_public_safe_summary",
+      "path": ".local/evidence/VS01-T05/real-dry-run-summary.json",
+      "contains_complete_packet_or_answer_prose": false,
+      "contains_private_archive_identity": false,
+      "contains_unrelated_incoming_names": false
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-SOL-20260823T020216Z.json"
+    },
+    {
+      "kind": "handoff",
+      "path": "handoffs/VS01-T05/VS01-T05-SOL-20260823T020216Z.md"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 1132,
+    "production_loc_removed": 6,
+    "test_loc_added": 746,
+    "test_loc_removed": 0,
+    "generated_loc": 1684,
+    "production_files_added": 4,
+    "production_files_removed": 0,
+    "modules_added": [
+      "src/bsl/contracts/runtime.py",
+      "src/bsl/application/john15_study_runtime.py",
+      "src/bsl/infrastructure/runtime_persistence.py"
+    ],
+    "modules_removed": [],
+    "tables_added": [
+      "bsl_runtime.study_run",
+      "bsl_runtime.runtime_artifact",
+      "bsl_runtime.runtime_event"
+    ],
+    "migrations_added": [
+      "migrations/0001_vs01_t05_runtime.sql"
+    ],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl study john-1-5-translation-nuance"
+    ],
+    "dependencies_added": [
+      "psycopg[binary]==3.3.4"
+    ],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "John15StudyRequest",
+      "John15StudyExecutionRecord",
+      "John15StudyAnswerArtifact",
+      "John15RuntimeAuditReceipt"
+    ],
+    "abstractions": [
+      {
+        "name": "ScholarModelAdapter",
+        "reason": "The sole private, unimplemented protocol frozen by the activation; deterministic execution rejects every non-null adapter."
+      },
+      {
+        "name": "runtime_persistence",
+        "reason": "Narrow authority-bound direct-psycopg adapter for the exact three-table persistence contract."
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Reused the approved canonical archive-root check and exact T04 public packet/receipt contracts.",
+      "Kept passage-specific pure construction and direct psycopg SQL instead of adding an ORM, migration framework, pool, repository abstraction, provider registry, prompt system, generic rule engine, or future-runtime scaffold."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "Docker, psql, and a local PostgreSQL service were unavailable. The 12 database tests skipped locally by explicit contract; exact-head vs01-t05-ci on the pinned PostgreSQL 18.6 service is mandatory evidence.",
+    "The full local pytest run emitted 51 pre-existing macOS temporary-directory cleanup warnings; all 401 executed tests and the coverage gate passed.",
+    "The ignored dry-run outputs contain the exact frozen public answer artifacts. The committed handoff contains identities, hashes, counts, and boundary results rather than the complete answer prose.",
+    "The live PR URL and exact-head CI URLs are necessarily produced after this mandated handoff-only commit; the completion comment binds the final head and results."
+  ],
+  "decisions_required": [
+    "ChatGPT must independently review the exact live draft-PR head after both exact-head workflows pass.",
+    "Joseph must separately decide whether to approve that exact head after a clean ChatGPT review."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
