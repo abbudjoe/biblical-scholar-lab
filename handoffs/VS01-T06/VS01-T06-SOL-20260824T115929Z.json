@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0.0",
+  "task_id": "VS01-T06",
+  "generated_at_utc": "2026-08-24T11:59:29Z",
+  "disposition": "READY_FOR_CHATGPT_REVIEW",
+  "activation_id": "ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1",
+  "authority": {
+    "base_commit": "58f51798b385df9ba0216147e1a4db2864b468aa",
+    "base_tree": "d44a44f1e21232dd9acb515647fc3764071c83b4",
+    "authority_persistence_commit": "65775a55b53a0c2d116d3dac3df54a107fa09a4a",
+    "renderer_authority_commit": "ae453024941ce9e0db9515a5305ffce04d27e742",
+    "implementation_head": "f147e1af8a228d1279bdacdc150a434c631839b7",
+    "implementation_tree": "d75747f462fa11ff09a5584fc00f088ab4154454",
+    "design_sha256": "188915da1f62812bf88eb9c5168dc07246b0a411990857663b12d1b7446eca8c",
+    "spec_sha256": "dd76d124b0ab9c42cb3551e1afd5a9e0326ac402977ae3f4625d9092fd80b285",
+    "scene_spec_identity": "ed19a7d564a00da054a26347f750b799e4a2b489412bd47c6159d1ca2097bcea",
+    "erratum_sha256": "fe5accbe92a40078122099a236a7569e8dd80de8de1f2d764ecec15d896cfd38",
+    "activation_sha256": "73ba0a542958fadbc8d260d0de8cf5160aac0e9d35555d82027c4962d0bed986"
+  },
+  "renderer": {
+    "platform": "linux/amd64",
+    "image_index_digest": "sha256:d50fb7611f86d04a3b0471b46d7557818d88983fc3136726336b2a4c657aa30b",
+    "child_manifest_digest": "sha256:72d3d75f2639ab82b34b29390ad3d6e0827c775befee94edda8e9976818f488d",
+    "image_id": "sha256:a1e028236d55ab8a2ec45d7c693137b5adb5d230baecdbae4f9f75cf51b6ce66",
+    "renderer_authority_sha256": "3ac7df8910bf4ea6a630a8f5e222483541121458620a80edf5bab20d067623de",
+    "renderer_tool_sha256": "1f2892123025535a7b12137459c314dea2e559b8c2f68b2a10c50a4ffa4a631c",
+    "python": "3.12.13",
+    "pillow": "12.3.0",
+    "pillow_wheel_sha256": "78cb2c6865a35ab8ff8b75fd122f6033b92a62c82801110e48ddd6c936a45d91",
+    "freetype": "2.14.3",
+    "libpng_exposed": false,
+    "zlib_compile": "1.2.13",
+    "zlib_runtime": "1.2.13"
+  },
+  "fonts": [
+    {"role": "regular", "sha256": "e5a4ee6a3d87bb9024796be390c6771e2a0eb1883dae25effaf57ca01668e24b", "byte_count": 261868, "mode": "0444"},
+    {"role": "italic", "sha256": "9d2950a8f1da66e21502c35d646a1d2148e79f9ea43fd2158cf02f5232e7f430", "byte_count": 187808, "mode": "0444"},
+    {"role": "license", "sha256": "75784a295293a8992f5a8d99210566e0064a012e6dab6731305e3787f15896c7", "byte_count": 4492, "mode": "0444"}
+  ],
+  "fixture": {
+    "fixture_identity": "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b",
+    "fixture_json_sha256": "c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f",
+    "fixture_json_byte_count": 23185,
+    "base_png_sha256": "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb",
+    "base_png_byte_count": 83499,
+    "degraded_png_sha256": "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce",
+    "degraded_png_byte_count": 94398,
+    "fresh_render_runs": 2,
+    "byte_identical_to_committed": true,
+    "receipt_semantics_equal": true,
+    "glyphs_verified": true,
+    "ink_bbox_count": 7
+  },
+  "schemas": {
+    "John15PageExtractionGroundTruth": "00c47b14580b28b364fb3200d6fd7e0e3b0f817466e717a47498482f834b0175",
+    "John15PageRegionGroundTruth": "4ff10912236932eee3714af520834b856b9af8674b1c627f2de6a48fb741b9aa",
+    "John15SyntheticPageFixture": "e788f71aceb222fe963b7f75ae001e0be77b15a3d132b58bfaeca60a11384ce1",
+    "John15SyntheticPagePublicationReceipt": "bb56fdc2bd1992e8b63df274a876a16c7497c8f31c0a083f0e13c29bc9873202"
+  },
+  "validation": {
+    "tests_passed": 444,
+    "tests_skipped": 36,
+    "branch_coverage_percent": 90.05,
+    "uv_sync_frozen": "PASS",
+    "uv_lock_check": "PASS",
+    "ruff_format_check": "PASS",
+    "ruff_check": "PASS",
+    "pyright": "PASS",
+    "schema_drift_and_registry": "PASS",
+    "git_diff_check": "PASS",
+    "git_fsck_full": "PASS_WITH_EXISTING_DANGLING_OBJECTS"
+  },
+  "dr30": {
+    "handwritten_active_physical_lines": 1466,
+    "handwritten_production_files": 5,
+    "public_contracts": 4,
+    "new_direct_dependencies": 0,
+    "migrations": 0,
+    "new_workflows": 0,
+    "max_function_logical_lines": 42,
+    "max_cyclomatic_complexity": 10,
+    "max_nesting": 2,
+    "max_class_logical_lines": 48,
+    "max_production_module_physical_lines": 395
+  },
+  "upstream_proof": {
+    "t03_bundle_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+    "t03_receipt_sha256": "e4871e859481614da6d4f52e77fa41e35234884b9f5baacad68c4855e2ed6af2",
+    "t04_packet_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+    "t04_receipt_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4",
+    "t05_catalog_sha256": "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4",
+    "t05_server_version_num": 180006,
+    "t05_run_id": "01a030a1-c3ca-76f6-b4c8-f74392e2cd91",
+    "t05_session_id": "01a030a1-c3cb-72d0-aac0-19da47db369e",
+    "t05_revision": 2,
+    "t05_supersedes_run_id": null,
+    "t05_request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+    "t05_execution_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+    "t05_brief_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+    "t05_study_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+    "t05_row_counts": [1, 5, 11],
+    "t05_final_event_sha256": "db40945f79e72a43e4342599312b9dc9a08e30e374a051188dc92f35bf2ce287",
+    "authority_fingerprint_before": "ab943c11408e3537f33b119eb1cc698012df26dc645c369361b831ba9d0d6ba1",
+    "authority_fingerprint_after": "ab943c11408e3537f33b119eb1cc698012df26dc645c369361b831ba9d0d6ba1",
+    "cli_authority_fingerprint": "f2e35501540f4ac1bfaec262ba7ad162752b14eb0c11bf50f6466640c37574a5",
+    "incoming_inventory_before": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "incoming_inventory_after": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "incoming_entry_count": 0
+  },
+  "operations": {
+    "canonical_dry_run_01": "EXIT_0_DRY_RUN_VALIDATED",
+    "canonical_dry_run_02": "EXIT_0_DRY_RUN_VALIDATED",
+    "archive_writes": 0,
+    "database_writes": 0,
+    "raw_non_font_source_reads": 0,
+    "ocr_invocations": 0,
+    "vlm_invocations": 0,
+    "model_invocations": 0,
+    "benchmark_executions": 0,
+    "network_requests_during_proof": 0,
+    "canonical_page_paths_absent": true
+  },
+  "visual_review": {
+    "clipping_detected": false,
+    "missing_glyphs_detected": false,
+    "ink_bboxes_within_regions": true,
+    "base_text_legible": true,
+    "degraded_phrase_blur_present": true,
+    "degraded_annotation_glare_present": true,
+    "frozen_geometry_changed": false
+  },
+  "github": {
+    "auth_mode": "GH_CLI_EXISTING_AUTH",
+    "active_login": "abbudjoe",
+    "token_override_variables_absent": true,
+    "draft_pr": "PENDING_PUSH",
+    "exact_head_ci": "PENDING_PUSH"
+  },
+  "risks": [
+    "Canonical live page publication was intentionally not executed.",
+    "Exact-head CI and independent visual review remain external gates."
+  ]
+}
