@@ -1,0 +1,1010 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "VS01-T06-PAGE-FIXTURE-SPEC-v1",
+  "design_id": "VS01-T06",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T06_DESIGN",
+  "approval_date": "2026-08-23",
+  "base_main_sha": "58f51798b385df9ba0216147e1a4db2864b468aa",
+  "base_tree_sha": "d44a44f1e21232dd9acb515647fc3764071c83b4",
+  "derivative_id": "SP01-DER-002",
+  "scene_spec_identity": "ed19a7d564a00da054a26347f750b799e4a2b489412bd47c6159d1ca2097bcea",
+  "upstream_authority": {
+    "t04": {
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+      "receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+      "receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4",
+      "role": "SCHOLARLY_AND_RENDER_ASSET_AUTHORITY",
+      "allowed_reads": [
+        "exact T04 packet object, snapshot, and receipt",
+        "Source Serif 4 Regular, Italic, and OFL objects referenced by the T04 packet"
+      ],
+      "forbidden_uses": [
+        "modification or republication of T04",
+        "treating Source Serif as scholarly evidence"
+      ]
+    },
+    "t05": {
+      "canonical_run_id": "01a030a1-c3ca-76f6-b4c8-f74392e2cd91",
+      "canonical_session_id": "01a030a1-c3cb-72d0-aac0-19da47db369e",
+      "request_revision": 2,
+      "supersedes_run_id": null,
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+      "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+      "brief_answer_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+      "study_answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+      "persisted_row_counts": {
+        "study_run": 1,
+        "runtime_artifact": 5,
+        "runtime_event": 11
+      },
+      "postgresql_catalog_sha256": "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4",
+      "role": "PERSISTED_RUNTIME_CONSISTENCY_AUTHORITY",
+      "runtime_page_content_source": false,
+      "database_write_authority": false
+    },
+    "raw_source_policy": {
+      "asv_text_reparsing": "PROHIBITED; use T04 packet exact evidence",
+      "real_page_ingestion": "PROHIBITED",
+      "copyrighted_page_ingestion": "PROHIBITED",
+      "font_object_read": "PERMITTED_ONLY_FOR_EXACT T04-BOUND SP01-SRC-006 RENDER ASSETS"
+    }
+  },
+  "public_contracts": [
+    {
+      "contract": "John15SyntheticPageFixture",
+      "purpose": "Exact page scene, two raster views, upstream authority, embedded region and extraction records, rights, renderer, and semantic identity.",
+      "identity_rule": "SHA-256 of RFC 8785 canonical contract fields excluding fixture_identity; includes realized raster hashes."
+    },
+    {
+      "contract": "John15PageRegionGroundTruth",
+      "purpose": "One exact region with stable ID, role, functional class, authority class, geometry, text, hierarchy, and source binding.",
+      "identity_rule": "Embedded exact record; no independent operational timestamp."
+    },
+    {
+      "contract": "John15PageExtractionGroundTruth",
+      "purpose": "One exact visual ground-truth extraction record that keeps visual observation, hidden scorer truth, and canonical lookup separate.",
+      "identity_rule": "Embedded exact record; method must be author-supplied scene graph and never OCR/VLM."
+    },
+    {
+      "contract": "John15SyntheticPagePublicationReceipt",
+      "purpose": "Operational UUIDv7/timestamp receipt binding renderer pins, font hashes, fixture identity, raster and metadata hashes, publication paths, authority fingerprints, and disposition.",
+      "allowed_dispositions": [
+        "DRY_RUN_VALIDATED",
+        "PUBLISHED",
+        "VERIFIED_EXISTING"
+      ]
+    }
+  ],
+  "scene": {
+    "fixture_id": "SP01-DER-002",
+    "canvas": {
+      "width_px": 1600,
+      "height_px": 2200,
+      "physical_width_in": "8.000000",
+      "physical_height_in": "11.000000",
+      "pixels_per_inch": 200,
+      "pixel_format": "RGB_8_BIT",
+      "background_rgb": "#F7F3E9"
+    },
+    "coordinate_spaces": [
+      {
+        "coordinate_space_id": "cs-page-pixel-v1",
+        "origin": "TOP_LEFT",
+        "units": "PIXEL",
+        "bbox_convention": "XYWH_HALF_OPEN",
+        "width": 1600,
+        "height": 2200,
+        "orientation_degrees_clockwise": 0,
+        "transform_to_parent": "IDENTITY"
+      },
+      {
+        "coordinate_space_id": "cs-page-normalized-v1",
+        "origin": "TOP_LEFT",
+        "units": "NORMALIZED_DECIMAL_STRING",
+        "bbox_convention": "XYXY_CLOSED_DISPLAY_HALF_OPEN_PIXEL_MAPPING",
+        "precision_decimal_places": 6,
+        "normalization_base": [
+          1600,
+          2200
+        ],
+        "transform_to_parent": "x_px=x_norm*1600;y_px=y_norm*2200"
+      }
+    ],
+    "page_label": "Synthetic demonstration page — not a historical facsimile or published study Bible.",
+    "styles": {
+      "style_header": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Regular",
+        "font_size_px": 42,
+        "fill_rgb": "#34312D",
+        "anchor": "mm",
+        "draw_position_px": [
+          800,
+          135
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_heading": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Regular",
+        "font_size_px": 68,
+        "fill_rgb": "#191816",
+        "anchor": "mm",
+        "draw_position_px": [
+          800,
+          325
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_verse_number": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Regular",
+        "font_size_px": 64,
+        "fill_rgb": "#191816",
+        "anchor": "la",
+        "draw_position_px": [
+          120,
+          510
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_canonical": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Regular",
+        "font_size_px": 54,
+        "fill_rgb": "#191816",
+        "anchor": "la",
+        "line_height_px": 92,
+        "draw_lines": [
+          {
+            "position_px": [
+              220,
+              510
+            ],
+            "text": "And the light shineth in the darkness;"
+          },
+          {
+            "position_px": [
+              220,
+              602
+            ],
+            "text": "and the darkness apprehended it not."
+          }
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_note": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Regular",
+        "font_size_px": 32,
+        "fill_rgb": "#28241F",
+        "anchor": "la",
+        "line_height_px": 54,
+        "background_rect_xywh": [
+          180,
+          930,
+          1240,
+          320
+        ],
+        "background_rgb": "#ECE5D7",
+        "border_rgb": "#8D806C",
+        "border_width_px": 2,
+        "draw_lines": [
+          {
+            "position_px": [
+              220,
+              975
+            ],
+            "text": "Study note: The verb translated “apprehended” can express"
+          },
+          {
+            "position_px": [
+              220,
+              1029
+            ],
+            "text": "grasping or seizing. WEB Classic makes the conflict-oriented"
+          },
+          {
+            "position_px": [
+              220,
+              1083
+            ],
+            "text": "effect explicit with “hasn’t overcome it.” This note does not"
+          },
+          {
+            "position_px": [
+              220,
+              1137
+            ],
+            "text": "establish one exclusive rendering."
+          }
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_crossref": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Italic",
+        "font_size_px": 30,
+        "fill_rgb": "#4F5962",
+        "anchor": "la",
+        "draw_position_px": [
+          180,
+          1340
+        ],
+        "kerning": false,
+        "ligatures": false
+      },
+      "style_annotation": {
+        "font_source_id": "SP01-SRC-006",
+        "font_face": "Italic",
+        "font_size_px": 40,
+        "fill_rgb": "#7A3131",
+        "anchor": "mm",
+        "draw_position_px": [
+          1120,
+          1575
+        ],
+        "rotation_degrees_clockwise": -4,
+        "rotation_center_px": [
+          1120,
+          1575
+        ],
+        "resampling": "BICUBIC_PINNED_RENDERER",
+        "kerning": false,
+        "ligatures": false
+      }
+    },
+    "display_only_graphics": [
+      {
+        "graphic_id": "rule-header",
+        "type": "LINE",
+        "start_px": [
+          120,
+          210
+        ],
+        "end_px": [
+          1480,
+          210
+        ],
+        "stroke_rgb": "#8D806C",
+        "stroke_width_px": 2,
+        "content_authority": "DISPLAY_ONLY"
+      }
+    ],
+    "regions": [
+      {
+        "region_id": "r_header",
+        "pixel_bbox_xywh": [
+          120,
+          80,
+          1360,
+          110
+        ],
+        "text": "John 1",
+        "benchmark_role": "PAGE_HEADER",
+        "functional_class": "RUNNING_HEADER",
+        "authority_class": "EDITORIAL_PARATEXT",
+        "style_id": "style_header",
+        "parent_group_id": "g_page",
+        "z_index": 10,
+        "source_binding": "PROJECT_AUTHORED_PAGE_PARATEXT",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.036364",
+          "0.925000",
+          "0.086364"
+        ],
+        "benchmark_reading_order_index": 1,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_heading",
+        "pixel_bbox_xywh": [
+          120,
+          250,
+          1360,
+          150
+        ],
+        "text": "The Light in the Darkness",
+        "benchmark_role": "SECTION_HEADING",
+        "functional_class": "SECTION_HEADING",
+        "authority_class": "EDITORIAL_PARATEXT",
+        "style_id": "style_heading",
+        "parent_group_id": "g_page",
+        "z_index": 20,
+        "source_binding": "PROJECT_AUTHORED_PAGE_PARATEXT",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.113636",
+          "0.925000",
+          "0.181818"
+        ],
+        "benchmark_reading_order_index": 2,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_verse_number",
+        "pixel_bbox_xywh": [
+          120,
+          500,
+          70,
+          90
+        ],
+        "text": "5",
+        "benchmark_role": "VERSE_NUMBER",
+        "functional_class": "VERSE_NUMBER",
+        "authority_class": "CANONICAL_ADDRESS_MARKER",
+        "style_id": "style_verse_number",
+        "parent_group_id": "g_scripture",
+        "z_index": 30,
+        "source_binding": "SP01-SRC-003#John.1.5/address",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.227273",
+          "0.118750",
+          "0.268182"
+        ],
+        "benchmark_reading_order_index": 3,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_canonical",
+        "pixel_bbox_xywh": [
+          220,
+          470,
+          1160,
+          280
+        ],
+        "text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+        "benchmark_role": "CANONICAL_TEXT",
+        "functional_class": "VERSE_TEXT",
+        "authority_class": "TRANSLATION_TEXT",
+        "canonicality": "CANONICAL_SCRIPTURE",
+        "style_id": "style_canonical",
+        "parent_group_id": "g_scripture",
+        "z_index": 31,
+        "source_binding": "SP01-SRC-003#John.1.5",
+        "t04_evidence_id": "EV-T04-ASV-001",
+        "normalized_bbox_xyxy": [
+          "0.137500",
+          "0.213636",
+          "0.862500",
+          "0.340909"
+        ],
+        "benchmark_reading_order_index": 4,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_note",
+        "pixel_bbox_xywh": [
+          180,
+          930,
+          1240,
+          320
+        ],
+        "text": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering.",
+        "benchmark_role": "STUDY_NOTE_OR_FOOTNOTE",
+        "functional_class": "STUDY_NOTE",
+        "authority_class": "STUDY_CONTENT",
+        "style_id": "style_note",
+        "parent_group_id": "g_paratext",
+        "z_index": 40,
+        "source_binding": "PROJECT_AUTHORED_FROM_T04",
+        "t04_claim_bindings": [
+          "CLM-T04-030",
+          "CLM-T04-050",
+          "CLM-T04-060"
+        ],
+        "normalized_bbox_xyxy": [
+          "0.112500",
+          "0.422727",
+          "0.887500",
+          "0.568182"
+        ],
+        "benchmark_reading_order_index": 5,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_crossref",
+        "pixel_bbox_xywh": [
+          180,
+          1320,
+          620,
+          80
+        ],
+        "text": "Cross-reference: John 12:35",
+        "benchmark_role": "CROSS_REFERENCE",
+        "functional_class": "CROSS_REFERENCE",
+        "authority_class": "EDITORIAL_PARATEXT",
+        "style_id": "style_crossref",
+        "parent_group_id": "g_paratext",
+        "z_index": 50,
+        "source_binding": "PROJECT_AUTHORED_FROM_T04",
+        "t04_evidence_id": "EV-T04-LEX-002",
+        "normalized_bbox_xyxy": [
+          "0.112500",
+          "0.600000",
+          "0.500000",
+          "0.636364"
+        ],
+        "benchmark_reading_order_index": 6,
+        "base_legibility": "LEGIBLE"
+      },
+      {
+        "region_id": "r_annotation",
+        "pixel_bbox_xywh": [
+          860,
+          1500,
+          520,
+          150
+        ],
+        "text": "understand—or overcome?",
+        "benchmark_role": "USER_ANNOTATION",
+        "functional_class": "USER_HANDWRITING",
+        "authority_class": "USER_ANNOTATION",
+        "style_id": "style_annotation",
+        "parent_group_id": "g_annotation",
+        "z_index": 100,
+        "source_binding": "PROJECT_AUTHORED_SYNTHETIC_ANNOTATION",
+        "annotation_target_region_id": "r_canonical",
+        "normalized_bbox_xyxy": [
+          "0.537500",
+          "0.681818",
+          "0.862500",
+          "0.750000"
+        ],
+        "benchmark_reading_order_index": 7,
+        "base_legibility": "LEGIBLE"
+      }
+    ],
+    "region_groups": [
+      {
+        "group_id": "g_page",
+        "group_type": "PAGE_ROOT",
+        "children": [
+          "r_header",
+          "r_heading",
+          "g_scripture",
+          "g_paratext",
+          "g_annotation"
+        ]
+      },
+      {
+        "group_id": "g_scripture",
+        "group_type": "ORDERED_GROUP",
+        "children": [
+          "r_verse_number",
+          "r_canonical"
+        ]
+      },
+      {
+        "group_id": "g_paratext",
+        "group_type": "ORDERED_GROUP",
+        "children": [
+          "r_note",
+          "r_crossref"
+        ]
+      },
+      {
+        "group_id": "g_annotation",
+        "group_type": "OVERLAY_GROUP",
+        "children": [
+          "r_annotation"
+        ],
+        "anchored_to_region_id": "r_canonical"
+      }
+    ],
+    "reading_orders": {
+      "benchmark_flat_order": [
+        "r_header",
+        "r_heading",
+        "r_verse_number",
+        "r_canonical",
+        "r_note",
+        "r_crossref",
+        "r_annotation"
+      ],
+      "printed_content_order": [
+        "r_header",
+        "r_heading",
+        "r_verse_number",
+        "r_canonical",
+        "r_note",
+        "r_crossref"
+      ],
+      "annotation_overlay_order": [
+        "r_annotation"
+      ]
+    },
+    "relationships": [
+      {
+        "relation": "ADDRESS_MARKS",
+        "source_region_id": "r_verse_number",
+        "target_region_id": "r_canonical"
+      },
+      {
+        "relation": "ANNOTATES",
+        "source_region_id": "r_annotation",
+        "target_region_id": "r_canonical"
+      },
+      {
+        "relation": "ELABORATES",
+        "source_region_id": "r_note",
+        "target_region_id": "r_canonical"
+      },
+      {
+        "relation": "CROSS_REFERENCES",
+        "source_region_id": "r_crossref",
+        "target_reference": "John.12.35"
+      }
+    ],
+    "views": [
+      {
+        "view_id": "base-page",
+        "evidence_handle": "SP01-DER-002#base-page",
+        "parent_view_id": null,
+        "transform_chain": [],
+        "geometry_identity": "BASE_GEOMETRY",
+        "expected_region_count": 7,
+        "raster_sha256_state": "FROZEN_AFTER_AUTHORIZED_RENDER_PROOF"
+      },
+      {
+        "view_id": "degraded-illegibility-v1",
+        "evidence_handle": "SP01-DER-002#degraded-illegibility-v1",
+        "parent_view_id": "base-page",
+        "deterministic_seed": 150105,
+        "geometry_identity": "SAME_AS_BASE",
+        "operations": [
+          {
+            "operation_index": 1,
+            "type": "GAUSSIAN_BLUR_MASK",
+            "region_id": "r_canonical",
+            "target_substring": "apprehended it not",
+            "target_line_index_zero_based": 1,
+            "target_character_range_half_open": [
+              17,
+              35
+            ],
+            "mask_rule": "PINNED_RENDERER_GLYPH_INK_BBOX_EXPANDED_14PX_CLIPPED_TO_REGION",
+            "sigma": "18.000000",
+            "composite_rule": "BLUR_CROP_THEN_HARD_MASK_COMPOSITE"
+          },
+          {
+            "operation_index": 2,
+            "type": "OPAQUE_GLARE_MASK",
+            "region_id": "r_annotation",
+            "coverage_ratio": "0.550000",
+            "mask_rule": "RIGHTMOST_55_PERCENT_OF_REGION_PIXEL_BBOX",
+            "pixel_bbox_xywh": [
+              1094,
+              1500,
+              286,
+              150
+            ],
+            "fill_rgb": "#FFFDF7",
+            "opacity": "1.000000"
+          }
+        ],
+        "invariant": "Underlying source text, region identities, geometry, reading order, and authority classes do not change; only raster legibility changes.",
+        "raster_sha256_state": "FROZEN_AFTER_AUTHORIZED_RENDER_PROOF"
+      }
+    ],
+    "extractions": [
+      {
+        "extraction_id": "ext-base-r_header",
+        "view_id": "base-page",
+        "region_id": "r_header",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "John 1",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "John 1"
+      },
+      {
+        "extraction_id": "ext-base-r_heading",
+        "view_id": "base-page",
+        "region_id": "r_heading",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "The Light in the Darkness",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "The Light in the Darkness"
+      },
+      {
+        "extraction_id": "ext-base-r_verse_number",
+        "view_id": "base-page",
+        "region_id": "r_verse_number",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "5",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "5"
+      },
+      {
+        "extraction_id": "ext-base-r_canonical",
+        "view_id": "base-page",
+        "region_id": "r_canonical",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "And the light shineth in the darkness; and the darkness apprehended it not.",
+        "canonical_lookup": {
+          "source_handle": "SP01-SRC-003#John.1.5",
+          "text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+          "relationship_to_pixels": "EXACT_VISIBLE_MATCH"
+        },
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "And the light shineth in the darkness; and the darkness apprehended it not."
+      },
+      {
+        "extraction_id": "ext-base-r_note",
+        "view_id": "base-page",
+        "region_id": "r_note",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering.",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering."
+      },
+      {
+        "extraction_id": "ext-base-r_crossref",
+        "view_id": "base-page",
+        "region_id": "r_crossref",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Cross-reference: John 12:35",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "Cross-reference: John 12:35"
+      },
+      {
+        "extraction_id": "ext-base-r_annotation",
+        "view_id": "base-page",
+        "region_id": "r_annotation",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "understand—or overcome?",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "understand—or overcome?"
+      },
+      {
+        "extraction_id": "ext-degraded-r_header",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_header",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "John 1",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "John 1"
+      },
+      {
+        "extraction_id": "ext-degraded-r_heading",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_heading",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "The Light in the Darkness",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "The Light in the Darkness"
+      },
+      {
+        "extraction_id": "ext-degraded-r_verse_number",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_verse_number",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "5",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "5"
+      },
+      {
+        "extraction_id": "ext-degraded-r_canonical",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_canonical",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "PARTIALLY_ILLEGIBLE",
+        "visual_transcription": "And the light shineth in the darkness; and the darkness [illegible].",
+        "canonical_lookup": {
+          "source_handle": "SP01-SRC-003#John.1.5",
+          "text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+          "relationship_to_pixels": "LOOKUP_NOT_VISUAL_TRANSCRIPTION",
+          "obscured_visual_span": "apprehended it not"
+        },
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "And the light shineth in the darkness; and the darkness apprehended it not."
+      },
+      {
+        "extraction_id": "ext-degraded-r_note",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_note",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering.",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "Study note: The verb translated “apprehended” can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with “hasn’t overcome it.” This note does not establish one exclusive rendering."
+      },
+      {
+        "extraction_id": "ext-degraded-r_crossref",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_crossref",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Cross-reference: John 12:35",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "Cross-reference: John 12:35"
+      },
+      {
+        "extraction_id": "ext-degraded-r_annotation",
+        "view_id": "degraded-illegibility-v1",
+        "region_id": "r_annotation",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "visual_legibility": "PARTIALLY_ILLEGIBLE",
+        "visual_transcription": "[partially illegible user annotation]",
+        "canonical_lookup": null,
+        "ocr_or_vlm_used": false,
+        "scorer_only_underlying_text": "understand—or overcome?"
+      }
+    ]
+  },
+  "renderer_activation_bindings_required": {
+    "reason": "This design turn is forbidden from generating a page; realized raster hashes cannot honestly be frozen before an authorized pinned render.",
+    "must_be_selected_by_chatgpt_before_implementation": [
+      "exact renderer container image and digest",
+      "exact Python and Pillow versions",
+      "exact FreeType, libpng, and zlib versions",
+      "exact Source Serif 4 Regular and Italic object SHA-256 values",
+      "exact OFL object SHA-256 value",
+      "canonical PNG encoder settings and allowed chunk order"
+    ],
+    "must_be_frozen_after_two_identical_authorized_renders": [
+      "base-page PNG SHA-256",
+      "degraded-illegibility-v1 PNG SHA-256",
+      "realized fixture identity and fixture canonical SHA-256"
+    ],
+    "sol_selection_authority": "NONE"
+  },
+  "raster_contract": {
+    "format": "PNG",
+    "color_type": "TRUECOLOR_RGB",
+    "bit_depth": 8,
+    "alpha": false,
+    "color_space": "sRGB",
+    "physical_resolution": {
+      "pixels_per_meter_x": 7874,
+      "pixels_per_meter_y": 7874,
+      "unit": "METER"
+    },
+    "allowed_chunks_in_order": [
+      "IHDR",
+      "sRGB",
+      "pHYs",
+      "IDAT",
+      "IEND"
+    ],
+    "forbidden_metadata": [
+      "tIME",
+      "tEXt",
+      "zTXt",
+      "iTXt",
+      "eXIf",
+      "private identifiers"
+    ],
+    "byte_identity": "SHA-256 of exact PNG bytes",
+    "base_and_degraded_dimensions_must_match": true
+  },
+  "ground_truth_boundary": {
+    "generation_method": "EXACT_PROJECT_AUTHORED_SCENE_GRAPH",
+    "ocr_used": false,
+    "vlm_used": false,
+    "model_used": false,
+    "recognition_hypotheses_created": false,
+    "subject_input": "Raster only, plus explicitly authorized deterministic tools in later benchmark execution.",
+    "scorer_only_fields": [
+      "underlying region text",
+      "degradation masks",
+      "exact region classes",
+      "expected visual extraction"
+    ],
+    "canonical_lookup_rule": "A canonical lookup may provide exact ASV wording but must remain labeled as lookup evidence and may not be described as visually read from an obscured raster."
+  },
+  "rights_and_public_display": {
+    "page_status": "PROJECT_AUTHORED_SYNTHETIC_DERIVATIVE",
+    "public_safe_candidate": true,
+    "historical_or_publisher_page_claim": "PROHIBITED",
+    "canonical_text": {
+      "source": "American Standard Version (1901), openbibleinfo digital USX edition",
+      "rights": "PUBLIC_DOMAIN",
+      "display_scope": "John 1:5 only"
+    },
+    "font": {
+      "source": "Source Serif 4 release 4.005R",
+      "rights": "SIL Open Font License 1.1",
+      "font_files_in_design_package": false,
+      "font_files_in_public_page_bundle": false,
+      "glyph_rendering_permitted": true
+    },
+    "paratext_and_annotation": "PROJECT_AUTHORED",
+    "required_label": "Synthetic demonstration page — not a historical facsimile or published study Bible.",
+    "required_attribution_bundle": [
+      "American Standard Version (1901), openbibleinfo digital USX edition; public domain.",
+      "Source Serif 4 4.005R; SIL Open Font License 1.1.",
+      "Synthetic page created by Biblical Scholar Lab; not a historical facsimile or published study Bible."
+    ],
+    "prohibited_distribution": [
+      "Source Serif font files through this design package",
+      "full T04 packet or source corpus",
+      "owner database credentials or rows beyond public-safe identifiers"
+    ]
+  },
+  "publication_design": {
+    "future_cli": "bsl page john-1-5-synthetic-fixture --archive-root <path> [--dry-run]",
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab",
+    "object_paths": {
+      "base_raster": "objects/sha256/<base-prefix>/<base-png-sha256>",
+      "degraded_raster": "objects/sha256/<degraded-prefix>/<degraded-png-sha256>",
+      "fixture_json": "objects/sha256/<fixture-prefix>/<fixture-json-sha256>"
+    },
+    "snapshot_path": "snapshots/page/john-1-5-synthetic-fixture.json",
+    "receipt_path": "manifests/page/john-1-5-synthetic-fixture/page-fixture-receipt.json",
+    "stage_path": ".incoming/john-1-5-synthetic-fixture-<fixture-json-sha256>.page-stage",
+    "link_order": [
+      "base raster object",
+      "degraded raster object",
+      "fixture JSON object",
+      "fixture snapshot",
+      "receipt last"
+    ],
+    "commit_marker": "receipt linked last",
+    "recoverable_exact_states": [
+      "base raster object only",
+      "both raster objects only",
+      "raster objects plus fixture JSON object",
+      "raster objects plus fixture object and snapshot",
+      "complete publication plus stale exact own stage"
+    ],
+    "fail_closed_states": [
+      "mismatched raster object",
+      "mismatched fixture object or snapshot",
+      "receipt without all prerequisites",
+      "mismatched exact stage",
+      "changed existing fixture"
+    ],
+    "unrelated_incoming_policy": "PRESERVE_AND_IGNORE; never inspect as page evidence, incorporate, or delete",
+    "implementation_turn_canonical_archive_mode": "NO-WRITE REAL RENDER PROOF ONLY",
+    "live_publication_authority": "SEPARATE OWNER OPERATIONAL AUTHORIZATION REQUIRED"
+  },
+  "benchmark_boundary": {
+    "batch_id": "BENCH-VS01-BATCH-01",
+    "execution_authorized": false,
+    "cases": [
+      {
+        "case_id": "VS01-B09-C01",
+        "fixture_handle": "SP01-DER-002#base-page",
+        "evidence_contract": "EC-VS01-05-PAGE-BASE",
+        "subject_receives": [
+          "base-page PNG",
+          "later-authorized deterministic canonical lookup"
+        ],
+        "scorer_receives": [
+          "exact region map",
+          "authority classes",
+          "base extraction records"
+        ],
+        "required_behavior": "Identify only r_canonical as canonical Scripture text; treat the verse number as an address marker and all remaining regions as noncanonical; quote exact ASV text."
+      },
+      {
+        "case_id": "VS01-B10-C01",
+        "fixture_handle": "SP01-DER-002#degraded-illegibility-v1",
+        "evidence_contract": "EC-VS01-06-PAGE-DEGRADED",
+        "subject_receives": [
+          "degraded PNG",
+          "later-authorized deterministic canonical lookup"
+        ],
+        "scorer_receives": [
+          "degradation masks",
+          "degraded extraction records",
+          "underlying scorer-only text"
+        ],
+        "required_behavior": "Render the obscured visual phrase as [illegible], identify full ASV wording only as canonical lookup, and do not invent obscured annotation text."
+      }
+    ],
+    "fixture_generation_does_not": [
+      "execute the benchmark",
+      "implement a scorer",
+      "invoke OCR or VLM",
+      "expose scorer-only ground truth to a benchmark subject",
+      "change frozen benchmark case content"
+    ]
+  },
+  "validation_and_adversarial_tests": [
+    "Reject any canvas other than 1600x2200, 200 PPI, RGB8 sRGB.",
+    "Reject any region ID, text, benchmark role, functional class, authority class, pixel bbox, normalized bbox, source binding, or reading-order mutation.",
+    "Require exactly seven regions and exactly one CANONICAL_SCRIPTURE region.",
+    "Require the verse number to remain CANONICAL_ADDRESS_MARKER rather than canonical wording.",
+    "Reject a heading, note, cross-reference, header, or annotation marked canonical.",
+    "Reject any normalized bbox that does not recompute from the exact pixel bbox at six decimal places.",
+    "Reject out-of-bounds or negative geometry and unauthorized region overlap or hierarchy cycles.",
+    "Reject any text line, manual line break, font face, size, color, draw position, or display-only graphic mutation.",
+    "Reject a Source Serif object, release, face, or license mismatch and reject any scholarly-evidence role for the font.",
+    "Reject any real or copyrighted page input and any claim that the fixture is historical or publisher-produced.",
+    "Require two base renders and two degraded renders in the exact pinned renderer to be byte-identical.",
+    "Require PNG dimensions, color type, chunk order, physical resolution, and forbidden-metadata absence.",
+    "Reject a degraded view that changes geometry, source text, region IDs, reading order, or authority classes.",
+    "Require seed 150105, exact sigma 18.0 target span, and exact 55-percent annotation glare mask.",
+    "Reject a degraded extraction that claims visually reading “apprehended it not” or the obscured annotation.",
+    "Require canonical lookup text to be labeled LOOKUP_NOT_VISUAL_TRANSCRIPTION.",
+    "Require all extraction records to say OCR/VLM/model used = false.",
+    "Require B09 and B10 loader fixtures to expose raster to the subject while withholding scorer-only ground truth.",
+    "Dry run writes no canonical archive file and creates no page publication path or own stage.",
+    "Fixture publication tests in a temporary archive cover receipt-last order, exact partial recovery, idempotency, mismatch refusal, mode 0444, and unrelated-stage preservation.",
+    "A read-only implementation proof must verify the exact T04 packet/receipt and the exact persisted T05 run without changing either authority.",
+    "No T05 database row, T04 object, T03 artifact, source object other than exact T04-bound Source Serif assets, or canonical archive path is modified.",
+    "No OCR, VLM, model, benchmark, network, web UI, retrieval, embedding, cloud, training, or billable operation occurs."
+  ],
+  "real_rendering_proof_and_visual_review": {
+    "implementation_evidence_required": [
+      "two clean base renders with identical PNG bytes and SHA-256",
+      "two clean degraded renders with identical PNG bytes and SHA-256",
+      "exact fixture JSON and canonical identity",
+      "font object and renderer stack hashes",
+      "pixel-level region overlay image for review, generated as ignored public-safe evidence",
+      "100-percent and 200-percent previews of base and degraded views",
+      "pre/post T04 authority fingerprints and read-only T05 run verification",
+      "zero archive writes and zero database writes"
+    ],
+    "chatgpt_visual_acceptance": [
+      "no clipping, collision, missing glyph, or text outside its frozen region",
+      "canonical text is exact and visually distinct from paratext",
+      "verse number is distinct from canonical wording",
+      "study note, cross-reference, header, heading, and annotation are visibly distinguishable",
+      "base page is clean and legible at 100 percent",
+      "degraded canonical final phrase is not legible at 100 or 200 percent while the preceding text remains legible",
+      "degraded annotation is visibly partial and cannot support invented hidden text",
+      "layout does not imitate a recognizable commercial study Bible",
+      "synthetic status and rights metadata are present in the fixture and receipt"
+    ],
+    "visual_review_is_not": "OCR/VLM ground-truth generation; it is human inspection of a deterministic authored fixture."
+  },
+  "implementation_budgets": {
+    "handwritten_active_lines_target": 1250,
+    "handwritten_active_lines_hard_limit": 1750,
+    "handwritten_production_files_hard_limit": 6,
+    "new_public_contracts_hard_limit": 4,
+    "new_direct_dependencies_hard_limit": 1,
+    "new_migrations_hard_limit": 0,
+    "new_task_specific_workflows_hard_limit": 1,
+    "function_logical_lines_hard_limit": 60,
+    "cyclomatic_complexity_hard_limit": 10,
+    "nesting_hard_limit": 3,
+    "production_class_logical_lines_hard_limit": 250,
+    "production_module_logical_lines_hard_limit": 500
+  },
+  "non_goals": [
+    "No Codex implementation or implementation activation in this design turn.",
+    "No raster, page, overlay, preview, or canonical archive artifact generation in this design turn.",
+    "No page publication or page database persistence.",
+    "No OCR, ATR, HTR, VLM, or model inference.",
+    "No real page, copyrighted page, user upload, PDF, photograph, or screenshot ingestion.",
+    "No benchmark execution, scorer, result, promotion claim, or case-content mutation.",
+    "No T04 mutation, T05 row mutation, new database migration, or runtime-row creation.",
+    "No web UI, retrieval, embedding, cloud, Lambda, training, evaluation, or billable action.",
+    "No generic page-understanding engine, OCR pipeline, layout model, multimodal harness, plugin architecture, or future-page generalization.",
+    "No VS01-T07 or later implementation."
+  ]
+}
