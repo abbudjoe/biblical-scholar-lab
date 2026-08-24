@@ -1,0 +1,33 @@
+{
+  "package_id": "BSL-VS01-T06-FROZEN-DESIGN",
+  "design_id": "VS01-T06",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T06_DESIGN",
+  "approval_date": "2026-08-23",
+  "base_main_sha": "58f51798b385df9ba0216147e1a4db2864b468aa",
+  "base_tree_sha": "d44a44f1e21232dd9acb515647fc3764071c83b4",
+  "required_upstream": {
+    "t04_packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+    "t04_packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+    "t05_canonical_run_id": "01a030a1-c3ca-76f6-b4c8-f74392e2cd91"
+  },
+  "scene_spec_identity": "ed19a7d564a00da054a26347f750b799e4a2b489412bd47c6159d1ca2097bcea",
+  "spec_sha256": "dd76d124b0ab9c42cb3551e1afd5a9e0326ac402977ae3f4625d9092fd80b285",
+  "implementation_authorized": false,
+  "page_generation_authorized": false,
+  "archive_publication_authorized": false,
+  "ocr_vlm_or_model_authorized": false,
+  "benchmark_execution_authorized": false,
+  "files": [
+    {
+      "path": "VS01-T06-synthetic-page-region-grounding.md",
+      "sha256": "188915da1f62812bf88eb9c5168dc07246b0a411990857663b12d1b7446eca8c",
+      "bytes": 13359
+    },
+    {
+      "path": "VS01-T06-page-fixture-spec.json",
+      "sha256": "dd76d124b0ab9c42cb3551e1afd5a9e0326ac402977ae3f4625d9092fd80b285",
+      "bytes": 38329
+    }
+  ]
+}

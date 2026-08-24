@@ -11,6 +11,7 @@ from typing import NoReturn
 from bsl.application.archive_initialization import initialize_archive
 from bsl.application.john15_evidence import generate_john15_evidence
 from bsl.application.john15_normalization import normalize_john15
+from bsl.application.john15_page_fixture import generate_john15_page_fixture
 from bsl.application.john15_study_runtime import execute_john15_study
 from bsl.application.source_acquisition import acquire_source
 from bsl.application.source_admission import compile_source_plan
@@ -65,6 +66,11 @@ def _parser() -> JsonArgumentParser:
     john_study.add_argument("--archive-root", required=True, type=Path)
     john_study.add_argument("--render", required=True, choices=("brief", "study", "both"))
     john_study.add_argument("--dry-run", action="store_true")
+    page = commands.add_parser("page")
+    page_commands = page.add_subparsers(dest="page_command", required=True)
+    fixture = page_commands.add_parser("john-1-5-synthetic-fixture")
+    fixture.add_argument("--archive-root", required=True, type=Path)
+    fixture.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -159,6 +165,21 @@ def _study(args: argparse.Namespace) -> int:
     return 0
 
 
+def _page(args: argparse.Namespace) -> int:
+    if args.page_command != "john-1-5-synthetic-fixture":
+        return _emit_error("INVALID_CLI_INPUT", "unsupported page command")
+    result = generate_john15_page_fixture(args.archive_root, dry_run=args.dry_run)
+    output = {
+        "fixture_identity": result.fixture.fixture_identity,
+        "raster_assets": result.fixture.raster_assets,
+        "receipt": result.receipt.model_dump(mode="json"),
+        "published": result.published,
+        "verified_existing": result.verified_existing,
+    }
+    print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     try:
         args = _parser().parse_args(argv)
@@ -172,6 +193,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _evidence(args)
         if args.command == "study":
             return _study(args)
+        if args.command == "page":
+            return _page(args)
         return _emit_error("INVALID_CLI_INPUT", "unsupported command")
     except CliInputError as exc:
         return _emit_error("INVALID_CLI_INPUT", str(exc))

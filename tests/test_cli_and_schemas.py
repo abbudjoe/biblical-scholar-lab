@@ -26,6 +26,12 @@ from bsl.contracts.evidence import (
     John15TranslationNuanceEvidenceReceipt,
 )
 from bsl.contracts.normalization import John15NormalizationBundle, NormalizationReceipt
+from bsl.contracts.page_fixture import (
+    John15PageExtractionGroundTruth,
+    John15PageRegionGroundTruth,
+    John15SyntheticPageFixture,
+    John15SyntheticPagePublicationReceipt,
+)
 from bsl.contracts.runtime import (
     John15RuntimeAuditReceipt,
     John15StudyAnswerArtifact,
@@ -77,6 +83,22 @@ SCHEMAS = (
     (
         ROOT / "contracts/json-schema/runtime/john-15-runtime-audit-receipt.schema.json",
         John15RuntimeAuditReceipt,
+    ),
+    (
+        ROOT / "contracts/json-schema/page/john-15-synthetic-page-fixture.schema.json",
+        John15SyntheticPageFixture,
+    ),
+    (
+        ROOT / "contracts/json-schema/page/john-15-page-region-ground-truth.schema.json",
+        John15PageRegionGroundTruth,
+    ),
+    (
+        ROOT / "contracts/json-schema/page/john-15-page-extraction-ground-truth.schema.json",
+        John15PageExtractionGroundTruth,
+    ),
+    (
+        ROOT / "contracts/json-schema/page/john-15-synthetic-page-publication-receipt.schema.json",
+        John15SyntheticPagePublicationReceipt,
     ),
 )
 

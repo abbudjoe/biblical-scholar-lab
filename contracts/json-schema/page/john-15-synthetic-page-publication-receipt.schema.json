@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "UUIDv7 receipt for dry-run validation or receipt-last publication.",
+  "properties": {
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "archive_writes": {
+      "minimum": 0,
+      "title": "Archive Writes",
+      "type": "integer"
+    },
+    "authority_fingerprint_after": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Authority Fingerprint After",
+      "type": "string"
+    },
+    "authority_fingerprint_before": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Authority Fingerprint Before",
+      "type": "string"
+    },
+    "base_png_sha256": {
+      "const": "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb"
+    },
+    "benchmark_executions": {
+      "const": 0,
+      "title": "Benchmark Executions",
+      "type": "integer"
+    },
+    "contract": {
+      "const": "John15SyntheticPagePublicationReceipt",
+      "default": "John15SyntheticPagePublicationReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "database_writes": {
+      "const": 0,
+      "title": "Database Writes",
+      "type": "integer"
+    },
+    "degraded_png_sha256": {
+      "const": "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "PUBLISHED",
+        "VERIFIED_EXISTING"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "fixture_identity": {
+      "const": "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"
+    },
+    "fixture_json_sha256": {
+      "const": "c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "model_invocations": {
+      "const": 0,
+      "title": "Model Invocations",
+      "type": "integer"
+    },
+    "ocr_invocations": {
+      "const": 0,
+      "title": "Ocr Invocations",
+      "type": "integer"
+    },
+    "publication_paths": {
+      "const": [
+        "objects/sha256/2c/2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb",
+        "objects/sha256/cb/cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce",
+        "objects/sha256/c8/c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f",
+        "snapshots/page/john-1-5-synthetic-fixture.json",
+        "manifests/page/john-1-5-synthetic-fixture/page-fixture-receipt.json"
+      ]
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "raw_non_font_source_reads": {
+      "const": 0,
+      "title": "Raw Non Font Source Reads",
+      "type": "integer"
+    },
+    "receipt_identity": {
+      "format": "uuid",
+      "title": "Receipt Identity",
+      "type": "string"
+    },
+    "renderer_authority_sha256": {
+      "const": "3ac7df8910bf4ea6a630a8f5e222483541121458620a80edf5bab20d067623de"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    },
+    "vlm_invocations": {
+      "const": 0,
+      "title": "Vlm Invocations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "receipt_identity",
+    "generated_at",
+    "implementation_commit",
+    "archive_root",
+    "disposition",
+    "dry_run",
+    "fixture_identity",
+    "fixture_json_sha256",
+    "base_png_sha256",
+    "degraded_png_sha256",
+    "renderer_authority_sha256",
+    "publication_paths",
+    "authority_fingerprint_before",
+    "authority_fingerprint_after",
+    "archive_writes",
+    "database_writes",
+    "raw_non_font_source_reads",
+    "ocr_invocations",
+    "vlm_invocations",
+    "model_invocations",
+    "benchmark_executions",
+    "published",
+    "verified_existing"
+  ],
+  "title": "John15SyntheticPagePublicationReceipt",
+  "type": "object"
+}

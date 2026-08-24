@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_header",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_header",
+        "scorer_only_underlying_text": "John 1",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "John 1"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_heading",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_heading",
+        "scorer_only_underlying_text": "The Light in the Darkness",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "The Light in the Darkness"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_verse_number",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_verse_number",
+        "scorer_only_underlying_text": "5",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "5"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": {
+          "relationship_to_pixels": "EXACT_VISIBLE_MATCH",
+          "source_handle": "SP01-SRC-003#John.1.5",
+          "text": "And the light shineth in the darkness; and the darkness apprehended it not."
+        },
+        "extraction_id": "ext-base-r_canonical",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_canonical",
+        "scorer_only_underlying_text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "And the light shineth in the darkness; and the darkness apprehended it not."
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_note",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_note",
+        "scorer_only_underlying_text": "Study note: The verb translated \u201capprehended\u201d can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with \u201chasn\u2019t overcome it.\u201d This note does not establish one exclusive rendering.",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Study note: The verb translated \u201capprehended\u201d can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with \u201chasn\u2019t overcome it.\u201d This note does not establish one exclusive rendering."
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_crossref",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_crossref",
+        "scorer_only_underlying_text": "Cross-reference: John 12:35",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Cross-reference: John 12:35"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-base-r_annotation",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_annotation",
+        "scorer_only_underlying_text": "understand\u2014or overcome?",
+        "view_id": "base-page",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "understand\u2014or overcome?"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_header",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_header",
+        "scorer_only_underlying_text": "John 1",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "John 1"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_heading",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_heading",
+        "scorer_only_underlying_text": "The Light in the Darkness",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "The Light in the Darkness"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_verse_number",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_verse_number",
+        "scorer_only_underlying_text": "5",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "5"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": {
+          "obscured_visual_span": "apprehended it not",
+          "relationship_to_pixels": "LOOKUP_NOT_VISUAL_TRANSCRIPTION",
+          "source_handle": "SP01-SRC-003#John.1.5",
+          "text": "And the light shineth in the darkness; and the darkness apprehended it not."
+        },
+        "extraction_id": "ext-degraded-r_canonical",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_canonical",
+        "scorer_only_underlying_text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "PARTIALLY_ILLEGIBLE",
+        "visual_transcription": "And the light shineth in the darkness; and the darkness [illegible]."
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_note",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_note",
+        "scorer_only_underlying_text": "Study note: The verb translated \u201capprehended\u201d can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with \u201chasn\u2019t overcome it.\u201d This note does not establish one exclusive rendering.",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Study note: The verb translated \u201capprehended\u201d can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with \u201chasn\u2019t overcome it.\u201d This note does not establish one exclusive rendering."
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_crossref",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_crossref",
+        "scorer_only_underlying_text": "Cross-reference: John 12:35",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "LEGIBLE",
+        "visual_transcription": "Cross-reference: John 12:35"
+      }
+    },
+    {
+      "const": {
+        "canonical_lookup": null,
+        "extraction_id": "ext-degraded-r_annotation",
+        "ground_truth_method": "AUTHOR_SUPPLIED_SCENE_GRAPH_PLUS_DEGRADATION_MASK",
+        "ocr_or_vlm_used": false,
+        "region_id": "r_annotation",
+        "scorer_only_underlying_text": "understand\u2014or overcome?",
+        "view_id": "degraded-illegibility-v1",
+        "visual_legibility": "PARTIALLY_ILLEGIBLE",
+        "visual_transcription": "[partially illegible user annotation]"
+      }
+    }
+  ],
+  "title": "John15PageExtractionGroundTruth"
+}

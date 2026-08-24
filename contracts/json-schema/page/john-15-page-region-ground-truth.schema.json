@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "const": {
+        "authority_class": "EDITORIAL_PARATEXT",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 1,
+        "benchmark_role": "PAGE_HEADER",
+        "functional_class": "RUNNING_HEADER",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.036364",
+          "0.925000",
+          "0.086364"
+        ],
+        "parent_group_id": "g_page",
+        "pixel_bbox_xywh": [
+          120,
+          80,
+          1360,
+          110
+        ],
+        "region_id": "r_header",
+        "source_binding": "PROJECT_AUTHORED_PAGE_PARATEXT",
+        "style_id": "style_header",
+        "text": "John 1",
+        "z_index": 10
+      }
+    },
+    {
+      "const": {
+        "authority_class": "EDITORIAL_PARATEXT",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 2,
+        "benchmark_role": "SECTION_HEADING",
+        "functional_class": "SECTION_HEADING",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.113636",
+          "0.925000",
+          "0.181818"
+        ],
+        "parent_group_id": "g_page",
+        "pixel_bbox_xywh": [
+          120,
+          250,
+          1360,
+          150
+        ],
+        "region_id": "r_heading",
+        "source_binding": "PROJECT_AUTHORED_PAGE_PARATEXT",
+        "style_id": "style_heading",
+        "text": "The Light in the Darkness",
+        "z_index": 20
+      }
+    },
+    {
+      "const": {
+        "authority_class": "CANONICAL_ADDRESS_MARKER",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 3,
+        "benchmark_role": "VERSE_NUMBER",
+        "functional_class": "VERSE_NUMBER",
+        "normalized_bbox_xyxy": [
+          "0.075000",
+          "0.227273",
+          "0.118750",
+          "0.268182"
+        ],
+        "parent_group_id": "g_scripture",
+        "pixel_bbox_xywh": [
+          120,
+          500,
+          70,
+          90
+        ],
+        "region_id": "r_verse_number",
+        "source_binding": "SP01-SRC-003#John.1.5/address",
+        "style_id": "style_verse_number",
+        "text": "5",
+        "z_index": 30
+      }
+    },
+    {
+      "const": {
+        "authority_class": "TRANSLATION_TEXT",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 4,
+        "benchmark_role": "CANONICAL_TEXT",
+        "canonicality": "CANONICAL_SCRIPTURE",
+        "functional_class": "VERSE_TEXT",
+        "normalized_bbox_xyxy": [
+          "0.137500",
+          "0.213636",
+          "0.862500",
+          "0.340909"
+        ],
+        "parent_group_id": "g_scripture",
+        "pixel_bbox_xywh": [
+          220,
+          470,
+          1160,
+          280
+        ],
+        "region_id": "r_canonical",
+        "source_binding": "SP01-SRC-003#John.1.5",
+        "style_id": "style_canonical",
+        "t04_evidence_id": "EV-T04-ASV-001",
+        "text": "And the light shineth in the darkness; and the darkness apprehended it not.",
+        "z_index": 31
+      }
+    },
+    {
+      "const": {
+        "authority_class": "STUDY_CONTENT",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 5,
+        "benchmark_role": "STUDY_NOTE_OR_FOOTNOTE",
+        "functional_class": "STUDY_NOTE",
+        "normalized_bbox_xyxy": [
+          "0.112500",
+          "0.422727",
+          "0.887500",
+          "0.568182"
+        ],
+        "parent_group_id": "g_paratext",
+        "pixel_bbox_xywh": [
+          180,
+          930,
+          1240,
+          320
+        ],
+        "region_id": "r_note",
+        "source_binding": "PROJECT_AUTHORED_FROM_T04",
+        "style_id": "style_note",
+        "t04_claim_bindings": [
+          "CLM-T04-030",
+          "CLM-T04-050",
+          "CLM-T04-060"
+        ],
+        "text": "Study note: The verb translated \u201capprehended\u201d can express grasping or seizing. WEB Classic makes the conflict-oriented effect explicit with \u201chasn\u2019t overcome it.\u201d This note does not establish one exclusive rendering.",
+        "z_index": 40
+      }
+    },
+    {
+      "const": {
+        "authority_class": "EDITORIAL_PARATEXT",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 6,
+        "benchmark_role": "CROSS_REFERENCE",
+        "functional_class": "CROSS_REFERENCE",
+        "normalized_bbox_xyxy": [
+          "0.112500",
+          "0.600000",
+          "0.500000",
+          "0.636364"
+        ],
+        "parent_group_id": "g_paratext",
+        "pixel_bbox_xywh": [
+          180,
+          1320,
+          620,
+          80
+        ],
+        "region_id": "r_crossref",
+        "source_binding": "PROJECT_AUTHORED_FROM_T04",
+        "style_id": "style_crossref",
+        "t04_evidence_id": "EV-T04-LEX-002",
+        "text": "Cross-reference: John 12:35",
+        "z_index": 50
+      }
+    },
+    {
+      "const": {
+        "annotation_target_region_id": "r_canonical",
+        "authority_class": "USER_ANNOTATION",
+        "base_legibility": "LEGIBLE",
+        "benchmark_reading_order_index": 7,
+        "benchmark_role": "USER_ANNOTATION",
+        "functional_class": "USER_HANDWRITING",
+        "normalized_bbox_xyxy": [
+          "0.537500",
+          "0.681818",
+          "0.862500",
+          "0.750000"
+        ],
+        "parent_group_id": "g_annotation",
+        "pixel_bbox_xywh": [
+          860,
+          1500,
+          520,
+          150
+        ],
+        "region_id": "r_annotation",
+        "source_binding": "PROJECT_AUTHORED_SYNTHETIC_ANNOTATION",
+        "style_id": "style_annotation",
+        "text": "understand\u2014or overcome?",
+        "z_index": 100
+      }
+    }
+  ],
+  "title": "John15PageRegionGroundTruth"
+}
