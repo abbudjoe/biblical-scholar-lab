@@ -85,6 +85,26 @@
       "contract": "John15RuntimeAuditReceipt", "schema_version": "1.0", "owning_design": "VS01-T05",
       "schema_path": "contracts/json-schema/runtime/john-15-runtime-audit-receipt.schema.json",
       "owning_task": "VS01-T05", "sha256": "ae52fc813c671037e85eae07428a3f90da03fca6c73274cc68e34631c94d9ab6"
+    },
+    {
+      "contract": "John15SyntheticPageFixture", "schema_version": "1.0", "owning_design": "VS01-T06",
+      "schema_path": "contracts/json-schema/page/john-15-synthetic-page-fixture.schema.json",
+      "owning_task": "VS01-T06", "sha256": "e788f71aceb222fe963b7f75ae001e0be77b15a3d132b58bfaeca60a11384ce1"
+    },
+    {
+      "contract": "John15PageRegionGroundTruth", "schema_version": "1.0", "owning_design": "VS01-T06",
+      "schema_path": "contracts/json-schema/page/john-15-page-region-ground-truth.schema.json",
+      "owning_task": "VS01-T06", "sha256": "4ff10912236932eee3714af520834b856b9af8674b1c627f2de6a48fb741b9aa"
+    },
+    {
+      "contract": "John15PageExtractionGroundTruth", "schema_version": "1.0", "owning_design": "VS01-T06",
+      "schema_path": "contracts/json-schema/page/john-15-page-extraction-ground-truth.schema.json",
+      "owning_task": "VS01-T06", "sha256": "00c47b14580b28b364fb3200d6fd7e0e3b0f817466e717a47498482f834b0175"
+    },
+    {
+      "contract": "John15SyntheticPagePublicationReceipt", "schema_version": "1.0", "owning_design": "VS01-T06",
+      "schema_path": "contracts/json-schema/page/john-15-synthetic-page-publication-receipt.schema.json",
+      "owning_task": "VS01-T06", "sha256": "bb56fdc2bd1992e8b63df274a876a16c7497c8f31c0a083f0e13c29bc9873202"
     }
   ]
 }
