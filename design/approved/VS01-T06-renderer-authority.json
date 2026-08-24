@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "VS01-T06-RENDERER-AUTHORITY-v1",
+  "platform": "linux/amd64",
+  "machine": "x86_64",
+  "image": {
+    "reference": "python:3.12.13-slim-bookworm@sha256:d50fb7611f86d04a3b0471b46d7557818d88983fc3136726336b2a4c657aa30b",
+    "index_digest": "sha256:d50fb7611f86d04a3b0471b46d7557818d88983fc3136726336b2a4c657aa30b",
+    "resolved_child_manifest_digest": "sha256:72d3d75f2639ab82b34b29390ad3d6e0827c775befee94edda8e9976818f488d",
+    "image_id": "sha256:a1e028236d55ab8a2ec45d7c693137b5adb5d230baecdbae4f9f75cf51b6ce66"
+  },
+  "python_version": "3.12.13",
+  "pillow": {
+    "version": "12.3.0",
+    "source_commit": "bb1d8e8ab8d29048624d96e3ee53cecf7c13d13d",
+    "wheel_name": "pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+    "wheel_sha256": "78cb2c6865a35ab8ff8b75fd122f6033b92a62c82801110e48ddd6c936a45d91"
+  },
+  "libraries": {
+    "freetype_version": "2.14.3",
+    "libpng_exposed_by_pillow": false,
+    "libpng_version": null,
+    "pillow_zlib_version": "1.2.13",
+    "zlib_compile_version": "1.2.13",
+    "zlib_runtime_version": "1.2.13"
+  },
+  "t03_authority": {
+    "bundle_identity": "9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32",
+    "bundle_sha256": "397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6",
+    "receipt_id": "01a02a37-79f8-7f29-abf7-a2dd9d7161ba",
+    "receipt_file_sha256": "e4871e859481614da6d4f52e77fa41e35234884b9f5baacad68c4855e2ed6af2",
+    "source_id": "SP01-SRC-006"
+  },
+  "fonts": [
+    {
+      "role": "regular_font",
+      "source_id": "SP01-SRC-006",
+      "relative_path": "TTF/SourceSerif4-Regular.ttf",
+      "container_path": "/fonts/TTF/SourceSerif4-Regular.ttf",
+      "sha256": "e5a4ee6a3d87bb9024796be390c6771e2a0eb1883dae25effaf57ca01668e24b",
+      "byte_count": 261868,
+      "rights_evidence": false,
+      "regular_file": true,
+      "symlink": false,
+      "mode": "0444"
+    },
+    {
+      "role": "italic_font",
+      "source_id": "SP01-SRC-006",
+      "relative_path": "TTF/SourceSerif4-It.ttf",
+      "container_path": "/fonts/TTF/SourceSerif4-It.ttf",
+      "sha256": "9d2950a8f1da66e21502c35d646a1d2148e79f9ea43fd2158cf02f5232e7f430",
+      "byte_count": 187808,
+      "rights_evidence": false,
+      "regular_file": true,
+      "symlink": false,
+      "mode": "0444"
+    },
+    {
+      "role": "license_object",
+      "source_id": "SP01-SRC-006",
+      "relative_path": "LICENSE.md",
+      "container_path": "/fonts/LICENSE.md",
+      "sha256": "75784a295293a8992f5a8d99210566e0064a012e6dab6731305e3787f15896c7",
+      "byte_count": 4492,
+      "rights_evidence": true,
+      "regular_file": true,
+      "symlink": false,
+      "mode": "0444"
+    }
+  ],
+  "characterization": {
+    "fresh_container_count": 2,
+    "equal_after_excluding_run_label": true,
+    "page_rendering_performed": false
+  }
+}
