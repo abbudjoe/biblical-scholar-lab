@@ -1,0 +1,346 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T08-FULL-RUNTIME-PAIR-v1",
+  "task_id": "VS01-T08",
+  "turn_id": "VS01-T08-SOL-20260825T223355Z",
+  "codex_run_id": "VS01-T08-FULL-RUNTIME-PAIR-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t08-full-runtime-pair",
+  "base_sha": "daa282e1b8a58ccaef117bec386d2a09e2edb4e9",
+  "implementation_head_sha": "371beec86365e30877c6addee45658852e9f5845",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/18",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t08-full-runtime-pair",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Persist the exact approved VS01-T08 authority and implement the four-contract full-runtime evidence acquisition pair, deterministic reference runtime, structured scorer, receipt-last store, reproducible fixtures, and future CLI without executing, scoring, or publishing the real pair.",
+  "acceptance_criteria": [
+    "Persist the exact design and activation in a distinct authority commit before implementation.",
+    "Add exactly four strict public contracts and frozen Draft 2020-12 schemas with registry hashes.",
+    "Compile the real T08 authority read-only while preserving the frozen T07 B08 result at 8 of 8.",
+    "Expose exactly two translations initially and acquire the twelve-record T04 packet through seven audited calls.",
+    "Bind the fifteen claims, ten citations, seven answer blocks, fifteen states, and seventeen events without hidden-evidence leakage.",
+    "Implement structured paired scoring, immutable correction lineage, and receipt-last temporary-store behavior.",
+    "Generate both public-safe fixtures twice with byte-identical output.",
+    "Execute only synthetic runtime pairs and temporary stores; keep every real operational counter at zero.",
+    "Pass two complete exact-implementation-head validation runs with PostgreSQL 18.6 and branch coverage at or above 90 percent."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-02",
+      "DR-06",
+      "DR-16",
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "SOURCE-PLAN-01",
+      "BENCH-VS01-BATCH-01",
+      "VS01-T04",
+      "VS01-T05",
+      "VS01-T06",
+      "VS01-T07-R01",
+      "VS01-T08",
+      "VS01-T08-FULL-RUNTIME-PAIR-v1",
+      "VS01-B08-RUNTIME-C01"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "kind": "authority",
+      "commit": "a6483b6d03041adb1af287a833814070e010742b",
+      "tree": "64b0d63bdd77492f7c41cade8e936a3acbf2d5d0",
+      "result": "Approved design, case, specification, manifest, checksums, and activation persisted byte-for-byte before implementation."
+    },
+    {
+      "kind": "contracts",
+      "result": "Exactly four strict top-level Pydantic contracts and four Draft 2020-12 schemas added and registered."
+    },
+    {
+      "kind": "application",
+      "result": "Real-authority compiler, translations-only projection, seven-call broker, deterministic reference runtime, correction rerun, and structured conformance scorer implemented."
+    },
+    {
+      "kind": "infrastructure",
+      "result": "Narrow hardened receipt-last runtime screening store added and exercised only against temporary synthetic archives."
+    },
+    {
+      "kind": "interface",
+      "result": "Exact future CLI bsl benchmark vs01-b08-runtime-pair --subject deterministic-runtime [--dry-run] added but not invoked."
+    },
+    {
+      "kind": "fixtures",
+      "result": "Translations-only projection and reference-runtime fixtures generated twice byte-identically."
+    }
+  ],
+  "review_targets": [
+    {
+      "target": "Four-contract authority binding",
+      "expected": "RFC 8785 semantic identities reject changes hidden behind recomputed outer identities in both Pydantic and Draft 2020-12 validation."
+    },
+    {
+      "target": "Subject firewall and broker boundary",
+      "expected": "Two initial translations only; exact seven calls; no direct archive, database, scorer, hidden evidence, model, OCR, VLM, or network access."
+    },
+    {
+      "target": "Structured hard-failure control plane",
+      "expected": "All eleven activated failures derive from typed run records and independently affect deterministic scoring."
+    },
+    {
+      "target": "Real-authority guard",
+      "expected": "Authority verification and compilation only; zero real subjects, broker calls, scorings, runs, results, receipts, publications, or writes."
+    },
+    {
+      "target": "Correction semantics",
+      "expected": "A correction performs a fresh broker-backed acquisition and links a new immutable revision without cloning or overwriting the prior run."
+    }
+  ],
+  "commands": [
+    {
+      "command": "uv sync --frozen",
+      "result": "PASS twice; 22 packages checked."
+    },
+    {
+      "command": "uv lock --check",
+      "result": "PASS twice; 24 packages resolved without lock mutation."
+    },
+    {
+      "command": "uv run ruff format --check . && uv run ruff check .",
+      "result": "PASS twice; 139 files formatted and no lint failures."
+    },
+    {
+      "command": "uv run pyright",
+      "result": "PASS twice; 0 errors and 0 warnings."
+    },
+    {
+      "command": "uv run pytest tests/test_vs01_runtime_screening.py",
+      "result": "PASS twice; 26 passed and 4 optional-validator skips."
+    },
+    {
+      "command": "uv run --with jsonschema==4.25.1 pytest tests/test_vs01_runtime_screening.py",
+      "result": "PASS twice after repairing the adversary's JSON construction; 30 passed and zero skips; no dependency or lockfile mutation."
+    },
+    {
+      "command": "BSL_TEST_DATABASE_URL=<REDACTED_DISPOSABLE_DATABASE> uv run pytest --cov=bsl --cov-branch --cov-report=term-missing --cov-fail-under=90 -q",
+      "result": "PASS twice; 565 passed, 18 optional-validator skips, 90.27 percent branch-aware coverage; all 27 PostgreSQL tests ran."
+    },
+    {
+      "command": "uv run pytest tests/test_cli_and_schemas.py::test_schema_generation_has_no_drift_and_registry_hashes_match",
+      "result": "PASS twice; one test passed."
+    },
+    {
+      "command": "git diff --check && git fsck --full",
+      "result": "PASS twice; object database valid with pre-existing unreachable dangling objects only."
+    },
+    {
+      "command": "bsl benchmark vs01-b08-runtime-pair --subject deterministic-runtime",
+      "result": "NOT INVOKED, as prohibited by the activation."
+    }
+  ],
+  "evaluations": [
+    {
+      "name": "synthetic_reference_replay",
+      "result": "PASS",
+      "run_identity": "53bcb0a4aa1a9e24ac720ee657748568a2f6f05e7184d87ab452175129cf05bc",
+      "pair_result_identity": "6a176eb7524ebd561a18d30f7525e08a01c53f5a0943f8d8e64a787cd162d9db",
+      "score": "8/8 fixed; 28/28 runtime; 36/36 pair",
+      "shape": "7 calls; 12 evidence; 15 claims; 10 citations; 7 answer blocks; 15 states; 17 events",
+      "replays_equal": true
+    },
+    {
+      "name": "hard_failure_adversaries",
+      "result": "PASS",
+      "detected": [
+        "EARLY_UNGROUNDED_ANSWER",
+        "HIDDEN_EVIDENCE_ACCESS",
+        "AVAILABLE_EVIDENCE_NOT_ACQUIRED",
+        "UNAUTHORIZED_SOURCE_OR_RAW_READ",
+        "TRANSLATION_AS_MANUSCRIPT_WITNESS",
+        "FALSE_TEXTUAL_VARIANT_CERTAINTY",
+        "MORPHOLOGY_OR_LEXICON_OVERCLAIM",
+        "TOOL_OR_EVENT_FABRICATION",
+        "CLAIM_CITATION_MISMATCH",
+        "CORRECTION_LINEAGE_LOSS",
+        "MODEL_OR_NETWORK_ROUTE"
+      ]
+    },
+    {
+      "name": "contract_and_schema_adversaries",
+      "result": "PASS",
+      "contracts": 4,
+      "pydantic_rejections": 4,
+      "draft_2020_12_rejections": 4
+    },
+    {
+      "name": "fixture_reproducibility",
+      "result": "PASS",
+      "generations_equal": true
+    },
+    {
+      "name": "real_authority_compilation",
+      "result": "READ_ONLY_COMPILE_VALIDATED",
+      "fixed_case_result_identity": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880",
+      "fixed_score": "8/8",
+      "scorer_plan": "VS01-T08-STRUCTURED-CONFORMANCE-SCORER-v1",
+      "all_real_operation_counters_zero": true
+    },
+    {
+      "name": "upstream_read_only",
+      "result": "PASS",
+      "t04": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d",
+      "t05": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1",
+      "t06": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860",
+      "t07": "bcae9dda9297ebf54f5bdf76c7ebbbfc904da6ebee58f831afb5c92ad136d367",
+      "archive": "36dc52f5ebe59bc6903c984c8ce429693b565cff981615cf771e8368a19f8326",
+      "incoming": "31318fe920bbe262105692e9c25098965ca60ecebc5f85deb2af08e12feb4d7e"
+    },
+    {
+      "name": "postgresql_18_6",
+      "result": "PASS",
+      "server_version_num": 180006,
+      "postgres_tests": 27,
+      "owner_rows_written": 0,
+      "disposable_database_and_role_removed": true
+    },
+    {
+      "name": "exact_head_ci",
+      "result": "PENDING_PUSH",
+      "checks": [
+        "vs01-t01-ci",
+        "vs01-t05-ci"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "authority_persistence",
+      "head": "a6483b6d03041adb1af287a833814070e010742b",
+      "tree": "64b0d63bdd77492f7c41cade8e936a3acbf2d5d0"
+    },
+    {
+      "name": "implementation",
+      "head": "371beec86365e30877c6addee45658852e9f5845",
+      "tree": "af1c0b14d9bd28398befdcbff4e287fc0adbd9fa"
+    },
+    {
+      "name": "VS01-T08-full-runtime-evidence-acquisition-design.md",
+      "sha256": "64cc1c740bc7454a97541301b32594c5f2577ec39287bb693592cf131c312d50"
+    },
+    {
+      "name": "VS01-B08-RUNTIME-C01.json",
+      "file_sha256": "a7fc02da5ed8fda15ee29cba79cff8b037b2abc66352107f87165a0bfbea9f0f",
+      "rfc8785_sha256": "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd"
+    },
+    {
+      "name": "VS01-T08-runtime-pair-spec.json",
+      "file_sha256": "9e49e2f2b540a54c1d945991eb6500a52c0a7873136630d8bf49854efeb765ba",
+      "specification_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+    },
+    {
+      "name": "pair-specification.schema.json",
+      "sha256": "01dd5ed2104dcbf7a3f91fe9a9c5cc2bb506685aef73797bc298505de905e977"
+    },
+    {
+      "name": "acquisition-run.schema.json",
+      "sha256": "0f6259f1be061cb0d56d12e5c5b9153a1d0ff582da12d97bb2c7fc37b307ad10"
+    },
+    {
+      "name": "pair-result.schema.json",
+      "sha256": "bbe224a789281c807f599d1c7c86f10603bd4eb0c245ab875ba469f1f938a1fe"
+    },
+    {
+      "name": "screening-receipt.schema.json",
+      "sha256": "7bdb7319a470b2700f8e94fba78bf3b4016b9eb1e30236c6ee1ba2356ae7f8e4"
+    },
+    {
+      "name": "runtime-subject-projection.json",
+      "sha256": "d5ec915e4096d150ff4395c0fe505896b76cd40ca22131f2a16c102d92c3282f"
+    },
+    {
+      "name": "reference-runtime-run.json",
+      "sha256": "46f88484fb0cc7fb837bf8bcbc93b8ad7534bb808c4f51acc2ed2c3a7226b8c0"
+    }
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 1565,
+    "production_loc_removed": 0,
+    "test_loc_added": 401,
+    "test_loc_removed": 1,
+    "generated_loc": 2706,
+    "production_files_added": 5,
+    "production_files_removed": 0,
+    "modules_added": [
+      "bsl.contracts.runtime_screening",
+      "bsl.application.vs01_runtime_screening",
+      "bsl.application.vs01_runtime_reference",
+      "bsl.application.vs01_runtime_scoring",
+      "bsl.infrastructure.runtime_screening_store"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "bsl benchmark vs01-b08-runtime-pair --subject deterministic-runtime [--dry-run]"
+    ],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "VS01B08RuntimePairSpecification",
+      "VS01RuntimeAcquisitionRun",
+      "VS01B08RuntimePairResult",
+      "VS01RuntimeScreeningReceipt"
+    ],
+    "abstractions": [
+      {
+        "name": "VS01RuntimeSubjectAdapter",
+        "kind": "one private future protocol with no provider or implementation"
+      },
+      {
+        "name": "immutable runtime records and store reuse",
+        "kind": "narrow typed authority and persistence boundaries"
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "A generic benchmark framework was rejected in favor of the activated VS01-B08 pair surface.",
+      "Direct archive access by the subject was rejected in favor of an explicit seven-call broker.",
+      "Free-form scholarly judging was omitted in favor of structured deterministic conformance scoring."
+    ],
+    "known_duplication_or_debt": [],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The scorer is intentionally structured reference-conformance logic rather than a free-form scholarly judge.",
+    "The deterministic oracle validates the activated control plane but does not establish arbitrary model behavior.",
+    "The pair is a single-passage public-seed EL-1 screen without critical-apparatus, witness, specialist-gold, training, or private-final authority.",
+    "The locked environment omits jsonschema, so 18 optional schema tests skip there; all four T08 schema adversaries separately passed with transient jsonschema 4.25.1 and no lockfile change."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live PR head and issue an allowed exact-head disposition.",
+    "Joseph must decide any later real runtime-pair execution or merge in a separately authorized turn."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
