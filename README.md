@@ -2,7 +2,7 @@
 
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` and `VS01-T04` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T06` implementation and no-write render proof are active under `ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1`; live page publication is not authorized or executed.
+Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07-R01` benchmark-harness implementation is active. The approved benchmark source remains byte-preserved, including B10's separate source-declared compatibility and RFC 8785 execution identities. Actual benchmark execution, result publication, model/OCR/VLM work, and the required unauthored `VS01-B08-RUNTIME-C01` full-runtime pair have not started.
 
 ## Authority
 
@@ -33,8 +33,10 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 - `VS01-T03` is complete and canonically published: bundle identity `9e147d9e218564d744360fd94b794758d1cc3e98e3826380008939eb0c494f32`, canonical SHA-256 `397f7c8908bf8e8533b23eb808ab7c0ede796c95d7b49451fa92f40261ee19d6`.
 - `VS01-T04` is complete and canonically published: packet identity `aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31`, canonical SHA-256 `9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409`.
 - `VS01-T05` is complete and persisted; its T04 authority and the upstream T03 authority remain immutable.
-- `VS01-T06` implementation and no-write render proof are active under `ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1`; live archive publication has not been executed.
-- OCR, VLM, model inference, and benchmark execution remain unstarted for T06.
+- `VS01-T06` is complete and canonically published.
+- `VS01-T07-R01` harness implementation is active with the benchmark source byte-preserved and B10 dual-hash compatibility authority active.
+- Actual benchmark execution and result publication are not started; model, OCR, and VLM work is not started.
+- `VS01-B08-RUNTIME-C01` remains required and has not been authored.
 
 ## Current approved baseline
 
@@ -106,10 +108,11 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-VS01-T03-JOHN-1-5-NORMALIZATION-v1` — completed historical T03 authorization; normalization is canonically published
 - `ACT-VS01-T04-JOHN-1-5-TRANSLATION-NUANCE-EVIDENCE-v1` — completed historical T04 authorization; the evidence packet is canonically published
 - `ACT-VS01-T05-DETERMINISTIC-STUDY-RUNTIME-v1` — completed; the canonical T05 runtime is persisted
-- `ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1` — active T06 implementation and no-write render proof; live page publication is not authorized
+- `ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1` — completed historical T06 authorization; the fixture is canonically published
+- `ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1` — active T07 R01 harness implementation only; actual benchmark execution and result publication are not authorized
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03` and `VS01-T04` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T06` implementation and no-write render proof are active; T04/T05 authority is immutable, live page publication has not occurred, and OCR/VLM/model and benchmark work is unstarted.
+The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07-R01` harness implementation is active with the benchmark source byte-preserved and B10's dual-hash compatibility authority active. Actual benchmark execution, result publication, model/OCR/VLM work, and the B08 full-runtime pair remain not started.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

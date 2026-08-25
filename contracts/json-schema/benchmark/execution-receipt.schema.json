@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "archive_paths": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Archive Paths",
+      "type": "array"
+    },
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "archive_writes": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Archive Writes",
+      "type": "integer"
+    },
+    "completed_attempts": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Completed Attempts",
+      "type": "integer"
+    },
+    "contract": {
+      "const": "VS01BenchmarkExecutionReceipt",
+      "default": "VS01BenchmarkExecutionReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "database_writes": {
+      "const": 0,
+      "default": 0,
+      "title": "Database Writes",
+      "type": "integer"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "REFERENCE_CONFORMANT",
+        "REFERENCE_NONCONFORMANT"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "error_counts": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Error Counts",
+      "type": "array"
+    },
+    "execution_specification_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Execution Specification Identity",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "model_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Model Invocations",
+      "type": "integer"
+    },
+    "network_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Network Invocations",
+      "type": "integer"
+    },
+    "ocr_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Ocr Invocations",
+      "type": "integer"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "requested_attempts": {
+      "const": 12,
+      "default": 12,
+      "title": "Requested Attempts",
+      "type": "integer"
+    },
+    "run_result_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result File Sha256",
+      "type": "string"
+    },
+    "run_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result Identity",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "upstream_fingerprints": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Upstream Fingerprints",
+      "type": "array"
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    },
+    "vlm_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Vlm Invocations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "generated_at",
+    "execution_specification_identity",
+    "run_result_identity",
+    "run_result_file_sha256",
+    "implementation_commit",
+    "archive_root",
+    "archive_paths",
+    "disposition",
+    "dry_run",
+    "published",
+    "verified_existing",
+    "upstream_fingerprints",
+    "completed_attempts",
+    "error_counts",
+    "archive_writes"
+  ],
+  "title": "VS01BenchmarkExecutionReceipt",
+  "type": "object"
+}

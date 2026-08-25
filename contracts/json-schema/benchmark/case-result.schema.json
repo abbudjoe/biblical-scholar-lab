@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "const": 1,
+      "default": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "attempt_state": {
+      "enum": [
+        "COMPLETED",
+        "ERROR",
+        "REFUSAL",
+        "TIMEOUT",
+        "MALFORMED",
+        "INVALID_LEAKAGE_INCIDENT"
+      ],
+      "title": "Attempt State",
+      "type": "string"
+    },
+    "capped_points": {
+      "minimum": 0,
+      "title": "Capped Points",
+      "type": "integer"
+    },
+    "case_disposition": {
+      "enum": [
+        "REFERENCE_CONFORMANT",
+        "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+        "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER",
+        "INVALID_LEAKAGE_INCIDENT"
+      ],
+      "title": "Case Disposition",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "case_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Case Result Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "VS01BenchmarkCaseResult",
+      "default": "VS01BenchmarkCaseResult",
+      "title": "Contract",
+      "type": "string"
+    },
+    "criterion_scores": {
+      "items": {
+        "maxItems": 4,
+        "minItems": 4,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Criterion Scores",
+      "type": "array"
+    },
+    "deterministic_checks": {
+      "items": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "boolean"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Deterministic Checks",
+      "type": "array"
+    },
+    "error": {
+      "title": "Error",
+      "type": "boolean"
+    },
+    "evidence_references": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence References",
+      "type": "array"
+    },
+    "execution_rfc8785_jcs_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Execution Rfc8785 Jcs Sha256",
+      "type": "string"
+    },
+    "hard_failures": {
+      "items": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Hard Failures",
+      "type": "array"
+    },
+    "leakage_state": {
+      "enum": [
+        "CLEAR",
+        "INVALID_LEAKAGE_INCIDENT"
+      ],
+      "title": "Leakage State",
+      "type": "string"
+    },
+    "malformed": {
+      "title": "Malformed",
+      "type": "boolean"
+    },
+    "raw_points": {
+      "minimum": 0,
+      "title": "Raw Points",
+      "type": "integer"
+    },
+    "refusal": {
+      "title": "Refusal",
+      "type": "boolean"
+    },
+    "response_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Response Identity",
+      "type": "string"
+    },
+    "response_payload": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Response Payload",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_declared_compatibility_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Declared Compatibility Sha256",
+      "type": "string"
+    },
+    "subject_package_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Package Identity",
+      "type": "string"
+    },
+    "timeout": {
+      "title": "Timeout",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "case_id",
+    "source_declared_compatibility_sha256",
+    "execution_rfc8785_jcs_sha256",
+    "subject_package_identity",
+    "response_identity",
+    "response_payload",
+    "attempt_state",
+    "criterion_scores",
+    "deterministic_checks",
+    "hard_failures",
+    "raw_points",
+    "capped_points",
+    "case_disposition",
+    "leakage_state",
+    "error",
+    "refusal",
+    "timeout",
+    "malformed",
+    "evidence_references",
+    "case_result_identity"
+  ],
+  "title": "VS01BenchmarkCaseResult",
+  "type": "object"
+}

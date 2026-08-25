@@ -21,6 +21,12 @@ from bsl.contracts.archive import (
     ArchiveReadiness,
     ArchiveRootMarker,
 )
+from bsl.contracts.benchmark import (
+    VS01BenchmarkCaseResult,
+    VS01BenchmarkExecutionReceipt,
+    VS01BenchmarkExecutionSpecification,
+    VS01BenchmarkRunResult,
+)
 from bsl.contracts.evidence import (
     John15TranslationNuanceEvidencePacket,
     John15TranslationNuanceEvidenceReceipt,
@@ -100,6 +106,16 @@ SCHEMAS = (
         ROOT / "contracts/json-schema/page/john-15-synthetic-page-publication-receipt.schema.json",
         John15SyntheticPagePublicationReceipt,
     ),
+    (
+        ROOT / "contracts/json-schema/benchmark/execution-specification.schema.json",
+        VS01BenchmarkExecutionSpecification,
+    ),
+    (ROOT / "contracts/json-schema/benchmark/case-result.schema.json", VS01BenchmarkCaseResult),
+    (ROOT / "contracts/json-schema/benchmark/run-result.schema.json", VS01BenchmarkRunResult),
+    (
+        ROOT / "contracts/json-schema/benchmark/execution-receipt.schema.json",
+        VS01BenchmarkExecutionReceipt,
+    ),
 )
 
 
@@ -175,6 +191,20 @@ def test_audit_schema_has_typed_operations_and_no_open_count_objects() -> None:
     assert schema["properties"]["latency_ms"]["type"] == "integer"
     for field in ("database_rows_written", "database_rows_verified"):
         assert all("const" in choice for choice in schema["properties"][field]["oneOf"])
+
+
+def test_benchmark_schemas_are_strict_draft_2020_12_and_fixed_shape() -> None:
+    for path, model in SCHEMAS[-4:]:
+        schema = json.loads(path.read_text())
+        assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+        assert schema["additionalProperties"] is False
+        assert schema == model.model_json_schema(by_alias=False)
+    run_schema = VS01BenchmarkRunResult.model_json_schema()
+    case_slots = run_schema["properties"]["case_results"]
+    assert case_slots["minItems"] == case_slots["maxItems"] == 12
+    receipt_schema = VS01BenchmarkExecutionReceipt.model_json_schema()
+    assert receipt_schema["properties"]["receipt_id"]["format"] == "uuid"
+    assert receipt_schema["properties"]["generated_at"]["format"] == "date-time"
 
 
 def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:

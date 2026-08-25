@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attempts_per_case": {
+      "const": 1,
+      "default": 1,
+      "title": "Attempts Per Case",
+      "type": "integer"
+    },
+    "automatic_retries": {
+      "const": 0,
+      "default": 0,
+      "title": "Automatic Retries",
+      "type": "integer"
+    },
+    "b08_full_runtime_limitation": {
+      "const": "VS01-B08-RUNTIME-C01_REQUIRED_NOT_AUTHORED",
+      "title": "B08 Full Runtime Limitation",
+      "type": "string"
+    },
+    "batch_cases_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Batch Cases Sha256",
+      "type": "string"
+    },
+    "batch_id": {
+      "const": "BENCH-VS01-BATCH-01",
+      "default": "BENCH-VS01-BATCH-01",
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "batch_markdown_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Batch Markdown Sha256",
+      "type": "string"
+    },
+    "case_order": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Case Order",
+      "type": "array"
+    },
+    "contract": {
+      "const": "VS01BenchmarkExecutionSpecification",
+      "default": "VS01BenchmarkExecutionSpecification",
+      "title": "Contract",
+      "type": "string"
+    },
+    "engine_revision": {
+      "const": "VS01-T07-REFERENCE-ENGINE-v1",
+      "default": "VS01-T07-REFERENCE-ENGINE-v1",
+      "title": "Engine Revision",
+      "type": "string"
+    },
+    "erratum_json_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Erratum Json Sha256",
+      "type": "string"
+    },
+    "erratum_markdown_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Erratum Markdown Sha256",
+      "type": "string"
+    },
+    "execution_mode": {
+      "enum": [
+        "REFERENCE_CONFORMANCE",
+        "REFERENCE_CONFORMANCE_DRY_RUN"
+      ],
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "execution_rfc8785_jcs_hashes": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Execution Rfc8785 Jcs Hashes",
+      "type": "array"
+    },
+    "isolation_policy": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Isolation Policy",
+      "type": "array"
+    },
+    "leakage_policy": {
+      "const": "INVALID_LEAKAGE_INCIDENT",
+      "default": "INVALID_LEAKAGE_INCIDENT",
+      "title": "Leakage Policy",
+      "type": "string"
+    },
+    "maximum_points": {
+      "const": 120,
+      "default": 120,
+      "title": "Maximum Points",
+      "type": "integer"
+    },
+    "p0_maximum_points": {
+      "const": 64,
+      "default": 64,
+      "title": "P0 Maximum Points",
+      "type": "integer"
+    },
+    "p1_maximum_points": {
+      "const": 56,
+      "default": 56,
+      "title": "P1 Maximum Points",
+      "type": "integer"
+    },
+    "r01_design_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "R01 Design Sha256",
+      "type": "string"
+    },
+    "r01_protocol_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "R01 Protocol Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scorer_revision": {
+      "const": "VS01-T07-REFERENCE-CONFORMANCE-SCORER-v1",
+      "title": "Scorer Revision",
+      "type": "string"
+    },
+    "scorer_scope": {
+      "const": "REFERENCE_CONFORMANCE_ONLY",
+      "default": "REFERENCE_CONFORMANCE_ONLY",
+      "title": "Scorer Scope",
+      "type": "string"
+    },
+    "screening_case_minimums": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Screening Case Minimums",
+      "type": "array"
+    },
+    "screening_partition_minimums": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Screening Partition Minimums",
+      "type": "array"
+    },
+    "semantic_rerolls": {
+      "const": 0,
+      "default": 0,
+      "title": "Semantic Rerolls",
+      "type": "integer"
+    },
+    "source_declared_compatibility_hashes": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Source Declared Compatibility Hashes",
+      "type": "array"
+    },
+    "specification_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Specification Identity",
+      "type": "string"
+    },
+    "subject_id": {
+      "const": "VS01-T07-REFERENCE-SUBJECT-v1",
+      "default": "VS01-T07-REFERENCE-SUBJECT-v1",
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "subject_projection_identities": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Subject Projection Identities",
+      "type": "array"
+    },
+    "upstream_authority": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Upstream Authority",
+      "type": "array"
+    }
+  },
+  "required": [
+    "batch_markdown_sha256",
+    "batch_cases_sha256",
+    "r01_design_sha256",
+    "r01_protocol_sha256",
+    "erratum_markdown_sha256",
+    "erratum_json_sha256",
+    "source_declared_compatibility_hashes",
+    "execution_rfc8785_jcs_hashes",
+    "case_order",
+    "subject_projection_identities",
+    "scorer_revision",
+    "upstream_authority",
+    "isolation_policy",
+    "screening_case_minimums",
+    "screening_partition_minimums",
+    "b08_full_runtime_limitation",
+    "execution_mode",
+    "specification_identity"
+  ],
+  "title": "VS01BenchmarkExecutionSpecification",
+  "type": "object"
+}
