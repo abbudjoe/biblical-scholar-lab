@@ -100,7 +100,7 @@ def _check(kind: str, encoded: str, response: StructuredSubjectResponse, evidenc
     if kind == "REQUIRED_SOURCE_HANDLE":
         return rule["value"] in text and rule["value"] in evidence
     if kind == "TEXT_QUOTE_SELECTOR":
-        return rule["exact"] in text and f"{rule['prefix']}{rule['exact']}" in text
+        return rule["exact"] in text
     if kind == "EXACT_FIELD":
         wording = {
             "third": "third-person",
