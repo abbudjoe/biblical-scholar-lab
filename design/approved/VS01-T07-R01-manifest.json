@@ -1,0 +1,42 @@
+{
+  "package_id": "BSL-VS01-T07-HASH-COMPATIBILITY-REPAIR-R01",
+  "status": "CHATGPT_FROZEN_PENDING_OWNER_APPROVAL",
+  "design_id": "VS01-T07-R01",
+  "erratum_id": "BENCH-VS01-BATCH-01-ERRATA-01",
+  "base_main_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "base_tree_sha": "f109f874cdfa8652198ed929f9876ebf9d49f676",
+  "approved_source_batch_sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
+  "source_batch_byte_preserved": true,
+  "semantic_benchmark_change": false,
+  "original_t07_package_sha256": "a43cc0fc89592a7bcde7f11b2ce8efc7f48ee332f70d9c2a3d55f4fbd564c2b0",
+  "original_protocol_sha256": "9442c2c4159a645f30f57bc5973e2ffe04099401223603c81b33fd600a492673",
+  "replacement_protocol_sha256": "bf48cbd15b09673f965e4a6300dbec61aec924f56f026032d8c9ccaaa12014bb",
+  "b10": {
+    "source_declared_case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+    "execution_rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"
+  },
+  "implementation_authorized": false,
+  "benchmark_execution_authorized": false,
+  "files": [
+    {
+      "path": "BENCH-VS01-BATCH-01-ERRATA-01.md",
+      "sha256": "8f3de652db50fc7a93d1368ac6ad53177f0f45858cad927b386127795dc3817d",
+      "bytes": 2681
+    },
+    {
+      "path": "BENCH-VS01-BATCH-01-ERRATA-01.json",
+      "sha256": "9153c12bc7ea3254ff2c76e685dc56ccbd26e615a6d20e770d196fcc3f5ad2be",
+      "bytes": 8670
+    },
+    {
+      "path": "VS01-T07-frozen-benchmark-harness-R01.md",
+      "sha256": "d6e89b7db1bd686fb74bdc2530719a3c9e3d9a753983fac7a35bdd8be40abdf7",
+      "bytes": 14145
+    },
+    {
+      "path": "VS01-T07-benchmark-execution-protocol-R01.json",
+      "sha256": "bf48cbd15b09673f965e4a6300dbec61aec924f56f026032d8c9ccaaa12014bb",
+      "bytes": 71630
+    }
+  ]
+}
