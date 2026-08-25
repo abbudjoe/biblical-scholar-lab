@@ -9,6 +9,18 @@ from typing import Any, Protocol, cast
 
 import rfc8785
 
+from bsl.contracts.benchmark import (
+    CASE_IDS,
+    CASE_MINIMUMS,
+    COMPATIBILITY_HASHES,
+    ISOLATION_POLICY,
+    JCS_HASHES,
+    PROJECTION_IDENTITIES,
+    UPSTREAM_AUTHORITY,
+    VS01BenchmarkCaseResult,
+    VS01BenchmarkExecutionSpecification,
+)
+
 ROOT = Path(__file__).parents[3]
 BATCH_MARKDOWN = ROOT / "design/approved/BENCH-VS01-BATCH-01.md"
 BATCH_CASES = ROOT / "design/approved/BENCH-VS01-BATCH-01-cases.json"
@@ -18,6 +30,8 @@ BATCH_MARKDOWN_SHA256 = "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972b
 BATCH_CASES_SHA256 = "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f"
 PROTOCOL_SHA256 = "bf48cbd15b09673f965e4a6300dbec61aec924f56f026032d8c9ccaaa12014bb"
 ERRATUM_SHA256 = "9153c12bc7ea3254ff2c76e685dc56ccbd26e615a6d20e770d196fcc3f5ad2be"
+DESIGN_SHA256 = "d6e89b7db1bd686fb74bdc2530719a3c9e3d9a753983fac7a35bdd8be40abdf7"
+ERRATUM_MARKDOWN_SHA256 = "8f3de652db50fc7a93d1368ac6ad53177f0f45858cad927b386127795dc3817d"
 BASE_RASTER_SHA256 = "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb"
 DEGRADED_RASTER_SHA256 = "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce"
 B10_COMPATIBILITY_SHA256 = "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06"
@@ -40,11 +54,53 @@ FORBIDDEN_SUBJECT_FIELDS = (
     "database_handle",
     "environment_coordinates",
 )
-_REAL_OPERATION_COUNTS = {"subject": 0, "scoring": 0, "case_result": 0, "run_result": 0, "receipt": 0}
+CHECK_FIELDS = {
+    "CLAIM_SOURCE_MAP": (frozenset({"claim", "required_source"}),),
+    "EXACT_FIELD": (frozenset({"field", "value"}),),
+    "EXACT_STRING": (frozenset({"value"}), frozenset({"source", "value"})),
+    "FORBIDDEN_STRING": (frozenset({"value"}),),
+    "ONLY_CANONICAL_QUOTE": (frozenset({"value"}),),
+    "REGION_ROLE_MAP": (frozenset({"expected"}),),
+    "REQUIRED_EVENT": (frozenset({"value"}),),
+    "REQUIRED_SOURCE_HANDLE": (frozenset({"value"}),),
+    "SESSION_STATE": (frozenset({"field", "value"}), frozenset({"field", "contains"})),
+    "TEXT_QUOTE_SELECTOR": (frozenset({"exact", "prefix"}),),
+}
 
 
 def canonical_sha256(value: Any) -> str:
     return hashlib.sha256(rfc8785.dumps(value)).hexdigest()
+
+
+def build_execution_specification(
+    authorities: tuple[_CaseAuthority, ...], *, dry_run: bool
+) -> VS01BenchmarkExecutionSpecification:
+    if tuple(item.case_id for item in authorities) != CASE_IDS:
+        raise ValueError("benchmark execution authority order differs")
+    payload: dict[str, Any] = {
+        "batch_markdown_sha256": BATCH_MARKDOWN_SHA256,
+        "batch_cases_sha256": BATCH_CASES_SHA256,
+        "r01_design_sha256": DESIGN_SHA256,
+        "r01_protocol_sha256": PROTOCOL_SHA256,
+        "erratum_markdown_sha256": ERRATUM_MARKDOWN_SHA256,
+        "erratum_json_sha256": ERRATUM_SHA256,
+        "source_declared_compatibility_hashes": COMPATIBILITY_HASHES,
+        "execution_rfc8785_jcs_hashes": JCS_HASHES,
+        "case_order": CASE_IDS,
+        "subject_projection_identities": PROJECTION_IDENTITIES,
+        "scorer_revision": "VS01-T07-REFERENCE-CONFORMANCE-SCORER-v1",
+        "upstream_authority": UPSTREAM_AUTHORITY,
+        "isolation_policy": ISOLATION_POLICY,
+        "screening_case_minimums": tuple(zip(CASE_IDS, CASE_MINIMUMS, strict=True)),
+        "screening_partition_minimums": (("REV-P0", 58), ("REV-P1", 45), ("TOTAL", 102)),
+        "b08_full_runtime_limitation": "VS01-B08-RUNTIME-C01_REQUIRED_NOT_AUTHORED",
+        "execution_mode": "REFERENCE_CONFORMANCE_DRY_RUN" if dry_run else "REFERENCE_CONFORMANCE",
+    }
+    draft = VS01BenchmarkExecutionSpecification.model_construct(**payload, specification_identity="0" * 64)
+    payload["specification_identity"] = canonical_sha256(
+        draft.model_dump(mode="json", exclude={"specification_identity"})
+    )
+    return VS01BenchmarkExecutionSpecification.model_validate(payload)
 
 
 def _strict_json(data: bytes) -> dict[str, Any]:
@@ -124,6 +180,7 @@ class ScorerCaseAuthority:
     deterministic_checks: tuple[tuple[str, str], ...]
     criteria: tuple[tuple[str, int, str], ...]
     evidence_references: tuple[str, ...]
+    review_partition: str
     scorer_plan_identity: str
 
 
@@ -152,6 +209,37 @@ class ReferenceSubjectFixture:
 
     def payload(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def failed_case_result(
+    case: SubjectCasePackage, scorer: ScorerCaseAuthority, attempt_state: str
+) -> VS01BenchmarkCaseResult:
+    scores = tuple((name, 0, weight, 0) for name, weight, _ in scorer.criteria)
+    payload: dict[str, Any] = {
+        "case_id": case.case_id,
+        "source_declared_compatibility_sha256": case.source_declared_compatibility_sha256,
+        "execution_rfc8785_jcs_sha256": case.execution_rfc8785_jcs_sha256,
+        "review_partition": scorer.review_partition,
+        "subject_package_identity": case.package_identity,
+        "response_identity": canonical_sha256(()),
+        "response_payload": (),
+        "attempt_state": attempt_state,
+        "criterion_scores": scores,
+        "deterministic_checks": tuple((kind, rule, False) for kind, rule in scorer.deterministic_checks),
+        "hard_failures": (),
+        "raw_points": 0,
+        "capped_points": 0,
+        "case_disposition": "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+        "leakage_state": "CLEAR",
+        "error": attempt_state == "ERROR",
+        "refusal": attempt_state == "REFUSAL",
+        "timeout": attempt_state == "TIMEOUT",
+        "malformed": attempt_state == "MALFORMED",
+        "evidence_references": scorer.evidence_references,
+    }
+    draft = VS01BenchmarkCaseResult.model_construct(**payload, case_result_identity="0" * 64)
+    payload["case_result_identity"] = canonical_sha256(draft.model_dump(mode="json", exclude={"case_result_identity"}))
+    return VS01BenchmarkCaseResult.model_validate(payload)
 
 
 class VS01BenchmarkSubjectAdapter(Protocol):
@@ -305,6 +393,10 @@ def compile_scorer_authority(authority: _CaseAuthority) -> ScorerCaseAuthority:
     )
     if any(plan_criteria[item[0]]["weight"] != item[1] for item in criteria):
         raise ValueError(f"scorer-plan rubric differs: {authority.case_id}")
+    check_records = source.get("deterministic_checks", ())
+    for item in check_records:
+        if frozenset(set(item) - {"type"}) not in CHECK_FIELDS.get(item.get("type"), ()):
+            raise ValueError(f"unsupported deterministic check authority: {authority.case_id}")
     checks = tuple(
         (
             item["type"],
@@ -315,7 +407,7 @@ def compile_scorer_authority(authority: _CaseAuthority) -> ScorerCaseAuthority:
                 separators=(",", ":"),
             ),
         )
-        for item in source.get("deterministic_checks", ())
+        for item in check_records
     )
     response = _reference_payload(source)
     payload: dict[str, Any] = {
@@ -327,6 +419,7 @@ def compile_scorer_authority(authority: _CaseAuthority) -> ScorerCaseAuthority:
         "deterministic_checks": checks,
         "criteria": criteria,
         "evidence_references": tuple(source["source_dependencies"]),
+        "review_partition": source["review_partition"],
     }
     return ScorerCaseAuthority(
         case_id=authority.case_id,
@@ -337,6 +430,7 @@ def compile_scorer_authority(authority: _CaseAuthority) -> ScorerCaseAuthority:
         deterministic_checks=checks,
         criteria=criteria,
         evidence_references=tuple(source["source_dependencies"]),
+        review_partition=source["review_partition"],
         scorer_plan_identity=canonical_sha256(payload),
     )
 
@@ -396,10 +490,5 @@ def static_compilation_identity(authorities: tuple[_CaseAuthority, ...] | None =
 
 
 def guard_real_case(case_id: str, phase: str, *, implementation_evidence_mode: bool) -> None:
-    if case_id not in REAL_CASE_IDS:
-        return
-    if implementation_evidence_mode:
+    if case_id in REAL_CASE_IDS and implementation_evidence_mode:
         raise ValueError(f"real benchmark {phase} prohibited in implementation-evidence mode")
-    if phase not in _REAL_OPERATION_COUNTS:
-        raise ValueError("unknown benchmark operation phase")
-    _REAL_OPERATION_COUNTS[phase] += 1

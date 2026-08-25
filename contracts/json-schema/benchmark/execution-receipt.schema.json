@@ -1,6 +1,141 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "disposition": {
+            "const": "DRY_RUN_VALIDATED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "archive_writes": {
+            "const": 0
+          },
+          "dry_run": {
+            "const": true
+          },
+          "publication_attempts": {
+            "const": 0
+          },
+          "published": {
+            "const": false
+          },
+          "retained_publication_receipt_id": {
+            "type": "null"
+          },
+          "retained_publication_receipt_sha256": {
+            "type": "null"
+          },
+          "verified_existing": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "disposition": {
+            "const": "REFERENCE_CONFORMANT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "archive_writes": {
+            "const": 3
+          },
+          "dry_run": {
+            "const": false
+          },
+          "publication_attempts": {
+            "const": 1
+          },
+          "published": {
+            "const": true
+          },
+          "retained_publication_receipt_id": {
+            "type": "null"
+          },
+          "retained_publication_receipt_sha256": {
+            "type": "null"
+          },
+          "verified_existing": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "disposition": {
+            "const": "REFERENCE_NONCONFORMANT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "archive_writes": {
+            "const": 0
+          },
+          "publication_attempts": {
+            "const": 0
+          },
+          "published": {
+            "const": false
+          },
+          "retained_publication_receipt_id": {
+            "type": "null"
+          },
+          "retained_publication_receipt_sha256": {
+            "type": "null"
+          },
+          "verified_existing": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "disposition": {
+            "const": "VERIFIED_EXISTING"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "archive_writes": {
+            "const": 0
+          },
+          "dry_run": {
+            "const": false
+          },
+          "publication_attempts": {
+            "const": 1
+          },
+          "published": {
+            "const": false
+          },
+          "retained_publication_receipt_id": {
+            "type": "string"
+          },
+          "retained_publication_receipt_sha256": {
+            "type": "string"
+          },
+          "verified_existing": {
+            "const": true
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "archive_paths": {
       "maxItems": 3,
@@ -24,9 +159,16 @@
       "type": "string"
     },
     "archive_writes": {
-      "maximum": 3,
-      "minimum": 0,
+      "enum": [
+        0,
+        3
+      ],
       "title": "Archive Writes",
+      "type": "integer"
+    },
+    "case_results_constructed": {
+      "const": 24,
+      "title": "Case Results Constructed",
       "type": "integer"
     },
     "completed_attempts": {
@@ -51,7 +193,8 @@
       "enum": [
         "DRY_RUN_VALIDATED",
         "REFERENCE_CONFORMANT",
-        "REFERENCE_NONCONFORMANT"
+        "REFERENCE_NONCONFORMANT",
+        "VERIFIED_EXISTING"
       ],
       "title": "Disposition",
       "type": "string"
@@ -92,6 +235,24 @@
       "title": "Implementation Commit",
       "type": "string"
     },
+    "initial_upstream_fingerprints": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Initial Upstream Fingerprints",
+      "type": "array"
+    },
     "model_invocations": {
       "const": 0,
       "default": 0,
@@ -110,38 +271,7 @@
       "title": "Ocr Invocations",
       "type": "integer"
     },
-    "published": {
-      "title": "Published",
-      "type": "boolean"
-    },
-    "receipt_id": {
-      "format": "uuid",
-      "title": "Receipt Id",
-      "type": "string"
-    },
-    "requested_attempts": {
-      "const": 12,
-      "default": 12,
-      "title": "Requested Attempts",
-      "type": "integer"
-    },
-    "run_result_file_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Run Result File Sha256",
-      "type": "string"
-    },
-    "run_result_identity": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Run Result Identity",
-      "type": "string"
-    },
-    "schema_version": {
-      "const": "1.0",
-      "default": "1.0",
-      "title": "Schema Version",
-      "type": "string"
-    },
-    "upstream_fingerprints": {
+    "pre_store_upstream_fingerprints": {
       "items": {
         "maxItems": 2,
         "minItems": 2,
@@ -156,8 +286,96 @@
         ],
         "type": "array"
       },
-      "title": "Upstream Fingerprints",
+      "title": "Pre Store Upstream Fingerprints",
       "type": "array"
+    },
+    "publication_attempts": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "Publication Attempts",
+      "type": "integer"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "receipts_constructed": {
+      "const": 1,
+      "title": "Receipts Constructed",
+      "type": "integer"
+    },
+    "replay_count": {
+      "const": 2,
+      "title": "Replay Count",
+      "type": "integer"
+    },
+    "requested_attempts": {
+      "const": 12,
+      "default": 12,
+      "title": "Requested Attempts",
+      "type": "integer"
+    },
+    "retained_publication_receipt_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Retained Publication Receipt Id"
+    },
+    "retained_publication_receipt_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Retained Publication Receipt Sha256"
+    },
+    "run_result_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result File Sha256",
+      "type": "string"
+    },
+    "run_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result Identity",
+      "type": "string"
+    },
+    "run_results_constructed": {
+      "const": 2,
+      "title": "Run Results Constructed",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scoring_invocations": {
+      "const": 24,
+      "title": "Scoring Invocations",
+      "type": "integer"
+    },
+    "subject_invocations": {
+      "const": 24,
+      "title": "Subject Invocations",
+      "type": "integer"
     },
     "verified_existing": {
       "title": "Verified Existing",
@@ -183,7 +401,17 @@
     "dry_run",
     "published",
     "verified_existing",
-    "upstream_fingerprints",
+    "initial_upstream_fingerprints",
+    "pre_store_upstream_fingerprints",
+    "replay_count",
+    "subject_invocations",
+    "scoring_invocations",
+    "case_results_constructed",
+    "run_results_constructed",
+    "receipts_constructed",
+    "publication_attempts",
+    "retained_publication_receipt_id",
+    "retained_publication_receipt_sha256",
     "completed_attempts",
     "error_counts",
     "archive_writes"

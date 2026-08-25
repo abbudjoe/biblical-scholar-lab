@@ -1,6 +1,2445 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B01-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B01-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B01-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_STRING"
+                  },
+                  {
+                    "const": "{\"value\":\"And the light shineth in the darkness; and the darkness apprehended it not.\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "REQUIRED_SOURCE_HANDLE"
+                  },
+                  {
+                    "const": "{\"value\":\"SP01-SRC-003#John.1.5\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "FORBIDDEN_STRING"
+                  },
+                  {
+                    "const": "{\"value\":\"hasn\u2019t overcome it\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 1,
+            "minItems": 1,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B01-R1"
+                    },
+                    {
+                      "const": "HF-1_CRITICAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B01-R2"
+                    },
+                    {
+                      "const": "HF-3_MATERIAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311"
+          },
+          "subject_package_identity": {
+            "const": "6e0fc90a246bb2ddad4d08b7da9f0942185aee1e05dd647a26333eda16428f67"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B02-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B02-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B02-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B02-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 7,
+            "minItems": 7,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "TEXT_QUOTE_SELECTOR"
+                  },
+                  {
+                    "const": "{\"exact\":\"\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd\",\"prefix\":\"\u03b1\u1f50\u03c4\u1f78 \u03bf\u1f50 \"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"lemma\",\"value\":\"\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"person\",\"value\":\"third\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"number\",\"value\":\"singular\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"tense_form\",\"value\":\"aorist\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"voice_form\",\"value\":\"active\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_FIELD"
+                  },
+                  {
+                    "const": "{\"field\":\"mood_form\",\"value\":\"indicative\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B02-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B02-R2"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B02-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6"
+          },
+          "subject_package_identity": {
+            "const": "cb43bff75f5e3ac71be22af041819f06ffe12fc56f65de3262cec700e7a04b7f"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B03-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B03-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B03-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_STRING"
+                  },
+                  {
+                    "const": "{\"source\":\"SP01-SRC-003#John.1.5\",\"value\":\"And the light shineth in the darkness; and the darkness apprehended it not.\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "EXACT_STRING"
+                  },
+                  {
+                    "const": "{\"source\":\"SP01-SRC-004#John.1.5\",\"value\":\"The light shines in the darkness, and the darkness hasn\u2019t overcome it.\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B03-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 1,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1"
+          },
+          "subject_package_identity": {
+            "const": "546662d1b032aa22ade8a635be8189857abd83fd1f44b30388d3a39e53137c51"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B04-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B04-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B04-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B04-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B04-R4"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              },
+              {
+                "const": "SP01-DER-001#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B04-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B04-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B04-R4"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600"
+          },
+          "subject_package_identity": {
+            "const": "205f0ea49489d6f743d82022d48bd4101f92f6fbb28bbe8ba04b0e44a592cdbf"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B05-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B05-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B05-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B05-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd"
+              },
+              {
+                "const": "SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9"
+              },
+              {
+                "const": "SP01-DER-001#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B05-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B05-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811"
+          },
+          "subject_package_identity": {
+            "const": "8e9f08f7952190ba676bdea7eb51d78cc861b2c24cad7006bffb7c1bf474eb98"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B06-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B06-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B06-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B06-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B06-R4"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 6,
+            "minItems": 6,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9"
+              },
+              {
+                "const": "SP01-DER-001#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B06-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B06-R4"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee"
+          },
+          "subject_package_identity": {
+            "const": "7f138825142950169a0ccc1fdf9d9a6bce46adbffd424899a3d80f9e26f6ab1b"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B07-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B07-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B07-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B07-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 5,
+            "minItems": 5,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "CLAIM_SOURCE_MAP"
+                  },
+                  {
+                    "const": "{\"claim\":\"greek_wording\",\"required_source\":\"SP01-SRC-001#John.1.5\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "CLAIM_SOURCE_MAP"
+                  },
+                  {
+                    "const": "{\"claim\":\"morphology\",\"required_source\":\"SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "CLAIM_SOURCE_MAP"
+                  },
+                  {
+                    "const": "{\"claim\":\"asv_wording\",\"required_source\":\"SP01-SRC-003#John.1.5\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "CLAIM_SOURCE_MAP"
+                  },
+                  {
+                    "const": "{\"claim\":\"web_wording\",\"required_source\":\"SP01-SRC-004#John.1.5\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "CLAIM_SOURCE_MAP"
+                  },
+                  {
+                    "const": "{\"claim\":\"lexical_range\",\"required_source\":\"SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 5,
+            "minItems": 5,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B07-R1"
+                    },
+                    {
+                      "const": "HF-1_CRITICAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B07-R2"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B07-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a"
+          },
+          "subject_package_identity": {
+            "const": "0cd172b26dc556af731c57e65122ce6e2703c840db300b0614f938f676ae6a89"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B08-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B08-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B08-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B08-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B08-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 1,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+          },
+          "subject_package_identity": {
+            "const": "70269776c11c6654d6f201db39ef2cff2b7554d4aadb55397d44dd010d8d23dc"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B09-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B09-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B09-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B09-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "REGION_ROLE_MAP"
+                  },
+                  {
+                    "const": "{\"expected\":{\"r_annotation\":\"USER_ANNOTATION\",\"r_canonical\":\"CANONICAL_TEXT\",\"r_crossref\":\"CROSS_REFERENCE\",\"r_header\":\"PAGE_HEADER\",\"r_heading\":\"SECTION_HEADING\",\"r_note\":\"STUDY_NOTE_OR_FOOTNOTE\",\"r_verse_number\":\"VERSE_NUMBER\"}}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "ONLY_CANONICAL_QUOTE"
+                  },
+                  {
+                    "const": "{\"value\":\"And the light shineth in the darkness; and the darkness apprehended it not.\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-DER-002#base-page"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B09-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B09-R2"
+                    },
+                    {
+                      "const": "HF-1_CRITICAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B09-R3"
+                    },
+                    {
+                      "const": "HF-3_MATERIAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367"
+          },
+          "subject_package_identity": {
+            "const": "cf7f0e0e5e448c28cf5025bc45f41861b4f78645c1ca43f18aa7f31c6f1429b4"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B10-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B10-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B10-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B10-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-DER-002#degraded-illegibility-v1"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B10-R1"
+                    },
+                    {
+                      "const": "HF-1_CRITICAL"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B10-R2"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B10-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06"
+          },
+          "subject_package_identity": {
+            "const": "811b9d2b5e59c0ffa274f534f2e9ff213be9fe363b2f71e62f598b88ec20b3de"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B11-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B11-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B11-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B11-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "SESSION_STATE"
+                  },
+                  {
+                    "const": "{\"field\":\"primary_translation\",\"value\":\"SP01-SRC-003\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "SESSION_STATE"
+                  },
+                  {
+                    "const": "{\"contains\":\"SP01-SRC-004\",\"field\":\"secondary_translations\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "const": "REQUIRED_EVENT"
+                  },
+                  {
+                    "const": "{\"value\":\"user-correction-asv-primary\"}"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B11-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B11-R3"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P0_DETERMINISTIC_AND_OPERATIONAL"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090"
+          },
+          "subject_package_identity": {
+            "const": "4bb1d5dd18bad9f0b18e8cf17ecac7b3803142abc6d5da0073b88fb31dedb101"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "VS01-B12-C01"
+          }
+        },
+        "required": [
+          "case_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "criterion_scores": {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B12-R1"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B12-R2"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B12-R3"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 2
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "const": "B12-R4"
+                  },
+                  {
+                    "enum": [
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "const": 1
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "type": "array"
+          },
+          "deterministic_checks": {
+            "maxItems": 0,
+            "minItems": 0,
+            "type": "array"
+          },
+          "evidence_references": {
+            "maxItems": 6,
+            "minItems": 6,
+            "prefixItems": [
+              {
+                "const": "SP01-SRC-001#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd"
+              },
+              {
+                "const": "SP01-SRC-003#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-004#John.1.5"
+              },
+              {
+                "const": "SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9"
+              },
+              {
+                "const": "SP01-DER-001#John.1.5"
+              }
+            ],
+            "type": "array"
+          },
+          "execution_rfc8785_jcs_sha256": {
+            "const": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28"
+          },
+          "hard_failures": {
+            "items": {
+              "oneOf": [
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B12-R1"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B12-R2"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "const": "B12-R4"
+                    },
+                    {
+                      "const": "HF-2_MAJOR"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 3,
+            "type": "array"
+          },
+          "review_partition": {
+            "const": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR"
+          },
+          "source_declared_compatibility_sha256": {
+            "const": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28"
+          },
+          "subject_package_identity": {
+            "const": "74d2d7e64edf61dd7f64e2b66ce02ded5b845b4aaf6917100cdf2b6a3a20cec7"
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "attempt_number": {
       "const": 1,
@@ -36,8 +2475,20 @@
       "type": "string"
     },
     "case_id": {
-      "title": "Case Id",
-      "type": "string"
+      "enum": [
+        "VS01-B01-C01",
+        "VS01-B02-C01",
+        "VS01-B03-C01",
+        "VS01-B04-C01",
+        "VS01-B05-C01",
+        "VS01-B06-C01",
+        "VS01-B07-C01",
+        "VS01-B08-C01",
+        "VS01-B09-C01",
+        "VS01-B10-C01",
+        "VS01-B11-C01",
+        "VS01-B12-C01"
+      ]
     },
     "case_result_identity": {
       "pattern": "^[0-9a-f]{64}$",
@@ -172,6 +2623,10 @@
       "title": "Response Payload",
       "type": "array"
     },
+    "review_partition": {
+      "title": "Review Partition",
+      "type": "string"
+    },
     "schema_version": {
       "const": "1.0",
       "default": "1.0",
@@ -197,6 +2652,7 @@
     "case_id",
     "source_declared_compatibility_sha256",
     "execution_rfc8785_jcs_sha256",
+    "review_partition",
     "subject_package_identity",
     "response_identity",
     "response_payload",

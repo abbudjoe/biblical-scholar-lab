@@ -1,13 +1,18 @@
+# pyright: reportPrivateUsage=false
 from __future__ import annotations
 
+import ast
 import hashlib
+import inspect
 import json
 import os
 import subprocess
-from datetime import UTC, datetime, timedelta
+import sys
+from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from uuid import uuid4
+from typing import Any, cast
 
 import pytest
 from pydantic import ValidationError
@@ -16,7 +21,7 @@ from uuid6 import uuid7
 import bsl.application.vs01_benchmark as benchmark
 import bsl.application.vs01_benchmark_scoring as scoring
 import bsl.application.vs01_reference_subject as reference_subject
-import bsl.interfaces.cli as cli
+import bsl.infrastructure.benchmark_store as store
 from bsl.application.vs01_benchmark import (
     ReferenceSubjectFixture,
     ScorerCaseAuthority,
@@ -25,28 +30,25 @@ from bsl.application.vs01_benchmark import (
 )
 from bsl.application.vs01_reference_subject import DeterministicReferenceSubjectAdapter
 from bsl.contracts.benchmark import (
+    CASE_IDS,
+    PARTITIONS,
     VS01BenchmarkCaseResult,
     VS01BenchmarkExecutionReceipt,
     VS01BenchmarkExecutionSpecification,
     VS01BenchmarkRunResult,
 )
-from bsl.infrastructure.benchmark_store import (
-    benchmark_stage_path,
-    canonical_run_result_bytes,
-    publication_paths,
-    publish_benchmark_result,
-    verify_existing,
-)
 
 ROOT = Path(__file__).parents[1]
-WEIGHTS = (5, 5, 5, 5, 4, 4, 4, 6, 6, 6, 5, 5)
-PARTITIONS = ("REV-P0",) * 7 + ("REV-P1",) * 5
 
 
-def _synthetic(index: int) -> tuple[SubjectCasePackage, ScorerCaseAuthority, ReferenceSubjectFixture]:
+def _synthetic(
+    index: int,
+    check: tuple[str, dict[str, Any]] | None = None,
+    severity: str = "HF-2_MAJOR",
+) -> tuple[SubjectCasePackage, ScorerCaseAuthority, ReferenceSubjectFixture]:
     case_id = f"SYN-T07-CASE-{index:02d}"
-    digest = benchmark.canonical_sha256((case_id, "synthetic authority"))
-    package_payload = {
+    digest = benchmark.canonical_sha256((case_id, "private synthetic authority"))
+    package_data = {
         "case_id": case_id,
         "source_declared_compatibility_sha256": digest,
         "execution_rfc8785_jcs_sha256": digest,
@@ -54,450 +56,334 @@ def _synthetic(index: int) -> tuple[SubjectCasePackage, ScorerCaseAuthority, Ref
         "evaluation_mode": "SYNTHETIC",
         "answer_mode": "BRIEF",
         "evidence_contract_id": "SYNTHETIC-EVIDENCE",
-        "whitelisted_source_handles": (f"SYNTHETIC-SOURCE-{index}",),
+        "whitelisted_source_handles": ("SYN-SOURCE",),
         "authorized_raster_sha256": None,
         "deterministic_tool_interfaces": (),
         "response_fields": ("answer",),
         "case_local_budgets": (("attempts", 1), ("retries", 0), ("semantic_rerolls", 0)),
     }
-    package = SubjectCasePackage(**package_payload, package_identity=benchmark.canonical_sha256(package_payload))
-    response_payload = (("answer", f"Synthetic response {index}"),)
-    response_sha = benchmark.canonical_sha256(response_payload)
-    scorer_payload = {
+    case = SubjectCasePackage(**cast(Any, package_data), package_identity=benchmark.canonical_sha256(package_data))
+    response = (("answer", '{"value":"safe"}'),)
+    checks = () if check is None else ((check[0], json.dumps(check[1], sort_keys=True, separators=(",", ":"))),)
+    scorer_data = {
         "case_id": case_id,
         "source_declared_compatibility_sha256": digest,
         "execution_rfc8785_jcs_sha256": digest,
-        "reference_payload": response_payload,
-        "reference_payload_sha256": response_sha,
-        "deterministic_checks": (("SYNTHETIC_EXACT", str(index)),),
-        "criteria": ((f"SYN-R{index}", WEIGHTS[index - 1], ""),),
-        "evidence_references": (f"SYNTHETIC-SOURCE-{index}",),
+        "reference_payload": response,
+        "reference_payload_sha256": benchmark.canonical_sha256(response),
+        "deterministic_checks": checks,
+        "criteria": ((f"SYN-R{index}", 1, severity),),
+        "evidence_references": ("SYN-SOURCE",),
+        "review_partition": "SYNTHETIC",
     }
-    scorer = ScorerCaseAuthority(**scorer_payload, scorer_plan_identity=benchmark.canonical_sha256(scorer_payload))
-    fixture = ReferenceSubjectFixture(case_id, digest, digest, "BRIEF", response_payload, response_sha)
-    return package, scorer, fixture
+    scorer = ScorerCaseAuthority(**cast(Any, scorer_data), scorer_plan_identity=benchmark.canonical_sha256(scorer_data))
+    fixture = ReferenceSubjectFixture(case_id, digest, digest, "BRIEF", response, scorer.reference_payload_sha256)
+    return case, scorer, fixture
 
 
-def _synthetic_spec() -> VS01BenchmarkExecutionSpecification:
-    records = tuple(_synthetic(index) for index in range(1, 13))
-    payload = {
-        "batch_markdown_sha256": "a" * 64,
-        "batch_cases_sha256": "b" * 64,
-        "r01_design_sha256": "c" * 64,
-        "r01_protocol_sha256": "d" * 64,
-        "erratum_markdown_sha256": "e" * 64,
-        "erratum_json_sha256": "f" * 64,
-        "source_declared_compatibility_hashes": tuple(
-            (case.case_id, case.source_declared_compatibility_sha256) for case, _, _ in records
-        ),
-        "execution_rfc8785_jcs_hashes": tuple(
-            (case.case_id, case.execution_rfc8785_jcs_sha256) for case, _, _ in records
-        ),
-        "case_order": tuple(case.case_id for case, _, _ in records),
-        "subject_projection_identities": tuple((case.case_id, case.package_identity) for case, _, _ in records),
-        "scorer_revision": scoring.SCORER_REVISION,
-        "upstream_authority": (("synthetic", "authority"),),
-        "isolation_policy": ("fresh subprocess per case", "one attempt", "zero retries"),
-        "screening_case_minimums": tuple((case.case_id, 0) for case, _, _ in records),
-        "screening_partition_minimums": (("REV-P0", 58), ("REV-P1", 45), ("TOTAL", 102)),
-        "b08_full_runtime_limitation": "VS01-B08-RUNTIME-C01_REQUIRED_NOT_AUTHORED",
-        "execution_mode": "REFERENCE_CONFORMANCE_DRY_RUN",
-    }
-    draft = VS01BenchmarkExecutionSpecification.model_construct(**payload, specification_identity="0" * 64)
-    payload["specification_identity"] = benchmark.canonical_sha256(
-        draft.model_dump(mode="json", exclude={"specification_identity"})
-    )
-    return VS01BenchmarkExecutionSpecification.model_validate(payload)
-
-
-def _response(
-    case: SubjectCasePackage, fixture: ReferenceSubjectFixture, state: str = "COMPLETED"
-) -> StructuredSubjectResponse:
+def _response(case: SubjectCasePackage, value: str, state: str = "COMPLETED") -> StructuredSubjectResponse:
+    payload = (("answer", value),)
     return StructuredSubjectResponse(
         case.case_id,
         case.source_declared_compatibility_sha256,
         case.execution_rfc8785_jcs_sha256,
         case.package_identity,
-        fixture.response_payload,
-        fixture.response_payload_sha256,
+        payload,
+        benchmark.canonical_sha256(payload),
         state,
     )
 
 
-def _synthetic_results() -> tuple[VS01BenchmarkCaseResult, ...]:
-    values = []
-    for index in range(1, 13):
-        case, scorer, fixture = _synthetic(index)
-        values.append(
-            scoring.score_reference_case(case, scorer, _response(case, fixture), implementation_evidence_mode=True)
-        )
-    return tuple(values)
+def _spec(dry_run: bool = False) -> VS01BenchmarkExecutionSpecification:
+    return benchmark.build_execution_specification(benchmark.load_benchmark_authority(), dry_run=dry_run)
 
 
-def _synthetic_run() -> tuple[VS01BenchmarkExecutionSpecification, VS01BenchmarkRunResult]:
-    specification = _synthetic_spec()
-    return specification, scoring._run_result(specification, _synthetic_results(), PARTITIONS)
+def _case(index: int) -> VS01BenchmarkCaseResult:
+    authority = benchmark.load_benchmark_authority()[index]
+    package, scorer, fixture = (
+        benchmark.compile_subject_package(authority),
+        benchmark.compile_scorer_authority(authority),
+        benchmark.compile_reference_fixture(authority),
+    )
+    scores = tuple((name, 2, weight, 2 * weight) for name, weight, _ in scorer.criteria)
+    payload: dict[str, Any] = {
+        "case_id": authority.case_id,
+        "source_declared_compatibility_sha256": authority.compatibility_sha256,
+        "execution_rfc8785_jcs_sha256": authority.execution_rfc8785_jcs_sha256,
+        "review_partition": scorer.review_partition,
+        "subject_package_identity": package.package_identity,
+        "response_identity": fixture.response_payload_sha256,
+        "response_payload": fixture.response_payload,
+        "attempt_state": "COMPLETED",
+        "criterion_scores": scores,
+        "deterministic_checks": tuple((kind, value, True) for kind, value in scorer.deterministic_checks),
+        "hard_failures": (),
+        "raw_points": sum(item[3] for item in scores),
+        "capped_points": sum(item[3] for item in scores),
+        "case_disposition": "REFERENCE_CONFORMANT",
+        "leakage_state": "CLEAR",
+        "error": False,
+        "refusal": False,
+        "timeout": False,
+        "malformed": False,
+        "evidence_references": scorer.evidence_references,
+    }
+    draft = VS01BenchmarkCaseResult.model_construct(**payload, case_result_identity="0" * 64)
+    payload["case_result_identity"] = benchmark.canonical_sha256(
+        draft.model_dump(mode="json", exclude={"case_result_identity"})
+    )
+    return VS01BenchmarkCaseResult.model_validate(payload)
 
 
-def _receipt(root: Path, result: VS01BenchmarkRunResult, *, dry_run: bool = False) -> VS01BenchmarkExecutionReceipt:
-    return scoring._receipt(
-        _synthetic_spec(),
+def _run(dry_run: bool = False) -> VS01BenchmarkRunResult:
+    return scoring._run_result(_spec(dry_run), tuple(_case(index) for index in range(12)), PARTITIONS)
+
+
+def _fingerprints() -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (name, benchmark.canonical_sha256(name)) for name in ("t04", "t05", "t06", "archive_root", "incoming_inventory")
+    )
+
+
+def _receipt(root: Path, result: VS01BenchmarkRunResult) -> VS01BenchmarkExecutionReceipt:
+    ledger = scoring.BenchmarkOperationLedger(2, 24, 24, 24, 2, 1, 1)
+    return store.build_execution_receipt(
+        _spec(),
         result,
         root,
-        dry_run=dry_run,
+        ledger.__dict__,
+        _fingerprints(),
+        _fingerprints(),
+        disposition="REFERENCE_CONFORMANT",
         implementation_commit="1" * 40,
         new_uuid=uuid7,
         now=lambda: datetime.now(UTC),
     )
 
 
-def test_exact_real_authority_dual_hash_arithmetic_and_static_compilation_only() -> None:
+def test_real_authority_static_compilation_dual_hash_and_fixtures() -> None:
     authorities = benchmark.load_benchmark_authority()
     matrix = benchmark.compatibility_hash_matrix(authorities)
-    assert len(authorities) == len(matrix) == 12
-    assert [item[0] for item in matrix] == list(benchmark.REAL_CASE_IDS)
+    assert len(authorities) == 12 and [item[0] for item in matrix] == list(CASE_IDS)
     assert [item[0] for item in matrix if item[1] != item[2]] == ["VS01-B10-C01"]
     assert matrix[9][1:] == (benchmark.B10_COMPATIBILITY_SHA256, benchmark.B10_JCS_SHA256)
     assert benchmark.static_compilation_identity(authorities) == benchmark.static_compilation_identity(authorities)
-    assert benchmark._REAL_OPERATION_COUNTS == {
-        "subject": 0,
-        "scoring": 0,
-        "case_result": 0,
-        "run_result": 0,
-        "receipt": 0,
-    }
-    with pytest.raises(ValueError, match="prohibited"):
-        benchmark.guard_real_case("VS01-B01-C01", "subject", implementation_evidence_mode=True)
-
-
-def test_generated_fixtures_are_reproducible_committed_and_public_safe() -> None:
-    first = benchmark.generated_fixture_bytes()
-    second = benchmark.generated_fixture_bytes()
-    assert first == second
-    paths = (
-        ROOT / "fixtures/VS01-T07/reference-subject-responses.json",
-        ROOT / "fixtures/VS01-T07/subject-projection-manifest.json",
+    generated = benchmark.generated_fixture_bytes(authorities)
+    assert generated == benchmark.generated_fixture_bytes(authorities)
+    assert generated == tuple(
+        (ROOT / path).read_bytes()
+        for path in (
+            "fixtures/VS01-T07/reference-subject-responses.json",
+            "fixtures/VS01-T07/subject-projection-manifest.json",
+        )
     )
-    assert tuple(path.read_bytes() for path in paths) == first
-    reference = json.loads(first[0])
-    assert len(reference["cases"]) == 12
-    assert set(reference["cases"][0]) == {
-        "case_id",
-        "source_declared_compatibility_sha256",
-        "execution_rfc8785_jcs_sha256",
-        "answer_mode",
-        "response_payload",
-        "response_payload_sha256",
-    }
-    for forbidden in (b'"rubric":', b'"deterministic_checks":', b'"hard_failures":', b'"scorer_path":'):
-        assert forbidden not in first[0] and forbidden not in first[1]
+    with pytest.raises(ValueError, match="prohibited"):
+        benchmark.guard_real_case(CASE_IDS[0], "subject", implementation_evidence_mode=True)
 
 
-def test_subject_projection_firewall_and_special_case_boundaries() -> None:
+def test_check_inventory_closed_and_special_projection_firewall() -> None:
     authorities = benchmark.load_benchmark_authority()
-    packages = {item.case_id: benchmark.compile_subject_package(item) for item in authorities}
-    assert set(packages["VS01-B08-C01"].whitelisted_source_handles) == {
-        "SP01-SRC-003#John.1.5",
-        "SP01-SRC-004#John.1.5",
+    observed = {
+        kind for item in authorities for kind, _ in benchmark.compile_scorer_authority(item).deterministic_checks
     }
-    assert packages["VS01-B08-C01"].deterministic_tool_interfaces == ()
-    assert packages["VS01-B09-C01"].authorized_raster_sha256 == benchmark.BASE_RASTER_SHA256
-    assert packages["VS01-B10-C01"].authorized_raster_sha256 == benchmark.DEGRADED_RASTER_SHA256
-    assert len(packages["VS01-B11-C01"].prompt_fields) == 5
-    assert "Correction: use the ASV" in packages["VS01-B11-C01"].prompt_fields[2][1]
-    assert packages["VS01-B12-C01"].response_fields == ("brief", "study")
-    package_fields = set(SubjectCasePackage.__dataclass_fields__)
-    assert not package_fields.intersection(benchmark.FORBIDDEN_SUBJECT_FIELDS)
-    assert set(ScorerCaseAuthority.__dataclass_fields__).isdisjoint({"prompt_fields", "deterministic_tool_interfaces"})
+    assert observed == set(benchmark.CHECK_FIELDS)
+    changed = dict(authorities[0].source) | {"deterministic_checks": [{"type": "UNKNOWN"}]}
+    with pytest.raises(ValueError, match="unsupported deterministic"):
+        benchmark.compile_scorer_authority(replace(authorities[0], source=changed))
+    packages = {item.case_id: benchmark.compile_subject_package(item) for item in authorities}
+    assert packages[CASE_IDS[7]].deterministic_tool_interfaces == ()
+    assert packages[CASE_IDS[8]].authorized_raster_sha256 == benchmark.BASE_RASTER_SHA256
+    assert packages[CASE_IDS[9]].authorized_raster_sha256 == benchmark.DEGRADED_RASTER_SHA256
+    assert "Correction: use the ASV" in packages[CASE_IDS[10]].prompt_fields[2][1]
+    assert packages[CASE_IDS[11]].response_fields == ("brief", "study")
+    assert set(SubjectCasePackage.__dataclass_fields__).isdisjoint(benchmark.FORBIDDEN_SUBJECT_FIELDS)
 
 
-def test_reference_subject_uses_a_fresh_subprocess_per_synthetic_case(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls = 0
-    original = scoring.DeterministicReferenceSubjectAdapter.generate
+def test_child_source_wire_argv_environment_and_two_processes(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert {"hashlib", "json", "sys"} == reference_subject.CHILD_IMPORTS
+    names = {node.id for node in ast.walk(ast.parse(reference_subject.CHILD_SOURCE)) if isinstance(node, ast.Name)}
+    assert names.isdisjoint({"bsl", "pathlib", "os", "subprocess", "socket", "importlib", "site"})
+    seen: list[tuple[list[str], dict[str, str], dict[str, Any]]] = []
+    original = reference_subject.subprocess.run
 
-    def counted(self: DeterministicReferenceSubjectAdapter, case: SubjectCasePackage) -> StructuredSubjectResponse:
-        nonlocal calls
-        calls += 1
-        return original(self, case)
+    def inspect_run(argv: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        seen.append((argv, kwargs["env"], json.loads(kwargs["input"])))
+        return cast(subprocess.CompletedProcess[bytes], original(argv, **kwargs))
 
-    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", counted)
+    monkeypatch.setattr(reference_subject.subprocess, "run", inspect_run)
     for index in (1, 2):
         case, _scorer, fixture = _synthetic(index)
-        response = DeterministicReferenceSubjectAdapter(fixture, implementation_evidence_mode=True).generate(case)
-        assert response.response_payload == fixture.response_payload
-    assert calls == 2
+        assert (
+            DeterministicReferenceSubjectAdapter(fixture, implementation_evidence_mode=True).generate(case).case_id
+            == case.case_id
+        )
+    for argv, environment, request in seen:
+        assert argv[1:5] == ["-I", "-S", "-X", "utf8"]
+        assert environment == {"PYTHONUTF8": "1", "LC_ALL": "C.UTF-8"}
+        assert set(request) == {
+            "case_id",
+            "source_declared_compatibility_sha256",
+            "execution_rfc8785_jcs_sha256",
+            "subject_package_identity",
+            "response_field_names",
+            "oracle_response_payload",
+            "oracle_response_payload_sha256",
+        }
+        assert not any("path" in key or "module" in key for key in request)
 
 
-def test_reference_subject_rejects_identity_and_subprocess_failures(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_child_rejects_malformed_and_mismatched_wire(tmp_path: Path) -> None:
+    script = tmp_path / "child.py"
+    script.write_text(reference_subject.CHILD_SOURCE)
+    completed = subprocess.run(
+        [sys.executable, "-I", "-S", "-X", "utf8", str(script)], input=b"{}", capture_output=True, check=False
+    )
+    assert completed.returncode == 2
     case, _scorer, fixture = _synthetic(1)
-    changed_fixture = ReferenceSubjectFixture(
-        fixture.case_id,
-        fixture.source_declared_compatibility_sha256,
-        fixture.execution_rfc8785_jcs_sha256,
-        fixture.answer_mode,
-        (("answer", "changed synthetic response"),),
-        fixture.response_payload_sha256,
-    )
     with pytest.raises(ValueError, match="identity differs"):
-        reference_subject._execute(case, changed_fixture)
-    assert reference_subject._record(SubjectCasePackage, case.payload()) == case
-    with pytest.raises(ValueError, match="record differs"):
-        reference_subject._record(SubjectCasePackage, {})
-    adapter = DeterministicReferenceSubjectAdapter(fixture, implementation_evidence_mode=True)
-    monkeypatch.setattr(
-        reference_subject.subprocess,
-        "run",
-        lambda *args, **kwargs: subprocess.CompletedProcess(args, 1, b"", b"synthetic failure"),
+        reference_subject._request(case, replace(fixture, response_payload_sha256="0" * 64))
+
+
+ADVERSARIES = (
+    ("wrong canonical quotation", "EXACT_STRING", {"value": "canonical quotation"}, "wrong quotation"),
+    ("morphology-as-meaning", "EXACT_FIELD", {"field": "morphology", "value": "aorist"}, '{"morphology":"present"}'),
+    ("edition-label swap", "EXACT_STRING", {"value": "ASV"}, "WEB edition"),
+    (
+        "translations-as-manuscript-witnesses",
+        "FORBIDDEN_STRING",
+        {"value": "translations prove manuscripts"},
+        "translations prove manuscripts",
+    ),
+    ("illegitimate totality transfer", "FORBIDDEN_STRING", {"value": "every gloss applies"}, "every gloss applies"),
+    ("false literally both claim", "FORBIDDEN_STRING", {"value": "literally both"}, "literally both"),
+    (
+        "citation/source-role swap",
+        "CLAIM_SOURCE_MAP",
+        {"claim": "quotation", "required_source": "SYN-SOURCE"},
+        '{"claims":{"quotation":"WRONG"}}',
+    ),
+    (
+        "confident Greek claim from translations only",
+        "FORBIDDEN_STRING",
+        {"value": "Greek certainly means"},
+        "Greek certainly means",
+    ),
+    ("study note as Scripture", "FORBIDDEN_STRING", {"value": "note is Scripture"}, "note is Scripture"),
+    (
+        "obscured phrase claimed visually read",
+        "FORBIDDEN_STRING",
+        {"value": "visually read obscured"},
+        "visually read obscured",
+    ),
+    (
+        "stale WEB preference",
+        "SESSION_STATE",
+        {"field": "primary_translation", "value": "ASV"},
+        '{"session_state":{"primary_translation":"WEB"}}',
+    ),
+    (
+        "Brief mode hides uncertainty",
+        "EXACT_FIELD",
+        {"field": "uncertainty", "value": "explicit"},
+        '{"uncertainty":"hidden"}',
+    ),
+)
+
+CHECK_CONTROLS = (
+    ("EXACT_STRING", {"value": "required"}, "required", "missing"),
+    ("FORBIDDEN_STRING", {"value": "forbidden"}, "safe", "forbidden"),
+    ("REQUIRED_SOURCE_HANDLE", {"value": "SYN-SOURCE"}, "SYN-SOURCE", "missing"),
+    ("TEXT_QUOTE_SELECTOR", {"prefix": "alpha ", "exact": "omega"}, "alpha omega", "omega"),
+    ("EXACT_FIELD", {"field": "lemma", "value": "target"}, '{"lemma":"target"}', '{"lemma":"wrong"}'),
+    (
+        "CLAIM_SOURCE_MAP",
+        {"claim": "claim", "required_source": "SYN-SOURCE"},
+        '{"claims":{"claim":"SYN-SOURCE"}}',
+        '{"claims":{"claim":"WRONG"}}',
+    ),
+    (
+        "REGION_ROLE_MAP",
+        {"expected": {"r_note": "STUDY_NOTE_OR_FOOTNOTE"}},
+        '{"region_roles":{"r_note":"STUDY_NOTE_OR_FOOTNOTE"}}',
+        '{"region_roles":{"r_note":"CANONICAL_TEXT"}}',
+    ),
+    (
+        "ONLY_CANONICAL_QUOTE",
+        {"value": "verse"},
+        '{"noncanonical_quoted":false,"quote":"verse"}',
+        '{"noncanonical_quoted":true,"quote":"verse"}',
+    ),
+    (
+        "SESSION_STATE",
+        {"field": "primary_translation", "value": "ASV"},
+        '{"session_state":{"primary_translation":"ASV"}}',
+        '{"session_state":{"primary_translation":"WEB"}}',
+    ),
+    ("REQUIRED_EVENT", {"value": "correction"}, '{"events":["correction"]}', '{"events":[]}'),
+)
+
+
+@pytest.mark.parametrize(("category", "kind", "rule", "mutation"), ADVERSARIES)
+def test_twelve_mutated_data_controls(category: str, kind: str, rule: dict[str, Any], mutation: str) -> None:
+    del category
+    case, scorer, _fixture = _synthetic(1, (kind, rule))
+    good = json.dumps(
+        {
+            rule.get("field", "value"): rule.get("value", "safe"),
+            "claims": {rule.get("claim", "none"): rule.get("required_source", "none")},
+            "session_state": {rule.get("field", "none"): rule.get("value", "none")},
+        },
+        sort_keys=True,
+        separators=(",", ":"),
     )
-    with pytest.raises(ValueError, match="subprocess failed"):
-        adapter.generate(case)
-    monkeypatch.setattr(
-        reference_subject.subprocess,
-        "run",
-        lambda *args, **kwargs: subprocess.CompletedProcess(args, 0, b"not-json", b""),
-    )
-    with pytest.raises(ValueError, match="malformed output"):
-        adapter.generate(case)
+    if kind == "FORBIDDEN_STRING":
+        good = '{"value":"safe"}'
+    if kind == "EXACT_STRING":
+        good += str(rule["value"])
+    failed = scoring.score_reference_case(case, scorer, _response(case, mutation), implementation_evidence_mode=True)
+    passed = scoring.score_reference_case(case, scorer, _response(case, good), implementation_evidence_mode=True)
+    assert failed.hard_failures == (("SYN-R1", "HF-2_MAJOR", "deterministic check failed"),)
+    assert failed.case_disposition == "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
+    assert passed.case_disposition == "REFERENCE_CONFORMANT"
 
 
-def test_static_execution_specification_compiles_real_authority_without_execution() -> None:
-    authorities = benchmark.load_benchmark_authority()
-    specification = scoring.build_execution_specification(authorities, dry_run=True)
-    assert specification.case_order == benchmark.REAL_CASE_IDS
-    assert specification.execution_mode == "REFERENCE_CONFORMANCE_DRY_RUN"
-    assert benchmark._REAL_OPERATION_COUNTS == {
-        "subject": 0,
-        "scoring": 0,
-        "case_result": 0,
-        "run_result": 0,
-        "receipt": 0,
-    }
-
-
-def test_synthetic_replay_and_campaign_publication_paths(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    synthetic = tuple(_synthetic(index) for index in range(1, 13))
-    authorities = tuple(
-        SimpleNamespace(case_id=case.case_id, source={"review_partition": PARTITIONS[index]})
-        for index, (case, _scorer, _fixture) in enumerate(synthetic)
-    )
-    by_id = {case.case_id: values for case, *values in synthetic}
-    monkeypatch.setattr(scoring, "compile_subject_package", lambda item: _synthetic(int(item.case_id[-2:]))[0])
-    monkeypatch.setattr(scoring, "compile_scorer_authority", lambda item: by_id[item.case_id][0])
-    monkeypatch.setattr(scoring, "compile_reference_fixture", lambda item: by_id[item.case_id][1])
-    specification = _synthetic_spec()
-    replay = scoring.execute_reference_replay(
-        authorities,  # type: ignore[arg-type]
-        specification,
-        implementation_evidence_mode=True,
-    )
-    assert replay.disposition == "REFERENCE_CONFORMANT"
-
-    def fail_synthetic_subject(
-        self: DeterministicReferenceSubjectAdapter, case: SubjectCasePackage
-    ) -> StructuredSubjectResponse:
-        raise ValueError("synthetic subject failure")
-
-    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", fail_synthetic_subject)
-    failed_replay = scoring.execute_reference_replay(
-        authorities,  # type: ignore[arg-type]
-        specification,
-        implementation_evidence_mode=True,
-    )
-    assert dict(failed_replay.failure_counts)["error"] == 12
-
-    monkeypatch.setattr(scoring, "build_execution_specification", lambda items, dry_run: specification)
-    monkeypatch.setattr(scoring, "execute_reference_replay", lambda *args, **kwargs: replay)
-    common = {
-        "archive_root": tmp_path,
-        "_authorities": authorities,
-        "_implementation_commit": "1" * 40,
-        "_new_uuid": uuid7,
-        "_now": lambda: datetime.now(UTC),
-    }
-    assert scoring.run_reference_campaign(dry_run=True, **common)[3] is False  # type: ignore[arg-type]
-    live = scoring.run_reference_campaign(dry_run=False, **common)  # type: ignore[arg-type]
-    assert live[3] is True and live[2].published
-    existing = scoring.run_reference_campaign(dry_run=False, **common)  # type: ignore[arg-type]
-    assert existing[3] is False and existing[2] == live[2]
-
-
-def test_campaign_rejects_replay_mismatch_and_git_head_mutation(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+@pytest.mark.parametrize(("kind", "rule", "passing", "failing"), CHECK_CONTROLS)
+def test_every_frozen_check_type_reads_synthetic_data(
+    kind: str, rule: dict[str, Any], passing: str, failing: str
 ) -> None:
-    specification, conformant = _synthetic_run()
-    case, scorer, fixture = _synthetic(1)
-    failed_case = scoring.score_reference_case(
-        case,
-        scorer,
-        _response(case, fixture, "ERROR"),
-        implementation_evidence_mode=True,
+    case, scorer, _ = _synthetic(1, (kind, rule))
+    outcomes = tuple(
+        scoring.score_reference_case(case, scorer, _response(case, value), implementation_evidence_mode=True)
+        for value in (passing, failing)
     )
-    failed = scoring._run_result(specification, (failed_case,) + _synthetic_results()[1:], PARTITIONS)
-    authorities = (SimpleNamespace(case_id="SYN-T07-CASE-01"),)
-    monkeypatch.setattr(scoring, "build_execution_specification", lambda items, dry_run: specification)
-    runs = iter((conformant, failed))
-    monkeypatch.setattr(scoring, "execute_reference_replay", lambda *args, **kwargs: next(runs))
-    with pytest.raises(ValueError, match="replay identity differs"):
-        scoring.run_reference_campaign(
-            dry_run=True,
-            archive_root=tmp_path,
-            _authorities=authorities,  # type: ignore[arg-type]
-            _implementation_commit="1" * 40,
+    assert tuple(item.case_disposition for item in outcomes) == (
+        "REFERENCE_CONFORMANT",
+        "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+    )
+
+
+def test_no_answer_key_parameters_hard_failure_precedence_and_leakage() -> None:
+    assert {"synthetic_adversary", "synthetic_severity", "failed_criterion"}.isdisjoint(
+        inspect.signature(scoring.score_reference_case).parameters
+    )
+    for severity, cap in (("HF-1_CRITICAL", 0), ("HF-2_MAJOR", 0), ("HF-3_MATERIAL", 0), ("HF-4_MINOR", 0)):
+        case, scorer, _ = _synthetic(1, ("EXACT_STRING", {"value": "required"}), severity)
+        result = scoring.score_reference_case(
+            case, scorer, _response(case, "missing"), implementation_evidence_mode=True
         )
-    assert (
-        scoring._git_head()
-        == subprocess.run(["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
-    )
-    monkeypatch.setattr(
-        scoring.subprocess,
-        "run",
-        lambda *args, **kwargs: subprocess.CompletedProcess(args, 0, "not-a-commit\n", ""),
-    )
-    with pytest.raises(ValueError, match="commit is invalid"):
-        scoring._git_head()
-
-
-@pytest.mark.parametrize(
-    ("mutation", "message"),
-    (
-        ({"specification_identity": "0" * 64}, "specification identity differs"),
-        ({"case_order": ("SYN-T07-CASE-01",) * 12}, "case inventory differs"),
-        ({"screening_case_minimums": (("SYN-T07-CASE-01", 0),)}, "duplicate or missing cases"),
-    ),
-)
-def test_execution_specification_rejects_identity_and_inventory(mutation: dict[str, object], message: str) -> None:
-    payload = _synthetic_spec().model_dump(mode="python") | mutation
-    if "specification_identity" not in mutation:
-        payload["specification_identity"] = benchmark.canonical_sha256(
-            {key: value for key, value in payload.items() if key != "specification_identity"}
-        )
-    with pytest.raises(ValidationError, match=message):
-        VS01BenchmarkExecutionSpecification.model_validate(payload)
-
-
-@pytest.mark.parametrize(
-    ("mutation", "message"),
-    (
-        ({"case_result_identity": "0" * 64}, "case-result identity differs"),
-        ({"criterion_scores": (("SYN-R1", 2, 5, 9),)}, "criterion arithmetic differs"),
-        ({"raw_points": 9}, "case-point arithmetic differs"),
-        ({"error": True}, "attempt-state accounting differs"),
-        ({"leakage_state": "INVALID_LEAKAGE_INCIDENT"}, "leakage disposition differs"),
-    ),
-)
-def test_case_result_rejects_broken_accounting(mutation: dict[str, object], message: str) -> None:
-    payload = _synthetic_results()[0].model_dump(mode="python") | mutation
-    if "case_result_identity" not in mutation:
-        payload["case_result_identity"] = benchmark.canonical_sha256(
-            {key: value for key, value in payload.items() if key != "case_result_identity"}
-        )
-    with pytest.raises(ValidationError, match=message):
-        VS01BenchmarkCaseResult.model_validate(payload)
-
-
-@pytest.mark.parametrize(
-    ("mutation", "message"),
-    (
-        ({"run_result_identity": "0" * 64}, "run-result identity differs"),
-        (
-            {
-                "case_results": tuple(
-                    item.model_dump(mode="python") for item in _synthetic_results()[:11] + (_synthetic_results()[0],)
-                )
-            },
-            "twelve unique cases",
-        ),
-        ({"p0_points": 63}, "partition arithmetic differs"),
-        ({"p0_points": 63, "total_points": 119}, "case arithmetic differs"),
-        ({"completed_attempts": 11}, "completed-attempt accounting differs"),
-    ),
-)
-def test_run_result_rejects_broken_accounting(mutation: dict[str, object], message: str) -> None:
-    payload = _synthetic_run()[1].model_dump(mode="python") | mutation
-    if "run_result_identity" not in mutation:
-        payload["run_result_identity"] = benchmark.canonical_sha256(
-            {key: value for key, value in payload.items() if key != "run_result_identity"}
-        )
-    with pytest.raises(ValidationError, match=message):
-        VS01BenchmarkRunResult.model_validate(payload)
-
-
-@pytest.mark.parametrize(
-    ("mutation", "message"),
-    (
-        ({"receipt_id": uuid4()}, "not UUIDv7"),
-        ({"generated_at": datetime.now()}, "not offset-aware"),
-        ({"dry_run": True, "published": True}, "claims publication"),
-        ({"published": True, "verified_existing": True}, "both published and verified-existing"),
-    ),
-)
-def test_execution_receipt_rejects_invalid_operations(
-    mutation: dict[str, object], message: str, tmp_path: Path
-) -> None:
-    receipt = _receipt(tmp_path, _synthetic_run()[1])
-    with pytest.raises(ValidationError, match=message):
-        VS01BenchmarkExecutionReceipt.model_validate(receipt.model_dump(mode="python") | mutation)
-
-
-@pytest.mark.parametrize("state", ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED"))
-def test_reference_scoring_replay_arithmetic_and_error_denominator(state: str) -> None:
-    specification = _synthetic_spec()
-    first = _synthetic_results()
-    second = _synthetic_results()
-    run1 = scoring._run_result(specification, first, PARTITIONS)
-    run2 = scoring._run_result(specification, second, PARTITIONS)
-    assert run1.run_result_identity == run2.run_result_identity
-    assert (run1.p0_points, run1.p1_points, run1.total_points) == (64, 56, 120)
+        assert result.capped_points == cap and result.hard_failures[0][1] == severity
     case, scorer, fixture = _synthetic(1)
-    failed = scoring.score_reference_case(
-        case, scorer, _response(case, fixture, state), implementation_evidence_mode=True
-    )
-    changed = (failed,) + first[1:]
-    failed_run = scoring._run_result(specification, changed, PARTITIONS)
-    assert failed_run.requested_attempts == 12 and failed_run.completed_attempts == 11
-    assert dict(failed_run.failure_counts)[state.lower()] == 1 and failed_run.total_points == 110
-
-
-@pytest.mark.parametrize("category", tuple(scoring.ADVERSARY_SEVERITIES))
-def test_twelve_synthetic_adversary_categories(category: str) -> None:
-    case, scorer, fixture = _synthetic(1)
-    result = scoring.score_reference_case(
-        case,
-        scorer,
-        _response(case, fixture),
-        implementation_evidence_mode=True,
-        synthetic_adversary=category,
-    )
-    assert result.case_disposition == "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
-    assert result.hard_failures[0][2] == category and result.capped_points == 0
-
-
-@pytest.mark.parametrize(
-    ("severity", "expected_cap"),
-    (("HF-1_CRITICAL", 0), ("HF-2_MAJOR", 0), ("HF-3_MATERIAL", 0), ("HF-4_MINOR", 2)),
-)
-def test_hard_failure_precedence(severity: str, expected_cap: int) -> None:
-    case, scorer, fixture = _synthetic(1)
-    scorer = ScorerCaseAuthority(
-        scorer.case_id,
-        scorer.source_declared_compatibility_sha256,
-        scorer.execution_rfc8785_jcs_sha256,
-        scorer.reference_payload,
-        scorer.reference_payload_sha256,
-        scorer.deterministic_checks,
-        (scorer.criteria[0], ("SYN-EXTRA", 1, "")),
-        scorer.evidence_references,
-        scorer.scorer_plan_identity,
+    changed: dict[str, Any] = case.payload() | {"whitelisted_source_handles": ("/tmp/private",)}
+    changed["package_identity"] = benchmark.canonical_sha256(
+        {key: value for key, value in changed.items() if key != "package_identity"}
     )
     result = scoring.score_reference_case(
-        case,
+        SubjectCasePackage(**cast(Any, changed)),
         scorer,
-        _response(case, fixture),
+        _response(case, fixture.response_payload[0][1]),
         implementation_evidence_mode=True,
-        synthetic_adversary="wrong canonical quotation",
-        synthetic_severity=severity,
     )
-    assert result.raw_points == 2 and result.capped_points == expected_cap
+    assert result.attempt_state == result.leakage_state == result.case_disposition == "INVALID_LEAKAGE_INCIDENT"
 
 
 @pytest.mark.parametrize(
@@ -505,7 +391,7 @@ def test_hard_failure_precedence(severity: str, expected_cap: int) -> None:
 )
 def test_every_screening_threshold_boundary(field: str, below: int, at: int) -> None:
     values = {"p0_points": 58, "p1_points": 45, "total_points": 102}
-    common = {
+    policy = {
         "every_case_minimum_met": True,
         "no_zero_criteria": True,
         "hf1_count": 0,
@@ -515,14 +401,15 @@ def test_every_screening_threshold_boundary(field: str, below: int, at: int) -> 
         "b10_passed": True,
         "b11_correction_losses": 0,
     }
-    assert scoring.screening_disposition(**(values | {field: below}), **common) == "SCREENING_NO_GO"
+    assert scoring.screening_disposition(**cast(Any, values | {field: below}), **cast(Any, policy)) == "SCREENING_NO_GO"
     assert (
-        scoring.screening_disposition(**(values | {field: at}), **common) == "SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"
+        scoring.screening_disposition(**cast(Any, values | {field: at}), **cast(Any, policy))
+        == "SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"
     )
 
 
 def test_screening_hard_failure_and_material_review_precedence() -> None:
-    values = {
+    policy = {
         "p0_points": 64,
         "p1_points": 56,
         "total_points": 120,
@@ -533,8 +420,8 @@ def test_screening_hard_failure_and_material_review_precedence() -> None:
         "b10_passed": True,
         "b11_correction_losses": 0,
     }
-    assert scoring.screening_disposition(**values, hf1_count=1, hf3_count=0) == "SCREENING_NO_GO"
-    assert scoring.screening_disposition(**values, hf1_count=0, hf3_count=1) == "SCREENING_REVIEW_REQUIRED"
+    assert scoring.screening_disposition(**cast(Any, policy), hf1_count=1, hf3_count=0) == "SCREENING_NO_GO"
+    assert scoring.screening_disposition(**cast(Any, policy), hf1_count=0, hf3_count=1) == "SCREENING_REVIEW_REQUIRED"
 
 
 @pytest.mark.parametrize("minimum", (5, 8, 5, 10, 8, 12, 10, 7, 8, 8, 8, 10))
@@ -543,77 +430,355 @@ def test_every_case_threshold_immediately_below_and_at_gate(minimum: int) -> Non
     assert scoring.meets_case_minimum(minimum, minimum)
 
 
-def test_leakage_invalidates_before_scoring() -> None:
+def test_operation_ledger_observes_two_synthetic_replays(monkeypatch: pytest.MonkeyPatch) -> None:
+    records = tuple(
+        SimpleNamespace(case_id=f"SYN-T07-CASE-{index:02d}", source={"review_partition": "SYN"})
+        for index in range(1, 13)
+    )
+    values = {item.case_id: _synthetic(index) for index, item in enumerate(records, 1)}
+
+    def subject(item: Any) -> Any:
+        return values[item.case_id][0]
+
+    def scorer(item: Any) -> Any:
+        return values[item.case_id][1]
+
+    def fixture(item: Any) -> Any:
+        return values[item.case_id][2]
+
+    def run_result(_spec: Any, results: tuple[Any, ...], _parts: Any) -> Any:
+        identity = benchmark.canonical_sha256(tuple((item.case_id, item.criterion_scores) for item in results))
+        return SimpleNamespace(run_result_identity=identity)
+
+    monkeypatch.setattr(scoring, "compile_subject_package", subject)
+    monkeypatch.setattr(scoring, "compile_scorer_authority", scorer)
+    monkeypatch.setattr(scoring, "compile_reference_fixture", fixture)
+    monkeypatch.setattr(scoring, "_run_result", run_result)
+    ledger = scoring.BenchmarkOperationLedger()
+    identities: list[str] = []
+    for _ in range(2):
+        result, ledger = scoring.execute_reference_replay(
+            cast(Any, records), cast(Any, object()), ledger, implementation_evidence_mode=True
+        )
+        identities.append(result.run_result_identity)
+    assert identities[0] == identities[1]
+    assert ledger == scoring.BenchmarkOperationLedger(2, 24, 24, 24, 2, 0, 0)
+
+
+def test_subject_error_remains_in_synthetic_denominator(monkeypatch: pytest.MonkeyPatch) -> None:
+    records = (SimpleNamespace(case_id="SYN-T07-CASE-01", source={"review_partition": "SYN"}),)
     case, scorer, fixture = _synthetic(1)
-    data = case.payload()
-    data["whitelisted_source_handles"] = ("/tmp/hidden-scorer-store",)
-    data["package_identity"] = benchmark.canonical_sha256(
-        {key: value for key, value in data.items() if key != "package_identity"}
+
+    def package(_item: Any) -> SubjectCasePackage:
+        return case
+
+    def authority(_item: Any) -> ScorerCaseAuthority:
+        return scorer
+
+    def oracle(_item: Any) -> ReferenceSubjectFixture:
+        return fixture
+
+    def fail(_adapter: Any, _case: Any) -> StructuredSubjectResponse:
+        raise OSError
+
+    monkeypatch.setattr(scoring, "compile_subject_package", package)
+    monkeypatch.setattr(scoring, "compile_scorer_authority", authority)
+    monkeypatch.setattr(scoring, "compile_reference_fixture", oracle)
+    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", fail)
+
+    def observed(_spec: Any, results: tuple[Any, ...], _parts: Any) -> Any:
+        assert results[0].attempt_state == "ERROR"
+        return SimpleNamespace(run_result_identity="error-retained")
+
+    monkeypatch.setattr(scoring, "_run_result", observed)
+    _result, ledger = scoring.execute_reference_replay(
+        cast(Any, records), cast(Any, object()), scoring.BenchmarkOperationLedger(), implementation_evidence_mode=True
     )
-    leaked = SubjectCasePackage(**data)
-    result = scoring.score_reference_case(leaked, scorer, _response(leaked, fixture), implementation_evidence_mode=True)
-    assert result.attempt_state == result.leakage_state == result.case_disposition == "INVALID_LEAKAGE_INCIDENT"
+    assert (ledger.subject_invocations, ledger.scoring_invocations, ledger.case_results_constructed) == (1, 0, 1)
 
 
-def test_result_canonicalization_and_receipt_operational_fields() -> None:
-    specification, result = _synthetic_run()
-    data = result.model_dump(mode="json")
-    data["total_points"] = 119
-    with pytest.raises(ValidationError):
-        VS01BenchmarkRunResult.model_validate(data)
-    first = scoring._receipt(
-        specification,
-        result,
-        Path("/synthetic"),
-        dry_run=True,
-        implementation_commit="1" * 40,
-        new_uuid=uuid7,
-        now=lambda: datetime(2026, 1, 1, tzinfo=UTC),
+@pytest.mark.parametrize(
+    "field",
+    (
+        "source_declared_compatibility_sha256",
+        "subject_package_identity",
+        "response_payload",
+        "criterion_scores",
+        "deterministic_checks",
+        "evidence_references",
+        "review_partition",
+    ),
+)
+def test_case_contract_rejects_recomputed_authority_mutation(field: str) -> None:
+    payload = _case(0).model_dump(mode="python")
+    mutations = {
+        "source_declared_compatibility_sha256": "0" * 64,
+        "subject_package_identity": "0" * 64,
+        "response_payload": (("answer", "mutated response"),),
+        "criterion_scores": (("WRONG", 2, 2, 4),) + payload["criterion_scores"][1:],
+        "deterministic_checks": (("WRONG", "{}", True),) + payload["deterministic_checks"][1:],
+        "evidence_references": ("WRONG",),
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+    }
+    payload[field] = mutations[field]
+    payload["case_result_identity"] = benchmark.canonical_sha256(
+        {key: value for key, value in payload.items() if key != "case_result_identity"}
     )
-    second = scoring._receipt(
-        specification,
-        result,
-        Path("/synthetic"),
-        dry_run=True,
-        implementation_commit="1" * 40,
-        new_uuid=uuid7,
-        now=lambda: datetime(2026, 1, 1, tzinfo=UTC) + timedelta(seconds=1),
+    with pytest.raises(ValidationError, match="differs"):
+        VS01BenchmarkCaseResult.model_validate(payload)
+
+
+def test_spec_run_and_receipt_cross_validation(tmp_path: Path) -> None:
+    specification = _spec()
+    payload = specification.model_dump(mode="python") | {"case_order": tuple(reversed(CASE_IDS))}
+    payload["specification_identity"] = benchmark.canonical_sha256(
+        {key: value for key, value in payload.items() if key != "specification_identity"}
     )
-    assert first.receipt_id != second.receipt_id and first.generated_at != second.generated_at
-    assert first.run_result_identity == second.run_result_identity == result.run_result_identity
+    with pytest.raises(ValidationError, match="authority differs"):
+        VS01BenchmarkExecutionSpecification.model_validate(payload)
+    run = _run()
+    draft = run.model_copy(update={"case_results": run.case_results[::-1]})
+    changed = draft.model_dump(mode="python")
+    changed["run_result_identity"] = benchmark.canonical_sha256(
+        draft.model_dump(mode="json", exclude={"run_result_identity"})
+    )
+    with pytest.raises(ValidationError, match="case order differs"):
+        VS01BenchmarkRunResult.model_validate(changed)
+    receipt = _receipt(tmp_path, run)
+    for mutation in (
+        {"published": False},
+        {"archive_writes": 0},
+        {"pre_store_upstream_fingerprints": (("changed", "b" * 64),)},
+    ):
+        with pytest.raises(ValidationError):
+            VS01BenchmarkExecutionReceipt.model_validate(receipt.model_dump(mode="python") | mutation)
 
 
-def test_synthetic_result_store_receipt_last_recovery_and_unrelated_preservation(tmp_path: Path) -> None:
-    (tmp_path / ".incoming").mkdir()
-    unrelated = tmp_path / ".incoming/foreign-stage"
-    unrelated.write_text("opaque")
-    _specification, result = _synthetic_run()
-    receipt = _receipt(tmp_path, result)
-    publish_benchmark_result(tmp_path, result, receipt)
-    result_sha = hashlib.sha256(canonical_run_result_bytes(result)).hexdigest()
-    assert unrelated.read_text() == "opaque" and not benchmark_stage_path(tmp_path, result_sha).exists()
-    for relative in publication_paths(result_sha):
-        assert os.stat(tmp_path / relative, follow_symlinks=False).st_mode & 0o777 == 0o444
-    assert verify_existing(tmp_path, result, canonical_run_result_bytes(result)) == receipt
-    receipt_path = tmp_path / publication_paths(result_sha)[-1]
-    os.chmod(receipt_path, 0o644)
-    receipt_path.unlink()
-    replacement = _receipt(tmp_path, result)
-    publish_benchmark_result(tmp_path, result, replacement)
-    object_path = tmp_path / publication_paths(result_sha)[0]
-    os.chmod(object_path, 0o644)
-    with pytest.raises(ValueError, match="differs or is mutable"):
-        verify_existing(tmp_path, result, canonical_run_result_bytes(result))
-
-
-def test_benchmark_cli_private_synthetic_seam_and_subject_rejection(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+def test_campaign_dry_live_verified_existing_and_stale_authority(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    specification, result = _synthetic_run()
-    receipt = _receipt(Path("/synthetic"), result, dry_run=True)
-    monkeypatch.setattr(cli, "run_reference_campaign", lambda **_kwargs: (specification, result, receipt, False))
-    assert cli.main(["benchmark", "vs01-batch-01", "--subject", "deterministic-reference", "--dry-run"]) == 0
-    output = json.loads(capsys.readouterr().out)
-    assert output["receipt"]["disposition"] == "DRY_RUN_VALIDATED" and output["published"] is False
-    assert cli.main(["benchmark", "vs01-batch-01", "--subject", "unsupported"]) == 2
-    assert json.loads(capsys.readouterr().out)["error"]["code"] == "INVALID_CLI_INPUT"
+    authorities = benchmark.load_benchmark_authority()
+    runs = {False: _run(False), True: _run(True)}
+
+    def replay(
+        _items: Any,
+        specification: VS01BenchmarkExecutionSpecification,
+        ledger: scoring.BenchmarkOperationLedger,
+        **_kwargs: Any,
+    ) -> tuple[VS01BenchmarkRunResult, scoring.BenchmarkOperationLedger]:
+        return runs[specification.execution_mode.endswith("DRY_RUN")], ledger.add(
+            replay_count=1,
+            subject_invocations=12,
+            scoring_invocations=12,
+            case_results_constructed=12,
+            run_results_constructed=1,
+        )
+
+    monkeypatch.setattr(scoring, "execute_reference_replay", replay)
+
+    def fingerprints(_root: Path) -> tuple[tuple[str, str], ...]:
+        return _fingerprints()
+
+    def campaign(dry_run: bool) -> tuple[Any, Any, VS01BenchmarkExecutionReceipt, bool]:
+        return scoring.run_reference_campaign(
+            dry_run=dry_run,
+            archive_root=tmp_path,
+            _authorities=authorities,
+            _implementation_commit="1" * 40,
+            _authority_loader=fingerprints,
+        )
+
+    dry, live, existing = campaign(True), campaign(False), campaign(False)
+    assert dry[2].disposition == "DRY_RUN_VALIDATED" and dry[3] is False
+    assert live[2].published and live[3] is True
+    assert existing[2].disposition == "VERIFIED_EXISTING" and existing[2].published is existing[3] is False
+    assert existing[2].retained_publication_receipt_id == live[2].receipt_id
+    changed = iter((_fingerprints(), (("changed", "b" * 64),)))
+
+    def changed_fingerprints(_root: Path) -> tuple[tuple[str, str], ...]:
+        return next(changed)
+
+    with pytest.raises(ValueError, match="changed before store"):
+        scoring.run_reference_campaign(
+            dry_run=True,
+            archive_root=tmp_path,
+            _authorities=authorities,
+            _implementation_commit="1" * 40,
+            _authority_loader=changed_fingerprints,
+        )
+
+
+def test_store_retained_validation_unsafe_paths_and_complete_writes(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    result = _run()
+    original = store.os.write
+    calls = 0
+
+    def short(descriptor: int, data: memoryview) -> int:
+        nonlocal calls
+        calls += 1
+        return original(descriptor, data[: max(1, len(data) // 2)])
+
+    scratch = tmp_path / "scratch"
+    monkeypatch.setattr(store.os, "write", short)
+    store._write_immutable(scratch, b"complete-write")
+    assert scratch.read_bytes() == b"complete-write" and calls > 1
+
+    def zero(_descriptor: int, _data: memoryview) -> int:
+        return 0
+
+    monkeypatch.setattr(store.os, "write", zero)
+    with pytest.raises(OSError, match="zero-byte"):
+        store._write_immutable(tmp_path / "zero", b"x")
+    monkeypatch.setattr(store.os, "write", original)
+    root = tmp_path / "archive"
+    root.mkdir()
+    root_receipt = _receipt(root, result)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (root / ".incoming").symlink_to(outside, target_is_directory=True)
+    with pytest.raises(ValueError, match="unsafe"):
+        store.publish_benchmark_result(root, result, root_receipt)
+    (root / ".incoming").unlink()
+    root.joinpath(".incoming").write_text("not-directory")
+    with pytest.raises(ValueError, match="unsafe"):
+        store.publish_benchmark_result(root, result, root_receipt)
+
+
+def test_store_partial_stage_recovery_unexpected_and_malformed_receipt(tmp_path: Path) -> None:
+    result = _run()
+    receipt = _receipt(tmp_path, result)
+    result_bytes = store.canonical_run_result_bytes(result)
+    result_sha = hashlib.sha256(result_bytes).hexdigest()
+    stage = store.benchmark_stage_path(tmp_path, result_sha)
+    stage.mkdir(parents=True)
+    store._write_immutable(stage / "object", result_bytes)
+    unrelated = tmp_path / ".incoming/unrelated-stage"
+    unrelated.mkdir()
+    store.publish_benchmark_result(tmp_path, result, receipt)
+    assert unrelated.is_dir() and not stage.exists()
+    receipt_path = tmp_path / store.publication_paths(result_sha)[2]
+    os.chmod(receipt_path, 0o644)
+    receipt_path.write_bytes(b"{}")
+    os.chmod(receipt_path, 0o444)
+    with pytest.raises(ValueError, match="invalid"):
+        store.verify_existing(tmp_path, result, result_bytes, {"implementation_commit": "1" * 40})
+
+
+@pytest.mark.parametrize("unsafe", ("symlink", "broken", "file"))
+def test_store_rejects_unsafe_existing_ancestors(tmp_path: Path, unsafe: str) -> None:
+    root = tmp_path / "archive"
+    root.mkdir()
+    target = tmp_path / "target"
+    target.mkdir()
+    if unsafe == "symlink":
+        (root / "objects").symlink_to(target, target_is_directory=True)
+    elif unsafe == "broken":
+        (root / "objects").symlink_to(tmp_path / "missing", target_is_directory=True)
+    else:
+        (root / "objects").write_text("not a directory")
+    result = _run()
+    with pytest.raises(ValueError, match="unsafe"):
+        store.verify_existing(root, result, store.canonical_run_result_bytes(result))
+
+
+def test_store_rejects_unexpected_exact_stage_and_mismatched_object(tmp_path: Path) -> None:
+    result = _run()
+    result_bytes = store.canonical_run_result_bytes(result)
+    result_sha = hashlib.sha256(result_bytes).hexdigest()
+    stage = store.benchmark_stage_path(tmp_path, result_sha)
+    stage.mkdir(parents=True)
+    (stage / "unexpected").write_text("preserve and reject")
+    with pytest.raises(ValueError, match="unexpected"):
+        store.publish_benchmark_result(tmp_path, result, _receipt(tmp_path, result))
+    assert (stage / "unexpected").read_text() == "preserve and reject"
+    for item in stage.iterdir():
+        item.unlink()
+    stage.rmdir()
+    object_path = tmp_path / store.publication_paths(result_sha)[0]
+    object_path.parent.mkdir(parents=True)
+    store._write_immutable(object_path, b"wrong")
+    with pytest.raises(ValueError, match="differs"):
+        store.verify_existing(tmp_path, result, result_bytes)
+
+
+def test_inventory_child_and_fixture_hashes_stable() -> None:
+    inventory = ROOT / ".local/evidence/VS01-T07/Repair01/deterministic-check-inventory.json"
+    assert hashlib.sha256(inventory.read_bytes()).hexdigest()
+    assert hashlib.sha256(reference_subject.CHILD_SOURCE.encode()).hexdigest() == reference_subject.CHILD_SHA256
+
+
+def test_authority_parser_and_firewall_fail_closed(tmp_path: Path) -> None:
+    for raw, message in (
+        (b'{"a":1,"a":2}', "duplicate JSON keys"),
+        (b'{"a":NaN}', "non-finite number"),
+        (b"not-json", "strict UTF-8 JSON"),
+        (b"[]", "not a JSON object"),
+    ):
+        with pytest.raises(ValueError, match=message):
+            benchmark._strict_json(raw)
+    missing = tmp_path / "missing.json"
+    with pytest.raises(ValueError, match="is missing"):
+        benchmark._read_exact(missing, "0" * 64)
+    missing.write_text("changed")
+    with pytest.raises(ValueError, match="hash differs"):
+        benchmark._read_exact(missing, "0" * 64)
+    authorities = benchmark.load_benchmark_authority()
+    with pytest.raises(ValueError, match="order differs"):
+        benchmark.build_execution_specification(tuple(reversed(authorities)), dry_run=False)
+    b08 = benchmark.compile_subject_package(authorities[7])
+    with pytest.raises(ValueError, match="INVALID_LEAKAGE"):
+        benchmark.audit_subject_package(replace(b08, deterministic_tool_interfaces=(("lookup", "{}"),)))
+    b09 = benchmark.compile_subject_package(authorities[8])
+    with pytest.raises(ValueError, match="INVALID_LEAKAGE"):
+        benchmark.audit_subject_package(replace(b09, authorized_raster_sha256=None))
+
+
+def test_reference_parent_rejects_bad_child_results(monkeypatch: pytest.MonkeyPatch) -> None:
+    with pytest.raises(ValueError, match="malformed output"):
+        reference_subject._parse_response(b"{}")
+    case, _scorer, fixture = _synthetic(1)
+    adapter = DeterministicReferenceSubjectAdapter(fixture, implementation_evidence_mode=True)
+    completed = subprocess.CompletedProcess([], 1, b"", b"child error")
+    monkeypatch.setattr(reference_subject.subprocess, "run", lambda *_args, **_kwargs: completed)
+    with pytest.raises(ValueError, match="subprocess failed"):
+        adapter.generate(case)
+    wrong = StructuredSubjectResponse(
+        case.case_id,
+        case.source_declared_compatibility_sha256,
+        case.execution_rfc8785_jcs_sha256,
+        case.package_identity,
+        fixture.response_payload,
+        fixture.response_payload_sha256,
+    )
+    monkeypatch.setattr(
+        reference_subject.subprocess, "run", lambda *_args, **_kwargs: subprocess.CompletedProcess([], 0)
+    )
+    monkeypatch.setattr(reference_subject, "_parse_response", lambda _value: replace(wrong, case_id="SYN-WRONG"))
+    with pytest.raises(ValueError, match="response differs"):
+        adapter.generate(case)
+
+
+def test_store_path_and_partial_publication_fail_closed(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(store.subprocess, "run", lambda *_args, **_kwargs: SimpleNamespace(stdout="bad\n"))
+    with pytest.raises(ValueError, match="implementation commit"):
+        store.implementation_head()
+    unsafe = tmp_path / "unsafe"
+    unsafe.write_text("not-directory")
+    with pytest.raises(ValueError, match="archive authority is unsafe"):
+        store._inventory(unsafe, contents=False)
+    root = tmp_path / "archive"
+    root.mkdir()
+    with pytest.raises(ValueError, match="escapes its root"):
+        store._safe_directory(root, "..")
+    with pytest.raises(ValueError, match="missing or unsafe"):
+        store._safe_directory(root, "missing", create=False)
+    result = _run()
+    result_bytes = store.canonical_run_result_bytes(result)
+    paths = store.publication_paths(hashlib.sha256(result_bytes).hexdigest())
+    receipt_path = root / paths[2]
+    receipt_path.parent.mkdir(parents=True)
+    store._write_immutable(receipt_path, b"{}")
+    with pytest.raises(ValueError, match="prerequisite is missing"):
+        store.verify_existing(root, result, result_bytes)

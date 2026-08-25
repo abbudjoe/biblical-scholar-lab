@@ -13,6 +13,7 @@ from uuid6 import uuid7
 import bsl.application.john15_study_runtime as study_runtime
 import bsl.contracts.runtime as runtime_contracts
 import bsl.interfaces.cli as cli
+from bsl.application.vs01_benchmark import canonical_sha256
 from bsl.contracts.archive import (
     ApprovedArchiveProfile,
     ArchiveInitializationReceipt,
@@ -205,6 +206,51 @@ def test_benchmark_schemas_are_strict_draft_2020_12_and_fixed_shape() -> None:
     receipt_schema = VS01BenchmarkExecutionReceipt.model_json_schema()
     assert receipt_schema["properties"]["receipt_id"]["format"] == "uuid"
     assert receipt_schema["properties"]["generated_at"]["format"] == "date-time"
+
+
+@pytest.mark.parametrize("contract", ("specification", "case", "run", "receipt"))
+def test_benchmark_schemas_reject_recomputed_authority_mutations(contract: str, tmp_path: Path) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is an external validation tool")
+    from test_vs01_benchmark import (  # pyright: ignore[reportPrivateUsage]
+        _case,
+        _receipt,
+        _run,
+        _spec,
+    )
+
+    values = {
+        "specification": _spec().model_dump(mode="json"),
+        "case": _case(0).model_dump(mode="json"),
+        "run": _run().model_dump(mode="json"),
+        "receipt": _receipt(tmp_path, _run()).model_dump(mode="json"),
+    }
+    value = values[contract]
+    if contract == "specification":
+        value["source_declared_compatibility_hashes"][0][1] = "0" * 64
+        value["specification_identity"] = canonical_sha256(
+            {key: item for key, item in value.items() if key != "specification_identity"}
+        )
+    elif contract == "case":
+        value["criterion_scores"][0][0] = "MUTATED"
+        value["case_result_identity"] = canonical_sha256(
+            {key: item for key, item in value.items() if key != "case_result_identity"}
+        )
+    elif contract == "run":
+        value["case_results"].reverse()
+        value["run_result_identity"] = canonical_sha256(
+            {key: item for key, item in value.items() if key != "run_result_identity"}
+        )
+    else:
+        value["published"] = False
+    names = {
+        "specification": "execution-specification.schema.json",
+        "case": "case-result.schema.json",
+        "run": "run-result.schema.json",
+        "receipt": "execution-receipt.schema.json",
+    }
+    schema = json.loads((ROOT / "contracts/json-schema/benchmark" / names[contract]).read_text())
+    validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
+    assert not validator.is_valid(value)
 
 
 def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:

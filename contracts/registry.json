@@ -109,22 +109,22 @@
     {
       "contract": "VS01BenchmarkExecutionSpecification", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/execution-specification.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "0890b26c812ef276238220e1b132bcc2c753aec42d4313fdc888081b6af87294"
+      "owning_task": "VS01-T07-R01", "sha256": "3eef6f98891bd50c9c7f599429640771a4a1822daf10c3b99bb99ab743926990"
     },
     {
       "contract": "VS01BenchmarkCaseResult", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/case-result.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "fe2f7b4803363700d1afd854433b6911222fe909bd575234147bc32d910c29c0"
+      "owning_task": "VS01-T07-R01", "sha256": "5847505bad08ac1a833433b3bca4c0cfce9b968bb82cf7bf96cec48faec7283f"
     },
     {
       "contract": "VS01BenchmarkRunResult", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/run-result.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "badd150bfff7c16371de11fe1464092e3a8eab670393c10ce826eddc258312aa"
+      "owning_task": "VS01-T07-R01", "sha256": "8963a02d65337c637294c9d8eb2b5c0a2c0922925ad8d5e3279fa836ce79c6fc"
     },
     {
       "contract": "VS01BenchmarkExecutionReceipt", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/execution-receipt.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "31dccd722408380bc82f34d95da2c627d249a987ffaa27d278e6c31530755293"
+      "owning_task": "VS01-T07-R01", "sha256": "c8caf7cb0bd32a0023b1c96b57d05f5be9edebf13b28b09b80d5b84fe2bd5d97"
     }
   ]
 }

@@ -20,7 +20,7 @@
       "type": "string"
     },
     "batch_cases_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
       "title": "Batch Cases Sha256",
       "type": "string"
     },
@@ -31,15 +31,51 @@
       "type": "string"
     },
     "batch_markdown_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff",
       "title": "Batch Markdown Sha256",
       "type": "string"
     },
     "case_order": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Case Order",
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "const": "VS01-B01-C01"
+        },
+        {
+          "const": "VS01-B02-C01"
+        },
+        {
+          "const": "VS01-B03-C01"
+        },
+        {
+          "const": "VS01-B04-C01"
+        },
+        {
+          "const": "VS01-B05-C01"
+        },
+        {
+          "const": "VS01-B06-C01"
+        },
+        {
+          "const": "VS01-B07-C01"
+        },
+        {
+          "const": "VS01-B08-C01"
+        },
+        {
+          "const": "VS01-B09-C01"
+        },
+        {
+          "const": "VS01-B10-C01"
+        },
+        {
+          "const": "VS01-B11-C01"
+        },
+        {
+          "const": "VS01-B12-C01"
+        }
+      ],
       "type": "array"
     },
     "contract": {
@@ -55,12 +91,12 @@
       "type": "string"
     },
     "erratum_json_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "9153c12bc7ea3254ff2c76e685dc56ccbd26e615a6d20e770d196fcc3f5ad2be",
       "title": "Erratum Json Sha256",
       "type": "string"
     },
     "erratum_markdown_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "8f3de652db50fc7a93d1368ac6ad53177f0f45858cad927b386127795dc3817d",
       "title": "Erratum Markdown Sha256",
       "type": "string"
     },
@@ -73,28 +109,104 @@
       "type": "string"
     },
     "execution_rfc8785_jcs_hashes": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "pattern": "^[0-9a-f]{64}$",
-            "type": "string"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Execution Rfc8785 Jcs Hashes",
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "const": [
+            "VS01-B01-C01",
+            "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B02-C01",
+            "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B03-C01",
+            "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B04-C01",
+            "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B05-C01",
+            "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B06-C01",
+            "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B07-C01",
+            "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B08-C01",
+            "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B09-C01",
+            "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B10-C01",
+            "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B11-C01",
+            "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B12-C01",
+            "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28"
+          ]
+        }
+      ],
       "type": "array"
     },
     "isolation_policy": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Isolation Policy",
+      "maxItems": 5,
+      "minItems": 5,
+      "prefixItems": [
+        {
+          "const": "fresh subprocess per case"
+        },
+        {
+          "const": "case-local state only"
+        },
+        {
+          "const": "one attempt"
+        },
+        {
+          "const": "zero retries"
+        },
+        {
+          "const": "errors remain in denominator"
+        }
+      ],
       "type": "array"
     },
     "leakage_policy": {
@@ -122,12 +234,12 @@
       "type": "integer"
     },
     "r01_design_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "d6e89b7db1bd686fb74bdc2530719a3c9e3d9a753983fac7a35bdd8be40abdf7",
       "title": "R01 Design Sha256",
       "type": "string"
     },
     "r01_protocol_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
+      "const": "bf48cbd15b09673f965e4a6300dbec61aec924f56f026032d8c9ccaaa12014bb",
       "title": "R01 Protocol Sha256",
       "type": "string"
     },
@@ -149,37 +261,107 @@
       "type": "string"
     },
     "screening_case_minimums": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "integer"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Screening Case Minimums",
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "const": [
+            "VS01-B01-C01",
+            5
+          ]
+        },
+        {
+          "const": [
+            "VS01-B02-C01",
+            8
+          ]
+        },
+        {
+          "const": [
+            "VS01-B03-C01",
+            5
+          ]
+        },
+        {
+          "const": [
+            "VS01-B04-C01",
+            10
+          ]
+        },
+        {
+          "const": [
+            "VS01-B05-C01",
+            8
+          ]
+        },
+        {
+          "const": [
+            "VS01-B06-C01",
+            12
+          ]
+        },
+        {
+          "const": [
+            "VS01-B07-C01",
+            10
+          ]
+        },
+        {
+          "const": [
+            "VS01-B08-C01",
+            7
+          ]
+        },
+        {
+          "const": [
+            "VS01-B09-C01",
+            8
+          ]
+        },
+        {
+          "const": [
+            "VS01-B10-C01",
+            8
+          ]
+        },
+        {
+          "const": [
+            "VS01-B11-C01",
+            8
+          ]
+        },
+        {
+          "const": [
+            "VS01-B12-C01",
+            10
+          ]
+        }
+      ],
       "type": "array"
     },
     "screening_partition_minimums": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "integer"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Screening Partition Minimums",
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "const": [
+            "REV-P0",
+            58
+          ]
+        },
+        {
+          "const": [
+            "REV-P1",
+            45
+          ]
+        },
+        {
+          "const": [
+            "TOTAL",
+            102
+          ]
+        }
+      ],
       "type": "array"
     },
     "semantic_rerolls": {
@@ -189,21 +371,82 @@
       "type": "integer"
     },
     "source_declared_compatibility_hashes": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "pattern": "^[0-9a-f]{64}$",
-            "type": "string"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Source Declared Compatibility Hashes",
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "const": [
+            "VS01-B01-C01",
+            "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B02-C01",
+            "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B03-C01",
+            "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B04-C01",
+            "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B05-C01",
+            "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B06-C01",
+            "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B07-C01",
+            "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B08-C01",
+            "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B09-C01",
+            "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B10-C01",
+            "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B11-C01",
+            "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B12-C01",
+            "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28"
+          ]
+        }
+      ],
       "type": "array"
     },
     "specification_identity": {
@@ -218,38 +461,155 @@
       "type": "string"
     },
     "subject_projection_identities": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "pattern": "^[0-9a-f]{64}$",
-            "type": "string"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Subject Projection Identities",
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "const": [
+            "VS01-B01-C01",
+            "6e0fc90a246bb2ddad4d08b7da9f0942185aee1e05dd647a26333eda16428f67"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B02-C01",
+            "cb43bff75f5e3ac71be22af041819f06ffe12fc56f65de3262cec700e7a04b7f"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B03-C01",
+            "546662d1b032aa22ade8a635be8189857abd83fd1f44b30388d3a39e53137c51"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B04-C01",
+            "205f0ea49489d6f743d82022d48bd4101f92f6fbb28bbe8ba04b0e44a592cdbf"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B05-C01",
+            "8e9f08f7952190ba676bdea7eb51d78cc861b2c24cad7006bffb7c1bf474eb98"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B06-C01",
+            "7f138825142950169a0ccc1fdf9d9a6bce46adbffd424899a3d80f9e26f6ab1b"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B07-C01",
+            "0cd172b26dc556af731c57e65122ce6e2703c840db300b0614f938f676ae6a89"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B08-C01",
+            "70269776c11c6654d6f201db39ef2cff2b7554d4aadb55397d44dd010d8d23dc"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B09-C01",
+            "cf7f0e0e5e448c28cf5025bc45f41861b4f78645c1ca43f18aa7f31c6f1429b4"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B10-C01",
+            "811b9d2b5e59c0ffa274f534f2e9ff213be9fe363b2f71e62f598b88ec20b3de"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B11-C01",
+            "4bb1d5dd18bad9f0b18e8cf17ecac7b3803142abc6d5da0073b88fb31dedb101"
+          ]
+        },
+        {
+          "const": [
+            "VS01-B12-C01",
+            "74d2d7e64edf61dd7f64e2b66ce02ded5b845b4aaf6917100cdf2b6a3a20cec7"
+          ]
+        }
+      ],
       "type": "array"
     },
     "upstream_authority": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "string"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Upstream Authority",
+      "maxItems": 11,
+      "minItems": 11,
+      "prefixItems": [
+        {
+          "const": [
+            "t04_packet_identity",
+            "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"
+          ]
+        },
+        {
+          "const": [
+            "t04_packet_sha256",
+            "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
+          ]
+        },
+        {
+          "const": [
+            "t04_receipt_id",
+            "01a02bbe-bda5-776b-a95e-16bb40d18597"
+          ]
+        },
+        {
+          "const": [
+            "t04_receipt_sha256",
+            "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
+          ]
+        },
+        {
+          "const": [
+            "t05_run_id",
+            "01a030a1-c3ca-76f6-b4c8-f74392e2cd91"
+          ]
+        },
+        {
+          "const": [
+            "t05_session_id",
+            "01a030a1-c3cb-72d0-aac0-19da47db369e"
+          ]
+        },
+        {
+          "const": [
+            "t06_fixture_identity",
+            "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"
+          ]
+        },
+        {
+          "const": [
+            "t06_base_sha256",
+            "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb"
+          ]
+        },
+        {
+          "const": [
+            "t06_degraded_sha256",
+            "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce"
+          ]
+        },
+        {
+          "const": [
+            "t06_fixture_json_sha256",
+            "c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f"
+          ]
+        },
+        {
+          "const": [
+            "t06_receipt_id",
+            "01a034c2-d6e4-73f4-91b2-7410e7453783"
+          ]
+        }
+      ],
       "type": "array"
     }
   },

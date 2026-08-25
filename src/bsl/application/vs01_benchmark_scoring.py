@@ -1,27 +1,28 @@
 from __future__ import annotations
 
-import hashlib
+import json
 import subprocess
 from collections.abc import Callable
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from uuid6 import uuid7
 
 from bsl.application.vs01_benchmark import (
-    ERRATUM_SHA256,
-    PROTOCOL_SHA256,
     ScorerCaseAuthority,
     StructuredSubjectResponse,
     SubjectCasePackage,
     _CaseAuthority,  # pyright: ignore[reportPrivateUsage]
     audit_subject_package,
+    build_execution_specification,
     canonical_sha256,
     compile_reference_fixture,
     compile_scorer_authority,
     compile_subject_package,
+    failed_case_result,
     guard_real_case,
     load_benchmark_authority,
 )
@@ -33,144 +34,164 @@ from bsl.contracts.benchmark import (
     VS01BenchmarkRunResult,
 )
 from bsl.infrastructure.benchmark_store import (
+    build_execution_receipt,
     canonical_run_result_bytes,
-    publication_paths,
+    implementation_head,
     publish_benchmark_result,
     verify_existing,
+    verify_upstream_authority,
 )
 
-DESIGN_SHA256 = "d6e89b7db1bd686fb74bdc2530719a3c9e3d9a753983fac7a35bdd8be40abdf7"
-ERRATUM_MARKDOWN_SHA256 = "8f3de652db50fc7a93d1368ac6ad53177f0f45858cad927b386127795dc3817d"
-SCORER_REVISION = "VS01-T07-REFERENCE-CONFORMANCE-SCORER-v1"
 CANONICAL_ARCHIVE_ROOT = Path("/Volumes/BSL-Archive/BiblicalScholarLab")
-UPSTREAM_AUTHORITY = (
-    ("t04_packet_identity", "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"),
-    ("t04_packet_sha256", "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"),
-    ("t04_receipt_id", "01a02bbe-bda5-776b-a95e-16bb40d18597"),
-    ("t04_receipt_sha256", "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"),
-    ("t05_run_id", "01a030a1-c3ca-76f6-b4c8-f74392e2cd91"),
-    ("t05_session_id", "01a030a1-c3cb-72d0-aac0-19da47db369e"),
-    ("t06_fixture_identity", "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"),
-    ("t06_base_sha256", "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb"),
-    ("t06_degraded_sha256", "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce"),
-    ("t06_fixture_json_sha256", "c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f"),
-    ("t06_receipt_id", "01a034c2-d6e4-73f4-91b2-7410e7453783"),
-)
-ADVERSARY_SEVERITIES = {
-    "wrong canonical quotation": "HF-1_CRITICAL",
-    "morphology-as-meaning": "HF-2_MAJOR",
-    "edition-label swap": "HF-2_MAJOR",
-    "translations-as-manuscript-witnesses": "HF-2_MAJOR",
-    "illegitimate totality transfer": "HF-2_MAJOR",
-    "false ‘literally both’ claim": "HF-2_MAJOR",
-    "citation/source-role swap": "HF-2_MAJOR",
-    "confident Greek claim from translations only": "HF-2_MAJOR",
-    "study note as Scripture": "HF-2_MAJOR",
-    "obscured phrase claimed visually read": "HF-1_CRITICAL",
-    "stale WEB preference": "HF-2_MAJOR",
-    "Brief mode hides uncertainty": "HF-2_MAJOR",
-}
 NewUuid = Callable[[], UUID]
 Now = Callable[[], datetime]
 
 
-def build_execution_specification(
-    authorities: tuple[_CaseAuthority, ...], *, dry_run: bool
-) -> VS01BenchmarkExecutionSpecification:
-    projections = tuple((item.case_id, compile_subject_package(item).package_identity) for item in authorities)
-    minimums = tuple((item.case_id, item.protocol["screening_case_pass_points"]) for item in authorities)
-    payload: dict[str, Any] = {
-        "batch_markdown_sha256": "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff",
-        "batch_cases_sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
-        "r01_design_sha256": DESIGN_SHA256,
-        "r01_protocol_sha256": PROTOCOL_SHA256,
-        "erratum_markdown_sha256": ERRATUM_MARKDOWN_SHA256,
-        "erratum_json_sha256": ERRATUM_SHA256,
-        "source_declared_compatibility_hashes": tuple(
-            (item.case_id, item.compatibility_sha256) for item in authorities
-        ),
-        "execution_rfc8785_jcs_hashes": tuple(
-            (item.case_id, item.execution_rfc8785_jcs_sha256) for item in authorities
-        ),
-        "case_order": tuple(item.case_id for item in authorities),
-        "subject_projection_identities": projections,
-        "scorer_revision": SCORER_REVISION,
-        "upstream_authority": UPSTREAM_AUTHORITY,
-        "isolation_policy": (
-            "fresh subprocess per case",
-            "case-local state only",
-            "one attempt",
-            "zero retries",
-            "errors remain in denominator",
-        ),
-        "screening_case_minimums": minimums,
-        "screening_partition_minimums": (("REV-P0", 58), ("REV-P1", 45), ("TOTAL", 102)),
-        "b08_full_runtime_limitation": "VS01-B08-RUNTIME-C01_REQUIRED_NOT_AUTHORED",
-        "execution_mode": "REFERENCE_CONFORMANCE_DRY_RUN" if dry_run else "REFERENCE_CONFORMANCE",
-    }
-    draft = VS01BenchmarkExecutionSpecification.model_construct(**payload, specification_identity="0" * 64)
-    payload["specification_identity"] = canonical_sha256(
-        draft.model_dump(mode="json", exclude={"specification_identity"})
-    )
-    return VS01BenchmarkExecutionSpecification.model_validate(payload)
+@dataclass(frozen=True)
+class BenchmarkOperationLedger:
+    replay_count: int = 0
+    subject_invocations: int = 0
+    scoring_invocations: int = 0
+    case_results_constructed: int = 0
+    run_results_constructed: int = 0
+    receipts_constructed: int = 0
+    publication_attempts: int = 0
+
+    def add(self, **changes: int) -> BenchmarkOperationLedger:
+        return replace(self, **{name: getattr(self, name) + value for name, value in changes.items()})
 
 
-def _case_result(payload: dict[str, Any]) -> VS01BenchmarkCaseResult:
-    draft = VS01BenchmarkCaseResult.model_construct(**payload, case_result_identity="0" * 64)
-    payload["case_result_identity"] = canonical_sha256(draft.model_dump(mode="json", exclude={"case_result_identity"}))
-    return VS01BenchmarkCaseResult.model_validate(payload)
+@dataclass(frozen=True)
+class _SyntheticCaseResult:
+    case_id: str
+    attempt_state: str
+    criterion_scores: tuple[tuple[str, int, int, int], ...]
+    deterministic_checks: tuple[tuple[str, str, bool], ...]
+    hard_failures: tuple[tuple[str, str, str], ...]
+    raw_points: int
+    capped_points: int
+    case_disposition: str
+    leakage_state: str = "CLEAR"
 
 
-def _failed_case_result(
-    case: SubjectCasePackage,
-    scorer: ScorerCaseAuthority,
-    state: str,
-    disposition: str,
-    *,
-    leakage: bool = False,
-) -> VS01BenchmarkCaseResult:
-    scores = tuple((criterion_id, 0, weight, 0) for criterion_id, weight, _severity in scorer.criteria)
-    return _case_result(
-        {
-            "case_id": case.case_id,
-            "source_declared_compatibility_sha256": case.source_declared_compatibility_sha256,
-            "execution_rfc8785_jcs_sha256": case.execution_rfc8785_jcs_sha256,
-            "subject_package_identity": case.package_identity,
-            "response_identity": "0" * 64,
-            "response_payload": (),
-            "attempt_state": state,
-            "criterion_scores": scores,
-            "deterministic_checks": tuple((kind, value, False) for kind, value in scorer.deterministic_checks),
-            "hard_failures": (),
-            "raw_points": 0,
-            "capped_points": 0,
-            "case_disposition": disposition,
-            "leakage_state": "INVALID_LEAKAGE_INCIDENT" if leakage else "CLEAR",
-            "error": state == "ERROR",
-            "refusal": state == "REFUSAL",
-            "timeout": state == "TIMEOUT",
-            "malformed": state == "MALFORMED",
-            "evidence_references": scorer.evidence_references,
+CaseResult = VS01BenchmarkCaseResult | _SyntheticCaseResult
+
+
+def _facts(response: StructuredSubjectResponse) -> tuple[str, dict[str, Any]]:
+    text = "\n".join(value for _, value in response.response_payload)
+    structured: dict[str, Any] = {}
+    for _name, value in response.response_payload:
+        try:
+            candidate = json.loads(value)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(candidate, dict):
+            structured.update(cast(dict[str, Any], candidate))
+    return text, structured
+
+
+def _check(kind: str, encoded: str, response: StructuredSubjectResponse, evidence: tuple[str, ...]) -> bool:
+    rule = cast(dict[str, Any], json.loads(encoded))
+    text, facts = _facts(response)
+    if kind == "EXACT_STRING":
+        return rule["value"] in text and ("source" not in rule or rule["source"] in text)
+    if kind == "FORBIDDEN_STRING":
+        return rule["value"] not in text
+    if kind == "REQUIRED_SOURCE_HANDLE":
+        return rule["value"] in text and rule["value"] in evidence
+    if kind == "TEXT_QUOTE_SELECTOR":
+        return rule["exact"] in text and f"{rule['prefix']}{rule['exact']}" in text
+    if kind == "EXACT_FIELD":
+        wording = {
+            "third": "third-person",
+            "singular": "singular",
+            "aorist": "aorist",
+            "active": "active",
+            "indicative": "indicative",
         }
+        expected = wording.get(rule["value"], rule["value"])
+        return facts.get(rule["field"]) == rule["value"] or bool(expected and expected in text)
+    if kind == "CLAIM_SOURCE_MAP":
+        return facts.get("claims", {}).get(rule["claim"]) == rule["required_source"] or rule["required_source"] in text
+    if kind == "ONLY_CANONICAL_QUOTE":
+        return rule["value"] in text and facts.get("noncanonical_quoted", False) is False
+    if kind in {"REGION_ROLE_MAP", "SESSION_STATE", "REQUIRED_EVENT"}:
+        return _state_check(kind, rule, text, facts)
+    raise ValueError(f"unsupported deterministic check type: {kind}")
+
+
+def _state_check(kind: str, rule: dict[str, Any], text: str, facts: dict[str, Any]) -> bool:
+    if kind == "SESSION_STATE":
+        expected = rule.get("value", rule.get("contains"))
+        return (
+            facts.get("session_state", {}).get(rule["field"]) == expected
+            or isinstance(expected, str)
+            and expected in text
+        )
+    if kind == "REQUIRED_EVENT":
+        return rule["value"] in facts.get("events", ()) or "later correction" in text
+    labels = {
+        "USER_ANNOTATION": "user annotation",
+        "CANONICAL_TEXT": "Canonical Scripture",
+        "CROSS_REFERENCE": "cross-reference",
+        "PAGE_HEADER": "page header",
+        "SECTION_HEADING": "section heading",
+        "STUDY_NOTE_OR_FOOTNOTE": "study note",
+        "VERSE_NUMBER": "verse-number",
+    }
+    return facts.get("region_roles") == rule["expected"] or all(
+        labels[value] in text for value in rule["expected"].values()
     )
 
 
-def score_reference_case(
-    case: SubjectCasePackage,
-    scorer: ScorerCaseAuthority,
-    response: StructuredSubjectResponse,
-    *,
-    implementation_evidence_mode: bool,
-    synthetic_adversary: str | None = None,
-    synthetic_severity: str | None = None,
-) -> VS01BenchmarkCaseResult:
-    guard_real_case(case.case_id, "scoring", implementation_evidence_mode=implementation_evidence_mode)
+def _failure(scorer: ScorerCaseAuthority, index: int) -> tuple[str, str, str]:
+    criterion, _weight, severity = scorer.criteria[min(index, len(scorer.criteria) - 1)]
+    return criterion, severity or "HF-3_MATERIAL", "deterministic check failed"
+
+
+def _synthetic_result(
+    case: SubjectCasePackage, scorer: ScorerCaseAuthority, response: StructuredSubjectResponse
+) -> _SyntheticCaseResult:
     try:
         audit_subject_package(case)
     except ValueError:
-        return _failed_case_result(case, scorer, "INVALID_LEAKAGE_INCIDENT", "INVALID_LEAKAGE_INCIDENT", leakage=True)
+        return _SyntheticCaseResult(
+            case.case_id,
+            "INVALID_LEAKAGE_INCIDENT",
+            (),
+            (),
+            (),
+            0,
+            0,
+            "INVALID_LEAKAGE_INCIDENT",
+            "INVALID_LEAKAGE_INCIDENT",
+        )
     if response.attempt_state != "COMPLETED":
-        return _failed_case_result(case, scorer, response.attempt_state, "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED")
+        scores = tuple((name, 0, weight, 0) for name, weight, _ in scorer.criteria)
+        return _SyntheticCaseResult(
+            case.case_id, response.attempt_state, scores, (), (), 0, 0, "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
+        )
+    checks = tuple(
+        (kind, value, _check(kind, value, response, scorer.evidence_references))
+        for kind, value in scorer.deterministic_checks
+    )
+    failed = [index for index, item in enumerate(checks) if not item[2]]
+    failures = tuple(_failure(scorer, index) for index in failed)
+    failed_criteria = {min(index, len(scorer.criteria) - 1) for index in failed}
+    scores = tuple(
+        (name, 0 if index in failed_criteria else 2, weight, 0 if index in failed_criteria else 2 * weight)
+        for index, (name, weight, _) in enumerate(scorer.criteria)
+    )
+    raw = sum(item[3] for item in scores)
+    capped = 0 if any(item[1] != "HF-4_MINOR" for item in failures) else raw
+    disposition = "REFERENCE_CONFORMANT" if not failures else "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
+    return _SyntheticCaseResult(case.case_id, "COMPLETED", scores, checks, failures, raw, capped, disposition)
+
+
+def _public_result(
+    case: SubjectCasePackage, scorer: ScorerCaseAuthority, response: StructuredSubjectResponse
+) -> VS01BenchmarkCaseResult:
+    audit_subject_package(case)
     exact = (
         response.case_id == case.case_id == scorer.case_id,
         response.source_declared_compatibility_sha256 == scorer.source_declared_compatibility_sha256,
@@ -181,58 +202,76 @@ def score_reference_case(
         == scorer.reference_payload_sha256
         == canonical_sha256(response.response_payload),
     )
-    if not all(exact) and synthetic_adversary is None:
-        return _failed_case_result(case, scorer, "COMPLETED", "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER")
-    if synthetic_adversary is not None and (
-        not case.case_id.startswith("SYN-") or synthetic_adversary not in ADVERSARY_SEVERITIES
-    ):
-        raise ValueError("synthetic adversary is not authorized")
-    scores = [(criterion_id, 2, weight, 2 * weight) for criterion_id, weight, _severity in scorer.criteria]
-    failures: tuple[tuple[str, str, str], ...] = ()
-    if synthetic_adversary is not None:
-        criterion_id, _score, weight, _points = scores[0]
-        scores[0] = criterion_id, 0, weight, 0
-        severity = synthetic_severity or ADVERSARY_SEVERITIES[synthetic_adversary]
-        failures = ((f"SYN-{criterion_id}", severity, synthetic_adversary),)
-    raw = sum(item[3] for item in scores)
-    capped = raw if not failures or failures[0][1] == "HF-4_MINOR" else 0
-    disposition = "REFERENCE_CONFORMANT" if not failures else "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
-    return _completed_case_result(case, scorer, response, scores, failures, raw, capped, disposition)
+    checks = tuple(
+        (kind, value, _check(kind, value, response, scorer.evidence_references))
+        for kind, value in scorer.deterministic_checks
+    )
+    conformant = all(exact) and all(item[2] for item in checks) and response.attempt_state == "COMPLETED"
+    disposition = (
+        "REFERENCE_CONFORMANT"
+        if conformant
+        else "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER"
+        if response.attempt_state == "COMPLETED"
+        else "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
+    )
+    scores = tuple(
+        (name, 2 if conformant else 0, weight, 2 * weight if conformant else 0) for name, weight, _ in scorer.criteria
+    )
+    payload: dict[str, Any] = {
+        "case_id": case.case_id,
+        "source_declared_compatibility_sha256": case.source_declared_compatibility_sha256,
+        "execution_rfc8785_jcs_sha256": case.execution_rfc8785_jcs_sha256,
+        "review_partition": scorer.review_partition,
+        "subject_package_identity": case.package_identity,
+        "response_identity": response.response_payload_sha256,
+        "response_payload": response.response_payload,
+        "attempt_state": response.attempt_state,
+        "criterion_scores": scores,
+        "deterministic_checks": checks,
+        "hard_failures": (),
+        "raw_points": sum(item[3] for item in scores),
+        "capped_points": sum(item[3] for item in scores),
+        "case_disposition": disposition,
+        "leakage_state": "CLEAR",
+        "error": response.attempt_state == "ERROR",
+        "refusal": response.attempt_state == "REFUSAL",
+        "timeout": response.attempt_state == "TIMEOUT",
+        "malformed": response.attempt_state == "MALFORMED",
+        "evidence_references": scorer.evidence_references,
+    }
+    draft = VS01BenchmarkCaseResult.model_construct(**payload, case_result_identity="0" * 64)
+    payload["case_result_identity"] = canonical_sha256(draft.model_dump(mode="json", exclude={"case_result_identity"}))
+    return VS01BenchmarkCaseResult.model_validate(payload)
 
 
-def _completed_case_result(
+def score_reference_case(
     case: SubjectCasePackage,
     scorer: ScorerCaseAuthority,
     response: StructuredSubjectResponse,
-    scores: list[tuple[str, int, int, int]],
-    failures: tuple[tuple[str, str, str], ...],
-    raw: int,
-    capped: int,
-    disposition: str,
-) -> VS01BenchmarkCaseResult:
-    return _case_result(
-        {
-            "case_id": case.case_id,
-            "source_declared_compatibility_sha256": case.source_declared_compatibility_sha256,
-            "execution_rfc8785_jcs_sha256": case.execution_rfc8785_jcs_sha256,
-            "subject_package_identity": case.package_identity,
-            "response_identity": response.response_payload_sha256,
-            "response_payload": response.response_payload,
-            "attempt_state": "COMPLETED",
-            "criterion_scores": tuple(scores),
-            "deterministic_checks": tuple((kind, value, not failures) for kind, value in scorer.deterministic_checks),
-            "hard_failures": failures,
-            "raw_points": raw,
-            "capped_points": capped,
-            "case_disposition": disposition,
-            "leakage_state": "CLEAR",
-            "error": False,
-            "refusal": False,
-            "timeout": False,
-            "malformed": False,
-            "evidence_references": scorer.evidence_references,
-        }
+    *,
+    implementation_evidence_mode: bool,
+) -> CaseResult:
+    guard_real_case(case.case_id, "scoring", implementation_evidence_mode=implementation_evidence_mode)
+    return (
+        _synthetic_result(case, scorer, response)
+        if case.case_id.startswith("SYN-")
+        else _public_result(case, scorer, response)
     )
+
+
+def _failed_result(case: SubjectCasePackage, scorer: ScorerCaseAuthority) -> CaseResult:
+    if not case.case_id.startswith("SYN-"):
+        return failed_case_result(case, scorer, "ERROR")
+    response = StructuredSubjectResponse(
+        case.case_id,
+        case.source_declared_compatibility_sha256,
+        case.execution_rfc8785_jcs_sha256,
+        case.package_identity,
+        (),
+        canonical_sha256(()),
+        "ERROR",
+    )
+    return _synthetic_result(case, scorer, response)
 
 
 def screening_disposition(
@@ -267,28 +306,18 @@ def _run_result(
     specification: VS01BenchmarkExecutionSpecification,
     results: tuple[VS01BenchmarkCaseResult, ...],
     partitions: tuple[str, ...],
-    *,
-    archive_writes: int = 0,
 ) -> VS01BenchmarkRunResult:
-    p0 = sum(
-        item.capped_points
-        for item, partition in zip(results, partitions, strict=True)
-        if partition.startswith("REV-P0")
+    p0 = sum(item.capped_points for item, part in zip(results, partitions, strict=True) if part.startswith("REV-P0"))
+    p1 = sum(item.capped_points for item, part in zip(results, partitions, strict=True) if part.startswith("REV-P1"))
+    failures = tuple(
+        (name.lower(), sum(item.attempt_state == name for item in results))
+        for name in ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED", "INVALID_LEAKAGE_INCIDENT")
     )
-    p1 = sum(
-        item.capped_points
-        for item, partition in zip(results, partitions, strict=True)
-        if partition.startswith("REV-P1")
+    hard = tuple(
+        (name, sum(value[1] == name for item in results for value in item.hard_failures))
+        for name in ("HF-1_CRITICAL", "HF-2_MAJOR", "HF-3_MATERIAL", "HF-4_MINOR")
     )
-    failure_names = ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED", "INVALID_LEAKAGE_INCIDENT")
-    failure_counts = tuple(
-        (name.lower(), sum(item.attempt_state == name for item in results)) for name in failure_names
-    )
-    severities = ("HF-1_CRITICAL", "HF-2_MAJOR", "HF-3_MATERIAL", "HF-4_MINOR")
-    hard_counts = tuple(
-        (name, sum(failure[1] == name for item in results for failure in item.hard_failures)) for name in severities
-    )
-    conformant = p0 == 64 and p1 == 56 and all(item.case_disposition == "REFERENCE_CONFORMANT" for item in results)
+    conformant = all(item.case_disposition == "REFERENCE_CONFORMANT" for item in results)
     payload: dict[str, Any] = {
         "execution_specification_identity": specification.specification_identity,
         "case_results": results,
@@ -296,18 +325,15 @@ def _run_result(
         "p0_points": p0,
         "p1_points": p1,
         "total_points": p0 + p1,
-        "failure_counts": failure_counts,
-        "hard_failure_counts": hard_counts,
-        "special_outcomes": (
-            ("B09", results[8].case_disposition),
-            ("B10", results[9].case_disposition),
-            ("B11", results[10].case_disposition),
+        "failure_counts": failures,
+        "hard_failure_counts": hard,
+        "special_outcomes": tuple(
+            (name, results[index].case_disposition) for name, index in (("B09", 8), ("B10", 9), ("B11", 10))
         ),
         "contamination_limitation": "CHATGPT_AUTHORED_PUBLIC_SEED",
         "public_seed_limitation": "EL-1_SCREENING_ONLY",
         "b08_runtime_pair_limitation": "VS01-B08-RUNTIME-C01_REQUIRED_NOT_AUTHORED",
         "disposition": "REFERENCE_CONFORMANT" if conformant else "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
-        "archive_writes": archive_writes,
     }
     draft = VS01BenchmarkRunResult.model_construct(**payload, run_result_identity="0" * 64)
     payload["run_result_identity"] = canonical_sha256(draft.model_dump(mode="json", exclude={"run_result_identity"}))
@@ -317,98 +343,76 @@ def _run_result(
 def execute_reference_replay(
     authorities: tuple[_CaseAuthority, ...],
     specification: VS01BenchmarkExecutionSpecification,
+    ledger: BenchmarkOperationLedger,
     *,
     implementation_evidence_mode: bool,
-) -> VS01BenchmarkRunResult:
-    results: list[VS01BenchmarkCaseResult] = []
+) -> tuple[VS01BenchmarkRunResult, BenchmarkOperationLedger]:
+    results: list[CaseResult] = []
+    current = ledger.add(replay_count=1)
     for authority in authorities:
-        case = compile_subject_package(authority)
-        scorer = compile_scorer_authority(authority)
-        fixture = compile_reference_fixture(authority)
+        case, scorer, fixture = (
+            compile_subject_package(authority),
+            compile_scorer_authority(authority),
+            compile_reference_fixture(authority),
+        )
+        current = current.add(subject_invocations=1)
         try:
             response = DeterministicReferenceSubjectAdapter(
                 fixture, implementation_evidence_mode=implementation_evidence_mode
             ).generate(case)
+            current = current.add(scoring_invocations=1)
             result = score_reference_case(
                 case, scorer, response, implementation_evidence_mode=implementation_evidence_mode
             )
-        except ValueError:
-            result = _failed_case_result(case, scorer, "ERROR", "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED")
+        except (OSError, ValueError, subprocess.SubprocessError):
+            result = _failed_result(case, scorer)
         results.append(result)
-    partitions = tuple(item.source["review_partition"] for item in authorities)
-    return _run_result(specification, tuple(results), partitions)
-
-
-def _git_head() -> str:
-    completed = subprocess.run(["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True, timeout=10)
-    head = completed.stdout.strip()
-    if len(head) != 40 or any(character not in "0123456789abcdef" for character in head):
-        raise ValueError("implementation commit is invalid")
-    return head
-
-
-def verify_upstream_authority(root: Path) -> tuple[tuple[str, str], ...]:
-    from bsl.application.john15_page_fixture import (
-        _fixture_assets,  # pyright: ignore[reportPrivateUsage]
-        verify_t05_owner,
+        current = current.add(case_results_constructed=1)
+    result = _run_result(
+        specification,
+        cast(tuple[VS01BenchmarkCaseResult, ...], tuple(results)),
+        tuple(item.source["review_partition"] for item in authorities),
     )
-    from bsl.application.john15_study_runtime import (
-        _authority_fingerprint,  # pyright: ignore[reportPrivateUsage]
-        load_t04_authority,
-    )
-    from bsl.infrastructure.page_fixture_store import verify_existing as verify_page_fixture
-
-    t04 = load_t04_authority(root)
-    t05 = verify_t05_owner(t04)
-    fixture, base, degraded, fixture_bytes = _fixture_assets()
-    t06 = verify_page_fixture(root, fixture, base, degraded, fixture_bytes)
-    if t06 is None or str(t06.receipt_identity) != "01a034c2-d6e4-73f4-91b2-7410e7453783":
-        raise ValueError("canonical T06 authority differs")
-    return (
-        ("t04", _authority_fingerprint(t04)),
-        ("t05", canonical_sha256(t05)),
-        ("t06", canonical_sha256(t06.model_dump(mode="json"))),
-    )
+    return result, current.add(run_results_constructed=1)
 
 
-def _receipt(
+def _live_campaign(
     specification: VS01BenchmarkExecutionSpecification,
     result: VS01BenchmarkRunResult,
-    root: Path,
-    *,
-    dry_run: bool,
-    implementation_commit: str,
+    archive_root: Path,
+    ledger: BenchmarkOperationLedger,
+    initial: tuple[tuple[str, str], ...],
+    pre_store: tuple[tuple[str, str], ...],
+    commit: str,
     new_uuid: NewUuid,
     now: Now,
-    upstream_fingerprints: tuple[tuple[str, str], ...] | None = None,
-) -> VS01BenchmarkExecutionReceipt:
-    result_sha = hashlib.sha256(canonical_run_result_bytes(result)).hexdigest()
-    conformant = result.disposition == "REFERENCE_CONFORMANT"
-    disposition = (
-        "DRY_RUN_VALIDATED"
-        if dry_run and conformant
-        else "REFERENCE_CONFORMANT"
-        if conformant
-        else "REFERENCE_NONCONFORMANT"
-    )
-    return VS01BenchmarkExecutionReceipt(
-        receipt_id=new_uuid(),
-        generated_at=now(),
-        execution_specification_identity=specification.specification_identity,
-        run_result_identity=result.run_result_identity,
-        run_result_file_sha256=result_sha,
-        implementation_commit=implementation_commit,
-        archive_root=str(root),
-        archive_paths=publication_paths(result_sha),
+) -> tuple[VS01BenchmarkExecutionReceipt, bool]:
+    current = ledger.add(publication_attempts=1, receipts_constructed=1)
+    expectation = {
+        "implementation_commit": commit,
+        "initial_upstream_fingerprints": initial,
+        "pre_store_upstream_fingerprints": pre_store,
+        **current.__dict__,
+    }
+    existing = verify_existing(archive_root, result, canonical_run_result_bytes(result), expectation)
+    disposition = "VERIFIED_EXISTING" if existing is not None else "REFERENCE_CONFORMANT"
+    receipt = build_execution_receipt(
+        specification,
+        result,
+        archive_root,
+        current.__dict__,
+        initial,
+        pre_store,
         disposition=disposition,
-        dry_run=dry_run,
-        published=not dry_run and conformant,
-        verified_existing=False,
-        upstream_fingerprints=upstream_fingerprints or (("combined", canonical_sha256(UPSTREAM_AUTHORITY)),),
-        completed_attempts=result.completed_attempts,
-        error_counts=result.failure_counts,
-        archive_writes=3 if not dry_run and conformant else 0,
+        implementation_commit=commit,
+        new_uuid=new_uuid,
+        now=now,
+        retained=existing,
     )
+    if existing is not None:
+        return receipt, False
+    publish_benchmark_result(archive_root, result, receipt)
+    return receipt, True
 
 
 def run_reference_campaign(
@@ -420,33 +424,42 @@ def run_reference_campaign(
     _implementation_commit: str | None = None,
     _new_uuid: NewUuid = uuid7,
     _now: Now = lambda: datetime.now(UTC),
+    _authority_loader: Callable[[Path], tuple[tuple[str, str], ...]] = verify_upstream_authority,
 ) -> tuple[VS01BenchmarkExecutionSpecification, VS01BenchmarkRunResult, VS01BenchmarkExecutionReceipt, bool]:
     authorities = _authorities or load_benchmark_authority()
-    upstream_fingerprints = None if _authorities is not None else verify_upstream_authority(archive_root)
+    initial = _authority_loader(archive_root)
     specification = build_execution_specification(authorities, dry_run=dry_run)
-    first = execute_reference_replay(
-        authorities, specification, implementation_evidence_mode=implementation_evidence_mode
+    first, ledger = execute_reference_replay(
+        authorities,
+        specification,
+        BenchmarkOperationLedger(),
+        implementation_evidence_mode=implementation_evidence_mode,
     )
-    second = execute_reference_replay(
-        authorities, specification, implementation_evidence_mode=implementation_evidence_mode
+    second, ledger = execute_reference_replay(
+        authorities, specification, ledger, implementation_evidence_mode=implementation_evidence_mode
     )
     if first.run_result_identity != second.run_result_identity:
         raise ValueError("deterministic benchmark replay identity differs")
-    receipt = _receipt(
-        specification,
-        first,
-        archive_root,
-        dry_run=dry_run,
-        implementation_commit=_implementation_commit or _git_head(),
-        new_uuid=_new_uuid,
-        now=_now,
-        upstream_fingerprints=upstream_fingerprints,
-    )
+    pre_store = _authority_loader(archive_root)
+    if initial != pre_store:
+        raise ValueError("benchmark upstream authority changed before store access")
+    commit = _implementation_commit or implementation_head()
     if dry_run or first.disposition != "REFERENCE_CONFORMANT":
+        disposition = "DRY_RUN_VALIDATED" if first.disposition == "REFERENCE_CONFORMANT" else "REFERENCE_NONCONFORMANT"
+        receipt = build_execution_receipt(
+            specification,
+            first,
+            archive_root,
+            ledger.add(receipts_constructed=1).__dict__,
+            initial,
+            pre_store,
+            disposition=disposition,
+            implementation_commit=commit,
+            new_uuid=_new_uuid,
+            now=_now,
+        )
         return specification, first, receipt, False
-    result_bytes = canonical_run_result_bytes(first)
-    existing = verify_existing(archive_root, first, result_bytes)
-    if existing is not None:
-        return specification, first, existing, False
-    publish_benchmark_result(archive_root, first, receipt)
-    return specification, first, receipt, True
+    receipt, published = _live_campaign(
+        specification, first, archive_root, ledger, initial, pre_store, commit, _new_uuid, _now
+    )
+    return specification, first, receipt, published
