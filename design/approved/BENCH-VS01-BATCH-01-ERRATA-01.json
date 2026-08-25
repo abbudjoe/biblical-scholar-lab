@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0",
+  "erratum_id": "BENCH-VS01-BATCH-01-ERRATA-01",
+  "status": "CHATGPT_FROZEN_PENDING_OWNER_APPROVAL",
+  "applies_to": [
+    "BENCH-VS01-BATCH-01",
+    "VS01-T07",
+    "VS01-T07-BENCHMARK-EXECUTION-PROTOCOL-v1"
+  ],
+  "authority": {
+    "designer": "ChatGPT",
+    "owner": "Joseph Abbud",
+    "owner_approval_status": "PENDING",
+    "approval_date": null
+  },
+  "approved_source_batch": {
+    "path": "design/approved/BENCH-VS01-BATCH-01-cases.json",
+    "sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
+    "byte_preserved": true,
+    "semantic_content_changed": false,
+    "case_revision_created": false
+  },
+  "root_cause": {
+    "classification": "CANONICALIZATION_COMPATIBILITY_DEFECT",
+    "affected_case_id": "VS01-B10-C01",
+    "source_declared_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+    "rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab",
+    "legacy_algorithm": {
+      "name": "PYTHON_SORTED_COMPACT_UTF8_V1",
+      "definition": "UTF-8 JSON, ensure_ascii=false, recursively sorted object keys, compact separators, Python numeric lexical serialization."
+    },
+    "rfc8785_difference": "B10 contains the numeric value 18.0. The legacy serializer emits 18.0; RFC 8785/ECMAScript number serialization emits 18. No other case contains a number whose legacy and JCS lexical forms differ."
+  },
+  "binding_compatibility_policy": {
+    "source_integrity": [
+      "Verify the complete approved case file SHA-256 remains exact.",
+      "Verify every declared case_content_sha256 using PYTHON_SORTED_COMPACT_UTF8_V1.",
+      "Do not edit, normalize, or replace the approved case file."
+    ],
+    "execution_identity": [
+      "Compute RFC 8785/SHA-256 for every case excluding only case_content_sha256.",
+      "Use execution_rfc8785_jcs_sha256 in T07 sample, case-result, and run identities.",
+      "Bind both the source-declared hash and execution JCS hash in every T07 authority record."
+    ],
+    "special_case": {
+      "case_id": "VS01-B10-C01",
+      "source_declared_case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+      "execution_rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"
+    },
+    "future_authoring": "Every newly authored or revised benchmark case must use RFC 8785 JCS directly. This compatibility rule applies only to the exact approved BENCH-VS01-BATCH-01 bytes."
+  },
+  "case_hashes": [
+    {
+      "case_id": "VS01-B01-C01",
+      "source_declared_case_content_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+      "legacy_sorted_compact_utf8_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+      "execution_rfc8785_jcs_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B02-C01",
+      "source_declared_case_content_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+      "legacy_sorted_compact_utf8_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+      "execution_rfc8785_jcs_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B03-C01",
+      "source_declared_case_content_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+      "legacy_sorted_compact_utf8_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+      "execution_rfc8785_jcs_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B04-C01",
+      "source_declared_case_content_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+      "legacy_sorted_compact_utf8_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+      "execution_rfc8785_jcs_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B05-C01",
+      "source_declared_case_content_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+      "legacy_sorted_compact_utf8_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+      "execution_rfc8785_jcs_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B06-C01",
+      "source_declared_case_content_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+      "legacy_sorted_compact_utf8_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+      "execution_rfc8785_jcs_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B07-C01",
+      "source_declared_case_content_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+      "legacy_sorted_compact_utf8_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+      "execution_rfc8785_jcs_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B08-C01",
+      "source_declared_case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+      "legacy_sorted_compact_utf8_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+      "execution_rfc8785_jcs_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B09-C01",
+      "source_declared_case_content_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+      "legacy_sorted_compact_utf8_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+      "execution_rfc8785_jcs_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B10-C01",
+      "source_declared_case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+      "legacy_sorted_compact_utf8_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+      "execution_rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab",
+      "source_declared_equals_jcs": false,
+      "compatibility_status": "LEGACY_NON_JCS_NUMBER_SERIALIZATION"
+    },
+    {
+      "case_id": "VS01-B11-C01",
+      "source_declared_case_content_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+      "legacy_sorted_compact_utf8_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+      "execution_rfc8785_jcs_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    },
+    {
+      "case_id": "VS01-B12-C01",
+      "source_declared_case_content_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+      "legacy_sorted_compact_utf8_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+      "execution_rfc8785_jcs_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+      "source_declared_equals_jcs": true,
+      "compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS"
+    }
+  ],
+  "prohibitions": [
+    "No benchmark prompt, evidence contract, answer contract, rubric, reference response, status, split, or metadata change.",
+    "No replacement of B10 numeric values with strings or integers.",
+    "No claim that the source-declared B10 hash is RFC 8785.",
+    "No implementation or benchmark execution before owner approval."
+  ]
+}

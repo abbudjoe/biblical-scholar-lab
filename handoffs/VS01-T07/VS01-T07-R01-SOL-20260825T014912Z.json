@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+  "task_id": "VS01-T07-R01",
+  "turn_id": "VS01-T07-R01-SOL-20260825T014912Z",
+  "codex_run_id": "VS01-T07-R01-BENCHMARK-HARNESS-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t07-r01-benchmark-harness",
+  "base_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "implementation_head_sha": "dcc5cf3b6ae99203c85a34791667c789837e26bc",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/16",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t07-r01-benchmark-harness",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Implement the frozen VS01-T07-R01 reference-conformance benchmark harness without executing, scoring, or publishing any real BENCH-VS01-BATCH-01 case.",
+  "acceptance_criteria": [
+    "Persist the corrected R01 authority byte-for-byte in the first task commit.",
+    "Bind all twelve compatibility hashes and all twelve RFC 8785 execution hashes, including B10's exact dual-hash distinction.",
+    "Add exactly four public benchmark contracts and strict Draft 2020-12 schemas.",
+    "Implement the authority loader, subject/scorer firewall, deterministic reference subprocess, reference scorer, receipt-last store, and exact CLI.",
+    "Generate the two public-safe fixtures twice with byte-identical output.",
+    "Exercise only synthetic execution, scoring, replay, adversary, and publication-store seams.",
+    "Statically compile all twelve real cases while keeping every real operation counter at zero.",
+    "Verify T04, T05, T06, the archive, owner database, and incoming inventory read-only.",
+    "Pass the full validation suite with branch coverage at or above 90 percent."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "BENCH-VS01-BATCH-01",
+      "BENCH-VS01-BATCH-01-ERRATA-01",
+      "VS01-T07-R01",
+      "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {"kind": "authority", "commit": "c2d04cc3ccbd3785b6596560bde55687fd834716", "result": "R01 authority persisted byte-for-byte and decision index minimally updated."},
+    {"kind": "contracts", "result": "Exactly four strict public contracts and schemas registered."},
+    {"kind": "application", "result": "Exact dual-hash loader, explicit subject/scorer firewall, subprocess oracle, reference-conformance scorer, and static real-batch compiler implemented."},
+    {"kind": "infrastructure", "result": "Narrow receipt-last benchmark result store implemented and tested only in temporary synthetic archives."},
+    {"kind": "interface", "result": "Exact deterministic-reference CLI surface implemented but not invoked."},
+    {"kind": "fixtures", "result": "Reference response fixture and subject projection manifest generated reproducibly from frozen authority."}
+  ],
+  "review_targets": [
+    {"target": "B10 dual-hash binding", "expected": "compatibility dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06; RFC 8785 f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"},
+    {"target": "Subject/scorer firewall", "expected": "Explicit subject allowlist; no scorer records, reference answers, hidden T06 truth, thresholds, archive/database handles, or environment coordinates."},
+    {"target": "Real-case guard", "expected": "12 parsed/compiled; 0 subject invocations, scorings, case results, run results, receipts, or canonical writes."},
+    {"target": "Future operation boundary", "expected": "Only deterministic-reference is supported; public command was not run in this turn."}
+  ],
+  "commands": [
+    {"command": "uv sync --frozen", "result": "PASS; 22 packages checked."},
+    {"command": "uv lock --check", "result": "PASS; 24 packages resolved without lock mutation."},
+    {"command": "uv run ruff format --check", "result": "PASS; 128 files formatted."},
+    {"command": "uv run ruff check", "result": "PASS."},
+    {"command": "uv run pyright", "result": "PASS; 0 errors, 0 warnings."},
+    {"command": "uv run --with jsonschema==4.25.1 pytest -q --cov=bsl --cov-branch --cov-fail-under=90", "result": "PASS; 519 passed, 27 skipped, branch coverage 90.04 percent."},
+    {"command": "git diff --check", "result": "PASS."},
+    {"command": "git fsck --full", "result": "PASS with pre-existing unreachable dangling objects only."},
+    {"command": "bsl benchmark vs01-batch-01", "result": "NOT INVOKED, as prohibited by activation."}
+  ],
+  "evaluations": [
+    {"name": "authority_arithmetic", "result": "PASS", "receipt": "7 evidence contracts / 12 cases / 37 criteria / weight 60 / maximum 120 / P0 7 cases and 64 points / P1 5 cases and 56 points / P2 0."},
+    {"name": "dual_hash_matrix", "result": "PASS", "identity": "c2b3c8748873ad7327fba09dacb3a6fec81f3fcd7a670684e8c707d3aa42c176", "mismatches": ["VS01-B10-C01"]},
+    {"name": "static_batch_compilation", "result": "PASS", "identity": "2dafc36e4053e5a2338f9058e7d4e8800a97af6c7e4f9a6c517b7d254825d1d2", "replays_equal": true},
+    {"name": "generated_fixtures", "result": "PASS", "generations_equal": true},
+    {"name": "synthetic_engine_scorer_replay", "result": "PASS", "real_cases_used": 0, "adversary_categories": 12},
+    {"name": "synthetic_publication_store", "result": "PASS", "canonical_archive_used": false},
+    {"name": "upstream_read_only", "result": "PASS", "authority_changed": false, "incoming_changed": false, "archive_writes": 0, "database_writes": 0},
+    {"name": "exact_head_ci", "result": "PENDING_PUSH", "checks": ["vs01-t01-ci", "vs01-t05-ci"]}
+  ],
+  "artifacts": [
+    {"name": "implementation", "head": "dcc5cf3b6ae99203c85a34791667c789837e26bc", "tree": "f69b6091bf57f230da1883b440240eac3e5c1286"},
+    {"name": "case-result.schema.json", "sha256": "fe2f7b4803363700d1afd854433b6911222fe909bd575234147bc32d910c29c0"},
+    {"name": "execution-receipt.schema.json", "sha256": "31dccd722408380bc82f34d95da2c627d249a987ffaa27d278e6c31530755293"},
+    {"name": "execution-specification.schema.json", "sha256": "0890b26c812ef276238220e1b132bcc2c753aec42d4313fdc888081b6af87294"},
+    {"name": "run-result.schema.json", "sha256": "badd150bfff7c16371de11fe1464092e3a8eab670393c10ce826eddc258312aa"},
+    {"name": "reference-subject-responses.json", "sha256": "ad582ad90758d60e6b3f773997f19565e86fdc59cf455baa1f9eec8859fe7c77"},
+    {"name": "subject-projection-manifest.json", "sha256": "5954efa6c22eb3d295b8b01c58f61aced622ba7b10bda41d3081152a65f5f199"},
+    {"name": "archive_fingerprint_before_after", "sha256": "0e6ccfcf7e318d67ff793a0ba7f946e29e47647e6b31e9bf0510231f734a606a"},
+    {"name": "incoming_inventory_before_after", "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 1393,
+    "production_loc_removed": 0,
+    "test_loc_added": 649,
+    "test_loc_removed": 0,
+    "generated_loc": 1167,
+    "production_files_added": 5,
+    "production_files_removed": 0,
+    "modules_added": [
+      "bsl.contracts.benchmark",
+      "bsl.application.vs01_benchmark",
+      "bsl.application.vs01_reference_subject",
+      "bsl.application.vs01_benchmark_scoring",
+      "bsl.infrastructure.benchmark_store"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": ["bsl benchmark vs01-batch-01 --subject deterministic-reference [--dry-run]"],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "VS01BenchmarkExecutionSpecification",
+      "VS01BenchmarkCaseResult",
+      "VS01BenchmarkRunResult",
+      "VS01BenchmarkExecutionReceipt"
+    ],
+    "abstractions": [
+      {"name": "VS01BenchmarkSubjectAdapter", "kind": "one private protocol authorized by activation"},
+      {"name": "private immutable authority records", "kind": "narrow typed firewall boundary"}
+    ],
+    "simpler_alternatives_considered": [
+      "A generic benchmark framework was rejected in favor of a VS01-specific loader and scorer.",
+      "Case deletion-based projection was rejected in favor of explicit allowlist construction.",
+      "A subject registry and model provider were omitted as unactivated future scope."
+    ],
+    "known_duplication_or_debt": ["B08 full-runtime pair VS01-B08-RUNTIME-C01 remains required and unauthored by design."],
+    "waivers": [],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The scorer is intentionally reference-conformance-only and cannot semantically score model or human responses.",
+    "B08 remains a limited two-translation case until separately approved full-runtime authority is authored.",
+    "The benchmark is a public-seed EL-1 screening instrument and remains contamination-limited."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live PR head and issue the allowed exact-head review disposition.",
+    "Joseph must decide whether a later separately approved operational turn may execute the twelve-case deterministic reference campaign."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+  "task_id": "VS01-T07-R01-REPAIR01-CI-FOLLOWUP",
+  "turn_id": "VS01-T07-R01-REPAIR01-CI-FOLLOWUP-SOL-20260825T121804Z",
+  "codex_run_id": "VS01-T07-R01-REPAIR01-CI-FOLLOWUP-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t07-r01-benchmark-harness",
+  "base_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "implementation_head_sha": "e3ef9bf91e06905bd68f652d6edbc0e906ce1045",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/16",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t07-r01-benchmark-harness",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Remove the benchmark inventory test's dependency on intentionally uncommitted local evidence, rerun both complete validations, and supersede the prior Repair01 handoff without changing production behavior or frozen authority.",
+  "acceptance_criteria": [
+    "Change only tests/test_vs01_benchmark.py in one corrective commit.",
+    "Derive the deterministic-check inventory in memory from committed frozen authority.",
+    "Do not read, commit, copy, or synthesize any .local evidence artifact into Git.",
+    "Preserve all production modules, contracts, schemas, fixtures, registry, authority, activation, dependencies, workflows, and documentation byte-for-byte from the authorized starting head.",
+    "Run complete Validation A and Validation B from the corrective commit with branch coverage at or above 90 percent.",
+    "Keep all real benchmark, publication, archive, database, model, OCR, VLM, network, web, cloud, and later-task operations at zero."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "BENCH-VS01-BATCH-01",
+      "BENCH-VS01-BATCH-01-ERRATA-01",
+      "VS01-T07-R01",
+      "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+      "APPROVE_VS01_T07_R01_REPAIR01",
+      "APPROVE_VS01_T07_R01_REPAIR01_CI_FOLLOWUP"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {"kind": "test_only", "commit": "e3ef9bf91e06905bd68f652d6edbc0e906ce1045", "tree": "334a067b326a7f97289c0cd44a3468f3e9c2a8e4", "result": "The inventory test derives all ten exact check types and 22 records from committed authority through compile_scorer_authority."},
+    {"kind": "history", "result": "No commit was amended, squashed, reset, rebased, cherry-picked, or rewritten."},
+    {"kind": "supersession", "result": "This append-only pair supersedes VS01-T07-R01-REPAIR01-SOL-20260825T114005Z for exact-head review evidence."}
+  ],
+  "review_targets": [
+    {"target": "CI isolation", "expected": "No test path contains .local/evidence/VS01-T07/Repair01 or deterministic-check-inventory.json."},
+    {"target": "Inventory strength", "expected": "The test derives the exact 10-type/22-record inventory from byte-preserved committed authority and the closed scorer compiler."},
+    {"target": "Path scope", "expected": "The corrective commit changes only tests/test_vs01_benchmark.py."},
+    {"target": "Production preservation", "expected": "All Repair01 production, contract, schema, fixture, registry, authority, subprocess, scorer, receipt, ledger, and store behavior is unchanged."},
+    {"target": "Operational boundary", "expected": "Static B01-B12 compilation only; real execution/scoring/result/publication and all external-operation counters remain zero."}
+  ],
+  "commands": [
+    {"command": "uv sync --frozen; uv lock --check", "result": "PASS in follow-up Validation A and Validation B."},
+    {"command": "uv run ruff format --check .; uv run ruff check .", "result": "PASS in both validations; 130 files formatted."},
+    {"command": "ruff C90/PLR1702 limits", "result": "PASS in both validations; complexity <=10 and nesting <=3."},
+    {"command": "uv run pyright", "result": "PASS in both validations; zero errors, warnings, or information messages."},
+    {"command": "uv run pytest -q --disable-warnings --cov=bsl --cov-branch --cov-fail-under=90", "result": "PASS in both validations; 509 passed, 40 skipped, branch coverage 90.10 percent."},
+    {"command": "offline Ajv Draft 2020-12 validation", "result": "PASS in both validations; four valid documents accepted and four outer-identity mutation adversaries rejected."},
+    {"command": "in-memory deterministic-check inventory", "result": "PASS in both validations; exact 10-type/22-record authority identity fb0acd381da02f3e309fda6b503c25a9cbdfbca3c03c3b769ea45edc01f4b33c."},
+    {"command": "schema drift, registry hashes, fixture reproduction, dual-hash matrix, static compilation, child isolation, contract, ledger, verified-existing, store adversaries", "result": "PASS in both validations with byte-identical semantic receipts."},
+    {"command": "read-only T04/T05/T06 and archive/incoming proof", "result": "PASS twice in each validation; authority and incoming inventory unchanged."},
+    {"command": "git diff --check; git fsck --full", "result": "PASS in both validations; only pre-existing dangling objects reported."},
+    {"command": "bsl benchmark vs01-batch-01", "result": "NOT INVOKED, including dry-run."}
+  ],
+  "evaluations": [
+    {"name": "ci_root_cause", "result": "CLOSED", "receipt": "The test no longer opens an ignored local evidence path."},
+    {"name": "validation_a", "result": "PASS", "tests_passed": 509, "tests_skipped": 40, "branch_coverage_percent": 90.10},
+    {"name": "validation_b", "result": "PASS", "tests_passed": 509, "tests_skipped": 40, "branch_coverage_percent": 90.10},
+    {"name": "validation_semantic_equality", "result": "PASS", "byte_identical": true},
+    {"name": "dual_hash_matrix", "result": "PASS", "identity": "c2b3c8748873ad7327fba09dacb3a6fec81f3fcd7a670684e8c707d3aa42c176", "mismatches": ["VS01-B10-C01"]},
+    {"name": "static_batch_compilation", "result": "PASS", "identity": "fb1a2f7be5fd524bddac7b7b5d75d761c09488edef6e6150569221a3abb77be7", "parsed": 12, "subject_packages": 12, "scorer_plans": 12, "reference_fixtures": 12},
+    {"name": "operation_ledger", "result": "PASS", "identity": "4af2749d8c27539a3c3102683c332823de268c645da4af84c74c98a11d5cc7c5", "real_counts_all_zero": true},
+    {"name": "upstream_read_only", "result": "PASS", "authority_changed": false, "incoming_changed": false, "archive_writes": 0, "database_writes": 0},
+    {"name": "exact_head_ci", "result": "PENDING_PUSH", "checks": ["vs01-t01-ci", "vs01-t05-ci"]}
+  ],
+  "artifacts": [
+    {"name": "corrective_commit", "head": "e3ef9bf91e06905bd68f652d6edbc0e906ce1045", "tree": "334a067b326a7f97289c0cd44a3468f3e9c2a8e4"},
+    {"name": "repair_implementation_preserved", "head": "5be3910772d80d8a41716b67d42c71e40e1042e9", "tree": "8e30d0607701bed95941bf002b810c17a36d2918"},
+    {"name": "case-result.schema.json", "sha256": "5847505bad08ac1a833433b3bca4c0cfce9b968bb82cf7bf96cec48faec7283f"},
+    {"name": "execution-receipt.schema.json", "sha256": "c8caf7cb0bd32a0023b1c96b57d05f5be9edebf13b28b09b80d5b84fe2bd5d97"},
+    {"name": "execution-specification.schema.json", "sha256": "3eef6f98891bd50c9c7f599429640771a4a1822daf10c3b99bb99ab743926990"},
+    {"name": "run-result.schema.json", "sha256": "8963a02d65337c637294c9d8eb2b5c0a2c0922925ad8d5e3279fa836ce79c6fc"},
+    {"name": "reference-subject-responses.json", "sha256": "ad582ad90758d60e6b3f773997f19565e86fdc59cf455baa1f9eec8859fe7c77"},
+    {"name": "subject-projection-manifest.json", "sha256": "5954efa6c22eb3d295b8b01c58f61aced622ba7b10bda41d3081152a65f5f199"},
+    {"name": "reference_child_source", "sha256": "f1fc21fe8e822c6ed04ae184e597e36b8f92021c6c7b9472cdeaea9c6af2741a"},
+    {"name": "in_memory_check_inventory", "sha256": "fb0acd381da02f3e309fda6b503c25a9cbdfbca3c03c3b769ea45edc01f4b33c"},
+    {"name": "t04_fingerprint", "sha256": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d"},
+    {"name": "t05_fingerprint", "sha256": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1"},
+    {"name": "t06_fingerprint", "sha256": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860"},
+    {"name": "archive_root_fingerprint", "sha256": "f45c8fe4be50573209e74d94214b94baf51a5f3a5b08108e855992063f79cd70"},
+    {"name": "incoming_inventory_fingerprint", "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 0,
+    "production_loc_removed": 0,
+    "test_loc_added": 17,
+    "test_loc_removed": 2,
+    "generated_loc": 0,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [],
+    "abstractions": [],
+    "simpler_alternatives_considered": [
+      "Committing the ignored evidence file was rejected because it would violate the approved local-evidence boundary.",
+      "Deleting the inventory assertion was rejected in favor of deriving the exact inventory from committed authority."
+    ],
+    "known_duplication_or_debt": [
+      "The inherited Repair01 simplicity waiver remains exactly production 1568 + tests 524 + existing CLI/current-state 46 + registry/metadata 20 = 2158.",
+      "This follow-up adds 17 and removes 2 substantive test lines only; it does not alter the approved Repair01 implementation accounting."
+    ],
+    "waivers": [
+      "Joseph's previously approved 2158-line Repair01 simplicity waiver is preserved without reinterpretation."
+    ],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The scorer remains intentionally reference-conformance-only and cannot semantically score model or human responses.",
+    "B08 full-runtime authority remains required and unauthored by frozen design."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live PR head and issue an allowed exact-head review disposition.",
+    "Joseph must decide whether any later separately approved operational turn may execute the deterministic reference campaign."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+  "task_id": "VS01-T07-R01-REPAIR02",
+  "turn_id": "VS01-T07-R01-REPAIR02-SOL-20260825T135952Z",
+  "codex_run_id": "VS01-T07-R01-REPAIR02-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t07-r01-benchmark-harness",
+  "base_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "implementation_head_sha": "53995d88a324a630681358388b3bb83eb0381774",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/16",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t07-r01-benchmark-harness",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Close Repair02 by retaining deterministic child failures in truthful nonconformant receipts, binding public result authority to the two exact execution specifications and complete reference-conformance state machine, and preventing stale-stage receipt symlink reads.",
+  "acceptance_criteria": [
+    "Permit truthful two-replay receipt ledgers with zero through 24 scorer invocations while retaining exact disposition and publication semantics.",
+    "Bind run results and operational receipts to the exact live and dry-run execution-specification identities.",
+    "Reject recomputed-identity mutations across every exact, unsupported, incomplete, and leakage case-result state in Pydantic and offline Draft 2020-12 validation.",
+    "Read canonical and stale-stage receipts through a single O_NOFOLLOW descriptor path and reject symlinks before target bytes are read.",
+    "Change only the ten authorized implementation, schema, registry, and test paths; preserve all frozen authority and fixtures.",
+    "Run two complete exact-commit validations with branch-aware coverage at or above 90 percent and all real benchmark/external-operation counters at zero."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "BENCH-VS01-BATCH-01",
+      "BENCH-VS01-BATCH-01-ERRATA-01",
+      "VS01-T07-R01",
+      "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+      "APPROVE_VS01_T07_R01_REPAIR02"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {"kind": "receipt_ledger", "result": "Two replays bind 24 subject calls, 0-24 scorer calls, 24 retained case results, two run results, one receipt, and disposition-specific publication counts."},
+    {"kind": "specification_binding", "result": "Run and receipt authority accepts only live ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561 or dry 9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528 where operationally applicable."},
+    {"kind": "case_state_machine", "result": "Exact, completed-nonexact, error/refusal/timeout/malformed, and leakage states now fail closed in runtime validation and generated schemas."},
+    {"kind": "store_no_follow", "result": "Stage receipts are opened with O_NOFOLLOW, verified by fstat as regular files, and parsed only from bytes read through the verified descriptor."},
+    {"kind": "generated_contracts", "result": "Exactly four existing schemas were regenerated and exactly four existing registry hashes were refreshed."},
+    {"kind": "history", "result": "No prior commit or handoff was amended, reset, rebased, squashed, cherry-picked, or rewritten."}
+  ],
+  "review_targets": [
+    {"target": "Campaign failure retention", "expected": "The same synthetic child fails in both replays; both errors remain in the denominator and the receipt records 24 subject, 22 scorer, 24 case-result, two run-result, and one receipt construction."},
+    {"target": "Exact public authority", "expected": "Rehashing an outer artifact cannot legitimize a changed specification identity, score, check, point total, or disposition."},
+    {"target": "No-follow stage recovery", "expected": "A stage receipt symlink is rejected without opening or reading its external valid-looking target and without stage cleanup or publication."},
+    {"target": "Schema scope", "expected": "Four public contracts and four registry entries remain unchanged in name, order, owner, version, and path."},
+    {"target": "Operational boundary", "expected": "Real B01-B12 execution, scoring, results, receipts, publication, archive/database writes, and benchmark model/OCR/VLM/network calls remain zero."}
+  ],
+  "commands": [
+    {"command": "uv sync --frozen; uv lock --check", "result": "PASS independently in Validation A and Validation B."},
+    {"command": "uv run ruff format --check .; uv run ruff check .; uv run pyright", "result": "PASS independently in both validations; 131 files formatted and zero type diagnostics."},
+    {"command": "uv run --offline --with=jsonschema==4.25.1 pytest -q -W ignore --cov=bsl --cov-branch", "result": "PASS independently in both validations; 524 passed, 27 PostgreSQL-environment skips, 90.14 percent branch-aware coverage."},
+    {"command": "offline Draft 2020-12 schema validation and adversaries", "result": "PASS in both validations; four schemas valid and exact/state/specification/ledger adversaries rejected."},
+    {"command": "schema drift, registry hashes, fixture double-reproduction, dual-hash matrix, and static compilation", "result": "PASS with byte-identical A/B identities."},
+    {"command": "synthetic child-failure campaign, case state machine, run binding, and store no-follow adversaries", "result": "PASS in both complete suites."},
+    {"command": "read-only T04/T05/T06 and archive/incoming proof", "result": "PASS before and after each validation; fingerprints unchanged."},
+    {"command": "git diff HEAD --check; git fsck --full", "result": "PASS in both validations; only pre-existing dangling objects were reported."},
+    {"command": "bsl benchmark vs01-batch-01", "result": "NOT INVOKED, including dry-run."}
+  ],
+  "evaluations": [
+    {"name": "validation_a", "result": "PASS", "tests_passed": 524, "tests_skipped": 27, "branch_coverage_percent": 90.14},
+    {"name": "validation_b", "result": "PASS", "tests_passed": 524, "tests_skipped": 27, "branch_coverage_percent": 90.14},
+    {"name": "validation_semantic_equality", "result": "PASS", "byte_identical": true},
+    {"name": "synthetic_child_failure_receipt", "result": "PASS", "disposition": "REFERENCE_NONCONFORMANT", "subject_invocations": 24, "scoring_invocations": 22, "case_results_constructed": 24, "run_results_constructed": 2, "receipts_constructed": 1, "publication_attempts": 0, "archive_writes": 0, "identity": "ceacadab2206afbaf8b704fd999390b9d4e59633e52fe8d9bb6e159326342c93"},
+    {"name": "case_result_state_machine", "result": "PASS", "pydantic_and_schema_adversaries": 8},
+    {"name": "run_specification_binding", "result": "PASS", "arbitrary_and_changed_identities_rejected": 3},
+    {"name": "stale_stage_symlink_target_non_read", "result": "PASS", "target_opened": false, "stage_cleaned": false, "publication_created": false},
+    {"name": "dual_hash_matrix", "result": "PASS", "identity": "c2b3c8748873ad7327fba09dacb3a6fec81f3fcd7a670684e8c707d3aa42c176", "mismatches": ["VS01-B10-C01"]},
+    {"name": "static_batch_compilation", "result": "PASS", "identity": "fb1a2f7be5fd524bddac7b7b5d75d761c09488edef6e6150569221a3abb77be7", "parsed": 12, "subject_packages": 12, "scorer_plans": 12, "reference_fixtures": 12},
+    {"name": "upstream_read_only", "result": "PASS", "authority_changed": false, "incoming_changed": false, "archive_writes": 0, "database_writes": 0},
+    {"name": "exact_head_ci", "result": "PENDING_HANDOFF_COMMIT", "checks": ["vs01-t01-ci", "vs01-t05-ci"]}
+  ],
+  "artifacts": [
+    {"name": "starting_head", "head": "98767cb1964d599ceaded08e6acf138e776658fe", "tree": "16ee3760a5290555d833ba95ebb9756253fc13cd"},
+    {"name": "repair02_implementation", "head": "53995d88a324a630681358388b3bb83eb0381774", "tree": "0ea7835620f42ef51a007562347cc114cdf40237"},
+    {"name": "final_handoff_commit_binding", "result": "The append-only commit containing only this Markdown/JSON pair is the final PR head; its exact head/tree and CI URLs are recorded in the public completion comment."},
+    {"name": "execution-specification.schema.json", "old_sha256": "3eef6f98891bd50c9c7f599429640771a4a1822daf10c3b99bb99ab743926990", "sha256": "9c1a9c223d6c36dd4329ab7cd61dcc0498a3205c42219e9f2bf93432ee2641ae"},
+    {"name": "case-result.schema.json", "old_sha256": "5847505bad08ac1a833433b3bca4c0cfce9b968bb82cf7bf96cec48faec7283f", "sha256": "4cc6f7510849ba0bdf66baa22df18c167cda551d3562e76a9ba5906102b37bba"},
+    {"name": "run-result.schema.json", "old_sha256": "8963a02d65337c637294c9d8eb2b5c0a2c0922925ad8d5e3279fa836ce79c6fc", "sha256": "3d01d00886a6b9c538bb16c472fafa5602483ce1e2913f6671bb71c0d5cca345"},
+    {"name": "execution-receipt.schema.json", "old_sha256": "c8caf7cb0bd32a0023b1c96b57d05f5be9edebf13b28b09b80d5b84fe2bd5d97", "sha256": "d3d4c513a40394b772341bbf3cc6ce1a8b4c477f406f91229512244da08fc527"},
+    {"name": "reference-subject-responses.json", "sha256": "ad582ad90758d60e6b3f773997f19565e86fdc59cf455baa1f9eec8859fe7c77"},
+    {"name": "subject-projection-manifest.json", "sha256": "5954efa6c22eb3d295b8b01c58f61aced622ba7b10bda41d3081152a65f5f199"},
+    {"name": "live_execution_specification", "sha256": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"},
+    {"name": "dry_execution_specification", "sha256": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"},
+    {"name": "t04_fingerprint", "sha256": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d"},
+    {"name": "t05_fingerprint", "sha256": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1"},
+    {"name": "t06_fingerprint", "sha256": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860"},
+    {"name": "archive_root_fingerprint", "sha256": "f45c8fe4be50573209e74d94214b94baf51a5f3a5b08108e855992063f79cd70"},
+    {"name": "incoming_inventory_fingerprint", "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 199,
+    "production_loc_removed": 82,
+    "test_loc_added": 159,
+    "test_loc_removed": 32,
+    "generated_loc": 21578,
+    "production_files_added": 0,
+    "production_files_removed": 0,
+    "modules_added": [],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "VS01BenchmarkExecutionSpecification",
+      "VS01BenchmarkCaseResult",
+      "VS01BenchmarkRunResult",
+      "VS01BenchmarkExecutionReceipt"
+    ],
+    "abstractions": [
+      {"name": "Exact frozen-authority state schemas", "purpose": "Encode the complete four-state public case authority in Draft 2020-12."},
+      {"name": "No-follow regular-file reader", "purpose": "Verify receipt file type before reading bytes from the opened descriptor."}
+    ],
+    "simpler_alternatives_considered": [
+      "Leaving scorer_invocations fixed at 24 was rejected because a subject failure truthfully prevents scoring.",
+      "Relying only on outer content identities was rejected because exact public authority must survive recomputation adversaries.",
+      "Using Path.read_bytes for staged receipts was rejected because symlink safety must hold before target bytes are read."
+    ],
+    "known_duplication_or_debt": [
+      "The scorer remains intentionally reference-conformance-only.",
+      "Generated exact case/run schemas are large because Draft 2020-12 structurally freezes all twelve ordered authorities."
+    ],
+    "waivers": [
+      "Joseph approved the Repair02 cumulative inclusive handwritten hard cap of 2400 substantive lines.",
+      "The approved baseline 2158 plus Repair02 active deltas production 107 and tests 121 yields production 1675 + tests 646 + existing CLI/status 46 + registry/metadata 20 = 2387."
+    ],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The scorer remains intentionally reference-conformance-only and cannot semantically score model or human responses.",
+    "B08 full-runtime authority remains required and unauthored by frozen design.",
+    "Exact generated tuple schemas are mechanically large but remain deterministic and registry-bound."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact final PR head and issue an allowed exact-head review disposition.",
+    "Joseph must decide whether any later separately approved operational turn may execute the deterministic reference campaign."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

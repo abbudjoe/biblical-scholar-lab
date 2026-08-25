@@ -1,0 +1,1621 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "VS01-T07-BENCHMARK-EXECUTION-PROTOCOL-v1",
+  "design_id": "VS01-T07",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T07_DESIGN",
+  "approval_date": "2026-08-24",
+  "base_main_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "base_tree_sha": "f109f874cdfa8652198ed929f9876ebf9d49f676",
+  "purpose": "Freeze the project-owned deterministic execution, isolation, leakage, scoring, result, publication, and promotion protocol for the twelve already approved VS-01 public benchmark-seed cases without changing their content.",
+  "governing_sources": {
+    "benchmark_markdown": {
+      "path": "design/approved/BENCH-VS01-BATCH-01.md",
+      "sha256": "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff",
+      "git_blob_sha": "60b2c9daa83b039ea1555f1aa96f8128547b28f0"
+    },
+    "benchmark_cases": {
+      "path": "design/approved/BENCH-VS01-BATCH-01-cases.json",
+      "sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
+      "git_blob_sha": "a9cbc8ba00329b13cf19d44a0865ab4a68f25987"
+    },
+    "designs": [
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-30",
+      "VS-01"
+    ],
+    "case_content_authority": "UNCHANGED; ChatGPT-authored and owner-approved in BENCH-VS01-BATCH-01",
+    "sol_case_content_authority": "NONE"
+  },
+  "upstream_authorities": {
+    "t04": {
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+      "role": "fixed scholarly evidence authority for applicable cases",
+      "mutation_authority": false
+    },
+    "t05": {
+      "canonical_run_id": "01a030a1-c3ca-76f6-b4c8-f74392e2cd91",
+      "canonical_session_id": "01a030a1-c3cb-72d0-aac0-19da47db369e",
+      "role": "deterministic runtime and correction-lineage authority",
+      "database_write_authority": false
+    },
+    "t06": {
+      "fixture_identity": "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b",
+      "base_png_sha256": "2c0cebc7245eb1032b2b1e4c0ee16e6f74dec47e6a53d8f49c4b9d0a847abbfb",
+      "degraded_png_sha256": "cb47073c8e40da01285d90d26ebb7144b34047a2cde8f58e4ba0d1f2cfb67fce",
+      "fixture_json_sha256": "c8cfc4eafee6b0a16fc2e0442190782a35e2b03477a619854105d5272f08417f",
+      "publication_receipt_identity": "01a034c2-d6e4-73f4-91b2-7410e7453783",
+      "role": "page raster authority and scorer-only authored ground truth",
+      "mutation_authority": false
+    }
+  },
+  "frozen_batch": {
+    "batch_id": "BENCH-VS01-BATCH-01",
+    "status_in_source": "APPROVED_CONTENT_FROZEN_PENDING_EXECUTION_PREREQUISITES",
+    "execution_readiness_overlay": "T03/T04/T05/T06 prerequisites are now satisfied, but the source batch remains byte-preserved and its still-missing B08 full-runtime pair remains a binding limitation.",
+    "author_model_contamination": "CHATGPT_AUTHORED",
+    "training_eligible": false,
+    "private_final_eligible": false,
+    "public_safe_candidate": true,
+    "case_count": 12,
+    "criterion_count": 37,
+    "criterion_weight_sum": 60,
+    "maximum_weighted_points": 120,
+    "review_partitions": {
+      "REV-P0_DETERMINISTIC_AND_OPERATIONAL": {
+        "case_count": 7,
+        "maximum_weighted_points": 64
+      },
+      "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR": {
+        "case_count": 5,
+        "maximum_weighted_points": 56
+      },
+      "REV-P2_SPECIALIST_SCHOLARLY_JUDGMENT": {
+        "case_count": 0,
+        "maximum_weighted_points": 0
+      }
+    },
+    "evidence_contracts": [
+      {
+        "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+        "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+        "required": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5"
+        ],
+        "permitted": [],
+        "withheld": [
+          "SP01-SRC-002#John.1.5:κατέλαβεν",
+          "SP01-SRC-005#καταλαμβάνω",
+          "SP01-DER-001#John.1.5"
+        ]
+      },
+      {
+        "evidence_contract_id": "EC-VS01-02-GREEK-MORPH",
+        "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+        "required": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-002#John.1.5:κατέλαβεν"
+        ],
+        "permitted": [
+          "SP01-SRC-005#καταλαμβάνω"
+        ],
+        "withheld": [
+          "SP01-DER-001#John.1.5"
+        ]
+      },
+      {
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "completeness": "SUFFICIENT_WITH_QUALIFICATION",
+        "required": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-002#John.1.5:κατέλαβεν",
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5",
+          "SP01-SRC-005#καταλαμβάνω",
+          "SP01-DER-001#John.1.5"
+        ],
+        "permitted": [],
+        "withheld": [
+          "critical apparatus",
+          "modern specialist scholarship",
+          "translation committee documentation"
+        ]
+      },
+      {
+        "evidence_contract_id": "EC-VS01-04-TRANSLATIONS-ONLY",
+        "completeness": "INTENTIONALLY_INCOMPLETE",
+        "required": [
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5"
+        ],
+        "permitted": [],
+        "withheld": [
+          "SP01-SRC-001#John.1.5",
+          "SP01-SRC-002#John.1.5:κατέλαβεν",
+          "SP01-SRC-005#καταλαμβάνω",
+          "SP01-DER-001#John.1.5",
+          "critical apparatus"
+        ],
+        "expected_behavior": "Qualify or abstain from claims that require withheld source-language evidence."
+      },
+      {
+        "evidence_contract_id": "EC-VS01-05-PAGE-BASE",
+        "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+        "required": [
+          "SP01-DER-002#base-page",
+          "SP01-SRC-003#John.1.5"
+        ],
+        "permitted": [
+          "deterministic page-region ground truth",
+          "canonical passage lookup"
+        ],
+        "withheld": [
+          "historical study-Bible provenance",
+          "publisher paratext"
+        ]
+      },
+      {
+        "evidence_contract_id": "EC-VS01-06-PAGE-DEGRADED",
+        "completeness": "INTENTIONALLY_INCOMPLETE",
+        "required": [
+          "SP01-DER-002#degraded-illegibility-v1",
+          "SP01-SRC-003#John.1.5"
+        ],
+        "permitted": [
+          "canonical passage lookup labeled separately from visual transcription"
+        ],
+        "withheld": [
+          "clean pixels for the obscured phrase"
+        ],
+        "expected_behavior": "Mark the obscured visual phrase illegible and distinguish canonical lookup from visual observation."
+      },
+      {
+        "evidence_contract_id": "EC-VS01-07-SESSION-COMPACTION",
+        "completeness": "COMPLETE_FOR_DEFINED_CLAIM",
+        "required": [
+          "SP01-SRC-003#John.1.5",
+          "SP01-SRC-004#John.1.5",
+          "session-event:initial-web-primary",
+          "session-event:user-correction-asv-primary",
+          "compaction-artifact:K1-K2-v1"
+        ],
+        "permitted": [
+          "rehydration of exact ASV and WEB source handles"
+        ],
+        "withheld": []
+      }
+    ],
+    "cases": [
+      {
+        "case_id": "VS01-B01-C01",
+        "title": "Resolve and quote John 1:5 from the approved ASV edition",
+        "track": "PRIMARY_TEXT_REFERENCE_AND_CANON",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "DETERMINISTIC_TOOLS_ONLY",
+        "answer_mode": "BRIEF",
+        "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+        "prompt": "In the approved American Standard Version edition, quote John 1:5 exactly and identify the edition. Do not substitute the World English Bible.",
+        "case_content_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+        "criteria": [
+          {
+            "criterion_id": "B01-R1",
+            "label": "Exact ASV wording",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Wrong or fabricated canonical wording.",
+            "hard_failure_severity": "HF-1_CRITICAL"
+          },
+          {
+            "criterion_id": "B01-R2",
+            "label": "Edition identity and citation",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Exact quotation without edition/source identity.",
+            "hard_failure_severity": "HF-3_MATERIAL"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "exact approved ASV John 1:5 tool result"
+          ],
+          "tools": [
+            "deterministic exact-edition passage lookup"
+          ]
+        },
+        "max_weighted_points": 6,
+        "screening_case_pass_points": 5,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/0",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+        "execution_rfc8785_jcs_sha256": "2c78be090f24fe8bb4c1b10adfbd127053c55e78f39b4a34f91ea77b76e7c311",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B02-C01",
+        "title": "Identify the Greek target span and morphology",
+        "track": "LINGUISTIC_REPRESENTATION_AND_ANALYSIS",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-02-GREEK-MORPH",
+        "prompt": "In the supplied SBLGNT John 1:5 text, identify the Greek verb corresponding to the disputed final rendering. Give its lemma and morphological form, then state one thing morphology alone does not establish.",
+        "case_content_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+        "criteria": [
+          {
+            "criterion_id": "B02-R1",
+            "label": "Exact Greek span and lemma",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Wrong Greek source span or lemma.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B02-R2",
+            "label": "Morphological form",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Materially incorrect parse.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B02-R3",
+            "label": "Formal-versus-contextual restraint",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Morphology presented as decisive contextual meaning.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "SBLGNT John 1:5",
+            "MorphGNT token record for κατέλαβεν"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 10,
+        "screening_case_pass_points": 8,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/1",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+        "execution_rfc8785_jcs_sha256": "d324b140332ce34ca2c9efa79116c274918cba078c2caf7253bd2887391c65d6",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B03-C01",
+        "title": "Compare exact ASV and WEB wording without interpretation",
+        "track": "PRIMARY_TEXT_REFERENCE_AND_CANON",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+        "answer_mode": "BRIEF",
+        "evidence_contract_id": "EC-VS01-01-EXACT-TEXTS",
+        "prompt": "Quote John 1:5 from the approved ASV and WEB Classic editions, then identify only the final-clause wording difference. Do not yet explain why they differ.",
+        "case_content_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+        "criteria": [
+          {
+            "criterion_id": "B03-R1",
+            "label": "Exact edition-labeled quotations",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Quotation or edition substitution.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B03-R2",
+            "label": "Surface difference isolated without overanalysis",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "exact approved ASV John 1:5",
+            "exact approved WEB Classic John 1:5"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 6,
+        "screening_case_pass_points": 5,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/2",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+        "execution_rfc8785_jcs_sha256": "e2cb06b09d758e1b653d114544acc0c13789c0b281dd2a0091b8d01970d9cbb1",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B04-C01",
+        "title": "Reject the false manuscript-variant inference",
+        "track": "TRANSLATION_NUANCE",
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+        "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "prompt": "The ASV says “apprehended it not,” while WEB Classic says “hasn’t overcome it.” Does that prove the translations were based on different Greek manuscripts? Explain using only the supplied evidence.",
+        "case_content_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+        "criteria": [
+          {
+            "criterion_id": "B04-R1",
+            "label": "Rejects translation-as-witness inference",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "States or implies that the two English renderings prove different manuscripts.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B04-R2",
+            "label": "Correct bounded cause diagnosis",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B04-R3",
+            "label": "Preserves source-edition uncertainty",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Claims identical full Greek base editions without evidence.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B04-R4",
+            "label": "Claim-level evidence support",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Central claim lacks or misuses source evidence.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "complete T04 Translation Nuance packet projection"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 12,
+        "screening_case_pass_points": 10,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/3",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+        "execution_rfc8785_jcs_sha256": "71742fbd96204eb29d89501828c592b347be7de881b9b97924d4f730fe6b4600",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B05-C01",
+        "title": "Correct illegitimate totality transfer",
+        "track": "LINGUISTIC_REPRESENTATION_AND_ANALYSIS",
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+        "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "prompt": "A study note claims: “Because καταλαμβάνω can mean understand, seize, attain, overtake, and overcome, all those meanings are present in John 1:5.” Evaluate that claim using the supplied evidence.",
+        "case_content_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+        "criteria": [
+          {
+            "criterion_id": "B05-R1",
+            "label": "Identifies the lexical fallacy",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Endorses every gloss as simultaneously active.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B05-R2",
+            "label": "Explains contextual sense selection",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B05-R3",
+            "label": "Preserves bounded alternatives and uncertainty",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Claims the lexicon alone settles the verse.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "complete T04 Translation Nuance packet projection"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 10,
+        "screening_case_pass_points": 8,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/4",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+        "execution_rfc8785_jcs_sha256": "f360ef4636850b47623701f0148cd3ef402851c0bef66ffa186abf0d1c16b811",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B06-C01",
+        "title": "Explain alternatives without false certainty",
+        "track": "TRANSLATION_NUANCE",
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+        "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "prompt": "Why might one translation use “apprehended” and another use “overcome” in John 1:5? Give a calibrated explanation and state what the supplied evidence does not settle.",
+        "case_content_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+        "criteria": [
+          {
+            "criterion_id": "B06-R1",
+            "label": "Explains both principal effects",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B06-R2",
+            "label": "Connects effects to bounded evidence",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B06-R3",
+            "label": "Calibrates ambiguity and uncertainty",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "States that the Greek literally and definitively means both.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B06-R4",
+            "label": "Avoids translator-intent and consensus overclaim",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Infers translator intent or consensus without evidence.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "complete T04 Translation Nuance packet projection"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 14,
+        "screening_case_pass_points": 12,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/5",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+        "execution_rfc8785_jcs_sha256": "ca11fca8be3fc20e4653dd8210b85bf0d92821b0552c6bd434058b3242d2e0ee",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B07-C01",
+        "title": "Attach each claim to evidence that actually supports it",
+        "track": "SCHOLARSHIP_CITATION_AND_LANDSCAPE",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "prompt": "Give a short cited explanation of the John 1:5 wording difference. Cite the Greek wording, morphology, each English rendering, and lexical-range claim to the source that actually supports it.",
+        "case_content_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+        "criteria": [
+          {
+            "criterion_id": "B07-R1",
+            "label": "Source identity and locator correctness",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Fabricated source or locator.",
+            "hard_failure_severity": "HF-1_CRITICAL"
+          },
+          {
+            "criterion_id": "B07-R2",
+            "label": "Claim-level entailment",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "A central claim is attached to evidence that does not support it.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B07-R3",
+            "label": "Source-role compatibility",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Translation or lexicon treated as manuscript attestation.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "complete T04 Translation Nuance packet projection"
+          ],
+          "tools": []
+        },
+        "max_weighted_points": 12,
+        "screening_case_pass_points": 10,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/6",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+        "execution_rfc8785_jcs_sha256": "d0da41800aa0470b573cfe6b7b1227d7c097bb34e44b70674c86e2d93ea7616a",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B08-C01",
+        "title": "Qualify when only translations are available",
+        "track": "TOOLS_RETRIEVAL_AND_RUNTIME",
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+        "evaluation_mode": "FIXED_PRIMARY_EVIDENCE",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-04-TRANSLATIONS-ONLY",
+        "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+        "case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+        "criteria": [
+          {
+            "criterion_id": "B08-R1",
+            "label": "Recognizes evidence insufficiency",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Gives a confident Greek or variant conclusion from translations alone.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B08-R2",
+            "label": "States what the available evidence does establish",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1
+          },
+          {
+            "criterion_id": "B08-R3",
+            "label": "Requests the right missing evidence",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "exact approved ASV John 1:5",
+            "exact approved WEB Classic John 1:5"
+          ],
+          "tools": [],
+          "explicitly_withheld": [
+            "Greek source",
+            "morphology",
+            "lexicon",
+            "T04 derived packet",
+            "critical apparatus"
+          ]
+        },
+        "runtime_pair_status": "REQUIRED_NOT_YET_AUTHORED",
+        "max_weighted_points": 8,
+        "screening_case_pass_points": 7,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/7",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+        "execution_rfc8785_jcs_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B09-C01",
+        "title": "Separate Scripture from page paratext and user annotation",
+        "track": "MULTIMODAL_PAGE_STUDY",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "IMAGE_PLUS_TOOLS",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-05-PAGE-BASE",
+        "prompt": "On the supplied synthetic study page, identify which regions are canonical Scripture and which are page header, section heading, verse number, study note, cross-reference, and user annotation. Quote only the canonical text.",
+        "case_content_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+        "criteria": [
+          {
+            "criterion_id": "B09-R1",
+            "label": "Region classification",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Study note, heading, cross-reference, or user annotation presented as Scripture.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B09-R2",
+            "label": "Canonical quotation and edition grounding",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Canonical text is fabricated or ungrounded.",
+            "hard_failure_severity": "HF-1_CRITICAL"
+          },
+          {
+            "criterion_id": "B09-R3",
+            "label": "Synthetic-fixture disclosure",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Page presented as historical or publisher-produced.",
+            "hard_failure_severity": "HF-3_MATERIAL"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "T06 base PNG bytes"
+          ],
+          "tools": [
+            "deterministic exact ASV canonical lookup"
+          ],
+          "withheld_from_subject": [
+            "T06 fixture JSON",
+            "region map",
+            "authority classes",
+            "ground-truth extraction records",
+            "reference response",
+            "rubric"
+          ]
+        },
+        "max_weighted_points": 10,
+        "screening_case_pass_points": 8,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/8",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+        "execution_rfc8785_jcs_sha256": "395090789236f9e61096be3470987000e320ff784b6231994764bbf3d9ef9367",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B10-C01",
+        "title": "Do not invent obscured page text",
+        "track": "MULTIMODAL_PAGE_STUDY",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "IMAGE_PLUS_TOOLS",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-06-PAGE-DEGRADED",
+        "prompt": "Transcribe only what is visibly legible in the highlighted canonical-text region. You may use the exact-edition lookup to say what the ASV source contains, but clearly distinguish lookup from visual observation.",
+        "case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+        "criteria": [
+          {
+            "criterion_id": "B10-R1",
+            "label": "Visual illegibility calibration",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Claims visually reading the obscured phrase.",
+            "hard_failure_severity": "HF-1_CRITICAL"
+          },
+          {
+            "criterion_id": "B10-R2",
+            "label": "Lookup-versus-observation distinction",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Canonical lookup silently replaces page evidence.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B10-R3",
+            "label": "No invention in obscured annotation",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Invents obscured user handwriting.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompt",
+          "evidence": [
+            "T06 degraded PNG bytes"
+          ],
+          "tools": [
+            "deterministic exact ASV canonical lookup"
+          ],
+          "withheld_from_subject": [
+            "T06 base PNG",
+            "T06 fixture JSON",
+            "degradation mask",
+            "underlying obscured text",
+            "ground-truth extraction records",
+            "reference response",
+            "rubric"
+          ]
+        },
+        "max_weighted_points": 10,
+        "screening_case_pass_points": 8,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/9",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+        "execution_rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab",
+        "case_hash_compatibility_status": "LEGACY_NON_JCS_NUMBER_SERIALIZATION",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B11-C01",
+        "title": "Preserve a corrected edition preference through compaction",
+        "track": "LONG_CONTEXT_SESSION_AND_COMPACTION",
+        "review_partition": "REV-P0_DETERMINISTIC_AND_OPERATIONAL",
+        "evaluation_mode": "COMPACTED_SESSION",
+        "answer_mode": "STUDY",
+        "evidence_contract_id": "EC-VS01-07-SESSION-COMPACTION",
+        "turns": [
+          {
+            "turn": 1,
+            "role": "user",
+            "content": "Use WEB Classic as the primary display translation for this study."
+          },
+          {
+            "turn": 2,
+            "role": "assistant_state",
+            "content": "Primary translation set to WEB Classic."
+          },
+          {
+            "turn": 3,
+            "role": "user",
+            "content": "Correction: use the ASV as the primary display translation, and compare WEB Classic only as the secondary translation."
+          },
+          {
+            "turn": 4,
+            "role": "runtime",
+            "content": "Apply K1 structured-state extraction and K2 evidence-handle compaction."
+          },
+          {
+            "turn": 5,
+            "role": "user",
+            "content": "Now quote the primary translation and summarize the secondary comparison."
+          }
+        ],
+        "case_content_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+        "criteria": [
+          {
+            "criterion_id": "B11-R1",
+            "label": "Correction precedence retained",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Stale WEB preference overrides the later correction.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B11-R2",
+            "label": "Correct primary and secondary source use",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B11-R3",
+            "label": "Compaction and audit integrity",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Correction disappears or history is silently overwritten.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "turns",
+          "evidence": [
+            "compacted K1/K2 active session state",
+            "rehydratable ASV and WEB handles"
+          ],
+          "tools": [
+            "exact ASV and WEB handle rehydration"
+          ],
+          "case_is_internally_multiturn": true
+        },
+        "max_weighted_points": 10,
+        "screening_case_pass_points": 8,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/10",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+        "execution_rfc8785_jcs_sha256": "82e8ed750187ca4d83d8e60510e96684a62f8d011288ca50bee641269a872090",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      },
+      {
+        "case_id": "VS01-B12-C01",
+        "title": "Keep Brief and Study answers substantively consistent",
+        "track": "RESEARCH_WORKFLOW_AND_ACCESSIBILITY",
+        "review_partition": "REV-P1_SOURCE_VERIFIABLE_SCHOLARLY_BEHAVIOR",
+        "evaluation_mode": "FIXED_COMPLETE_EVIDENCE_PACKET",
+        "answer_mode": "PAIRED_BRIEF_AND_STUDY",
+        "evidence_contract_id": "EC-VS01-03-COMPLETE-TNC",
+        "prompts": {
+          "brief": "Brief mode: Why do the ASV and WEB Classic differ in John 1:5?",
+          "study": "Study mode: Why do the ASV and WEB Classic differ in John 1:5? Include the source-language evidence, alternatives, and uncertainty."
+        },
+        "case_content_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+        "criteria": [
+          {
+            "criterion_id": "B12-R1",
+            "label": "Shared conclusion consistency",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2,
+            "hard_failure_if": "Brief and Study answers materially contradict.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B12-R2",
+            "label": "Brief-mode adequacy",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Brief mode hides a material qualification.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          },
+          {
+            "criterion_id": "B12-R3",
+            "label": "Study-mode added depth and evidence",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 2
+          },
+          {
+            "criterion_id": "B12-R4",
+            "label": "No unsupported specialist escalation",
+            "scoring_type": "ORDINAL_0_2",
+            "anchors": {
+              "0": "Absent, incorrect, or materially unsupported.",
+              "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+              "2": "Correct, sufficiently supported, and appropriately qualified."
+            },
+            "weight": 1,
+            "hard_failure_if": "Study mode invents consensus, intent, or certainty.",
+            "hard_failure_severity": "HF-2_MAJOR"
+          }
+        ],
+        "subject_visible": {
+          "prompt_field": "prompts",
+          "evidence": [
+            "same complete T04 packet projection for both answers"
+          ],
+          "tools": [],
+          "paired_outputs_required": [
+            "BRIEF",
+            "STUDY"
+          ]
+        },
+        "max_weighted_points": 12,
+        "screening_case_pass_points": 10,
+        "scorer_only": {
+          "source_pointer": "design/approved/BENCH-VS01-BATCH-01-cases.json#/cases/11",
+          "fields": [
+            "answer_contract",
+            "deterministic_checks",
+            "rubric",
+            "reference_response or reference_responses",
+            "hard-failure rules",
+            "case_content_sha256",
+            "review and contamination metadata"
+          ],
+          "subject_access": false
+        },
+        "source_declared_case_content_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+        "execution_rfc8785_jcs_sha256": "370eaa8169bc82c79960654e5b6229f2afe21a9f4c12557500082d80be9eea28",
+        "case_hash_compatibility_status": "IDENTICAL_UNDER_LEGACY_AND_JCS",
+        "case_content_sha256_semantics": "SOURCE_DECLARED_COMPATIBILITY_IDENTITY"
+      }
+    ],
+    "required_follow_up_case": {
+      "planned_case_id": "VS01-B08-RUNTIME-C01",
+      "evaluation_mode": "FULL_RUNTIME_HARNESS",
+      "status": "REQUIRED_NOT_YET_AUTHORED",
+      "included_in_t07_batch": false,
+      "effect": "Blocks any claim that this batch validates default full-runtime evidence acquisition."
+    }
+  },
+  "subject_and_scorer_firewall": {
+    "logical_stores": {
+      "subject_store": [
+        "case identity and exact user-visible prompt/turns",
+        "case mode and answer-depth requirements",
+        "whitelisted evidence bytes or deterministic tool interface",
+        "case-local output schema"
+      ],
+      "scorer_store": [
+        "answer contract",
+        "deterministic checks",
+        "atomic rubric",
+        "hard-failure rules and severities",
+        "reference response fixtures",
+        "T06 fixture JSON, regions, masks, and scorer-only extraction truth",
+        "review and contamination metadata"
+      ]
+    },
+    "process_boundary": "The subject adapter receives a serialized SubjectCasePackage created from an explicit whitelist. It receives no filesystem path, object reference, environment variable, database handle, archive handle, or import path capable of reaching scorer-only data.",
+    "image_cases": {
+      "B09_subject_receives": [
+        "base PNG bytes",
+        "exact ASV lookup interface"
+      ],
+      "B09_subject_never_receives": [
+        "fixture JSON",
+        "region map",
+        "authority classes",
+        "reference response"
+      ],
+      "B10_subject_receives": [
+        "degraded PNG bytes",
+        "exact ASV lookup interface"
+      ],
+      "B10_subject_never_receives": [
+        "base PNG",
+        "fixture JSON",
+        "degradation masks",
+        "underlying obscured text",
+        "reference response"
+      ]
+    },
+    "leakage_disposition": "NO_GO_INVALID_RUN",
+    "leakage_tests_required": true
+  },
+  "evaluation_subjects": {
+    "deterministic_reference_subject": {
+      "subject_id": "VS01-T07-REFERENCE-SUBJECT-v1",
+      "subject_type": "DETERMINISTIC_TOOL_SUITE",
+      "purpose": "Harness, scorer, and projection conformance only; not a capability claim.",
+      "model_invocations": 0,
+      "ocr_invocations": 0,
+      "vlm_invocations": 0,
+      "network_requests": 0,
+      "behavior": "For each case, return a precompiled structured response derived byte-for-byte from the frozen reference_response/reference_responses after validating the exact case hash and subject-visible projection. The running subject process cannot open the benchmark case source or scorer store.",
+      "expected_result": {
+        "attempted_cases": 12,
+        "criterion_scores": "all 2",
+        "hard_failures": 0,
+        "P0_points": 64,
+        "P1_points": 56,
+        "total_points": 120,
+        "classification": "REFERENCE_CONFORMANT"
+      }
+    },
+    "future_model_subject_adapter": {
+      "protocol": "VS01BenchmarkSubjectAdapter",
+      "method": "generate(SubjectCasePackage) -> StructuredSubjectResponse",
+      "implementation_in_t07": null,
+      "provider": null,
+      "prompt": null,
+      "model": null,
+      "invocation_authority": false,
+      "separate_campaign_required": true
+    }
+  },
+  "execution_protocol": {
+    "reference_engine": "single-process project-owned ReferenceEvaluationEngine",
+    "case_order": [
+      "VS01-B01-C01",
+      "VS01-B02-C01",
+      "VS01-B03-C01",
+      "VS01-B04-C01",
+      "VS01-B05-C01",
+      "VS01-B06-C01",
+      "VS01-B07-C01",
+      "VS01-B08-C01",
+      "VS01-B09-C01",
+      "VS01-B10-C01",
+      "VS01-B11-C01",
+      "VS01-B12-C01"
+    ],
+    "case_isolation": {
+      "fresh_subject_instance_per_case": true,
+      "fresh_temporary_directory_per_case": true,
+      "cross_case_memory": false,
+      "shared_mutable_state": false,
+      "B11_internal_multiturn_exception": true,
+      "B12_paired_output_exception": true
+    },
+    "attempt_policy": {
+      "requested_attempts_per_case": 1,
+      "automatic_retries": 0,
+      "semantic_rerolls": 0,
+      "failed_refused_timed_out_malformed_outputs_remain_in_denominator": true
+    },
+    "deterministic_replay": {
+      "required_complete_runs": 2,
+      "run_order": "same canonical case order",
+      "required_semantic_equality": true,
+      "required_result_identity_equality": true,
+      "operational_receipt_fields_may_differ": [
+        "receipt UUIDv7",
+        "generated_at",
+        "measured duration"
+      ]
+    },
+    "no_engine_adapter_in_initial_implementation": "Inspect AI and provider/model adapters remain later bounded adapters; T07 first proves the project-owned reference engine and scorer."
+  },
+  "scoring_protocol": {
+    "criterion_scale": {
+      "0": "Absent, incorrect, or materially unsupported.",
+      "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+      "2": "Correct, sufficiently supported, and appropriately qualified."
+    },
+    "weighted_points_formula": "criterion_score * criterion_weight",
+    "case_points_formula": "sum(weighted criterion points)",
+    "batch_points_formula": "sum all twelve case points",
+    "maximum_points": {
+      "P0": 64,
+      "P1": 56,
+      "batch": 120
+    },
+    "not_evaluable_rule": "A downstream criterion may be NOT_EVALUABLE_DUE_TO_UPSTREAM_FAILURE only when its frozen dependency makes independent scoring impossible; the case still remains in the denominator and any upstream hard failure/cap applies.",
+    "hard_failure_precedence": {
+      "HF-1_CRITICAL": "Immediate NO_GO_INVALID_RUN_OR_SUBJECT_RESULT; numeric score cannot override.",
+      "HF-2_MAJOR": "Case failure and batch SCREENING_NO_GO; numeric score cannot override.",
+      "HF-3_MATERIAL": "Case failure and SCREENING_REVIEW_REQUIRED; cannot be a screening pass.",
+      "HF-4_MINOR": "Reported and retained; does not alone override thresholds unless case contract says so."
+    },
+    "reference_conformance_gate": {
+      "all_cases_attempted": true,
+      "all_criterion_scores_equal": 2,
+      "hard_failure_count": 0,
+      "P0_points_required": 64,
+      "P1_points_required": 56,
+      "batch_points_required": 120,
+      "two_replays_identical": true,
+      "pass_classification": "REFERENCE_CONFORMANT",
+      "failure_classification": "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED"
+    },
+    "future_public_seed_screening_gate": {
+      "claim_level": "EL-1_SCREENING_ONLY",
+      "all_cases_attempted_once": true,
+      "per_case_minimum_points": {
+        "VS01-B01-C01": 5,
+        "VS01-B02-C01": 8,
+        "VS01-B03-C01": 5,
+        "VS01-B04-C01": 10,
+        "VS01-B05-C01": 8,
+        "VS01-B06-C01": 12,
+        "VS01-B07-C01": 10,
+        "VS01-B08-C01": 7,
+        "VS01-B09-C01": 8,
+        "VS01-B10-C01": 8,
+        "VS01-B11-C01": 8,
+        "VS01-B12-C01": 10
+      },
+      "no_criterion_score_zero": true,
+      "HF1_HF2_count_required": 0,
+      "HF3_count_required": 0,
+      "P0_points_minimum": 58,
+      "P1_points_minimum": 45,
+      "batch_points_minimum": 102,
+      "B09_and_B10_must_each_pass": true,
+      "B11_correction_loss_count_required": 0,
+      "pass_classification": "SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+      "review_classification": "SCREENING_REVIEW_REQUIRED",
+      "fail_classification": "SCREENING_NO_GO"
+    },
+    "score_reporting": [
+      "criterion raw score and weight",
+      "case weighted points and percentage",
+      "P0 and P1 weighted totals separately",
+      "batch weighted total",
+      "hard failures by severity and case",
+      "abstention and uncertainty outcomes",
+      "page-role and lookup-versus-visual outcomes",
+      "attempt/error/refusal/timeout accounting",
+      "subject, engine, scorer, evidence, and upstream identities"
+    ],
+    "prohibited_reporting": [
+      "one unexplained aggregate score",
+      "dropping failed or malformed cases",
+      "treating fixed-evidence and full-runtime results as interchangeable",
+      "claiming specialist validation",
+      "claiming uncontaminated OpenAI frontier evaluation"
+    ]
+  },
+  "case_result_requirements": {
+    "common": [
+      "case and content hash",
+      "subject-visible package identity",
+      "structured response identity",
+      "criterion scores and evidence",
+      "hard failures and severities",
+      "attempt state and error class",
+      "subject/scorer leakage check"
+    ],
+    "citations": [
+      "exact source handles",
+      "claim-to-source compatibility",
+      "no fabricated locator"
+    ],
+    "uncertainty": [
+      "required qualifications retained",
+      "forbidden certainty absent"
+    ],
+    "abstention": [
+      "B08 required abstention on withheld Greek and textual-critical claims"
+    ],
+    "page": [
+      "B09 exact region-role map and only-canonical quotation",
+      "B10 visual transcription separated from canonical lookup",
+      "no obscured annotation invention"
+    ],
+    "session": [
+      "B11 latest correction retained through K1/K2 compaction"
+    ],
+    "paired_depth": [
+      "B12 Brief and Study share conclusion and material uncertainty"
+    ]
+  },
+  "public_contracts": [
+    {
+      "contract": "VS01BenchmarkExecutionSpecification",
+      "purpose": "Immutable batch, subject, projection, attempt, scorer, thresholds, and upstream authority."
+    },
+    {
+      "contract": "VS01BenchmarkCaseResult",
+      "purpose": "One case attempt with structured response identity, criterion scores, failures, and leakage state."
+    },
+    {
+      "contract": "VS01BenchmarkRunResult",
+      "purpose": "All twelve case results, partition and batch aggregates, limitations, and content-addressed identity."
+    },
+    {
+      "contract": "VS01BenchmarkExecutionReceipt",
+      "purpose": "Operational UUIDv7/timestamp receipt for dry-run validation, publication, or verified existing result."
+    }
+  ],
+  "identity_rules": {
+    "canonicalization": "RFC 8785",
+    "hash": "SHA-256",
+    "execution_specification_identity": "exclude only specification_identity",
+    "case_result_identity": "exclude only case_result_identity",
+    "run_result_identity": "exclude only run_result_identity",
+    "receipt_identity": "UUIDv7; receipt also carries canonical content SHA-256",
+    "result_identity_includes": [
+      "exact batch JSON and Markdown SHA-256",
+      "all twelve case content hashes",
+      "both source-declared and RFC 8785 execution hashes for every case",
+      "subject identity",
+      "engine identity",
+      "subject-visible projection identities",
+      "scorer revision",
+      "T04/T05/T06 authority",
+      "all attempts, including errors",
+      "all criterion scores and hard failures",
+      "limitations and contamination state"
+    ]
+  },
+  "publication_protocol": {
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab",
+    "result_object_path": "objects/sha256/<result-prefix>/<run-result-sha256>",
+    "snapshot_path": "snapshots/benchmark/vs01-batch-01/reference-conformance.json",
+    "receipt_path": "manifests/benchmark/vs01-batch-01/reference-conformance/benchmark-execution-receipt.json",
+    "stage_path": ".incoming/vs01-batch-01-<run-result-sha256>.benchmark-stage",
+    "link_order": [
+      "run-result object",
+      "stable result snapshot",
+      "receipt last"
+    ],
+    "commit_marker": "receipt linked last",
+    "retained_modes": "0444",
+    "exact_partial_recovery": true,
+    "mismatch_policy": "FAIL_CLOSED_NO_REPLACEMENT",
+    "unrelated_incoming_policy": "PRESERVE_AND_IGNORE",
+    "implementation_turn_publication": "NOT_AUTHORIZED",
+    "live_publication": "SEPARATE_OWNER_OPERATIONAL_AUTHORIZATION_REQUIRED"
+  },
+  "negative_controls_and_adversarial_mutations": [
+    "one case-content hash changed",
+    "B10 source-declared and RFC 8785 hashes are swapped, conflated, or mislabeled",
+    "case omitted, duplicated, reordered with order-dependent output, or silently retried",
+    "subject package contains answer_contract, rubric, reference response, or scorer path",
+    "B08 receives Greek, morphology, lexicon, T04 packet, or a source tool",
+    "B09 receives fixture JSON, region map, or scorer-only authority classes",
+    "B10 receives base PNG, degradation mask, or underlying obscured text",
+    "B10 response claims the blurred phrase was visually read",
+    "B11 loses the later ASV correction or rewrites history",
+    "B12 Brief and Study materially contradict or Brief hides uncertainty",
+    "citation is real but attached to an unsupported claim",
+    "translation or lexicon is treated as manuscript attestation",
+    "hard failure is present but aggregate remains high",
+    "failed/refused/malformed output is dropped from denominator",
+    "reference subject imports or opens frozen case/scorer source at runtime",
+    "model, OCR, VLM, network, archive write, or database write count is nonzero",
+    "T04, T05, or T06 authority identity differs",
+    "published result object, snapshot, receipt, or exact stage mismatches"
+  ],
+  "promotion_and_no_go": {
+    "harness_implementation_promotion": "May be recommended for merge only after REFERENCE_CONFORMANT 120/120, two identical replays, zero leakage, zero hard failures, all tests, and exact-head review.",
+    "benchmark_seed_screening_claim": "A later separately authorized subject may receive only SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS or a failure/review disposition.",
+    "product_or_runtime_promotion_from_this_batch": "PROHIBITED",
+    "blocking_reasons": [
+      "VS01-B08-RUNTIME-C01 is required but not yet authored or owner-approved",
+      "the batch is ChatGPT-authored public seed content",
+      "no private-final or fresh post-freeze cases are present",
+      "no independent uncontaminated OpenAI-frontier claim is possible",
+      "no REV-P2 specialist gold is present"
+    ],
+    "automatic_no_go_conditions": [
+      "identity, integrity, or upstream-authority mismatch",
+      "subject/scorer leakage",
+      "any HF-1 or HF-2",
+      "missing or unattempted case",
+      "B09/B10 visual-grounding failure",
+      "B11 correction loss",
+      "retry/reroll or denominator manipulation",
+      "rights/privacy/security incident",
+      "publication mismatch or unresolved benchmark incident"
+    ],
+    "owner_decision_required": true
+  },
+  "dry_run_and_tests": {
+    "future_cli": "bsl benchmark vs01-batch-01 --subject deterministic-reference [--dry-run]",
+    "dry_run_behavior": [
+      "verify exact batch and all upstream authority",
+      "construct subject/scorer projections",
+      "execute and score all twelve deterministic reference cases",
+      "produce canonical result semantics",
+      "write no archive path and no database row",
+      "invoke no model, OCR, VLM, network, or benchmark provider"
+    ],
+    "required_tests": [
+      "exact batch hash and twelve case hashes",
+      "verify all twelve source-declared hashes with the legacy sorted compact UTF-8 canonicalizer and all twelve execution hashes with RFC 8785",
+      "all seven evidence contracts and subject whitelists",
+      "all thirty-seven criteria, weights, anchors, and hard failures",
+      "subject/scorer process and path firewall",
+      "all adversarial leakage mutations",
+      "reference result exactly 64/64 P0, 56/56 P1, 120/120 total",
+      "two replay identities equal",
+      "case-order permutation does not change per-case or aggregate semantics",
+      "errors/refusals/malformed outputs remain in denominator",
+      "threshold boundary tests immediately below and at every exact gate",
+      "temporary receipt-last publication, recovery, mismatch, modes, and unrelated-stage preservation",
+      "pre/post T04/T05/T06 and archive fingerprints equal",
+      "zero model/OCR/VLM/network/archive/database operations"
+    ]
+  },
+  "implementation_budget": {
+    "handwritten_active_lines_target": 1300,
+    "handwritten_active_lines_hard_limit": 1800,
+    "handwritten_production_files_hard_limit": 6,
+    "new_public_contracts_hard_limit": 4,
+    "new_direct_dependencies_hard_limit": 0,
+    "migrations_hard_limit": 0,
+    "new_task_specific_workflows_hard_limit": 1,
+    "function_logical_lines_hard_limit": 60,
+    "cyclomatic_complexity_hard_limit": 10,
+    "nesting_hard_limit": 3,
+    "production_class_logical_lines_hard_limit": 250,
+    "production_module_physical_lines_hard_limit": 500
+  },
+  "non_goals": [
+    "No implementation or execution in this design turn.",
+    "No benchmark case, prompt, answer contract, reference response, rubric, split, or hash change.",
+    "No edit or replacement of the approved benchmark case file.",
+    "No B08 full-runtime case authoring.",
+    "No model subject, provider adapter, model judge, OCR, VLM, or human-scoring workflow.",
+    "No benchmark execution, result publication, model selection, or public superiority claim.",
+    "No training, preference optimization, retrieval tuning, or use as a holdout.",
+    "No database migration or runtime-row creation.",
+    "No T04/T05/T06 or canonical archive modification.",
+    "No Inspect AI integration in the initial implementation.",
+    "No web UI, retrieval, embedding, cloud, Lambda, training, VS01-T08, or later work."
+  ],
+  "revision": "R01",
+  "supersedes_protocol_sha256": "9442c2c4159a645f30f57bc5973e2ffe04099401223603c81b33fd600a492673",
+  "benchmark_hash_erratum": {
+    "erratum_id": "BENCH-VS01-BATCH-01-ERRATA-01",
+    "erratum_json_sha256": "9153c12bc7ea3254ff2c76e685dc56ccbd26e615a6d20e770d196fcc3f5ad2be",
+    "erratum_markdown_sha256": "8f3de652db50fc7a93d1368ac6ad53177f0f45858cad927b386127795dc3817d",
+    "source_batch_sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
+    "policy": {
+      "source_integrity": [
+        "Verify the complete approved case file SHA-256 remains exact.",
+        "Verify every declared case_content_sha256 using PYTHON_SORTED_COMPACT_UTF8_V1.",
+        "Do not edit, normalize, or replace the approved case file."
+      ],
+      "execution_identity": [
+        "Compute RFC 8785/SHA-256 for every case excluding only case_content_sha256.",
+        "Use execution_rfc8785_jcs_sha256 in T07 sample, case-result, and run identities.",
+        "Bind both the source-declared hash and execution JCS hash in every T07 authority record."
+      ],
+      "special_case": {
+        "case_id": "VS01-B10-C01",
+        "source_declared_case_content_sha256": "dccf12a80604494847853850d86706da17dce45e4663cedbf6c07a68f2d3fa06",
+        "execution_rfc8785_jcs_sha256": "f158ea959695243e18c6fc46661387d17f7fe2268bd479f24db02ef868ac7eab"
+      },
+      "future_authoring": "Every newly authored or revised benchmark case must use RFC 8785 JCS directly. This compatibility rule applies only to the exact approved BENCH-VS01-BATCH-01 bytes."
+    }
+  }
+}

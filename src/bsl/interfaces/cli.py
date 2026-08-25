@@ -15,6 +15,7 @@ from bsl.application.john15_page_fixture import generate_john15_page_fixture
 from bsl.application.john15_study_runtime import execute_john15_study
 from bsl.application.source_acquisition import acquire_source
 from bsl.application.source_admission import compile_source_plan
+from bsl.application.vs01_benchmark_scoring import run_reference_campaign
 from bsl.contracts.archive import ArchiveReadiness
 from bsl.infrastructure.macos_volume import inspect_volume
 
@@ -71,6 +72,11 @@ def _parser() -> JsonArgumentParser:
     fixture = page_commands.add_parser("john-1-5-synthetic-fixture")
     fixture.add_argument("--archive-root", required=True, type=Path)
     fixture.add_argument("--dry-run", action="store_true")
+    benchmark = commands.add_parser("benchmark")
+    benchmark_commands = benchmark.add_subparsers(dest="benchmark_command", required=True)
+    batch = benchmark_commands.add_parser("vs01-batch-01")
+    batch.add_argument("--subject", required=True, choices=("deterministic-reference",))
+    batch.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -180,6 +186,20 @@ def _page(args: argparse.Namespace) -> int:
     return 0
 
 
+def _benchmark(args: argparse.Namespace) -> int:
+    if args.benchmark_command != "vs01-batch-01" or args.subject != "deterministic-reference":
+        return _emit_error("INVALID_CLI_INPUT", "unsupported benchmark or subject")
+    specification, result, receipt, published = run_reference_campaign(dry_run=args.dry_run)
+    output = {
+        "execution_specification": specification.model_dump(mode="json"),
+        "run_result": result.model_dump(mode="json"),
+        "receipt": receipt.model_dump(mode="json"),
+        "published": published,
+    }
+    print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+    return int(result.disposition != "REFERENCE_CONFORMANT")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     try:
         args = _parser().parse_args(argv)
@@ -195,6 +215,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _study(args)
         if args.command == "page":
             return _page(args)
+        if args.command == "benchmark":
+            return _benchmark(args)
         return _emit_error("INVALID_CLI_INPUT", "unsupported command")
     except CliInputError as exc:
         return _emit_error("INVALID_CLI_INPUT", str(exc))

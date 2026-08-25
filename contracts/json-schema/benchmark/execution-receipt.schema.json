@@ -1,0 +1,488 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "DRY_RUN_VALIDATED"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "execution_specification_identity": {
+          "const": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
+        }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    },
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 3
+        },
+        "disposition": {
+          "const": "REFERENCE_CONFORMANT"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 1
+        },
+        "published": {
+          "const": true
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
+        }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    },
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "VERIFIED_EXISTING"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 1
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "string"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "string"
+        },
+        "verified_existing": {
+          "const": true
+        }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    },
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "REFERENCE_NONCONFORMANT"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
+        }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    },
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "REFERENCE_NONCONFORMANT"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "execution_specification_identity": {
+          "const": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
+        }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    }
+  ],
+  "properties": {
+    "archive_paths": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Archive Paths",
+      "type": "array"
+    },
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "archive_writes": {
+      "enum": [
+        0,
+        3
+      ],
+      "title": "Archive Writes",
+      "type": "integer"
+    },
+    "case_results_constructed": {
+      "const": 24
+    },
+    "completed_attempts": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Completed Attempts",
+      "type": "integer"
+    },
+    "contract": {
+      "const": "VS01BenchmarkExecutionReceipt",
+      "default": "VS01BenchmarkExecutionReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "database_writes": {
+      "const": 0,
+      "default": 0,
+      "title": "Database Writes",
+      "type": "integer"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "REFERENCE_CONFORMANT",
+        "REFERENCE_NONCONFORMANT",
+        "VERIFIED_EXISTING"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "error_counts": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Error Counts",
+      "type": "array"
+    },
+    "execution_specification_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Execution Specification Identity",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "initial_upstream_fingerprints": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Initial Upstream Fingerprints",
+      "type": "array"
+    },
+    "model_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Model Invocations",
+      "type": "integer"
+    },
+    "network_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Network Invocations",
+      "type": "integer"
+    },
+    "ocr_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Ocr Invocations",
+      "type": "integer"
+    },
+    "pre_store_upstream_fingerprints": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Pre Store Upstream Fingerprints",
+      "type": "array"
+    },
+    "publication_attempts": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "Publication Attempts",
+      "type": "integer"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "receipts_constructed": {
+      "const": 1
+    },
+    "replay_count": {
+      "const": 2
+    },
+    "requested_attempts": {
+      "const": 12,
+      "default": 12,
+      "title": "Requested Attempts",
+      "type": "integer"
+    },
+    "retained_publication_receipt_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Retained Publication Receipt Id"
+    },
+    "retained_publication_receipt_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Retained Publication Receipt Sha256"
+    },
+    "run_result_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result File Sha256",
+      "type": "string"
+    },
+    "run_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Run Result Identity",
+      "type": "string"
+    },
+    "run_results_constructed": {
+      "const": 2
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scoring_invocations": {
+      "maximum": 24,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "subject_invocations": {
+      "const": 24
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    },
+    "vlm_invocations": {
+      "const": 0,
+      "default": 0,
+      "title": "Vlm Invocations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "generated_at",
+    "execution_specification_identity",
+    "run_result_identity",
+    "run_result_file_sha256",
+    "implementation_commit",
+    "archive_root",
+    "archive_paths",
+    "disposition",
+    "dry_run",
+    "published",
+    "verified_existing",
+    "initial_upstream_fingerprints",
+    "pre_store_upstream_fingerprints",
+    "replay_count",
+    "subject_invocations",
+    "scoring_invocations",
+    "case_results_constructed",
+    "run_results_constructed",
+    "receipts_constructed",
+    "publication_attempts",
+    "retained_publication_receipt_id",
+    "retained_publication_receipt_sha256",
+    "completed_attempts",
+    "error_counts",
+    "archive_writes"
+  ],
+  "title": "VS01BenchmarkExecutionReceipt",
+  "type": "object"
+}
