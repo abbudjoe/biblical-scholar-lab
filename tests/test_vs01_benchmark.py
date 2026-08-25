@@ -704,8 +704,23 @@ def test_store_rejects_unexpected_exact_stage_and_mismatched_object(tmp_path: Pa
 
 
 def test_inventory_child_and_fixture_hashes_stable() -> None:
-    inventory = ROOT / ".local/evidence/VS01-T07/Repair01/deterministic-check-inventory.json"
-    assert hashlib.sha256(inventory.read_bytes()).hexdigest()
+    inventory = tuple(
+        kind
+        for authority in benchmark.load_benchmark_authority()
+        for kind, _rule in benchmark.compile_scorer_authority(authority).deterministic_checks
+    )
+    assert {kind: inventory.count(kind) for kind in benchmark.CHECK_FIELDS} == {
+        "CLAIM_SOURCE_MAP": 5,
+        "EXACT_FIELD": 6,
+        "EXACT_STRING": 3,
+        "FORBIDDEN_STRING": 1,
+        "ONLY_CANONICAL_QUOTE": 1,
+        "REGION_ROLE_MAP": 1,
+        "REQUIRED_EVENT": 1,
+        "REQUIRED_SOURCE_HANDLE": 1,
+        "SESSION_STATE": 2,
+        "TEXT_QUOTE_SELECTOR": 1,
+    }
     assert hashlib.sha256(reference_subject.CHILD_SOURCE.encode()).hexdigest() == reference_subject.CHILD_SHA256
 
 
