@@ -125,6 +125,26 @@
       "contract": "VS01BenchmarkExecutionReceipt", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/execution-receipt.schema.json",
       "owning_task": "VS01-T07-R01", "sha256": "d3d4c513a40394b772341bbf3cc6ce1a8b4c477f406f91229512244da08fc527"
+    },
+    {
+      "contract": "VS01B08RuntimePairSpecification", "schema_version": "1.0", "owning_design": "VS01-T08",
+      "schema_path": "contracts/json-schema/runtime-screening/pair-specification.schema.json",
+      "owning_task": "VS01-T08", "sha256": "01dd5ed2104dcbf7a3f91fe9a9c5cc2bb506685aef73797bc298505de905e977"
+    },
+    {
+      "contract": "VS01RuntimeAcquisitionRun", "schema_version": "1.0", "owning_design": "VS01-T08",
+      "schema_path": "contracts/json-schema/runtime-screening/acquisition-run.schema.json",
+      "owning_task": "VS01-T08", "sha256": "0f6259f1be061cb0d56d12e5c5b9153a1d0ff582da12d97bb2c7fc37b307ad10"
+    },
+    {
+      "contract": "VS01B08RuntimePairResult", "schema_version": "1.0", "owning_design": "VS01-T08",
+      "schema_path": "contracts/json-schema/runtime-screening/pair-result.schema.json",
+      "owning_task": "VS01-T08", "sha256": "bbe224a789281c807f599d1c7c86f10603bd4eb0c245ab875ba469f1f938a1fe"
+    },
+    {
+      "contract": "VS01RuntimeScreeningReceipt", "schema_version": "1.0", "owning_design": "VS01-T08",
+      "schema_path": "contracts/json-schema/runtime-screening/screening-receipt.schema.json",
+      "owning_task": "VS01-T08", "sha256": "7bdb7319a470b2700f8e94fba78bf3b4016b9eb1e30236c6ee1ba2356ae7f8e4"
     }
   ]
 }

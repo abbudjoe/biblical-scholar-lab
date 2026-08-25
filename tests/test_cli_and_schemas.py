@@ -45,6 +45,12 @@ from bsl.contracts.runtime import (
     John15StudyExecutionRecord,
     John15StudyRequest,
 )
+from bsl.contracts.runtime_screening import (
+    VS01B08RuntimePairResult,
+    VS01B08RuntimePairSpecification,
+    VS01RuntimeAcquisitionRun,
+    VS01RuntimeScreeningReceipt,
+)
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.interfaces.cli import main
 
@@ -116,6 +122,19 @@ SCHEMAS = (
     (
         ROOT / "contracts/json-schema/benchmark/execution-receipt.schema.json",
         VS01BenchmarkExecutionReceipt,
+    ),
+    (
+        ROOT / "contracts/json-schema/runtime-screening/pair-specification.schema.json",
+        VS01B08RuntimePairSpecification,
+    ),
+    (
+        ROOT / "contracts/json-schema/runtime-screening/acquisition-run.schema.json",
+        VS01RuntimeAcquisitionRun,
+    ),
+    (ROOT / "contracts/json-schema/runtime-screening/pair-result.schema.json", VS01B08RuntimePairResult),
+    (
+        ROOT / "contracts/json-schema/runtime-screening/screening-receipt.schema.json",
+        VS01RuntimeScreeningReceipt,
     ),
 )
 
@@ -195,7 +214,7 @@ def test_audit_schema_has_typed_operations_and_no_open_count_objects() -> None:
 
 
 def test_benchmark_schemas_are_strict_draft_2020_12_and_fixed_shape() -> None:
-    for path, model in SCHEMAS[-4:]:
+    for path, model in SCHEMAS[-8:-4]:
         schema = json.loads(path.read_text())
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
         assert schema["additionalProperties"] is False

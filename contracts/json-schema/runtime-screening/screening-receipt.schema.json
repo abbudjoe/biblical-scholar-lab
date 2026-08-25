@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquisition_run_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Acquisition Run Identity",
+      "type": "string"
+    },
+    "archive_paths": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "pattern": "^objects/sha256/[0-9a-f]{2}/[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "const": "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json"
+        },
+        {
+          "const": "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json"
+        },
+        {
+          "pattern": "^\\.incoming/vs01-b08-runtime-pair-[0-9a-f]{64}\\.runtime-screening-stage$",
+          "type": "string"
+        }
+      ],
+      "type": "array"
+    },
+    "archive_root": {
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "authority_fingerprints_after": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Authority Fingerprints After",
+      "type": "array"
+    },
+    "authority_fingerprints_before": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Authority Fingerprints Before",
+      "type": "array"
+    },
+    "contract": {
+      "const": "VS01RuntimeScreeningReceipt",
+      "default": "VS01RuntimeScreeningReceipt",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "DRY_RUN_VALIDATED",
+        "REFERENCE_CONFORMANT",
+        "REFERENCE_NONCONFORMANT",
+        "VERIFIED_EXISTING"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "implementation_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Implementation Commit",
+      "type": "string"
+    },
+    "pair_result_file_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Result File Sha256",
+      "type": "string"
+    },
+    "pair_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Result Identity",
+      "type": "string"
+    },
+    "pair_specification_identity": {
+      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+    },
+    "published": {
+      "title": "Published",
+      "type": "boolean"
+    },
+    "real_operation_counters": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Real Operation Counters",
+      "type": "array"
+    },
+    "receipt_canonical_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Canonical Sha256",
+      "type": "string"
+    },
+    "receipt_id": {
+      "format": "uuid",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "verified_existing": {
+      "title": "Verified Existing",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "generated_at",
+    "receipt_canonical_sha256",
+    "implementation_commit",
+    "pair_specification_identity",
+    "acquisition_run_identity",
+    "pair_result_identity",
+    "pair_result_file_sha256",
+    "archive_root",
+    "archive_paths",
+    "disposition",
+    "published",
+    "verified_existing",
+    "authority_fingerprints_before",
+    "authority_fingerprints_after",
+    "real_operation_counters"
+  ],
+  "title": "VS01RuntimeScreeningReceipt",
+  "type": "object"
+}

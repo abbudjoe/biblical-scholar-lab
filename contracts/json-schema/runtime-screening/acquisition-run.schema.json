@@ -1,0 +1,1639 @@
+{
+  "$defs": {
+    "RuntimeAnswerBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Alternative Ids",
+          "type": "array"
+        },
+        "block_id": {
+          "title": "Block Id",
+          "type": "string"
+        },
+        "citation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Citation Ids",
+          "type": "array"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id",
+        "heading",
+        "text",
+        "claim_ids",
+        "citation_ids"
+      ],
+      "title": "RuntimeAnswerBlock",
+      "type": "object"
+    },
+    "RuntimeAuditEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "event": {
+          "title": "Event",
+          "type": "string"
+        },
+        "event_semantic_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Event Semantic Sha256",
+          "type": "string"
+        },
+        "previous_event_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previous Event Sha256"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence",
+        "event",
+        "artifact_ref",
+        "previous_event_sha256",
+        "event_semantic_sha256"
+      ],
+      "title": "RuntimeAuditEvent",
+      "type": "object"
+    },
+    "RuntimeCitationRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "citation_id": {
+          "title": "Citation Id",
+          "type": "string"
+        },
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "quoted_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quoted Span"
+        },
+        "selector": {
+          "title": "Selector",
+          "type": "string"
+        }
+      },
+      "required": [
+        "citation_id",
+        "evidence_id",
+        "selector",
+        "quoted_span"
+      ],
+      "title": "RuntimeCitationRecord",
+      "type": "object"
+    },
+    "RuntimeClaimRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "epistemic_status": {
+          "title": "Epistemic Status",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "proposition": {
+          "title": "Proposition",
+          "type": "string"
+        },
+        "required_qualifications": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Qualifications",
+          "type": "array"
+        }
+      },
+      "required": [
+        "claim_id",
+        "proposition",
+        "epistemic_status",
+        "evidence_ids",
+        "required_qualifications"
+      ],
+      "title": "RuntimeClaimRecord",
+      "type": "object"
+    },
+    "RuntimeEvidenceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "acquired_by": {
+          "title": "Acquired By",
+          "type": "string"
+        },
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "exact_excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Exact Excerpt"
+        },
+        "selector": {
+          "title": "Selector",
+          "type": "string"
+        },
+        "source_handle": {
+          "title": "Source Handle",
+          "type": "string"
+        },
+        "source_role": {
+          "title": "Source Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "source_handle",
+        "source_role",
+        "selector",
+        "exact_excerpt",
+        "acquired_by"
+      ],
+      "title": "RuntimeEvidenceRecord",
+      "type": "object"
+    },
+    "RuntimeOperationCounters": {
+      "additionalProperties": false,
+      "properties": {
+        "archive_writes": {
+          "minimum": 0,
+          "title": "Archive Writes",
+          "type": "integer"
+        },
+        "database_writes": {
+          "minimum": 0,
+          "title": "Database Writes",
+          "type": "integer"
+        },
+        "model_invocations": {
+          "minimum": 0,
+          "title": "Model Invocations",
+          "type": "integer"
+        },
+        "network_invocations": {
+          "minimum": 0,
+          "title": "Network Invocations",
+          "type": "integer"
+        },
+        "ocr_invocations": {
+          "minimum": 0,
+          "title": "Ocr Invocations",
+          "type": "integer"
+        },
+        "packet_loads": {
+          "minimum": 0,
+          "title": "Packet Loads",
+          "type": "integer"
+        },
+        "raw_source_reads": {
+          "minimum": 0,
+          "title": "Raw Source Reads",
+          "type": "integer"
+        },
+        "t03_reads": {
+          "minimum": 0,
+          "title": "T03 Reads",
+          "type": "integer"
+        },
+        "vlm_invocations": {
+          "minimum": 0,
+          "title": "Vlm Invocations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "packet_loads",
+        "raw_source_reads",
+        "t03_reads",
+        "model_invocations",
+        "ocr_invocations",
+        "vlm_invocations",
+        "network_invocations",
+        "database_writes",
+        "archive_writes"
+      ],
+      "title": "RuntimeOperationCounters",
+      "type": "object"
+    },
+    "RuntimeToolCallRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "input_json": {
+          "title": "Input Json",
+          "type": "string"
+        },
+        "input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Input Sha256",
+          "type": "string"
+        },
+        "output_json": {
+          "title": "Output Json",
+          "type": "string"
+        },
+        "output_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Output Sha256",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "tool_call_id": {
+          "title": "Tool Call Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence",
+        "tool_call_id",
+        "tool",
+        "input_json",
+        "output_json",
+        "input_sha256",
+        "output_sha256"
+      ],
+      "title": "RuntimeToolCallRecord",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_alternative_ids": {
+      "const": [
+        "ALT-T04-CONFLICT",
+        "ALT-T04-COGNITIVE",
+        "ALT-T04-DOUBLE-RESONANCE"
+      ]
+    },
+    "acquisition_run_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Acquisition Run Identity",
+      "type": "string"
+    },
+    "answer_blocks": {
+      "maxItems": 7,
+      "minItems": 7,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-DIRECT"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-TEXTS"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-GREEK"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-LEXICON"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-ALTERNATIVES"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-TEXTUAL-STATE"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAnswerBlock"
+            },
+            {
+              "properties": {
+                "block_id": {
+                  "const": "STUDY-ASSESSMENT"
+                }
+              },
+              "required": [
+                "block_id"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "audit_events": {
+      "maxItems": 17,
+      "minItems": 17,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "RUN_RECEIVED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "INITIAL_TRANSLATIONS_BOUND"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "INITIAL_SUFFICIENCY_ASSESSED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "ACQUISITION_PLAN_FROZEN"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "T04_PACKET_LOADED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "SBLGNT_VIEW_ACQUIRED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "MORPHGNT_VIEW_ACQUIRED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "ABBOTT_SMITH_VIEW_ACQUIRED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "T04_PROJECTION_ACQUIRED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "EVIDENCE_LEDGER_COMPLETED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "EVIDENCE_SUFFICIENCY_REASSESSED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "CLAIM_LEDGER_COMPLETED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "ANSWER_CANDIDATE_BOUND"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "ANSWER_VERIFIED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "ANSWER_RENDERED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "AUDIT_FINALIZED"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeAuditEvent"
+            },
+            {
+              "properties": {
+                "event": {
+                  "const": "RUN_COMPLETE"
+                }
+              },
+              "required": [
+                "event"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "citation_ledger": {
+      "maxItems": 10,
+      "minItems": 10,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-001"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-002"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-003"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-004"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-005"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-006"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-007"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-008"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-009"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCitationRecord"
+            },
+            {
+              "properties": {
+                "citation_id": {
+                  "const": "CIT-T05-010"
+                }
+              },
+              "required": [
+                "citation_id"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "claim_ledger": {
+      "maxItems": 15,
+      "minItems": 15,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-010"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-011"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-012"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-020"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-021"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-022"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-030"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-031"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-032"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-040"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-041"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-042"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-043"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-050"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeClaimRecord"
+            },
+            {
+              "properties": {
+                "claim_id": {
+                  "const": "CLM-T04-060"
+                }
+              },
+              "required": [
+                "claim_id"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "contract": {
+      "const": "VS01RuntimeAcquisitionRun",
+      "default": "VS01RuntimeAcquisitionRun",
+      "title": "Contract",
+      "type": "string"
+    },
+    "evidence_ledger": {
+      "maxItems": 12,
+      "minItems": 12,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-NORM-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-GRK-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-MORPH-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-ASV-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-WEB-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-LEX-000"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-LEX-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-LEX-002"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-LEX-003"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-METHOD-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-METHOD-002"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeEvidenceRecord"
+            },
+            {
+              "properties": {
+                "evidence_id": {
+                  "const": "EV-T04-BOUNDARY-001"
+                }
+              },
+              "required": [
+                "evidence_id"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "final_sufficiency": {
+      "title": "Final Sufficiency",
+      "type": "string"
+    },
+    "initial_assessment": {
+      "title": "Initial Assessment",
+      "type": "string"
+    },
+    "material_unknown_claim_ids": {
+      "const": [
+        "CLM-T04-042",
+        "CLM-T04-043"
+      ]
+    },
+    "operation_counters": {
+      "$ref": "#/$defs/RuntimeOperationCounters"
+    },
+    "pair_specification_identity": {
+      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+    },
+    "prompt": {
+      "const": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both \u201cunderstand\u201d and \u201covercome,\u201d and is a textual variant involved?"
+    },
+    "request_revision": {
+      "minimum": 1,
+      "title": "Request Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state_sequence": {
+      "const": [
+        "RECEIVED",
+        "NORMALIZED",
+        "CLASSIFIED",
+        "INITIAL_EVIDENCE_BOUND",
+        "EVIDENCE_ASSESSED_INSUFFICIENT",
+        "PLAN_FROZEN",
+        "EVIDENCE_ACQUIRING",
+        "EVIDENCE_ACQUIRED",
+        "EVIDENCE_REASSESSED_SUFFICIENT_WITH_QUALIFICATION",
+        "CLAIMS_RESOLVED",
+        "ANSWER_CANDIDATE_BOUND",
+        "VERIFYING",
+        "RENDERED",
+        "AUDITED",
+        "COMPLETE"
+      ]
+    },
+    "supersedes_run_identity": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Supersedes Run Identity"
+    },
+    "tool_calls": {
+      "maxItems": 7,
+      "minItems": 7,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "assess_evidence_sufficiency"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "load_published_t04_packet"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "select_sblgnt_exact_source_view"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "select_morphgnt_target_token"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "select_abbott_smith_entry_projection"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "select_t04_translation_nuance_projection"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeToolCallRecord"
+            },
+            {
+              "properties": {
+                "tool": {
+                  "const": "verify_complete_tnc_evidence_contract"
+                }
+              },
+              "required": [
+                "tool"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    }
+  },
+  "required": [
+    "pair_specification_identity",
+    "case_id",
+    "prompt",
+    "request_revision",
+    "supersedes_run_identity",
+    "initial_assessment",
+    "tool_calls",
+    "evidence_ledger",
+    "claim_ledger",
+    "citation_ledger",
+    "answer_blocks",
+    "accepted_alternative_ids",
+    "material_unknown_claim_ids",
+    "final_sufficiency",
+    "state_sequence",
+    "audit_events",
+    "operation_counters",
+    "acquisition_run_identity"
+  ],
+  "title": "VS01RuntimeAcquisitionRun",
+  "type": "object"
+}

@@ -1,0 +1,305 @@
+{
+  "$defs": {
+    "RuntimeCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "points": {
+          "minimum": 0,
+          "title": "Points",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "weight": {
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "weight",
+        "score",
+        "points"
+      ],
+      "title": "RuntimeCriterion",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquisition_run_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Acquisition Run Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "VS01B08RuntimePairResult",
+      "default": "VS01B08RuntimePairResult",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "REFERENCE_CONFORMANT",
+        "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+        "RUNTIME_SCREENING_NO_GO"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "events_observed": {
+      "minimum": 0,
+      "title": "Events Observed",
+      "type": "integer"
+    },
+    "fixed_case_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Fixed Case Result Identity",
+      "type": "string"
+    },
+    "fixed_points": {
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Fixed Points",
+      "type": "integer"
+    },
+    "hard_failures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Hard Failures",
+      "type": "array"
+    },
+    "leakage_incidents": {
+      "minimum": 0,
+      "title": "Leakage Incidents",
+      "type": "integer"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "pair_points": {
+      "maximum": 36,
+      "minimum": 0,
+      "title": "Pair Points",
+      "type": "integer"
+    },
+    "pair_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Result Identity",
+      "type": "string"
+    },
+    "pair_specification_identity": {
+      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+    },
+    "replay_run_identities": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      ],
+      "title": "Replay Run Identities",
+      "type": "array"
+    },
+    "runtime_criteria": {
+      "maxItems": 8,
+      "minItems": 8,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R1"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R2"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R3"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R4"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R5"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R6"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R7"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RuntimeCriterion"
+            },
+            {
+              "properties": {
+                "criterion_id": {
+                  "const": "B08-RT-R8"
+                }
+              },
+              "required": [
+                "criterion_id"
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "runtime_points": {
+      "maximum": 28,
+      "minimum": 0,
+      "title": "Runtime Points",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool_calls_observed": {
+      "minimum": 0,
+      "title": "Tool Calls Observed",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "pair_specification_identity",
+    "acquisition_run_identity",
+    "fixed_case_result_identity",
+    "fixed_points",
+    "runtime_criteria",
+    "runtime_points",
+    "pair_points",
+    "tool_calls_observed",
+    "events_observed",
+    "hard_failures",
+    "leakage_incidents",
+    "replay_run_identities",
+    "disposition",
+    "limitations",
+    "pair_result_identity"
+  ],
+  "title": "VS01B08RuntimePairResult",
+  "type": "object"
+}
