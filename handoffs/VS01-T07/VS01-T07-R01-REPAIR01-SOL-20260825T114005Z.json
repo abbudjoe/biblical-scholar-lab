@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+  "task_id": "VS01-T07-R01-REPAIR01",
+  "turn_id": "VS01-T07-R01-REPAIR01-SOL-20260825T114005Z",
+  "codex_run_id": "VS01-T07-R01-REPAIR01-EXACT-HEAD-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t07-r01-benchmark-harness",
+  "base_sha": "ffcc2892b2096f8c951fb822c6cf01a5634b6793",
+  "implementation_head_sha": "5be3910772d80d8a41716b67d42c71e40e1042e9",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/16",
+  "compare_url": "https://github.com/abbudjoe/biblical-scholar-lab/compare/main...codex/vs01-t07-r01-benchmark-harness",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false,
+    "receipt_path": null
+  },
+  "objective": "Repair the exact-head VS01-T07-R01 benchmark harness findings P1-01 through P2-02 without changing frozen authority or executing, scoring, or publishing a real benchmark case.",
+  "acceptance_criteria": [
+    "Infer deterministic-check failures from mutated response and evidence data with no caller-supplied adversary answer key.",
+    "Run the deterministic reference child as an isolated standard-library-only Python process with a minimal wire request and environment.",
+    "Cross-bind exact frozen authority in exactly four public contracts and Draft 2020-12 schemas.",
+    "Return truthful VERIFIED_EXISTING operational receipts after fully validating retained publication authority.",
+    "Use an immutable local operation ledger and observe all replay and operation counts.",
+    "Harden publication paths, immutable complete writes, stage recovery, and receipt-last linking.",
+    "Run two independent complete validations with branch coverage at or above 90 percent.",
+    "Keep every real execution, scoring, result, receipt, archive-write, database-write, and model/OCR/VLM/network counter at zero."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "VS-01",
+      "BENCH-VS01-BATCH-01",
+      "BENCH-VS01-BATCH-01-ERRATA-01",
+      "VS01-T07-R01",
+      "ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1",
+      "APPROVE_VS01_T07_R01_REPAIR01",
+      "Joseph simplicity waiver approval: Approved. Continue"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {"finding": "P1-01", "result": "Closed; ten frozen deterministic-check types use closed data-driven dispatch and 12/12 response/evidence mutations are detected without answer-key parameters."},
+    {"finding": "P1-02", "result": "Closed; the fixed child source imports only hashlib, json, and sys and runs under Python -I -S -X utf8 with a minimal environment and wire request."},
+    {"finding": "P1-03", "result": "Closed; exactly four public contracts and schemas cross-bind the exact frozen case, criterion, check, evidence, failure, partition, run, and receipt authority."},
+    {"finding": "P1-04", "result": "Closed; upstream authority is independently reloaded before store access and VERIFIED_EXISTING returns a truthful unpublished operational receipt bound to a fully validated retained receipt."},
+    {"finding": "P2-01", "result": "Closed; one immutable local BenchmarkOperationLedger observes both replay passes and every operational count."},
+    {"finding": "P2-02", "result": "Closed; lstat component walking, root confinement, complete-write loops, immutable rereads, exact-stage recovery, and receipt-last linking fail closed."}
+  ],
+  "review_targets": [
+    {"target": "Deterministic scorer", "expected": "No synthetic_adversary, synthetic_severity, or failed_criterion production parameter; failures derive only from response/evidence/tool state plus frozen scorer authority."},
+    {"target": "Reference child", "expected": "No project import or authority path; argv uses -I -S -X utf8; environment is PYTHONUTF8 and LC_ALL only."},
+    {"target": "Exact contracts", "expected": "Recomputing an outer identity cannot legitimize mutated hashes, projections, criteria, checks, evidence, hard failures, order, accounting, or disposition."},
+    {"target": "Verified existing", "expected": "Current receipt is VERIFIED_EXISTING, published false, archive_writes zero, and binds the validated retained publication receipt ID and canonical SHA-256."},
+    {"target": "Store hardening", "expected": "Symlink, broken-link, non-directory, short-write, zero-write, partial-stage, unexpected-stage, and mismatched-publication controls fail closed."},
+    {"target": "Real-operation boundary", "expected": "12 records statically compiled and every real operational counter remains zero; public benchmark CLI was never invoked."}
+  ],
+  "commands": [
+    {"command": "uv sync --frozen; uv lock --check", "result": "PASS in Validation A and Validation B; no lock mutation."},
+    {"command": "uv run ruff format --check .; uv run ruff check .", "result": "PASS in Validation A and Validation B; 129 files formatted."},
+    {"command": "ruff C90/PLR1702 limits", "result": "PASS in Validation A and Validation B; complexity <=10 and nesting <=3."},
+    {"command": "uv run pyright", "result": "PASS in Validation A and Validation B; zero errors, warnings, or information messages."},
+    {"command": "uv run pytest -q --disable-warnings --cov=bsl --cov-branch --cov-fail-under=90", "result": "PASS in Validation A and Validation B; 509 passed, 40 skipped, branch coverage 90.10 percent."},
+    {"command": "offline Ajv Draft 2020-12 validation", "result": "PASS in Validation A and Validation B; all four valid documents accepted and all four recomputed-identity mutations rejected."},
+    {"command": "schema drift, registry, fixture reproduction, dual-hash matrix, static compilation, check inventory", "result": "PASS in Validation A and Validation B with byte-identical semantic receipts."},
+    {"command": "read-only T04/T05/T06 and archive/incoming fingerprint proof", "result": "PASS twice in each validation; authority and incoming inventory unchanged."},
+    {"command": "git diff --check; git fsck --full", "result": "PASS in Validation A and Validation B; only pre-existing dangling objects reported."},
+    {"command": "bsl benchmark vs01-batch-01", "result": "NOT INVOKED, including dry-run, as prohibited."}
+  ],
+  "evaluations": [
+    {"name": "repair_findings", "result": "PASS", "closed": ["P1-01", "P1-02", "P1-03", "P1-04", "P2-01", "P2-02"]},
+    {"name": "deterministic_mutation_controls", "result": "PASS", "mutated_data_controls_detected": 12, "answer_key_parameters_present": false},
+    {"name": "authority_arithmetic", "result": "PASS", "receipt": "7 evidence contracts / 12 cases / 37 criteria / weight 60 / maximum 120 / P0 7 cases and 64 points / P1 5 cases and 56 points / P2 0."},
+    {"name": "dual_hash_matrix", "result": "PASS", "identity": "c2b3c8748873ad7327fba09dacb3a6fec81f3fcd7a670684e8c707d3aa42c176", "mismatches": ["VS01-B10-C01"]},
+    {"name": "static_batch_compilation", "result": "PASS", "identity": "fb1a2f7be5fd524bddac7b7b5d75d761c09488edef6e6150569221a3abb77be7", "counts": {"parsed": 12, "subject_packages": 12, "scorer_plans": 12, "reference_fixtures": 12}},
+    {"name": "operation_ledger", "result": "PASS", "identity": "4af2749d8c27539a3c3102683c332823de268c645da4af84c74c98a11d5cc7c5", "real_counts_all_zero": true},
+    {"name": "validation_semantic_equality", "result": "PASS", "validation_a_equals_validation_b": true},
+    {"name": "upstream_read_only", "result": "PASS", "authority_changed": false, "incoming_changed": false, "archive_writes": 0, "database_writes": 0},
+    {"name": "exact_head_ci", "result": "PENDING_PUSH", "checks": ["vs01-t01-ci", "vs01-t05-ci"]}
+  ],
+  "artifacts": [
+    {"name": "repair_implementation", "head": "5be3910772d80d8a41716b67d42c71e40e1042e9", "tree": "8e30d0607701bed95941bf002b810c17a36d2918"},
+    {"name": "case-result.schema.json", "sha256": "5847505bad08ac1a833433b3bca4c0cfce9b968bb82cf7bf96cec48faec7283f"},
+    {"name": "execution-receipt.schema.json", "sha256": "c8caf7cb0bd32a0023b1c96b57d05f5be9edebf13b28b09b80d5b84fe2bd5d97"},
+    {"name": "execution-specification.schema.json", "sha256": "3eef6f98891bd50c9c7f599429640771a4a1822daf10c3b99bb99ab743926990"},
+    {"name": "run-result.schema.json", "sha256": "8963a02d65337c637294c9d8eb2b5c0a2c0922925ad8d5e3279fa836ce79c6fc"},
+    {"name": "reference-subject-responses.json", "sha256": "ad582ad90758d60e6b3f773997f19565e86fdc59cf455baa1f9eec8859fe7c77"},
+    {"name": "subject-projection-manifest.json", "sha256": "5954efa6c22eb3d295b8b01c58f61aced622ba7b10bda41d3081152a65f5f199"},
+    {"name": "reference_child_source", "sha256": "f1fc21fe8e822c6ed04ae184e597e36b8f92021c6c7b9472cdeaea9c6af2741a"},
+    {"name": "deterministic_check_inventory", "sha256": "79a4491ff6104c1d4a76bad7dae3a7ec3b204cfbd13182941815b6d055ca9590"},
+    {"name": "t04_fingerprint", "sha256": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d"},
+    {"name": "t05_fingerprint", "sha256": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1"},
+    {"name": "t06_fingerprint", "sha256": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860"},
+    {"name": "archive_root_fingerprint", "sha256": "f45c8fe4be50573209e74d94214b94baf51a5f3a5b08108e855992063f79cd70"},
+    {"name": "incoming_inventory_fingerprint", "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}
+  ],
+  "delegated_operations": [],
+  "complexity_receipt": {
+    "production_loc_added": 1711,
+    "production_loc_removed": 0,
+    "test_loc_added": 763,
+    "test_loc_removed": 0,
+    "generated_loc": 6775,
+    "production_files_added": 5,
+    "production_files_removed": 0,
+    "modules_added": [
+      "bsl.application.vs01_benchmark",
+      "bsl.application.vs01_benchmark_scoring",
+      "bsl.application.vs01_reference_subject",
+      "bsl.contracts.benchmark",
+      "bsl.infrastructure.benchmark_store"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [],
+    "dependencies_added": [],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "VS01BenchmarkExecutionSpecification",
+      "VS01BenchmarkCaseResult",
+      "VS01BenchmarkRunResult",
+      "VS01BenchmarkExecutionReceipt"
+    ],
+    "abstractions": [
+      {"name": "BenchmarkOperationLedger", "kind": "private immutable operation record"},
+      {"name": "fixed child program", "kind": "standard-library-only subprocess boundary"},
+      {"name": "closed deterministic-check dispatch", "kind": "ten exact frozen-authority check types"}
+    ],
+    "simpler_alternatives_considered": [
+      "Superseded adversary injection, mutable global counters, project-importing child execution, and weak validators were removed instead of retained in parallel.",
+      "No plugin registry, general semantic scorer, regex rule language, generic rubric engine, or new production module was added."
+    ],
+    "known_duplication_or_debt": [
+      "Inclusive active metadata adds 46 existing CLI/current-state lines and 20 registry lines, for 2540 total handwritten substantive changed lines.",
+      "B08 full-runtime pair VS01-B08-RUNTIME-C01 remains required and unauthored by frozen design."
+    ],
+    "waivers": [
+      "The cumulative inclusive handwritten substantive count is 2540 versus the original 1800 cap. Joseph explicitly approved continuation after receiving the exact over-cap receipt by stating: Approved. Continue."
+    ],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "The scorer remains intentionally REFERENCE_CONFORMANCE_ONLY and cannot semantically score model or human responses.",
+    "B08 remains a limited two-translation case until separately approved full-runtime authority is authored.",
+    "The cumulative inclusive handwritten count is 2540 and relies on Joseph's explicit simplicity waiver approval."
+  ],
+  "decisions_required": [
+    "ChatGPT must review the exact live PR head and issue an allowed exact-head review disposition.",
+    "Joseph must decide whether any separately approved later operational turn may execute the deterministic twelve-case reference campaign."
+  ],
+  "billable_actions": {"performed": false, "actual_cost_usd": 0, "campaign_ids": []},
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
