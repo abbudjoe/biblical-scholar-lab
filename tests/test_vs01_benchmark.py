@@ -96,6 +96,17 @@ def _response(case: SubjectCasePackage, value: str, state: str = "COMPLETED") ->
     )
 
 
+def _frozen_response(case: SubjectCasePackage, fixture: ReferenceSubjectFixture) -> StructuredSubjectResponse:
+    return StructuredSubjectResponse(
+        case.case_id,
+        case.source_declared_compatibility_sha256,
+        case.execution_rfc8785_jcs_sha256,
+        case.package_identity,
+        fixture.response_payload,
+        fixture.response_payload_sha256,
+    )
+
+
 def _spec(dry_run: bool = False) -> VS01BenchmarkExecutionSpecification:
     return benchmark.build_execution_specification(benchmark.load_benchmark_authority(), dry_run=dry_run)
 
@@ -299,7 +310,7 @@ CHECK_CONTROLS = (
     ("EXACT_STRING", {"value": "required"}, "required", "missing"),
     ("FORBIDDEN_STRING", {"value": "forbidden"}, "safe", "forbidden"),
     ("REQUIRED_SOURCE_HANDLE", {"value": "SYN-SOURCE"}, "SYN-SOURCE", "missing"),
-    ("TEXT_QUOTE_SELECTOR", {"prefix": "alpha ", "exact": "omega"}, "alpha omega", "omega"),
+    ("TEXT_QUOTE_SELECTOR", {"prefix": "alpha ", "exact": "omega"}, "omega", "alpha sigma"),
     ("EXACT_FIELD", {"field": "lemma", "value": "target"}, '{"lemma":"target"}', '{"lemma":"wrong"}'),
     (
         "CLAIM_SOURCE_MAP",
@@ -788,6 +799,100 @@ def test_inventory_child_and_fixture_hashes_stable() -> None:
         "TEXT_QUOTE_SELECTOR": 1,
     }
     assert hashlib.sha256(reference_subject.CHILD_SOURCE.encode()).hexdigest() == reference_subject.CHILD_SHA256
+
+
+def test_frozen_b02_selector_requires_only_exact_selected_text() -> None:
+    authority = benchmark.load_benchmark_authority()[1]
+    assert authority.case_id == "VS01-B02-C01"
+    case = benchmark.compile_subject_package(authority)
+    scorer = benchmark.compile_scorer_authority(authority)
+    fixture = benchmark.compile_reference_fixture(authority)
+    selectors = [
+        (encoded, json.loads(encoded)) for kind, encoded in scorer.deterministic_checks if kind == "TEXT_QUOTE_SELECTOR"
+    ]
+    assert len(scorer.deterministic_checks) == 7
+    assert len(selectors) == 1
+    encoded, rule = selectors[0]
+    assert rule == {"exact": "κατέλαβεν", "prefix": "αὐτὸ οὐ "}
+    response = _frozen_response(case, fixture)
+    checks = tuple(
+        scoring._check(kind, value, response, scorer.evidence_references) for kind, value in scorer.deterministic_checks
+    )
+    assert checks == (True,) * 7
+
+    def contains(text: str) -> bool:
+        payload = (("answer", text),)
+        candidate = replace(
+            response,
+            response_payload=payload,
+            response_payload_sha256=benchmark.canonical_sha256(payload),
+        )
+        return scoring._check("TEXT_QUOTE_SELECTOR", encoded, candidate, scorer.evidence_references)
+
+    assert contains("κατέλαβεν")
+    assert not contains("αὐτὸ οὐ")
+    assert not contains("καταλαμβάνω")
+
+
+def test_all_frozen_references_pass_checks_and_case_results_without_operations(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = {
+        "reference-subject subprocesses": 0,
+        "campaigns": 0,
+        "replays": 0,
+        "run results": 0,
+        "receipts": 0,
+        "publications": 0,
+    }
+
+    def prohibited(name: str) -> Any:
+        def fail(*_args: Any, **_kwargs: Any) -> None:
+            calls[name] += 1
+            raise AssertionError(f"prohibited operational path called: {name}")
+
+        return fail
+
+    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", prohibited("reference-subject subprocesses"))
+    monkeypatch.setattr(scoring, "run_reference_campaign", prohibited("campaigns"))
+    monkeypatch.setattr(scoring, "execute_reference_replay", prohibited("replays"))
+    monkeypatch.setattr(scoring, "_run_result", prohibited("run results"))
+    monkeypatch.setattr(scoring, "build_execution_receipt", prohibited("receipts"))
+    monkeypatch.setattr(scoring, "publish_benchmark_result", prohibited("publications"))
+
+    authorities = benchmark.load_benchmark_authority()
+    assert tuple(item.case_id for item in authorities) == CASE_IDS
+    check_count = 0
+    points = {"REV-P0": 0, "REV-P1": 0}
+    for authority in authorities:
+        case = benchmark.compile_subject_package(authority)
+        benchmark.audit_subject_package(case)
+        scorer = benchmark.compile_scorer_authority(authority)
+        fixture = benchmark.compile_reference_fixture(authority)
+        response = _frozen_response(case, fixture)
+        checks = tuple(
+            scoring._check(kind, encoded, response, scorer.evidence_references)
+            for kind, encoded in scorer.deterministic_checks
+        )
+        check_count += len(checks)
+        assert all(checks)
+        result = scoring.score_reference_case(case, scorer, response, implementation_evidence_mode=False)
+        assert isinstance(result, VS01BenchmarkCaseResult)
+        assert result.attempt_state == "COMPLETED"
+        assert result.case_disposition == "REFERENCE_CONFORMANT"
+        assert result.leakage_state == "CLEAR"
+        assert all(score == 2 for _criterion, score, _weight, _points in result.criterion_scores)
+        assert all(passed for _kind, _rule, passed in result.deterministic_checks)
+        assert result.hard_failures == ()
+        case_maximum = sum(2 * weight for _criterion, weight, _severity in scorer.criteria)
+        assert result.raw_points == result.capped_points == case_maximum
+        partition = "REV-P0" if scorer.review_partition.startswith("REV-P0") else "REV-P1"
+        points[partition] += result.capped_points
+
+    assert check_count == 22
+    assert points == {"REV-P0": 64, "REV-P1": 56}
+    assert sum(points.values()) == 120
+    assert calls == dict.fromkeys(calls, 0)
 
 
 def test_authority_parser_and_firewall_fail_closed(tmp_path: Path) -> None:
