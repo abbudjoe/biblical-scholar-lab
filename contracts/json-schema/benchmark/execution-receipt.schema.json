@@ -1,139 +1,216 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "allOf": [
+  "oneOf": [
     {
-      "if": {
-        "properties": {
-          "disposition": {
-            "const": "DRY_RUN_VALIDATED"
-          }
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "DRY_RUN_VALIDATED"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "execution_specification_identity": {
+          "const": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
         }
       },
-      "then": {
-        "properties": {
-          "archive_writes": {
-            "const": 0
-          },
-          "dry_run": {
-            "const": true
-          },
-          "publication_attempts": {
-            "const": 0
-          },
-          "published": {
-            "const": false
-          },
-          "retained_publication_receipt_id": {
-            "type": "null"
-          },
-          "retained_publication_receipt_sha256": {
-            "type": "null"
-          },
-          "verified_existing": {
-            "const": false
-          }
-        }
-      }
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
     },
     {
-      "if": {
-        "properties": {
-          "disposition": {
-            "const": "REFERENCE_CONFORMANT"
-          }
+      "properties": {
+        "archive_writes": {
+          "const": 3
+        },
+        "disposition": {
+          "const": "REFERENCE_CONFORMANT"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 1
+        },
+        "published": {
+          "const": true
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
         }
       },
-      "then": {
-        "properties": {
-          "archive_writes": {
-            "const": 3
-          },
-          "dry_run": {
-            "const": false
-          },
-          "publication_attempts": {
-            "const": 1
-          },
-          "published": {
-            "const": true
-          },
-          "retained_publication_receipt_id": {
-            "type": "null"
-          },
-          "retained_publication_receipt_sha256": {
-            "type": "null"
-          },
-          "verified_existing": {
-            "const": false
-          }
-        }
-      }
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
     },
     {
-      "if": {
-        "properties": {
-          "disposition": {
-            "const": "REFERENCE_NONCONFORMANT"
-          }
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "VERIFIED_EXISTING"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 1
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "string"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "string"
+        },
+        "verified_existing": {
+          "const": true
         }
       },
-      "then": {
-        "properties": {
-          "archive_writes": {
-            "const": 0
-          },
-          "publication_attempts": {
-            "const": 0
-          },
-          "published": {
-            "const": false
-          },
-          "retained_publication_receipt_id": {
-            "type": "null"
-          },
-          "retained_publication_receipt_sha256": {
-            "type": "null"
-          },
-          "verified_existing": {
-            "const": false
-          }
-        }
-      }
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
     },
     {
-      "if": {
-        "properties": {
-          "disposition": {
-            "const": "VERIFIED_EXISTING"
-          }
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "REFERENCE_NONCONFORMANT"
+        },
+        "dry_run": {
+          "const": false
+        },
+        "execution_specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
         }
       },
-      "then": {
-        "properties": {
-          "archive_writes": {
-            "const": 0
-          },
-          "dry_run": {
-            "const": false
-          },
-          "publication_attempts": {
-            "const": 1
-          },
-          "published": {
-            "const": false
-          },
-          "retained_publication_receipt_id": {
-            "type": "string"
-          },
-          "retained_publication_receipt_sha256": {
-            "type": "string"
-          },
-          "verified_existing": {
-            "const": true
-          }
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
+    },
+    {
+      "properties": {
+        "archive_writes": {
+          "const": 0
+        },
+        "disposition": {
+          "const": "REFERENCE_NONCONFORMANT"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "execution_specification_identity": {
+          "const": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+        },
+        "publication_attempts": {
+          "const": 0
+        },
+        "published": {
+          "const": false
+        },
+        "retained_publication_receipt_id": {
+          "type": "null"
+        },
+        "retained_publication_receipt_sha256": {
+          "type": "null"
+        },
+        "verified_existing": {
+          "const": false
         }
-      }
+      },
+      "required": [
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+        "disposition",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_sha256"
+      ]
     }
   ],
   "properties": {
@@ -167,9 +244,7 @@
       "type": "integer"
     },
     "case_results_constructed": {
-      "const": 24,
-      "title": "Case Results Constructed",
-      "type": "integer"
+      "const": 24
     },
     "completed_attempts": {
       "maximum": 12,
@@ -307,14 +382,10 @@
       "type": "string"
     },
     "receipts_constructed": {
-      "const": 1,
-      "title": "Receipts Constructed",
-      "type": "integer"
+      "const": 1
     },
     "replay_count": {
-      "const": 2,
-      "title": "Replay Count",
-      "type": "integer"
+      "const": 2
     },
     "requested_attempts": {
       "const": 12,
@@ -357,9 +428,7 @@
       "type": "string"
     },
     "run_results_constructed": {
-      "const": 2,
-      "title": "Run Results Constructed",
-      "type": "integer"
+      "const": 2
     },
     "schema_version": {
       "const": "1.0",
@@ -368,14 +437,12 @@
       "type": "string"
     },
     "scoring_invocations": {
-      "const": 24,
-      "title": "Scoring Invocations",
+      "maximum": 24,
+      "minimum": 0,
       "type": "integer"
     },
     "subject_invocations": {
-      "const": 24,
-      "title": "Subject Invocations",
-      "type": "integer"
+      "const": 24
     },
     "verified_existing": {
       "title": "Verified Existing",

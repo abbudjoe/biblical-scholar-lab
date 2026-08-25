@@ -1,6 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "execution_mode": {
+          "const": "REFERENCE_CONFORMANCE"
+        },
+        "specification_identity": {
+          "const": "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+        }
+      }
+    },
+    {
+      "properties": {
+        "execution_mode": {
+          "const": "REFERENCE_CONFORMANCE_DRY_RUN"
+        },
+        "specification_identity": {
+          "const": "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+        }
+      }
+    }
+  ],
   "properties": {
     "attempts_per_case": {
       "const": 1,

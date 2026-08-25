@@ -91,7 +91,12 @@ def build_execution_receipt(
     values = {
         "DRY_RUN_VALIDATED": (True, False, False, 0),
         "REFERENCE_CONFORMANT": (False, True, False, 3),
-        "REFERENCE_NONCONFORMANT": (False, False, False, 0),
+        "REFERENCE_NONCONFORMANT": (
+            specification.execution_mode == "REFERENCE_CONFORMANCE_DRY_RUN",
+            False,
+            False,
+            0,
+        ),
         "VERIFIED_EXISTING": (False, False, True, 0),
     }[disposition]
     return VS01BenchmarkExecutionReceipt.model_validate(
@@ -163,15 +168,22 @@ def _fsync(path: Path) -> None:
         os.close(descriptor)
 
 
-def _read_exact(path: Path, expected: bytes) -> None:
+def _read_regular(path: Path) -> tuple[bytes, os.stat_result]:
     try:
         descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
         metadata = os.fstat(descriptor)
         with os.fdopen(descriptor, "rb") as stream:
-            actual = stream.read()
+            data = stream.read()
     except OSError:
         raise ValueError(f"benchmark publication is missing or unsafe: {path.name}") from None
-    if not stat.S_ISREG(metadata.st_mode) or stat.S_IMODE(metadata.st_mode) != 0o444 or actual != expected:
+    if not stat.S_ISREG(metadata.st_mode):
+        raise ValueError(f"benchmark publication is missing or unsafe: {path.name}")
+    return data, metadata
+
+
+def _read_exact(path: Path, expected: bytes) -> None:
+    actual, metadata = _read_regular(path)
+    if stat.S_IMODE(metadata.st_mode) != 0o444 or actual != expected:
         raise ValueError(f"benchmark publication differs or is mutable: {path.name}")
 
 
@@ -223,11 +235,11 @@ def _validated_receipt(
     path: Path, root: Path, result: VS01BenchmarkRunResult, result_bytes: bytes, expected: dict[str, Any] | None
 ) -> VS01BenchmarkExecutionReceipt:
     try:
-        data = path.read_bytes()
+        data, metadata = _read_regular(path)
         receipt = VS01BenchmarkExecutionReceipt.model_validate_json(data)
-    except (OSError, ValidationError):
+    except (ValueError, ValidationError):
         raise ValueError("existing benchmark receipt is invalid") from None
-    if data != _receipt_bytes(receipt):
+    if stat.S_IMODE(metadata.st_mode) != 0o444 or data != _receipt_bytes(receipt):
         raise ValueError("existing benchmark receipt is not canonical")
     result_sha = hashlib.sha256(result_bytes).hexdigest()
     authority = {
@@ -253,7 +265,6 @@ def _validated_receipt(
     observed = receipt.model_dump(mode="python")
     if any(observed.get(key) != value for key, value in (authority | (expected or {})).items()):
         raise ValueError("existing benchmark receipt authority differs")
-    _read_exact(path, data)
     return receipt
 
 

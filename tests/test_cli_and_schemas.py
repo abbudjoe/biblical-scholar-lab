@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from uuid6 import uuid7
 
 import bsl.application.john15_study_runtime as study_runtime
@@ -251,6 +251,67 @@ def test_benchmark_schemas_reject_recomputed_authority_mutations(contract: str, 
     schema = json.loads((ROOT / "contracts/json-schema/benchmark" / names[contract]).read_text())
     validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
     assert not validator.is_valid(value)
+
+
+def test_benchmark_schemas_reject_repair02_state_and_identity_adversaries(tmp_path: Path) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is an external validation tool")
+    from test_vs01_benchmark import _case, _receipt, _run  # pyright: ignore[reportPrivateUsage]
+
+    def accepts(name: str, value: dict[str, object]) -> bool:
+        schema = json.loads((ROOT / "contracts/json-schema/benchmark" / name).read_text())
+        return jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).is_valid(value)
+
+    exact = _case(0).model_dump(mode="python")
+    zeros = tuple((name, 0, weight, 0) for name, _score, weight, _points in exact["criterion_scores"])
+    false_checks = tuple((kind, rule, False) for kind, rule, _passed in exact["deterministic_checks"])
+
+    def zero_state(state: str, **changes: object) -> dict[str, object]:
+        return {
+            "attempt_state": state,
+            "criterion_scores": zeros,
+            "deterministic_checks": false_checks,
+            "raw_points": 0,
+            "capped_points": 0,
+            **changes,
+        }
+
+    for mutation in (
+        {"criterion_scores": zeros},
+        {"deterministic_checks": false_checks},
+        {"raw_points": exact["raw_points"] - 1},
+        {"case_disposition": "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER"},
+        {
+            "response_payload": (("answer", "nonexact"),),
+            "response_identity": canonical_sha256((("answer", "nonexact"),)),
+            "case_disposition": "REFERENCE_CONFORMANT",
+        },
+        zero_state("ERROR", error=True, deterministic_checks=exact["deterministic_checks"]),
+        zero_state("TIMEOUT", timeout=True, criterion_scores=exact["criterion_scores"]),
+        zero_state(
+            "INVALID_LEAKAGE_INCIDENT",
+            leakage_state="INVALID_LEAKAGE_INCIDENT",
+            case_disposition="REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+        ),
+    ):
+        value = exact | mutation
+        value["case_result_identity"] = canonical_sha256(
+            {key: item for key, item in value.items() if key != "case_result_identity"}
+        )
+        with pytest.raises(ValidationError, match="accounting differs"):
+            VS01BenchmarkCaseResult.model_validate(value)
+        assert not accepts("case-result.schema.json", value)
+    for identity in ("0" * 64, *(_run(dry).execution_specification_identity[:-1] + "0" for dry in (False, True))):
+        value = _run().model_dump(mode="json") | {"execution_specification_identity": identity}
+        value["run_result_identity"] = canonical_sha256(
+            {key: item for key, item in value.items() if key != "run_result_identity"}
+        )
+        assert not accepts("run-result.schema.json", value)
+    receipt = _receipt(tmp_path, _run()).model_dump(mode="json")
+    assert not accepts("execution-receipt.schema.json", receipt | {"scoring_invocations": 25})
+    assert not accepts(
+        "execution-receipt.schema.json",
+        receipt | {"execution_specification_identity": _run(True).execution_specification_identity},
+    )
 
 
 def test_workflow_binds_exact_pr_head_and_committed_diff() -> None:

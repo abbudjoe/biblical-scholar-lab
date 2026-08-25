@@ -31,6 +31,8 @@ from bsl.application.vs01_benchmark import (
 from bsl.application.vs01_reference_subject import DeterministicReferenceSubjectAdapter
 from bsl.contracts.benchmark import (
     CASE_IDS,
+    DRY_SPECIFICATION_IDENTITY,
+    LIVE_SPECIFICATION_IDENTITY,
     PARTITIONS,
     VS01BenchmarkCaseResult,
     VS01BenchmarkExecutionReceipt,
@@ -163,6 +165,10 @@ def _receipt(root: Path, result: VS01BenchmarkRunResult) -> VS01BenchmarkExecuti
 
 def test_real_authority_static_compilation_dual_hash_and_fixtures() -> None:
     authorities = benchmark.load_benchmark_authority()
+    assert tuple(_spec(value).specification_identity for value in (False, True)) == (
+        LIVE_SPECIFICATION_IDENTITY,
+        DRY_SPECIFICATION_IDENTITY,
+    )
     matrix = benchmark.compatibility_hash_matrix(authorities)
     assert len(authorities) == 12 and [item[0] for item in matrix] == list(CASE_IDS)
     assert [item[0] for item in matrix if item[1] != item[2]] == ["VS01-B10-C01"]
@@ -323,9 +329,8 @@ CHECK_CONTROLS = (
 )
 
 
-@pytest.mark.parametrize(("category", "kind", "rule", "mutation"), ADVERSARIES)
-def test_twelve_mutated_data_controls(category: str, kind: str, rule: dict[str, Any], mutation: str) -> None:
-    del category
+@pytest.mark.parametrize(("_category", "kind", "rule", "mutation"), ADVERSARIES)
+def test_twelve_mutated_data_controls(_category: str, kind: str, rule: dict[str, Any], mutation: str) -> None:
     case, scorer, _fixture = _synthetic(1, (kind, rule))
     good = json.dumps(
         {
@@ -465,36 +470,61 @@ def test_operation_ledger_observes_two_synthetic_replays(monkeypatch: pytest.Mon
     assert ledger == scoring.BenchmarkOperationLedger(2, 24, 24, 24, 2, 0, 0)
 
 
-def test_subject_error_remains_in_synthetic_denominator(monkeypatch: pytest.MonkeyPatch) -> None:
-    records = (SimpleNamespace(case_id="SYN-T07-CASE-01", source={"review_partition": "SYN"}),)
-    case, scorer, fixture = _synthetic(1)
-
-    def package(_item: Any) -> SubjectCasePackage:
-        return case
-
-    def authority(_item: Any) -> ScorerCaseAuthority:
-        return scorer
-
-    def oracle(_item: Any) -> ReferenceSubjectFixture:
-        return fixture
-
-    def fail(_adapter: Any, _case: Any) -> StructuredSubjectResponse:
-        raise OSError
-
-    monkeypatch.setattr(scoring, "compile_subject_package", package)
-    monkeypatch.setattr(scoring, "compile_scorer_authority", authority)
-    monkeypatch.setattr(scoring, "compile_reference_fixture", oracle)
-    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", fail)
-
-    def observed(_spec: Any, results: tuple[Any, ...], _parts: Any) -> Any:
-        assert results[0].attempt_state == "ERROR"
-        return SimpleNamespace(run_result_identity="error-retained")
-
-    monkeypatch.setattr(scoring, "_run_result", observed)
-    _result, ledger = scoring.execute_reference_replay(
-        cast(Any, records), cast(Any, object()), scoring.BenchmarkOperationLedger(), implementation_evidence_mode=True
+def test_subject_error_yields_truthful_synthetic_campaign_receipt(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    records = tuple(
+        SimpleNamespace(case_id=f"SYN-T07-CASE-{index:02d}", source={"review_partition": "SYN"})
+        for index in range(1, 13)
     )
-    assert (ledger.subject_invocations, ledger.scoring_invocations, ledger.case_results_constructed) == (1, 0, 1)
+    values = {item.case_id: _synthetic(index) for index, item in enumerate(records, 1)}
+    monkeypatch.setattr(scoring, "compile_subject_package", lambda item: values[item.case_id][0])
+    monkeypatch.setattr(scoring, "compile_scorer_authority", lambda item: values[item.case_id][1])
+    monkeypatch.setattr(scoring, "compile_reference_fixture", lambda item: values[item.case_id][2])
+    failures: list[str] = []
+
+    def generate(_adapter: Any, case: SubjectCasePackage) -> StructuredSubjectResponse:
+        if case.case_id.endswith("05"):
+            failures.append(case.case_id)
+            raise OSError("synthetic child failure")
+        return _response(case, values[case.case_id][2].response_payload[0][1])
+
+    def run_result(specification: Any, results: tuple[Any, ...], _partitions: Any) -> Any:
+        states = tuple((item.case_id, item.attempt_state, item.case_disposition) for item in results)
+        payload = {
+            "execution_specification_identity": specification.specification_identity,
+            "completed_attempts": 11,
+            "failure_counts": (
+                ("error", 1),
+                ("refusal", 0),
+                ("timeout", 0),
+                ("malformed", 0),
+                ("invalid_leakage_incident", 0),
+            ),
+            "disposition": "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+            "states": states,
+        }
+        return SimpleNamespace(
+            **payload,
+            run_result_identity=benchmark.canonical_sha256(payload),
+            model_dump=lambda **_kwargs: payload,
+        )
+
+    monkeypatch.setattr(DeterministicReferenceSubjectAdapter, "generate", generate)
+    monkeypatch.setattr(scoring, "_run_result", run_result)
+    monkeypatch.setattr(scoring, "build_execution_specification", lambda *_args, **_kwargs: _spec(False))
+    _specification, _result, receipt, published = scoring.run_reference_campaign(
+        dry_run=False,
+        archive_root=tmp_path,
+        implementation_evidence_mode=True,
+        _authorities=cast(Any, records),
+        _implementation_commit="1" * 40,
+        _authority_loader=lambda _root: _fingerprints(),
+    )
+    assert failures == ["SYN-T07-CASE-05"] * 2
+    assert receipt.disposition == "REFERENCE_NONCONFORMANT" and published is False
+    assert (receipt.subject_invocations, receipt.scoring_invocations, receipt.case_results_constructed) == (24, 22, 24)
+    assert (receipt.publication_attempts, receipt.archive_writes) == (0, 0)
 
 
 @pytest.mark.parametrize(
@@ -544,6 +574,13 @@ def test_spec_run_and_receipt_cross_validation(tmp_path: Path) -> None:
     )
     with pytest.raises(ValidationError, match="case order differs"):
         VS01BenchmarkRunResult.model_validate(changed)
+    for identity in ("0" * 64, LIVE_SPECIFICATION_IDENTITY[:-1] + "0", DRY_SPECIFICATION_IDENTITY[:-1] + "0"):
+        changed = run.model_dump(mode="python") | {"execution_specification_identity": identity}
+        changed["run_result_identity"] = benchmark.canonical_sha256(
+            {key: value for key, value in changed.items() if key != "run_result_identity"}
+        )
+        with pytest.raises(ValidationError, match="execution specification differs"):
+            VS01BenchmarkRunResult.model_validate(changed)
     receipt = _receipt(tmp_path, run)
     for mutation in (
         {"published": False},
@@ -664,6 +701,35 @@ def test_store_partial_stage_recovery_unexpected_and_malformed_receipt(tmp_path:
     os.chmod(receipt_path, 0o444)
     with pytest.raises(ValueError, match="invalid"):
         store.verify_existing(tmp_path, result, result_bytes, {"implementation_commit": "1" * 40})
+
+
+def test_stale_stage_receipt_symlink_target_is_never_opened(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    result = _run()
+    receipt = _receipt(tmp_path, result)
+    result_bytes = store.canonical_run_result_bytes(result)
+    stage = store.benchmark_stage_path(tmp_path, hashlib.sha256(result_bytes).hexdigest())
+    stage.mkdir(parents=True)
+    outside = tmp_path / "external-valid-receipt.json"
+    outside.write_bytes(store._receipt_bytes(receipt))
+    receipt_link = stage / "receipt"
+    receipt_link.symlink_to(outside)
+    opened: list[Path] = []
+    original = store.os.open
+
+    def observed(path: Any, *args: Any, **kwargs: Any) -> int:
+        opened.append(Path(path))
+        assert Path(path) != outside
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(store.os, "open", observed)
+    with pytest.raises(ValueError, match="invalid"):
+        store.publish_benchmark_result(tmp_path, result, receipt)
+    assert opened == [receipt_link]
+    assert outside.read_bytes() == store._receipt_bytes(receipt)
+    assert receipt_link.is_symlink() and stage.is_dir()
+    assert not any(
+        (tmp_path / relative).exists() for relative in store.publication_paths(hashlib.sha256(result_bytes).hexdigest())
+    )
 
 
 @pytest.mark.parametrize("unsafe", ("symlink", "broken", "file"))

@@ -202,8 +202,9 @@ def _public_result(
         == scorer.reference_payload_sha256
         == canonical_sha256(response.response_payload),
     )
+    completed = response.attempt_state == "COMPLETED"
     checks = tuple(
-        (kind, value, _check(kind, value, response, scorer.evidence_references))
+        (kind, value, completed and _check(kind, value, response, scorer.evidence_references))
         for kind, value in scorer.deterministic_checks
     )
     conformant = all(exact) and all(item[2] for item in checks) and response.attempt_state == "COMPLETED"

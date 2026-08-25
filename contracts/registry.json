@@ -109,22 +109,22 @@
     {
       "contract": "VS01BenchmarkExecutionSpecification", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/execution-specification.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "3eef6f98891bd50c9c7f599429640771a4a1822daf10c3b99bb99ab743926990"
+      "owning_task": "VS01-T07-R01", "sha256": "9c1a9c223d6c36dd4329ab7cd61dcc0498a3205c42219e9f2bf93432ee2641ae"
     },
     {
       "contract": "VS01BenchmarkCaseResult", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/case-result.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "5847505bad08ac1a833433b3bca4c0cfce9b968bb82cf7bf96cec48faec7283f"
+      "owning_task": "VS01-T07-R01", "sha256": "4cc6f7510849ba0bdf66baa22df18c167cda551d3562e76a9ba5906102b37bba"
     },
     {
       "contract": "VS01BenchmarkRunResult", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/run-result.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "8963a02d65337c637294c9d8eb2b5c0a2c0922925ad8d5e3279fa836ce79c6fc"
+      "owning_task": "VS01-T07-R01", "sha256": "3d01d00886a6b9c538bb16c472fafa5602483ce1e2913f6671bb71c0d5cca345"
     },
     {
       "contract": "VS01BenchmarkExecutionReceipt", "schema_version": "1.0", "owning_design": "VS01-T07-R01",
       "schema_path": "contracts/json-schema/benchmark/execution-receipt.schema.json",
-      "owning_task": "VS01-T07-R01", "sha256": "c8caf7cb0bd32a0023b1c96b57d05f5be9edebf13b28b09b80d5b84fe2bd5d97"
+      "owning_task": "VS01-T07-R01", "sha256": "d3d4c513a40394b772341bbf3cc6ce1a8b4c477f406f91229512244da08fc527"
     }
   ]
 }

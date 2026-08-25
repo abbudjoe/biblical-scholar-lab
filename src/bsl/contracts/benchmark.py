@@ -58,7 +58,6 @@ def _authority() -> dict[str, Any]:
     for case, plan, projection, fixture, partition in zip(
         source["cases"], plans, projections, fixtures, PARTITIONS, strict=True
     ):
-        severity = {item["criterion_id"]: item.get("hard_failure_severity", "") for item in plan["criteria"]}
         result[case["case_id"]] = {
             "compatibility": case["case_content_sha256"],
             "jcs": plan["execution_rfc8785_jcs_sha256"],
@@ -66,8 +65,8 @@ def _authority() -> dict[str, Any]:
             "criteria": tuple((item["criterion_id"], item["weight"]) for item in case["rubric"]),
             "checks": _checks(case),
             "evidence": tuple(case["source_dependencies"]),
-            "failures": tuple((name, value) for name, value in severity.items() if value),
             "partition": partition,
+            "response_payload": tuple(tuple(item) for item in fixture["response_payload"]),
             "response_sha": fixture["response_payload_sha256"],
         }
     return result
@@ -99,11 +98,16 @@ ISOLATION_POLICY = (
 )
 
 
+LIVE_SPECIFICATION_IDENTITY = "ebba965fd37846d2a0af2ff27e35cdd79574f37042751d581c69f74e4ca35561"
+DRY_SPECIFICATION_IDENTITY = "9426a48b6c53d0f3ee5e34ae65e3d1894c83192540a65054195e1d2ebc710528"
+SPECIFICATION_IDENTITIES = (LIVE_SPECIFICATION_IDENTITY, DRY_SPECIFICATION_IDENTITY)
+
+
 def _array(values: tuple[Any, ...]) -> dict[str, Any]:
     constants: list[dict[str, Any]] = [
         {"const": list(cast(tuple[Any, ...], value)) if isinstance(value, tuple) else value} for value in values
     ]
-    return {"type": "array", "prefixItems": constants, "minItems": len(values), "maxItems": len(values)}
+    return _exact_tuple(constants)
 
 
 def _fixed(*items: dict[str, Any]) -> dict[str, Any]:
@@ -134,6 +138,83 @@ def _spec_schema(schema: dict[str, Any]) -> None:
         ("isolation_policy", ISOLATION_POLICY),
     ):
         schema["properties"][name] = _array(value)
+    schema["oneOf"] = [
+        {"properties": {"execution_mode": {"const": mode}, "specification_identity": {"const": identity}}}
+        for mode, identity in (
+            ("REFERENCE_CONFORMANCE", LIVE_SPECIFICATION_IDENTITY),
+            ("REFERENCE_CONFORMANCE_DRY_RUN", DRY_SPECIFICATION_IDENTITY),
+        )
+    ]
+
+
+def _state_fields(authority: dict[str, Any], score: int, checks: bool, disposition: str) -> dict[str, Any]:
+    points = sum(2 * weight for _name, weight in authority["criteria"]) if score == 2 else 0
+    return {
+        "criterion_scores": _array(
+            tuple((name, score, weight, score * weight) for name, weight in authority["criteria"])
+        ),
+        "deterministic_checks": _array(tuple((kind, rule, checks) for kind, rule in authority["checks"])),
+        "hard_failures": {"type": "array", "maxItems": 0},
+        "raw_points": {"const": points},
+        "capped_points": {"const": points},
+        "case_disposition": {"const": disposition},
+    }
+
+
+def _case_state_rules(authority: dict[str, Any]) -> list[dict[str, Any]]:
+    reference = {
+        "response_payload": {"const": [list(item) for item in authority["response_payload"]]},
+        "response_identity": {"const": authority["response_sha"]},
+    }
+    completed = {"attempt_state": {"const": "COMPLETED"}}
+    unsupported = _state_fields(authority, 0, False, "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER")
+    unsupported["deterministic_checks"] = _exact_tuple(
+        [_fixed({"const": kind}, {"const": rule}, {"type": "boolean"}) for kind, rule in authority["checks"]]
+    )
+    clear_flags = {name: {"const": False} for name in ("error", "refusal", "timeout", "malformed")}
+    rules = [
+        {
+            "if": {"properties": completed | reference, "required": list(completed | reference)},
+            "then": {
+                "properties": _state_fields(authority, 2, True, "REFERENCE_CONFORMANT")
+                | clear_flags
+                | {"leakage_state": {"const": "CLEAR"}}
+            },
+        },
+        {
+            "if": {
+                "properties": completed,
+                "required": list(completed),
+                "not": {"properties": reference, "required": list(reference)},
+            },
+            "then": {"properties": unsupported | clear_flags | {"leakage_state": {"const": "CLEAR"}}},
+        },
+    ]
+    for state, flag in ((name, name.lower()) for name in ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED")):
+        rules.append(
+            {
+                "if": {"properties": {"attempt_state": {"const": state}}, "required": ["attempt_state"]},
+                "then": {
+                    "properties": _state_fields(authority, 0, False, "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED")
+                    | clear_flags
+                    | {flag: {"const": True}, "leakage_state": {"const": "CLEAR"}}
+                },
+            }
+        )
+    rules.append(
+        {
+            "if": {
+                "properties": {"attempt_state": {"const": "INVALID_LEAKAGE_INCIDENT"}},
+                "required": ["attempt_state"],
+            },
+            "then": {
+                "properties": _state_fields(authority, 0, False, "INVALID_LEAKAGE_INCIDENT")
+                | clear_flags
+                | {"leakage_state": {"const": "INVALID_LEAKAGE_INCIDENT"}}
+            },
+        }
+    )
+    return rules
 
 
 def _case_schema(schema: dict[str, Any]) -> None:
@@ -141,35 +222,17 @@ def _case_schema(schema: dict[str, Any]) -> None:
     schema["properties"]["case_id"] = {"enum": list(CASE_IDS)}
     rules: list[dict[str, Any]] = []
     for case_id, authority in AUTHORITY.items():
-        scores = [
-            _fixed({"const": name}, {"enum": [0, 1, 2]}, {"const": weight}, {"type": "integer"})
-            for name, weight in authority["criteria"]
-        ]
-        checks = [_fixed({"const": kind}, {"const": value}, {"type": "boolean"}) for kind, value in authority["checks"]]
         properties: dict[str, dict[str, Any]] = {
             "source_declared_compatibility_sha256": {"const": authority["compatibility"]},
             "execution_rfc8785_jcs_sha256": {"const": authority["jcs"]},
             "subject_package_identity": {"const": authority["projection"]},
             "review_partition": {"const": authority["partition"]},
-            "criterion_scores": _exact_tuple(scores),
-            "deterministic_checks": _exact_tuple(checks),
             "evidence_references": _array(authority["evidence"]),
-            "hard_failures": {
-                "type": "array",
-                "maxItems": len(authority["failures"]),
-            },
         }
-        if authority["failures"]:
-            properties["hard_failures"]["items"] = {
-                "oneOf": [
-                    _fixed({"const": criterion}, {"const": severity}, {"type": "string"})
-                    for criterion, severity in authority["failures"]
-                ]
-            }
         rules.append(
             {
                 "if": {"properties": {"case_id": {"const": case_id}}, "required": ["case_id"]},
-                "then": {"properties": properties},
+                "then": {"properties": properties, "allOf": _case_state_rules(authority)},
             }
         )
     schema["allOf"] = rules
@@ -177,6 +240,7 @@ def _case_schema(schema: dict[str, Any]) -> None:
 
 def _run_schema(schema: dict[str, Any]) -> None:
     _base_schema(schema)
+    schema["properties"]["execution_specification_identity"] = {"enum": list(SPECIFICATION_IDENTITIES)}
     slots = (schema["properties"]["case_results"]["items"],) * 12
     schema["properties"]["case_results"] = {
         "type": "array",
@@ -196,28 +260,39 @@ def _run_schema(schema: dict[str, Any]) -> None:
 
 def _receipt_schema(schema: dict[str, Any]) -> None:
     _base_schema(schema)
+    for name, value in (
+        ("replay_count", 2),
+        ("subject_invocations", 24),
+        ("case_results_constructed", 24),
+        ("run_results_constructed", 2),
+        ("receipts_constructed", 1),
+    ):
+        schema["properties"][name] = {"const": value}
+    schema["properties"]["scoring_invocations"] = {"type": "integer", "minimum": 0, "maximum": 24}
     combinations = {
-        "DRY_RUN_VALIDATED": (True, False, False, 0, 0),
-        "REFERENCE_CONFORMANT": (False, True, False, 3, 1),
-        "REFERENCE_NONCONFORMANT": (None, False, False, 0, 0),
-        "VERIFIED_EXISTING": (False, False, True, 0, 1),
+        "DRY_RUN_VALIDATED": (True, False, False, 0, 0, DRY_SPECIFICATION_IDENTITY),
+        "REFERENCE_CONFORMANT": (False, True, False, 3, 1, LIVE_SPECIFICATION_IDENTITY),
+        "VERIFIED_EXISTING": (False, False, True, 0, 1, LIVE_SPECIFICATION_IDENTITY),
     }
-    fields = ("dry_run", "published", "verified_existing", "archive_writes", "publication_attempts")
-    conditions: list[dict[str, Any]] = []
-    for disposition, values in combinations.items():
+    for dry_run, identity in ((False, LIVE_SPECIFICATION_IDENTITY), (True, DRY_SPECIFICATION_IDENTITY)):
+        combinations[f"REFERENCE_NONCONFORMANT_{dry_run}"] = (dry_run, False, False, 0, 0, identity)
+    names = (
+        "dry_run",
+        "published",
+        "verified_existing",
+        "archive_writes",
+        "publication_attempts",
+        "execution_specification_identity",
+    )
+    choices: list[dict[str, Any]] = []
+    for key, values in combinations.items():
+        disposition = key.removesuffix("_True").removesuffix("_False")
         retained = {"type": "string" if disposition == "VERIFIED_EXISTING" else "null"}
-        properties: dict[str, dict[str, Any]] = {
-            field: {"const": value} for field, value in zip(fields, values, strict=True) if value is not None
-        }
-        properties["retained_publication_receipt_id"] = retained
+        properties = {name: {"const": value} for name, value in zip(names, values, strict=True)}
+        properties |= {"disposition": {"const": disposition}, "retained_publication_receipt_id": retained}
         properties["retained_publication_receipt_sha256"] = retained
-        conditions.append(
-            {
-                "if": {"properties": {"disposition": {"const": disposition}}},
-                "then": {"properties": properties},
-            }
-        )
-    schema["allOf"] = conditions
+        choices.append({"properties": properties, "required": list(properties)})
+    schema["oneOf"] = choices
 
 
 class VS01BenchmarkExecutionSpecification(BaseModel):
@@ -268,7 +343,10 @@ class VS01BenchmarkExecutionSpecification(BaseModel):
         )
         if not all(exact):
             raise ValueError("benchmark execution specification authority differs")
-        if self.specification_identity != canonical_sha256(
+        expected = (
+            DRY_SPECIFICATION_IDENTITY if self.execution_mode.endswith("DRY_RUN") else LIVE_SPECIFICATION_IDENTITY
+        )
+        if self.specification_identity != expected or expected != canonical_sha256(
             self.model_dump(mode="json", exclude={"specification_identity"})
         ):
             raise ValueError("benchmark execution specification identity differs")
@@ -320,37 +398,12 @@ class VS01BenchmarkCaseResult(BaseModel):
             tuple((item[0], item[2]) for item in self.criterion_scores) == authority["criteria"],
             tuple(item[:2] for item in self.deterministic_checks) == authority["checks"],
             self.evidence_references == authority["evidence"],
-            all(item[:2] in authority["failures"] for item in self.hard_failures),
         )
         if not all(exact):
             raise ValueError("benchmark case-result authority differs")
-        if any(
-            score not in (0, 1, 2) or points != score * weight for _, score, weight, points in self.criterion_scores
-        ):
+        if any(score not in (0, 2) or points != score * weight for _, score, weight, points in self.criterion_scores):
             raise ValueError("benchmark criterion arithmetic differs")
-        raw = sum(item[3] for item in self.criterion_scores)
-        severe = any(item[1] != "HF-4_MINOR" for item in self.hard_failures)
-        states = tuple(self.attempt_state == name for name in ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED"))
-        conformant = self.attempt_state == "COMPLETED" and self.leakage_state == "CLEAR"
-        conformant &= all(item[1] == 2 for item in self.criterion_scores)
-        conformant &= all(item[2] for item in self.deterministic_checks) and not self.hard_failures
-        conformant &= self.response_identity == authority["response_sha"]
-        incomplete = self.attempt_state != "COMPLETED"
-        failed_criteria = {item[0] for item in self.hard_failures}
-        valid = (
-            self.raw_points == raw,
-            self.capped_points == (0 if severe else raw),
-            self.response_identity == canonical_sha256(self.response_payload),
-            (self.error, self.refusal, self.timeout, self.malformed) == states,
-            not incomplete
-            or not self.hard_failures
-            and raw == 0
-            and not any(item[2] for item in self.deterministic_checks),
-            all(score == 0 for name, score, _weight, _points in self.criterion_scores if name in failed_criteria),
-            (self.leakage_state == "INVALID_LEAKAGE_INCIDENT")
-            == (self.attempt_state == self.case_disposition == "INVALID_LEAKAGE_INCIDENT"),
-            (self.case_disposition == "REFERENCE_CONFORMANT") == conformant,
-        )
+        valid = _case_state_valid(self, authority)
         if not all(valid):
             raise ValueError("benchmark case-result accounting differs")
         if self.case_result_identity != canonical_sha256(
@@ -358,6 +411,45 @@ class VS01BenchmarkCaseResult(BaseModel):
         ):
             raise ValueError("benchmark case-result identity differs")
         return self
+
+
+def _case_state_valid(result: VS01BenchmarkCaseResult, authority: dict[str, Any]) -> tuple[bool, ...]:
+    states = tuple(result.attempt_state == name for name in ("ERROR", "REFUSAL", "TIMEOUT", "MALFORMED"))
+    zeros = all(score == points == 0 for _name, score, _weight, points in result.criterion_scores)
+    base = (
+        result.response_identity == canonical_sha256(result.response_payload),
+        (result.error, result.refusal, result.timeout, result.malformed) == states,
+        not result.hard_failures,
+    )
+    if result.attempt_state == "INVALID_LEAKAGE_INCIDENT":
+        return base + (
+            result.leakage_state == result.case_disposition == "INVALID_LEAKAGE_INCIDENT",
+            zeros and not any(item[2] for item in result.deterministic_checks),
+            result.raw_points == result.capped_points == 0,
+        )
+    if result.attempt_state != "COMPLETED":
+        return base + (
+            result.leakage_state == "CLEAR" and result.case_disposition == "REFERENCE_NONCONFORMANT_REPAIR_REQUIRED",
+            zeros and not any(item[2] for item in result.deterministic_checks),
+            result.raw_points == result.capped_points == 0,
+        )
+    exact = (
+        result.response_payload == authority["response_payload"]
+        and result.response_identity == authority["response_sha"]
+    )
+    if exact:
+        maximum = sum(2 * weight for _name, weight in authority["criteria"])
+        return base + (
+            result.leakage_state == "CLEAR" and result.case_disposition == "REFERENCE_CONFORMANT",
+            all(score == 2 and points == 2 * weight for _name, score, weight, points in result.criterion_scores),
+            all(item[2] for item in result.deterministic_checks),
+            result.raw_points == result.capped_points == maximum,
+        )
+    return base + (
+        result.leakage_state == "CLEAR" and result.case_disposition == "UNSUPPORTED_SUBJECT_FOR_REFERENCE_SCORER",
+        zeros,
+        result.raw_points == result.capped_points == 0,
+    )
 
 
 TwelveCaseResults = Annotated[tuple[VS01BenchmarkCaseResult, ...], Field(min_length=12, max_length=12)]
@@ -391,6 +483,8 @@ class VS01BenchmarkRunResult(BaseModel):
 
     @model_validator(mode="after")
     def exact_accounting(self) -> Self:
+        if self.execution_specification_identity not in SPECIFICATION_IDENTITIES:
+            raise ValueError("benchmark run-result execution specification differs")
         if tuple(item.case_id for item in self.case_results) != CASE_IDS:
             raise ValueError("benchmark run-result case order differs")
         p0 = sum(item.capped_points for item in self.case_results if item.review_partition.startswith("REV-P0"))
@@ -444,7 +538,7 @@ class VS01BenchmarkExecutionReceipt(BaseModel):
     pre_store_upstream_fingerprints: tuple[HashBinding, ...]
     replay_count: Literal[2]
     subject_invocations: Literal[24]
-    scoring_invocations: Literal[24]
+    scoring_invocations: int = Field(ge=0, le=24)
     case_results_constructed: Literal[24]
     run_results_constructed: Literal[2]
     receipts_constructed: Literal[1]
@@ -468,11 +562,12 @@ class VS01BenchmarkExecutionReceipt(BaseModel):
         retained = (
             self.retained_publication_receipt_id is not None and self.retained_publication_receipt_sha256 is not None
         )
+        identity = DRY_SPECIFICATION_IDENTITY if self.dry_run else LIVE_SPECIFICATION_IDENTITY
         combinations = {
-            "DRY_RUN_VALIDATED": (True, False, False, 0, 0, False),
-            "REFERENCE_CONFORMANT": (False, True, False, 3, 1, False),
-            "REFERENCE_NONCONFORMANT": (self.dry_run, False, False, 0, 0, False),
-            "VERIFIED_EXISTING": (False, False, True, 0, 1, True),
+            "DRY_RUN_VALIDATED": (True, False, False, 0, 0, False, DRY_SPECIFICATION_IDENTITY),
+            "REFERENCE_CONFORMANT": (False, True, False, 3, 1, False, LIVE_SPECIFICATION_IDENTITY),
+            "REFERENCE_NONCONFORMANT": (self.dry_run, False, False, 0, 0, False, identity),
+            "VERIFIED_EXISTING": (False, False, True, 0, 1, True, LIVE_SPECIFICATION_IDENTITY),
         }
         observed = (
             self.dry_run,
@@ -481,11 +576,21 @@ class VS01BenchmarkExecutionReceipt(BaseModel):
             self.archive_writes,
             self.publication_attempts,
             retained,
+            self.execution_specification_identity,
         )
         if observed != combinations[self.disposition]:
             raise ValueError("benchmark receipt operation differs")
         if self.initial_upstream_fingerprints != self.pre_store_upstream_fingerprints:
             raise ValueError("benchmark upstream authority changed")
+        ledger = (
+            self.subject_invocations == self.replay_count * 12,
+            self.scoring_invocations <= self.subject_invocations,
+            self.case_results_constructed == self.subject_invocations,
+            self.run_results_constructed == self.replay_count,
+            self.receipts_constructed == 1,
+        )
+        if not all(ledger):
+            raise ValueError("benchmark receipt operation ledger differs")
         names = ("t04", "t05", "t06", "archive_root", "incoming_inventory")
         if tuple(item[0] for item in self.initial_upstream_fingerprints) != names:
             raise ValueError("benchmark upstream fingerprint inventory differs")
