@@ -1,0 +1,127 @@
+{
+  "additional_t09b_closure_requirements": [
+    "Render all seven frozen Study blocks exactly once and in order.",
+    "Disable FastAPI trailing-slash redirects and test API trailing-slash requests as non-redirecting failures.",
+    "Use lazy CLI imports so non-web CLI import and execution do not load FastAPI/Uvicorn/web authority.",
+    "Strengthen keyboard, narrow-screen, 320px, and 200-percent-equivalent assertions across all frozen surfaces."
+  ],
+  "affected_authorities": {
+    "contract": "VS01StudyWorkspaceProjection",
+    "defective_schema_sha256": "296a49c51b261eb0fa5ef366787a6049426488d791ef5c77460811ee8c53ef2e",
+    "design_id": "VS01-T09",
+    "local_activation_compatibility_commit_expected": "63b9d24c200aa23c663d9e5d99a9157b6765dfe9",
+    "projection_fixture_sha256": "6e55a7f77cc8b51e632f5a07877abe4fc12145c8b0b27b3eb7a7fde2de24d96e",
+    "schema_version": "1.0",
+    "specification_identity": "7252c62d27b041cbd84b73e5340abf8584c694b0e92107a7fc9ba62ac6e901cd",
+    "t09b_activation_sha256": "51a4a24b22a876161a4f98b61bfde71d2d39bdc67bbbb14279ec23bec62b3ba5",
+    "workspace_identity": "9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d"
+  },
+  "defect": {
+    "root_cause": "The _projection_schema hook clears Pydantic's generated object shape and emits only $schema, title, additionalProperties, and const.",
+    "scope": "MACHINE_READABLE_SCHEMA_ONLY",
+    "severity": "P1_IMPLEMENTATION_BLOCKER",
+    "summary": "The generated Draft 2020-12 schema combines a nonempty object const with additionalProperties=false but declares neither type=object nor top-level properties. The exact const instance is therefore rejected as containing additional properties, and Ajv strict mode also rejects the malformed object-keyword usage."
+  },
+  "erratum_id": "VS01-T09-ERRATA-01",
+  "erratum_identity": "a72e39da8625e4f9abd9ebd2d8994e33f715489f5153f5a6c6228a6b3b2a1df8",
+  "frozen_correction": {
+    "contract_version_changes": 0,
+    "fixture_byte_changes": 0,
+    "generator_rule": "Generate the schema directly in src/bsl/contracts/study_workspace.py. Do not construct, patch, relax, or replace it in web tooling.",
+    "registry_entries_added": 0,
+    "registry_rule": "Replace only the existing VS01StudyWorkspaceProjection schema SHA-256.",
+    "required_schema_shape": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "const_rule": "exact unchanged committed projection object",
+      "properties_rule": "exactly one empty-schema declaration for each frozen top-level key",
+      "required_rule": "exactly all frozen top-level keys",
+      "title": "VS01StudyWorkspaceProjection",
+      "top_level_keys": [
+        "accepted_alternative_ids",
+        "active_context",
+        "answer_mode",
+        "audit_bindings",
+        "citation_records",
+        "claim_records",
+        "contract",
+        "evidence_horizon",
+        "evidence_inspector",
+        "evidence_records",
+        "greek",
+        "material_unknown_claim_ids",
+        "operation_disclosure",
+        "page_study",
+        "question",
+        "route",
+        "schema_version",
+        "study_blocks",
+        "translations",
+        "workspace_id",
+        "workspace_identity"
+      ],
+      "type": "object"
+    },
+    "schema_version_rule": "Remain 1.0 because instance semantics and contract bytes are unchanged.",
+    "scholarly_content_changes": 0,
+    "workspace_identity_changes": 0
+  },
+  "preserves": [
+    "All other VS01-T09 design and T09B activation requirements.",
+    "The exact workspace projection fixture and workspace identity.",
+    "The three exact scholarly API routes and loopback-only runtime boundary.",
+    "The T09B dependency, endpoint, migration, contract, and security limits.",
+    "Separate authorization for VS01-T09-OP01."
+  ],
+  "prohibitions": [
+    "Do not alter the committed workspace fixture, workspace identity, or scholarly content.",
+    "Do not weaken Ajv strict mode.",
+    "Do not retain an in-memory schema workaround.",
+    "Do not start the public owner server or owner browser.",
+    "Do not perform T09-OP01, T10, T08 reruns, archive writes, database access, or model/OCR/VLM/cloud work."
+  ],
+  "repository_base": {
+    "sha": "95d587a2b09d8c07ac7574050a5d7afa0969a625",
+    "tree": "ccba7f3673f2ed918a8c4cdf5556156bbad3ca18"
+  },
+  "required_negative_tests": [
+    "An extra top-level property is rejected.",
+    "A missing top-level property is rejected.",
+    "A representative changed projection field is rejected even after workspace_identity recomputation.",
+    "The browser-local schema copy is byte-identical to the corrected committed schema."
+  ],
+  "required_positive_tests": [
+    "Python Draft202012Validator.check_schema accepts the committed schema.",
+    "Python Draft202012Validator validates the exact committed projection fixture.",
+    "Ajv 8 strict mode compiles the exact committed schema without options that relax strictness.",
+    "Ajv validates the exact committed projection fixture."
+  ],
+  "same_pr_owner_waiver": {
+    "authorized": true,
+    "history": [
+      "Keep local authority/compatibility commit 63b9d24c200aa23c663d9e5d99a9157b6765dfe9 unchanged.",
+      "Create one focused schema-authority repair commit as its sole child.",
+      "Create the T09B implementation commit as the sole child of that repair commit.",
+      "Create the final handoff-only commit as the sole child of the T09B implementation commit."
+    ],
+    "reason": "Avoid discarding or restarting the already preserved T09B compatibility and implementation draft.",
+    "repair_allowance": {
+      "combined_substantive_changed_loc_hard_limit": 1560,
+      "decision_index_nonblank_loc_max": 5,
+      "migrations": 0,
+      "new_dependencies": 0,
+      "new_endpoints": 0,
+      "new_public_contracts": 0,
+      "production_nonblank_loc_max": 20,
+      "test_nonblank_loc_max": 40
+    }
+  },
+  "schema_version": "1.0",
+  "status": "OWNER_APPROVAL_BY_EXACT_CONTINUATION_PROMPT",
+  "supersedes_only": [
+    "The T09B activation invariant that the old schema SHA-256 296a49c51b261eb0fa5ef366787a6049426488d791ef5c77460811ee8c53ef2e remains unchanged.",
+    "The T09B implementation-boundary sentence requiring the defective schema bytes to remain unchanged.",
+    "Any draft web generator that repairs or substitutes the committed schema in memory."
+  ],
+  "title": "Study workspace JSON Schema satisfiability and exact-client validation"
+}

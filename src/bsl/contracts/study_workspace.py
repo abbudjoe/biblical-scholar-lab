@@ -47,11 +47,19 @@ def _projection_schema(schema: dict[str, Any]) -> None:
     projection = json.loads(data)
     if data != rfc8785.dumps(projection) + b"\n" or projection.get("workspace_identity") != EXPECTED_WORKSPACE_IDENTITY:
         raise ValueError("committed workspace projection fixture differs")
+    keys = tuple(projection)
     schema.clear()
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["title"] = "VS01StudyWorkspaceProjection"
-    schema["additionalProperties"] = False
-    schema["const"] = projection
+    schema.update(
+        {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "VS01StudyWorkspaceProjection",
+            "type": "object",
+            "properties": {key: {} for key in keys},
+            "required": list(keys),
+            "additionalProperties": False,
+            "const": projection,
+        }
+    )
 
 
 class VS01StudyWorkspaceProjection(BaseModel):

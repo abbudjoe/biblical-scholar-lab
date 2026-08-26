@@ -485,7 +485,25 @@ def test_implementation_has_no_prohibited_import_or_call_path() -> None:
 
 def test_committed_schema_is_exact_draft_2020_12_const() -> None:
     schema = json.loads(SCHEMA.read_bytes())
+    fixture = _fixture()
+    keys = list(fixture)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+    assert schema["type"] == "object"
+    assert schema["properties"] == {key: {} for key in keys}
+    assert schema["required"] == keys
     assert schema["additionalProperties"] is False
-    assert schema["const"] == _fixture()
+    assert schema["const"] == fixture
     assert schema == VS01StudyWorkspaceProjection.model_json_schema(by_alias=False)
+
+
+def test_committed_schema_passes_external_draft_2020_12_validation() -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="external Draft 2020-12 validation tool")
+    schema = json.loads(SCHEMA.read_bytes())
+    fixture = _fixture()
+    keys = list(fixture)
+    jsonschema.Draft202012Validator.check_schema(schema)
+    validator = jsonschema.Draft202012Validator(schema)
+    assert validator.is_valid(fixture)
+    assert not validator.is_valid({**fixture, "unexpected": True})
+    assert not validator.is_valid({key: value for key, value in fixture.items() if key != keys[0]})
+    assert not validator.is_valid(_mutated("question"))
