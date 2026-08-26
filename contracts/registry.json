@@ -145,6 +145,11 @@
       "contract": "VS01RuntimeScreeningReceipt", "schema_version": "1.0", "owning_design": "VS01-T08",
       "schema_path": "contracts/json-schema/runtime-screening/screening-receipt.schema.json",
       "owning_task": "VS01-T08", "sha256": "71aa7850eef6c9bf9a94755c00a1b5205e32a03f91f8bcffa2b26da746a7b0bc"
+    },
+    {
+      "contract": "VS01StudyWorkspaceProjection", "schema_version": "1.0", "owning_design": "VS01-T09",
+      "schema_path": "contracts/json-schema/study-workspace/vs01-study-workspace-projection.schema.json",
+      "owning_task": "VS01-T09A", "sha256": "296a49c51b261eb0fa5ef366787a6049426488d791ef5c77460811ee8c53ef2e"
     }
   ]
 }

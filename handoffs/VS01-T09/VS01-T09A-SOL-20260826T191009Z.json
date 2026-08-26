@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "task_id": "VS01-T09A",
+  "turn_id": "VS01-T09A-SOL-20260826T191009Z",
+  "activation_id": "ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t09a-study-workspace-projection",
+  "base": {
+    "sha": "2c074e6d9ba03a3a33a95e9a94f1fc28780a5f69",
+    "tree": "ba8027e9e63632109f9c5218ad2f3cd775e568e5"
+  },
+  "authority_commit": {
+    "sha": "67d85566bd60c4e884a4981ceda214cdda43a74d",
+    "tree": "61b52a537c0b1884f84bf0ad995470528826fc9b",
+    "parent": "2c074e6d9ba03a3a33a95e9a94f1fc28780a5f69"
+  },
+  "implementation_commit": {
+    "sha": "07814cf63b4eff23688b9a13da6c8821a0749639",
+    "tree": "cb13e8107510af800fd93eb10214e73e30aec336",
+    "parent": "67d85566bd60c4e884a4981ceda214cdda43a74d"
+  },
+  "github_auth": {
+    "mode": "GH_CLI_EXISTING_AUTH",
+    "active_login": "abbudjoe",
+    "token_overrides_absent": true,
+    "token_retrieved_or_exposed": false
+  },
+  "package": {
+    "sha256": "3f86665daac9c4ca963649f430cdf63a036b443f986f521d53126c09362ebe43",
+    "members": {
+      "ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1.json": "f8ca3dd92aac4f032198987d34e3b651a22ed2e9aa5411c080e1f8b963ebf75e",
+      "ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1.sha256": "1952be65b25916469235e7daa60c7a469242273ea693100dda7047271d0a9cc6",
+      "VS01-T09-design-files.sha256": "ab1c15039fcfa3d80ebb031a9f8b1267a01ab37f9e50c98d37093cd013bb6b71",
+      "VS01-T09-design-manifest.json": "0b0b6691822cdda74aed0f298ac879f5fd1d3450d14d9a29ad157a6076549ffe",
+      "VS01-T09-local-study-workspace-design.md": "0e4091ef15ea3085875faf4a00ca097e78f952cd5fae1876d018e2c53c2bf244",
+      "VS01-T09-local-study-workspace-spec.json": "831618a3ac513992e46161059239b1920456264348d8fcecd290dc4f0c8f5942"
+    },
+    "specification_identity": "7252c62d27b041cbd84b73e5340abf8584c694b0e92107a7fc9ba62ac6e901cd"
+  },
+  "projection": {
+    "contract": "VS01StudyWorkspaceProjection",
+    "schema_version": "1.0",
+    "workspace_identity": "9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d",
+    "fixture_sha256": "6e55a7f77cc8b51e632f5a07877abe4fc12145c8b0b27b3eb7a7fde2de24d96e",
+    "fixture_bytes": 30839,
+    "canonical_projection_sha256": "14af8a8bfdf72b11a87803b1da06d3af8ec1c4731afa7817d1630869339dc415",
+    "schema_sha256": "296a49c51b261eb0fa5ef366787a6049426488d791ef5c77460811ee8c53ef2e",
+    "schema_bytes": 44064,
+    "counts": {
+      "translations": 2,
+      "study_blocks": 7,
+      "evidence_records": 12,
+      "claim_records": 15,
+      "citation_records": 10,
+      "evidence_inspector_records": 10,
+      "accepted_alternatives": 3,
+      "material_unknown_claims": 2,
+      "page_variants": 2,
+      "page_region_roles": 7
+    }
+  },
+  "real_authority_validation": {
+    "successful_compilations": 2,
+    "workspace_identities_equal": true,
+    "canonical_bytes_equal": true,
+    "committed_fixture_equal": true,
+    "archive_inventory_entries": 230,
+    "archive_inventory_before_after_sha256": "3b4411d7f3838ee7f9fee64b40b3514242b918b91942faf32dd5560b026bc0c5",
+    "incoming_inventory_entries": 1,
+    "incoming_inventory_before_after_sha256": "fe6f4416aad72ae887e0a12b671e45c803dc6766d264325b9ccac7b97ccb9df4",
+    "tracked_git_state_unchanged": true,
+    "database_environment_present": false,
+    "psycopg_loaded": false,
+    "socket_attempts": 0,
+    "prior_aborted_read_only_validation_invocations": 1,
+    "prior_aborted_invocation_returned_projection": false,
+    "prior_aborted_invocation_writes": 0
+  },
+  "authority_bindings": {
+    "t08_pair_result_sha256": "04c9b4680a0d612bda05508da65720eb583587ebb83ab6f766ac151f1c656222",
+    "t08_pair_result_identity": "f73ffd20f5096f2b465f3bd91bdb093f4d44a1c9fa5f717f6589ea5ae11d9426",
+    "t08_receipt_uuid": "01a03f23-35e7-7ef4-b482-d84dafa77010",
+    "t08_receipt_canonical_sha256": "8af561aba1c2d0df41ba58f8bd65f6a93de547b5353e8be7eac2c1ece505fac9",
+    "t08_receipt_file_sha256": "1b2498a08e9221ab53dde1c9dea59e021cf1c361356f24b6420e872c96d638b6",
+    "t08_run_fixture_sha256": "eaf59d7d2e654b8f3ae73f36633dca9ffc095788ffbb7c0937bcac583eb1b161",
+    "t08_acquisition_run_identity": "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+    "t08_answer_projection_identity": "ce9500860ea1be8c4bf4916a554ce541040a34784633389beddb12f80cc321c3",
+    "t06_fixture_identity": "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b",
+    "t06_receipt_uuid": "01a034c2-d6e4-73f4-91b2-7410e7453783"
+  },
+  "validation": {
+    "uv_sync_frozen": "PASS; 22 packages checked",
+    "uv_lock_check": "PASS; 24 packages resolved",
+    "ruff_format": "PASS; 147 files",
+    "ruff_lint": "PASS",
+    "pyright": "PASS; 0 errors",
+    "focused_locked": "PASS; 56 passed, 73 skipped",
+    "focused_external_jsonschema": "PASS; 129 passed, zero skipped",
+    "semantic_adversaries": "PASS; 59 rejected by Pydantic and Draft 2020-12",
+    "full_locked": "PASS; 607 passed, 162 skipped",
+    "postgresql_18_6": "PASS; server_version_num 180006; 27 passed, zero skipped",
+    "catalog_boundary": "PASS; 1 passed",
+    "branch_coverage_percent": 90.49,
+    "schema_registry_drift": "PASS",
+    "git_diff_check": "PASS",
+    "git_fsck_full": "PASS; pre-existing dangling objects only",
+    "independent_review": "CLEAN",
+    "post_review_smoke": "PASS; 129 passed, zero skipped"
+  },
+  "dod_ledger": [
+    {"item": "Exact strict frozen recursive immutable contract and identity", "status": "MET"},
+    {"item": "Read-only descriptor-relative secure authority enforcement", "status": "MET"},
+    {"item": "Exact workspace content, counts, and evidence inspector", "status": "MET"},
+    {"item": "Fixture, schema, and registry", "status": "MET"},
+    {"item": "Adversarial matrix", "status": "MET"},
+    {"item": "Binding budgets", "status": "MET"},
+    {"item": "Forbidden future work absent", "status": "MET"},
+    {"item": "Independent spec-conformance review and post-review smoke", "status": "MET"}
+  ],
+  "dr30": {
+    "public_contracts": 1,
+    "direct_dependencies": 0,
+    "migrations": 0,
+    "http_endpoints": 0,
+    "production_files": 3,
+    "production_nonblank_loc": 499,
+    "test_nonblank_loc": 451,
+    "inclusive_handwritten_nonblank_loc": 950,
+    "simplicity_waiver_required": false
+  },
+  "zero_prohibited_operations": {
+    "t08_executions": 0,
+    "t08_scorings": 0,
+    "t08_publications": 0,
+    "canonical_archive_writes": 0,
+    "database_connections_by_t09a": 0,
+    "database_writes": 0,
+    "t03_reads": 0,
+    "raw_source_reads": 0,
+    "source_acquisitions": 0,
+    "model_calls": 0,
+    "ocr_calls": 0,
+    "vlm_calls": 0,
+    "product_runtime_network_calls": 0,
+    "cloud_calls": 0,
+    "luna_delegations": 0,
+    "http_endpoints_added": 0,
+    "web_clients_added": 0,
+    "t09b_work": 0,
+    "t09_op01_work": 0,
+    "t10_or_later_work": 0
+  },
+  "ci": {
+    "vs01_t01_ci": "pending final handoff-only head push",
+    "vs01_t05_ci": "pending final handoff-only head push",
+    "run_ids_recorded_in_completion_comment": true
+  },
+  "next_action": "ChatGPT exact-head review after both required exact-head workflows pass. No merge or approval is authorized."
+}

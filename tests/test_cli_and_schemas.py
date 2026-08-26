@@ -52,6 +52,7 @@ from bsl.contracts.runtime_screening import (
     VS01RuntimeScreeningReceipt,
 )
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
+from bsl.contracts.study_workspace import VS01StudyWorkspaceProjection
 from bsl.interfaces.cli import main
 
 ROOT = Path(__file__).parents[1]
@@ -135,6 +136,10 @@ SCHEMAS = (
     (
         ROOT / "contracts/json-schema/runtime-screening/screening-receipt.schema.json",
         VS01RuntimeScreeningReceipt,
+    ),
+    (
+        ROOT / "contracts/json-schema/study-workspace/vs01-study-workspace-projection.schema.json",
+        VS01StudyWorkspaceProjection,
     ),
 )
 
