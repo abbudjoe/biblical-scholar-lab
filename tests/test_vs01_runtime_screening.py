@@ -297,6 +297,25 @@ def test_positive_subject_firewall_rejects_every_changed_authority(case: str) ->
         subject_package_from_projection(changed, case_id=SYNTHETIC_CASE_ID)
 
 
+def test_live_projection_output_schema_order_is_semantic() -> None:
+    live = runtime_screening._subject_projection(  # pyright: ignore[reportPrivateUsage]
+        compile_pair_specification()
+    )
+    reordered = copy.deepcopy(live)
+    reordered["output_schema"] = dict(reversed(tuple(live["output_schema"].items())))
+    assert tuple(live["output_schema"]) != tuple(reordered["output_schema"])
+
+    live_package = subject_package_from_projection(live, case_id="VS01-B08-RUNTIME-C01")
+    reordered_package = subject_package_from_projection(reordered, case_id="VS01-B08-RUNTIME-C01")
+    assert live_package.output_schema == reordered_package.output_schema
+    assert live_package.package_identity == reordered_package.package_identity
+
+    changed = copy.deepcopy(live)
+    changed["output_schema"]["answer_blocks"] = 8
+    with pytest.raises(ValueError):
+        subject_package_from_projection(changed, case_id="VS01-B08-RUNTIME-C01")
+
+
 def test_subject_order_broker_and_genuine_correction_lineage() -> None:
     projection, template = _static()
     reordered = copy.deepcopy(projection)
