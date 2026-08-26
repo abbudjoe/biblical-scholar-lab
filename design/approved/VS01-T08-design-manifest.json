@@ -1,0 +1,37 @@
+{
+  "package_id": "BSL-VS01-T08-FROZEN-DESIGN",
+  "design_id": "VS01-T08",
+  "spec_id": "VS01-T08-FULL-RUNTIME-PAIR-v1",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T08_DESIGN",
+  "approval_date": "2026-08-25",
+  "base_main_sha": "daa282e1b8a58ccaef117bec386d2a09e2edb4e9",
+  "base_tree_sha": "cb67f28438507cdf5fa0bb6632f150db0e8dbd49",
+  "pair_id": "BENCH-VS01-B08-PAIR-01",
+  "runtime_case_id": "VS01-B08-RUNTIME-C01",
+  "runtime_case_sha256": "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd",
+  "spec_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51",
+  "implementation_authorized": false,
+  "runtime_execution_authorized": false,
+  "benchmark_execution_authorized": false,
+  "model_ocr_vlm_authorized": false,
+  "result_publication_authorized": false,
+  "database_or_archive_mutation_authorized": false,
+  "files": [
+    {
+      "path": "VS01-T08-full-runtime-evidence-acquisition-design.md",
+      "sha256": "64cc1c740bc7454a97541301b32594c5f2577ec39287bb693592cf131c312d50",
+      "bytes": 8571
+    },
+    {
+      "path": "VS01-B08-RUNTIME-C01.json",
+      "sha256": "a7fc02da5ed8fda15ee29cba79cff8b037b2abc66352107f87165a0bfbea9f0f",
+      "bytes": 20510
+    },
+    {
+      "path": "VS01-T08-runtime-pair-spec.json",
+      "sha256": "9e49e2f2b540a54c1d945991eb6500a52c0a7873136630d8bf49854efeb765ba",
+      "bytes": 48934
+    }
+  ]
+}

@@ -1,0 +1,2329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "const": {
+                "acquisition_run_identity": "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+                "contract": "VS01B08RuntimePairResult",
+                "disposition": "REFERENCE_CONFORMANT",
+                "events_observed": 17,
+                "fixed_case_result_identity": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880",
+                "fixed_points": 8,
+                "hard_failures": [],
+                "leakage_incidents": 0,
+                "limitations": [
+                  "single passage and ChatGPT-authored public screening pair",
+                  "deterministic oracle runtime rather than model-mediated tool selection",
+                  "no critical apparatus or witness evidence",
+                  "no REV-P2 specialist gold",
+                  "not training eligible or private-final eligible"
+                ],
+                "pair_points": 36,
+                "pair_result_identity": "f73ffd20f5096f2b465f3bd91bdb093f4d44a1c9fa5f717f6589ea5ae11d9426",
+                "pair_specification_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51",
+                "replay_run_identities": [
+                  "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+                  "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                ],
+                "runtime_criteria": [
+                  {
+                    "criterion_id": "B08-RT-R1",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R2",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R3",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  },
+                  {
+                    "criterion_id": "B08-RT-R4",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R5",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R6",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R7",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R8",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  }
+                ],
+                "runtime_points": 28,
+                "schema_version": "1.0",
+                "tool_calls_observed": 7
+              }
+            },
+            {
+              "const": {
+                "acquisition_run_identity": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+                "contract": "VS01B08RuntimePairResult",
+                "disposition": "REFERENCE_CONFORMANT",
+                "events_observed": 17,
+                "fixed_case_result_identity": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880",
+                "fixed_points": 8,
+                "hard_failures": [],
+                "leakage_incidents": 0,
+                "limitations": [
+                  "single passage and ChatGPT-authored public screening pair",
+                  "deterministic oracle runtime rather than model-mediated tool selection",
+                  "no critical apparatus or witness evidence",
+                  "no REV-P2 specialist gold",
+                  "not training eligible or private-final eligible"
+                ],
+                "pair_points": 36,
+                "pair_result_identity": "506e33f0fe5883c67c745259f20f77730d0961c8815519ba2a2f56fc9fad1ece",
+                "pair_specification_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51",
+                "replay_run_identities": [
+                  "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+                  "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                ],
+                "runtime_criteria": [
+                  {
+                    "criterion_id": "B08-RT-R1",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R2",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R3",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  },
+                  {
+                    "criterion_id": "B08-RT-R4",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R5",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R6",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R7",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R8",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  }
+                ],
+                "runtime_points": 28,
+                "schema_version": "1.0",
+                "tool_calls_observed": 7
+              }
+            },
+            {
+              "const": {
+                "acquisition_run_identity": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+                "contract": "VS01B08RuntimePairResult",
+                "disposition": "REFERENCE_CONFORMANT",
+                "events_observed": 17,
+                "fixed_case_result_identity": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880",
+                "fixed_points": 8,
+                "hard_failures": [],
+                "leakage_incidents": 0,
+                "limitations": [
+                  "single passage and ChatGPT-authored public screening pair",
+                  "deterministic oracle runtime rather than model-mediated tool selection",
+                  "no critical apparatus or witness evidence",
+                  "no REV-P2 specialist gold",
+                  "not training eligible or private-final eligible"
+                ],
+                "pair_points": 36,
+                "pair_result_identity": "03e028d4eaf7b2b11f72c09eb457fd8c475f6440619362a369469c428ec03359",
+                "pair_specification_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51",
+                "replay_run_identities": [
+                  "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+                  "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                ],
+                "runtime_criteria": [
+                  {
+                    "criterion_id": "B08-RT-R1",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R2",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R3",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  },
+                  {
+                    "criterion_id": "B08-RT-R4",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R5",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R6",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R7",
+                    "points": 4,
+                    "score": 2,
+                    "weight": 2
+                  },
+                  {
+                    "criterion_id": "B08-RT-R8",
+                    "points": 2,
+                    "score": 2,
+                    "weight": 1
+                  }
+                ],
+                "runtime_points": 28,
+                "schema_version": "1.0",
+                "tool_calls_observed": 7
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "disposition": {
+          "const": "REFERENCE_CONFORMANT"
+        }
+      }
+    },
+    {
+      "allOf": [
+        {
+          "properties": {
+            "events_observed": {
+              "const": 17
+            },
+            "fixed_points": {
+              "minimum": 7
+            },
+            "hard_failures": {
+              "maxItems": 0
+            },
+            "leakage_incidents": {
+              "const": 0
+            },
+            "limitations": {
+              "const": [
+                "single passage and ChatGPT-authored public screening pair",
+                "deterministic oracle runtime rather than model-mediated tool selection",
+                "no critical apparatus or witness evidence",
+                "no REV-P2 specialist gold",
+                "not training eligible or private-final eligible"
+              ]
+            },
+            "pair_points": {
+              "minimum": 32
+            },
+            "runtime_criteria": {
+              "maxItems": 8,
+              "minItems": 8,
+              "prefixItems": [
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R1"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R2"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 1
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R3"
+                    },
+                    "weight": {
+                      "const": 1
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R4"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R5"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R6"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 4
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R7"
+                    },
+                    "weight": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 1
+                        },
+                        "score": {
+                          "const": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "points": {
+                          "const": 2
+                        },
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "criterion_id": {
+                      "const": "B08-RT-R8"
+                    },
+                    "weight": {
+                      "const": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "runtime_points": {
+              "minimum": 24
+            },
+            "tool_calls_observed": {
+              "const": 7
+            }
+          }
+        },
+        {
+          "not": {
+            "oneOf": [
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+                      "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+                      "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+                      "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "disposition": {
+          "const": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"
+        }
+      }
+    },
+    {
+      "not": {
+        "anyOf": [
+          {
+            "oneOf": [
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+                      "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+                      "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "acquisition_run_identity": {
+                    "const": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                  },
+                  "contract": {
+                    "const": "VS01B08RuntimePairResult"
+                  },
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_case_result_identity": {
+                    "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "const": []
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "pair_specification_identity": {
+                    "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                  },
+                  "replay_run_identities": {
+                    "const": [
+                      "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+                      "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                    ]
+                  },
+                  "runtime_criteria": {
+                    "const": [
+                      {
+                        "criterion_id": "B08-RT-R1",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R2",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R3",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      },
+                      {
+                        "criterion_id": "B08-RT-R4",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R5",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R6",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R7",
+                        "points": 4,
+                        "score": 2,
+                        "weight": 2
+                      },
+                      {
+                        "criterion_id": "B08-RT-R8",
+                        "points": 2,
+                        "score": 2,
+                        "weight": 1
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "schema_version": {
+                    "const": "1.0"
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "properties": {
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_points": {
+                    "minimum": 7
+                  },
+                  "hard_failures": {
+                    "maxItems": 0
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "limitations": {
+                    "const": [
+                      "single passage and ChatGPT-authored public screening pair",
+                      "deterministic oracle runtime rather than model-mediated tool selection",
+                      "no critical apparatus or witness evidence",
+                      "no REV-P2 specialist gold",
+                      "not training eligible or private-final eligible"
+                    ]
+                  },
+                  "pair_points": {
+                    "minimum": 32
+                  },
+                  "runtime_criteria": {
+                    "maxItems": 8,
+                    "minItems": 8,
+                    "prefixItems": [
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R1"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R2"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 1
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R3"
+                          },
+                          "weight": {
+                            "const": 1
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R4"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R5"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R6"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 4
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R7"
+                          },
+                          "weight": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 1
+                              },
+                              "score": {
+                                "const": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "points": {
+                                "const": 2
+                              },
+                              "score": {
+                                "const": 2
+                              }
+                            }
+                          }
+                        ],
+                        "properties": {
+                          "criterion_id": {
+                            "const": "B08-RT-R8"
+                          },
+                          "weight": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "minimum": 24
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "not": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "acquisition_run_identity": {
+                          "const": "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                        },
+                        "contract": {
+                          "const": "VS01B08RuntimePairResult"
+                        },
+                        "events_observed": {
+                          "const": 17
+                        },
+                        "fixed_case_result_identity": {
+                          "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                        },
+                        "fixed_points": {
+                          "const": 8
+                        },
+                        "hard_failures": {
+                          "const": []
+                        },
+                        "leakage_incidents": {
+                          "const": 0
+                        },
+                        "limitations": {
+                          "const": [
+                            "single passage and ChatGPT-authored public screening pair",
+                            "deterministic oracle runtime rather than model-mediated tool selection",
+                            "no critical apparatus or witness evidence",
+                            "no REV-P2 specialist gold",
+                            "not training eligible or private-final eligible"
+                          ]
+                        },
+                        "pair_points": {
+                          "const": 36
+                        },
+                        "pair_specification_identity": {
+                          "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                        },
+                        "replay_run_identities": {
+                          "const": [
+                            "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e",
+                            "3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e"
+                          ]
+                        },
+                        "runtime_criteria": {
+                          "const": [
+                            {
+                              "criterion_id": "B08-RT-R1",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R2",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R3",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            },
+                            {
+                              "criterion_id": "B08-RT-R4",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R5",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R6",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R7",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R8",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            }
+                          ]
+                        },
+                        "runtime_points": {
+                          "const": 28
+                        },
+                        "schema_version": {
+                          "const": "1.0"
+                        },
+                        "tool_calls_observed": {
+                          "const": 7
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "acquisition_run_identity": {
+                          "const": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                        },
+                        "contract": {
+                          "const": "VS01B08RuntimePairResult"
+                        },
+                        "events_observed": {
+                          "const": 17
+                        },
+                        "fixed_case_result_identity": {
+                          "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                        },
+                        "fixed_points": {
+                          "const": 8
+                        },
+                        "hard_failures": {
+                          "const": []
+                        },
+                        "leakage_incidents": {
+                          "const": 0
+                        },
+                        "limitations": {
+                          "const": [
+                            "single passage and ChatGPT-authored public screening pair",
+                            "deterministic oracle runtime rather than model-mediated tool selection",
+                            "no critical apparatus or witness evidence",
+                            "no REV-P2 specialist gold",
+                            "not training eligible or private-final eligible"
+                          ]
+                        },
+                        "pair_points": {
+                          "const": 36
+                        },
+                        "pair_specification_identity": {
+                          "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                        },
+                        "replay_run_identities": {
+                          "const": [
+                            "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+                            "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8"
+                          ]
+                        },
+                        "runtime_criteria": {
+                          "const": [
+                            {
+                              "criterion_id": "B08-RT-R1",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R2",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R3",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            },
+                            {
+                              "criterion_id": "B08-RT-R4",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R5",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R6",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R7",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R8",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            }
+                          ]
+                        },
+                        "runtime_points": {
+                          "const": 28
+                        },
+                        "schema_version": {
+                          "const": "1.0"
+                        },
+                        "tool_calls_observed": {
+                          "const": 7
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "acquisition_run_identity": {
+                          "const": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                        },
+                        "contract": {
+                          "const": "VS01B08RuntimePairResult"
+                        },
+                        "events_observed": {
+                          "const": 17
+                        },
+                        "fixed_case_result_identity": {
+                          "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+                        },
+                        "fixed_points": {
+                          "const": 8
+                        },
+                        "hard_failures": {
+                          "const": []
+                        },
+                        "leakage_incidents": {
+                          "const": 0
+                        },
+                        "limitations": {
+                          "const": [
+                            "single passage and ChatGPT-authored public screening pair",
+                            "deterministic oracle runtime rather than model-mediated tool selection",
+                            "no critical apparatus or witness evidence",
+                            "no REV-P2 specialist gold",
+                            "not training eligible or private-final eligible"
+                          ]
+                        },
+                        "pair_points": {
+                          "const": 36
+                        },
+                        "pair_specification_identity": {
+                          "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+                        },
+                        "replay_run_identities": {
+                          "const": [
+                            "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+                            "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568"
+                          ]
+                        },
+                        "runtime_criteria": {
+                          "const": [
+                            {
+                              "criterion_id": "B08-RT-R1",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R2",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R3",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            },
+                            {
+                              "criterion_id": "B08-RT-R4",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R5",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R6",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R7",
+                              "points": 4,
+                              "score": 2,
+                              "weight": 2
+                            },
+                            {
+                              "criterion_id": "B08-RT-R8",
+                              "points": 2,
+                              "score": 2,
+                              "weight": 1
+                            }
+                          ]
+                        },
+                        "runtime_points": {
+                          "const": 28
+                        },
+                        "schema_version": {
+                          "const": "1.0"
+                        },
+                        "tool_calls_observed": {
+                          "const": 7
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "disposition": {
+          "const": "RUNTIME_SCREENING_NO_GO"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "acquisition_run_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Acquisition Run Identity",
+      "type": "string"
+    },
+    "contract": {
+      "const": "VS01B08RuntimePairResult",
+      "default": "VS01B08RuntimePairResult",
+      "title": "Contract",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "REFERENCE_CONFORMANT",
+        "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+        "RUNTIME_SCREENING_NO_GO"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "events_observed": {
+      "minimum": 0,
+      "title": "Events Observed",
+      "type": "integer"
+    },
+    "fixed_case_result_identity": {
+      "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+    },
+    "fixed_points": {
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Fixed Points",
+      "type": "integer"
+    },
+    "hard_failures": {
+      "items": {
+        "enum": [
+          "EARLY_UNGROUNDED_ANSWER",
+          "HIDDEN_EVIDENCE_ACCESS",
+          "AVAILABLE_EVIDENCE_NOT_ACQUIRED",
+          "UNAUTHORIZED_SOURCE_OR_RAW_READ",
+          "TRANSLATION_AS_MANUSCRIPT_WITNESS",
+          "FALSE_TEXTUAL_VARIANT_CERTAINTY",
+          "MORPHOLOGY_OR_LEXICON_OVERCLAIM",
+          "TOOL_OR_EVENT_FABRICATION",
+          "CLAIM_CITATION_MISMATCH",
+          "CORRECTION_LINEAGE_LOSS",
+          "MODEL_OR_NETWORK_ROUTE"
+        ]
+      },
+      "title": "Hard Failures",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "leakage_incidents": {
+      "minimum": 0,
+      "title": "Leakage Incidents",
+      "type": "integer"
+    },
+    "limitations": {
+      "const": [
+        "single passage and ChatGPT-authored public screening pair",
+        "deterministic oracle runtime rather than model-mediated tool selection",
+        "no critical apparatus or witness evidence",
+        "no REV-P2 specialist gold",
+        "not training eligible or private-final eligible"
+      ]
+    },
+    "pair_points": {
+      "maximum": 36,
+      "minimum": 0,
+      "title": "Pair Points",
+      "type": "integer"
+    },
+    "pair_result_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pair Result Identity",
+      "type": "string"
+    },
+    "pair_specification_identity": {
+      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+    },
+    "replay_run_identities": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      ],
+      "title": "Replay Run Identities",
+      "type": "array"
+    },
+    "runtime_criteria": {
+      "maxItems": 8,
+      "minItems": 8,
+      "prefixItems": [
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R1"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R2"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 1
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R3"
+            },
+            "weight": {
+              "const": 1
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R4"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R5"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R6"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 4
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R7"
+            },
+            "weight": {
+              "const": 2
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "points": {
+                  "const": 0
+                },
+                "score": {
+                  "const": 0
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 1
+                },
+                "score": {
+                  "const": 1
+                }
+              }
+            },
+            {
+              "properties": {
+                "points": {
+                  "const": 2
+                },
+                "score": {
+                  "const": 2
+                }
+              }
+            }
+          ],
+          "properties": {
+            "criterion_id": {
+              "const": "B08-RT-R8"
+            },
+            "weight": {
+              "const": 1
+            }
+          }
+        }
+      ]
+    },
+    "runtime_points": {
+      "maximum": 28,
+      "minimum": 0,
+      "title": "Runtime Points",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool_calls_observed": {
+      "minimum": 0,
+      "title": "Tool Calls Observed",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "pair_specification_identity",
+    "acquisition_run_identity",
+    "fixed_case_result_identity",
+    "fixed_points",
+    "runtime_criteria",
+    "runtime_points",
+    "pair_points",
+    "tool_calls_observed",
+    "events_observed",
+    "hard_failures",
+    "leakage_incidents",
+    "replay_run_identities",
+    "disposition",
+    "limitations",
+    "pair_result_identity"
+  ],
+  "title": "VS01B08RuntimePairResult",
+  "type": "object"
+}

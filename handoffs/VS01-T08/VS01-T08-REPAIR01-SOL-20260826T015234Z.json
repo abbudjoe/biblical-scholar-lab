@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T08-FULL-RUNTIME-PAIR-v1",
+  "task_id": "VS01-T08",
+  "turn_id": "VS01-T08-REPAIR01-SOL-20260826T015234Z",
+  "codex_run_id": "VS01-T08-REPAIR01-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "supersedes": "VS01-T08-SOL-20260825T223355Z",
+  "owner_authorization": "APPROVE_VS01_T08_REPAIR01",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t08-full-runtime-pair",
+  "base_sha": "daa282e1b8a58ccaef117bec386d2a09e2edb4e9",
+  "starting_head_sha": "c0bd68c2ecf26456f38be0baabf60147116ffe35",
+  "starting_tree": "ae78b7cfe229fcc9e014acd8f9082ee7a1e8c4b4",
+  "implementation_head_sha": "228b5ce28ef89b51afb44977597dcb12ee13d7f9",
+  "implementation_tree": "7186fdf30f77f912a655f5a64d12f1f451806ea5",
+  "implementation_parent": "c0bd68c2ecf26456f38be0baabf60147116ffe35",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/18",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false
+  },
+  "design_conformance": {
+    "status": "CONFORMING",
+    "unapproved_design_changes_executed": false,
+    "public_top_level_contracts": 4,
+    "frozen_authority_changed": false
+  },
+  "findings": {
+    "truthful_operation_ledger": "CLOSED",
+    "authority_reload": "CLOSED",
+    "retained_receipt_binding": "CLOSED",
+    "positive_subject_and_evidence_firewall": "CLOSED",
+    "public_state_machines_and_correction": "CLOSED"
+  },
+  "operation_ledgers": {
+    "common": {
+      "subject_invocations": 2,
+      "broker_tool_calls": 14,
+      "scoring_invocations": 1,
+      "acquisition_runs_constructed": 2,
+      "pair_results_constructed": 1,
+      "receipts_constructed": 1
+    },
+    "DRY_RUN_VALIDATED": [0, 0, 0, 0],
+    "REFERENCE_CONFORMANT": [2, 1, 1, 3],
+    "REFERENCE_NONCONFORMANT": [0, 0, 0, 0],
+    "VERIFIED_EXISTING": [1, 0, 0, 0],
+    "disposition_count_order": [
+      "store_verification_attempts",
+      "publication_attempts",
+      "successful_publications",
+      "canonical_archive_writes"
+    ],
+    "all_forbidden_counters_zero": true
+  },
+  "authority_reload": {
+    "tuple_sha256": "cb38435d97939b55e81f6a20ae05a0a94932a27712608cba681cd98b52f0035f",
+    "compiles_equal": true,
+    "changed_pre_store": "REJECTED_BEFORE_STORE_WITH_ZERO_STORE_CALLS",
+    "changed_post_store": "REJECTED_AFTER_ONE_READ_ONLY_VERIFY_WITH_ZERO_WRITES",
+    "fingerprints": {
+      "t04": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d",
+      "t05": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1",
+      "t06": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860",
+      "t07": "bcae9dda9297ebf54f5bdf76c7ebbbfc904da6ebee58f831afb5c92ad136d367",
+      "archive_root": "f45c8fe4be50573209e74d94214b94baf51a5f3a5b08108e855992063f79cd70",
+      "incoming_inventory": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "adversarial_evidence": {
+    "retained_receipt": "PASS_ALL",
+    "subject_and_evidence_firewall": "PASS_ALL",
+    "run_result_receipt_state_machines": "PASS_ALL",
+    "pydantic": "PASS",
+    "draft_2020_12_jsonschema_4_25_1": "PASS"
+  },
+  "correction_evidence": {
+    "request_changed": true,
+    "request_before": "79d952feb9b69c7955f76fb0f8724f271999be5f75bfa8789bd7c7645fc015a2",
+    "request_after": "9b3022a424a8ad665e214a4d388b18d6e7888f317d05d3a48cf30c923bf78768",
+    "plan_before": "a1b529713eb5b91760a1136007460172899da0324b4944931abd3de22165d637",
+    "plan_after": "d9708ba1e9eb90c17204434d9f7d43b5da33b6f8301b97967b9862b1388657e7",
+    "answer_before": "50e4728c2205d67cdcd78320e6484f78c5f8bee8245f0e02a19db08fcbed2cc9",
+    "answer_after": "8703d2578a932db907548923e6b58c5075b52bcb26430a34428447d5ebd7cfcd",
+    "run_before": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+    "run_after": "05459a4a180a7cd571a04a604cfc25151a4cffaa424dcbb12104d31364c4a833",
+    "supersession_exact": true,
+    "fresh_broker_calls": 7,
+    "prior_run_unchanged": true
+  },
+  "schema_hashes": {
+    "VS01B08RuntimePairSpecification": "7cc1828d7ff5c6456c8b0051cffe58fa0e40ef77d1a711610d564e4ce67aea55",
+    "VS01RuntimeAcquisitionRun": "9bc19f370c6aa340787a357082ee3792de202bfe6027cd42112a2db7f1130f6e",
+    "VS01B08RuntimePairResult": "71b7c5a9deca86d690f35b26ecc22bd3f81330a5071d7f8ce51d31effb4e3e60",
+    "VS01RuntimeScreeningReceipt": "66113b75c153c35a01e2c8e2461c0b72b001efa588ba148926450d4a68e79f95"
+  },
+  "validation": {
+    "complete_passes": 2,
+    "locked_focused": "55 passed, 4 skipped",
+    "external_jsonschema_focused": "59 passed, 0 skipped",
+    "full_suite": "594 passed, 18 skipped",
+    "postgresql_version": "18.6",
+    "postgresql_tests": 27,
+    "postgresql_skips": 0,
+    "branch_coverage_percent": 90.65,
+    "schema_drift": false,
+    "owner_schema_sha256": "dc2b7f1e87617b0752fcead7c8a16a36b261f3c65b0171e81143636c51ff2590",
+    "disposable_database_and_role_removed": true,
+    "git_diff_check": "PASS",
+    "git_fsck": "PASS_PREEXISTING_DANGLING_ONLY"
+  },
+  "complexity_receipt": {
+    "production": 1950,
+    "tests": 513,
+    "cli": 41,
+    "status_docs": 0,
+    "registry_metadata": 20,
+    "total": 2524,
+    "cap": 2900,
+    "generated_schemas": 5324,
+    "generated_fixtures": 2,
+    "largest_module_physical_lines": 491,
+    "max_function_logical_lines": 55,
+    "simplicity_conformance": "PASS"
+  },
+  "exact_head_ci": {
+    "result": "PENDING_HANDOFF_ONLY_PUSH",
+    "vs01_t01_ci": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t01-ci.yml",
+    "vs01_t05_ci": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t05-ci.yml"
+  },
+  "prohibited_operations": {
+    "real_t08_executions": 0,
+    "real_scorings": 0,
+    "real_publications": 0,
+    "canonical_archive_writes": 0,
+    "owner_database_writes": 0,
+    "t03_reads": 0,
+    "raw_source_reads": 0,
+    "model_ocr_vlm_network_cloud": [0, 0, 0, 0, 0],
+    "public_t08_cli_invocations": 0,
+    "delegated_operations": []
+  },
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

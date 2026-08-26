@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-VS01-T08-FULL-RUNTIME-PAIR-v1",
+  "task_id": "VS01-T08",
+  "turn_id": "VS01-T08-REPAIR02-SOL-20260826T122813Z",
+  "codex_run_id": "VS01-T08-REPAIR02-ROOT-TURN",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "supersedes": "VS01-T08-REPAIR01-SOL-20260826T015234Z",
+  "review_id": 5026346641,
+  "owner_authorization": "VS01-T08 Repair02 only",
+  "repository": "https://github.com/abbudjoe/biblical-scholar-lab",
+  "branch": "codex/vs01-t08-full-runtime-pair",
+  "base_sha": "daa282e1b8a58ccaef117bec386d2a09e2edb4e9",
+  "starting_head_sha": "3ddb4ae49cd28cdc56d0cab75a8133d90ab11074",
+  "starting_tree": "c87cc7d394281b4561f0662900463d8393400b03",
+  "implementation_head_sha": "9fb1b107f6f3d382c1feedaaef2f64ec6983eb94",
+  "implementation_tree": "af6f8e354e76fcd1843c455c57976f132d992b23",
+  "implementation_parent": "3ddb4ae49cd28cdc56d0cab75a8133d90ab11074",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/18",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false
+  },
+  "design_conformance": {
+    "status": "CONFORMING",
+    "unapproved_design_changes_executed": false,
+    "public_top_level_contracts": 4,
+    "frozen_authority_changed": false,
+    "real_reference_fixture_changed": false
+  },
+  "findings": {
+    "real_post_store_authority_phase": "CLOSED",
+    "truthful_partial_recovery_ledger": "CLOSED",
+    "draft_2020_12_semantic_parity": "CLOSED",
+    "genuine_correction_trace_and_answer": "CLOSED"
+  },
+  "publication_order": [
+    "authority_reload_pre_store",
+    "verify_prefix_state",
+    "link_result_object",
+    "link_snapshot",
+    "authority_reload_post_store",
+    "link_receipt",
+    "verify_complete",
+    "clean_exact_stage"
+  ],
+  "partial_recovery_ledgers": {
+    "common": {
+      "subject_invocations": 2,
+      "broker_tool_calls": 14,
+      "scoring_invocations": 1,
+      "acquisition_runs_constructed": 2,
+      "pair_results_constructed": 1,
+      "receipts_constructed": 1
+    },
+    "DRY_RUN_VALIDATED": [0, 0, 0, 0],
+    "REFERENCE_NONCONFORMANT": [0, 0, 0, 0],
+    "REFERENCE_CONFORMANT_EMPTY": [2, 1, 1, 3],
+    "REFERENCE_CONFORMANT_OBJECT_ONLY": [2, 1, 1, 2],
+    "REFERENCE_CONFORMANT_OBJECT_AND_SNAPSHOT": [2, 1, 1, 1],
+    "VERIFIED_EXISTING_COMPLETE": [1, 0, 0, 0],
+    "count_order": [
+      "store_verification_attempts",
+      "publication_attempts",
+      "successful_publications",
+      "canonical_archive_writes"
+    ],
+    "all_forbidden_counters_zero": true
+  },
+  "authority_reload": {
+    "compiles": 2,
+    "compiles_equal": true,
+    "tuple_sha256": "33a0f34b342ea1f7be42b20323c0d61baac1865f3f9062215530bb8cf57af8e4",
+    "changed_pre_store": "REJECTED_BEFORE_VERIFY_OR_WRITE",
+    "changed_post_store": "RESULT_PREFIX_ONLY_NO_CANONICAL_RECEIPT",
+    "fingerprints": {
+      "t04": "27609cc1fd4cc6e1844fc4275dd5dd0ce8a485fb68f7f75dddd779005d70031d",
+      "t05": "b79810f9bf9cf327b0d40041b640a49079d9cbf5c043660e148ed2d5e38a14a1",
+      "t06": "ec0b4018d30d7160213b20945461325be7821c4b7e666675de5529e4a76ed860",
+      "t07": "bcae9dda9297ebf54f5bdf76c7ebbbfc904da6ebee58f831afb5c92ad136d367",
+      "archive_root": "f45c8fe4be50573209e74d94214b94baf51a5f3a5b08108e855992063f79cd70",
+      "incoming_inventory": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "adversarial_evidence": {
+    "publication_order_and_interruption_recovery": "PASS_ALL",
+    "pair_result_pydantic_and_draft_2020_12": "PASS_ALL",
+    "screening_receipt_pydantic_and_draft_2020_12": "PASS_ALL",
+    "correction_trace_answer_and_immutability": "PASS_ALL",
+    "external_jsonschema_version": "4.25.1"
+  },
+  "correction_evidence": {
+    "request_changed": true,
+    "request_before": "79d952feb9b69c7955f76fb0f8724f271999be5f75bfa8789bd7c7645fc015a2",
+    "request_after": "9b3022a424a8ad665e214a4d388b18d6e7888f317d05d3a48cf30c923bf78768",
+    "plan_before": "a1b529713eb5b91760a1136007460172899da0324b4944931abd3de22165d637",
+    "plan_after": "d9708ba1e9eb90c17204434d9f7d43b5da33b6f8301b97967b9862b1388657e7",
+    "answer_before": "50e4728c2205d67cdcd78320e6484f78c5f8bee8245f0e02a19db08fcbed2cc9",
+    "answer_after": "65b157d135ecca7a81e78cc5e9eccaf720db76aa597c0df016f77deee34194d8",
+    "run_before": "7e0633b1ece4b5f530dfa2cdf0028b1ad9c234c7692d680c85ea4d2aced177d8",
+    "run_after": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
+    "supersession_exact": true,
+    "fresh_broker_calls": 7,
+    "fresh_sufficiency_fields": true,
+    "fresh_answer_content": true,
+    "prior_run_unchanged": true
+  },
+  "schema_hashes": {
+    "VS01B08RuntimePairSpecification": "7cc1828d7ff5c6456c8b0051cffe58fa0e40ef77d1a711610d564e4ce67aea55",
+    "VS01RuntimeAcquisitionRun": "9b2b3f65a7f71b42dc1cc9d3cf97e2232cfad006df337062b51e8e7736ff4e0a",
+    "VS01B08RuntimePairResult": "0c9be59ddcb1a2aaf1bf6cca5296ed17816f7a7c33f975760acdda6332b0b03f",
+    "VS01RuntimeScreeningReceipt": "71aa7850eef6c9bf9a94755c00a1b5205e32a03f91f8bcffa2b26da746a7b0bc"
+  },
+  "validation": {
+    "locked_focused": "48 passed, 62 external-validator skips",
+    "external_jsonschema_focused": "110 passed, 0 skipped",
+    "locked_full_suite": "560 passed, 103 optional/database skips",
+    "postgresql_full_suite": "587 passed, 76 optional skips",
+    "postgresql_version": "18.6",
+    "postgresql_tests": 27,
+    "postgresql_skips": 0,
+    "branch_coverage_percent": 90.74,
+    "schema_drift": false,
+    "owner_schema_sha256_normalized": "aa2a77490322936f3065d1779bddc805088617178834c4f454909322cb97c5ab",
+    "owner_schema_unchanged": true,
+    "disposable_database_and_role_removed": true,
+    "git_diff_check": "PASS",
+    "git_fsck": "PASS_PREEXISTING_DANGLING_ONLY"
+  },
+  "complexity_receipt": {
+    "production": 2173,
+    "tests": 665,
+    "cli": 41,
+    "status_docs": 0,
+    "registry_metadata": 20,
+    "total": 2899,
+    "cap": 2900,
+    "generated_schemas": 10444,
+    "generated_fixtures": 2,
+    "largest_module_physical_lines": 500,
+    "max_function_logical_lines": 59,
+    "max_class_logical_lines": 65,
+    "simplicity_conformance": "PASS"
+  },
+  "exact_head_ci": {
+    "result": "PENDING_HANDOFF_ONLY_PUSH",
+    "vs01_t01_ci": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t01-ci.yml",
+    "vs01_t05_ci": "https://github.com/abbudjoe/biblical-scholar-lab/actions/workflows/vs01-t05-ci.yml"
+  },
+  "prohibited_operations": {
+    "real_t08_executions": 0,
+    "real_scorings": 0,
+    "real_publications": 0,
+    "canonical_archive_writes": 0,
+    "owner_database_writes": 0,
+    "t03_reads": 0,
+    "raw_source_reads": 0,
+    "model_ocr_vlm_runtime_network_cloud": [0, 0, 0, 0, 0, 0],
+    "public_t08_cli_invocations": 0,
+    "delegated_operations": []
+  },
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0,
+    "campaign_ids": []
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}

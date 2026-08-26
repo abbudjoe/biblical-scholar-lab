@@ -1,0 +1,1252 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "VS01-T08-FULL-RUNTIME-PAIR-v1",
+  "design_id": "VS01-T08",
+  "status": "FROZEN_DESIGN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "owner_authorization_id": "APPROVE_VS01_T08_DESIGN",
+  "approval_date": "2026-08-25",
+  "base_main_sha": "daa282e1b8a58ccaef117bec386d2a09e2edb4e9",
+  "base_tree_sha": "cb67f28438507cdf5fa0bb6632f150db0e8dbd49",
+  "purpose": "Freeze a paired fixed-evidence/full-runtime screening design that proves the deterministic runtime distinguishes unavailable evidence from available approved evidence, acquires the latter through auditable local tools, and continues to the bounded T05 Study answer without model inference.",
+  "upstream_authorities": {
+    "t04": {
+      "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+      "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+      "receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+      "receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
+    },
+    "t05": {
+      "canonical_run_id": "01a030a1-c3ca-76f6-b4c8-f74392e2cd91",
+      "canonical_session_id": "01a030a1-c3cb-72d0-aac0-19da47db369e",
+      "request_revision": 2,
+      "supersedes_run_id": null,
+      "request_identity": "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef",
+      "execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc",
+      "brief_answer_identity": "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0",
+      "study_answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+      "study_markdown_sha256": "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6",
+      "row_counts": {
+        "study_run": 1,
+        "runtime_artifact": 5,
+        "runtime_event": 11
+      },
+      "catalog_sha256": "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4"
+    },
+    "t06": {
+      "fixture_identity": "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"
+    },
+    "t07": {
+      "benchmark_batch_id": "BENCH-VS01-BATCH-01",
+      "benchmark_markdown_sha256": "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff",
+      "benchmark_cases_sha256": "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f",
+      "run_result_identity": "2f5838b85627c257d94436ff2aed94d2bf3528ed478b6ae2a3e2f81f7db9ae7f",
+      "run_result_file_sha256": "32649b32eafeea121f6c0eea9aa43819863ed07a528577f2a40c2ff3847ee853",
+      "publication_receipt_identity": "01a03a85-e49b-7d1c-b737-b560fd9a17df",
+      "fixed_case_id": "VS01-B08-C01",
+      "fixed_case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+      "fixed_case_reference_score": {
+        "earned": 8,
+        "maximum": 8
+      }
+    }
+  },
+  "pair": {
+    "pair_id": "BENCH-VS01-B08-PAIR-01",
+    "same_prompt_required": true,
+    "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+    "fixed_condition": {
+      "case_id": "VS01-B08-C01",
+      "authority": "BYTE_PRESERVED_T07_CASE_AND_PUBLISHED_REFERENCE_RESULT",
+      "evidence_availability": "TRANSLATIONS_ONLY_NO_ACQUISITION_TOOLS",
+      "required_behavior": "ABSTAIN_AND_REQUEST_MISSING_EVIDENCE",
+      "score": {
+        "earned": 8,
+        "maximum": 8
+      }
+    },
+    "runtime_condition": {
+      "schema_version": "1.0",
+      "case_id": "VS01-B08-RUNTIME-C01",
+      "family_id": "VS01-B08",
+      "pair_id": "BENCH-VS01-B08-PAIR-01",
+      "title": "Acquire approved evidence before answering the translations-only question",
+      "track": "TOOLS_RETRIEVAL_AND_RUNTIME",
+      "review_partition": "MIXED_REV_P0_OPERATIONAL_AND_REV_P1_SOURCE_VERIFIABLE",
+      "split_recommendation": "DEV_PUBLIC_CANDIDATE",
+      "evaluation_mode": "FULL_RUNTIME_HARNESS",
+      "answer_mode": "STUDY",
+      "construct": "Evidence-sufficiency recognition, deterministic approved evidence acquisition, and bounded source-verifiable continuation.",
+      "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+      "paired_fixed_case": {
+        "case_id": "VS01-B08-C01",
+        "case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+        "prompt_must_be_byte_identical": true,
+        "fixed_evidence_behavior": "ABSTAIN_AND_REQUEST_MISSING_EVIDENCE",
+        "fixed_reference_score": {
+          "earned": 8,
+          "maximum": 8
+        }
+      },
+      "initial_evidence_contract": {
+        "contract_id": "EC-VS01-08-RUNTIME-ACQUISITION",
+        "completeness": "INTENTIONALLY_INCOMPLETE_BUT_TOOLS_AVAILABLE",
+        "visible_evidence": [
+          {
+            "runtime_evidence_id": "EV-T08-INITIAL-ASV",
+            "t04_evidence_id": "EV-T04-ASV-001",
+            "source_handle": "SP01-SRC-003#John.1.5",
+            "source_role": "ENGLISH_TRANSLATION_A",
+            "state": "INITIAL_VISIBLE",
+            "exact_excerpt": "And the light shineth in the darkness; and the darkness apprehended it not."
+          },
+          {
+            "runtime_evidence_id": "EV-T08-INITIAL-WEB",
+            "t04_evidence_id": "EV-T04-WEB-001",
+            "source_handle": "SP01-SRC-004#John.1.5",
+            "source_role": "ENGLISH_TRANSLATION_B",
+            "state": "INITIAL_VISIBLE",
+            "exact_excerpt": "The light shines in the darkness, and the darkness hasn’t overcome it."
+          }
+        ],
+        "initially_hidden_evidence_ids": [
+          "EV-T04-NORM-001",
+          "EV-T04-GRK-001",
+          "EV-T04-MORPH-001",
+          "EV-T04-LEX-000",
+          "EV-T04-LEX-001",
+          "EV-T04-LEX-002",
+          "EV-T04-LEX-003",
+          "EV-T04-METHOD-001",
+          "EV-T04-METHOD-002",
+          "EV-T04-BOUNDARY-001"
+        ],
+        "critical_apparatus_available": false,
+        "expected_initial_behavior": "Record insufficiency, freeze the approved acquisition plan, and acquire the available T04-bound evidence before answering."
+      },
+      "tool_plan": [
+        {
+          "sequence": 1,
+          "tool_call_id": "TC-T08-001",
+          "tool": "assess_evidence_sufficiency",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+            "visible_evidence_ids": [
+              "EV-T08-INITIAL-ASV",
+              "EV-T08-INITIAL-WEB"
+            ],
+            "requested_claim_classes": [
+              "GREEK_LEXICAL_RANGE",
+              "MORPHOLOGY",
+              "CONTEXTUAL_EFFECT",
+              "TEXTUAL_VARIANT_STATUS"
+            ]
+          },
+          "expected_output": {
+            "status": "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS",
+            "supported_now": [
+              "ENGLISH_WORDING_DIFFERENCE"
+            ],
+            "missing_roles": [
+              "GREEK_TEXT_AUTHORITY",
+              "MORPHOLOGY_AND_LEMMA",
+              "LEXICAL_RANGE",
+              "TRANSLATION_NUANCE_CLAIM_GRAPH"
+            ],
+            "unavailable_role": "CRITICAL_APPARATUS_AND_WITNESS_EVIDENCE"
+          }
+        },
+        {
+          "sequence": 2,
+          "tool_call_id": "TC-T08-002",
+          "tool": "load_published_t04_packet",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": true,
+          "input": {
+            "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+            "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+            "receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+            "receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
+          },
+          "expected_output": {
+            "packet_loads": 1,
+            "packet_verified": true,
+            "available_evidence_ids": [
+              "EV-T04-NORM-001",
+              "EV-T04-GRK-001",
+              "EV-T04-MORPH-001",
+              "EV-T04-ASV-001",
+              "EV-T04-WEB-001",
+              "EV-T04-LEX-000",
+              "EV-T04-LEX-001",
+              "EV-T04-LEX-002",
+              "EV-T04-LEX-003",
+              "EV-T04-METHOD-001",
+              "EV-T04-METHOD-002",
+              "EV-T04-BOUNDARY-001"
+            ],
+            "available_claim_count": 16,
+            "raw_source_access": false
+          }
+        },
+        {
+          "sequence": 3,
+          "tool_call_id": "TC-T08-003",
+          "tool": "select_sblgnt_exact_source_view",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "source_handle": "SP01-SRC-001#John.1.5"
+          },
+          "expected_output": {
+            "evidence_ids": [
+              "EV-T04-GRK-001"
+            ],
+            "exact_excerpt": "καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν."
+          }
+        },
+        {
+          "sequence": 4,
+          "tool_call_id": "TC-T08-004",
+          "tool": "select_morphgnt_target_token",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "source_handle": "SP01-SRC-002#John.1.5:κατέλαβεν"
+          },
+          "expected_output": {
+            "evidence_ids": [
+              "EV-T04-MORPH-001"
+            ],
+            "source_form": "κατέλαβεν",
+            "lemma": "καταλαμβάνω",
+            "person": "third",
+            "number": "singular",
+            "tense_form": "aorist",
+            "voice_form": "active",
+            "mood_form": "indicative"
+          }
+        },
+        {
+          "sequence": 5,
+          "tool_call_id": "TC-T08-005",
+          "tool": "select_abbott_smith_entry_projection",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "source_handle": "SP01-SRC-005#καταλαμβάνω"
+          },
+          "expected_output": {
+            "evidence_ids": [
+              "EV-T04-LEX-000",
+              "EV-T04-LEX-001",
+              "EV-T04-LEX-002",
+              "EV-T04-LEX-003"
+            ],
+            "target_passage_sense": "sense 2 — to overtake",
+            "mental_action_target_passage_present": false
+          }
+        },
+        {
+          "sequence": 6,
+          "tool_call_id": "TC-T08-006",
+          "tool": "select_t04_translation_nuance_projection",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "projection_handle": "SP01-DER-001#John.1.5"
+          },
+          "expected_output": {
+            "evidence_ids": [
+              "EV-T04-NORM-001",
+              "EV-T04-METHOD-001",
+              "EV-T04-METHOD-002",
+              "EV-T04-BOUNDARY-001"
+            ],
+            "claim_ids": [
+              "CLM-T04-010",
+              "CLM-T04-011",
+              "CLM-T04-012",
+              "CLM-T04-020",
+              "CLM-T04-021",
+              "CLM-T04-022",
+              "CLM-T04-030",
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-040",
+              "CLM-T04-041",
+              "CLM-T04-042",
+              "CLM-T04-043",
+              "CLM-T04-050",
+              "CLM-T04-060"
+            ],
+            "accepted_alternatives": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ]
+          }
+        },
+        {
+          "sequence": 7,
+          "tool_call_id": "TC-T08-007",
+          "tool": "verify_complete_tnc_evidence_contract",
+          "maximum_calls": 1,
+          "network": false,
+          "archive_read": false,
+          "input": {
+            "target_contract": "EC-VS01-03-COMPLETE-TNC",
+            "required_evidence_ids": [
+              "EV-T04-NORM-001",
+              "EV-T04-GRK-001",
+              "EV-T04-MORPH-001",
+              "EV-T04-ASV-001",
+              "EV-T04-WEB-001",
+              "EV-T04-LEX-000",
+              "EV-T04-LEX-001",
+              "EV-T04-LEX-002",
+              "EV-T04-LEX-003",
+              "EV-T04-METHOD-001",
+              "EV-T04-METHOD-002",
+              "EV-T04-BOUNDARY-001"
+            ]
+          },
+          "expected_output": {
+            "status": "SUFFICIENT_WITH_QUALIFICATION",
+            "evidence_count": 12,
+            "claim_count": 15,
+            "remaining_limitations": [
+              "critical apparatus and witness evidence",
+              "translation-project source-base documentation",
+              "translator documentation",
+              "modern specialist scholarship",
+              "historical English semantic evidence for ASV “apprehended”"
+            ]
+          }
+        }
+      ],
+      "runtime_state_sequence": [
+        "RECEIVED",
+        "NORMALIZED",
+        "CLASSIFIED",
+        "INITIAL_EVIDENCE_BOUND",
+        "EVIDENCE_ASSESSED_INSUFFICIENT",
+        "PLAN_FROZEN",
+        "EVIDENCE_ACQUIRING",
+        "EVIDENCE_ACQUIRED",
+        "EVIDENCE_REASSESSED_SUFFICIENT_WITH_QUALIFICATION",
+        "CLAIMS_RESOLVED",
+        "ANSWER_CANDIDATE_BOUND",
+        "VERIFYING",
+        "RENDERED",
+        "AUDITED",
+        "COMPLETE"
+      ],
+      "audit_event_sequence": [
+        "RUN_RECEIVED",
+        "INITIAL_TRANSLATIONS_BOUND",
+        "INITIAL_SUFFICIENCY_ASSESSED",
+        "ACQUISITION_PLAN_FROZEN",
+        "T04_PACKET_LOADED",
+        "SBLGNT_VIEW_ACQUIRED",
+        "MORPHGNT_VIEW_ACQUIRED",
+        "ABBOTT_SMITH_VIEW_ACQUIRED",
+        "T04_PROJECTION_ACQUIRED",
+        "EVIDENCE_LEDGER_COMPLETED",
+        "EVIDENCE_SUFFICIENCY_REASSESSED",
+        "CLAIM_LEDGER_COMPLETED",
+        "ANSWER_CANDIDATE_BOUND",
+        "ANSWER_VERIFIED",
+        "ANSWER_RENDERED",
+        "AUDIT_FINALIZED",
+        "RUN_COMPLETE"
+      ],
+      "answer_contract": {
+        "reference_content_authority": {
+          "t05_study_answer_identity": "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd",
+          "t05_study_markdown_sha256": "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6",
+          "t05_execution_record_identity": "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc"
+        },
+        "required_evidence_ids": [
+          "EV-T04-NORM-001",
+          "EV-T04-GRK-001",
+          "EV-T04-MORPH-001",
+          "EV-T04-ASV-001",
+          "EV-T04-WEB-001",
+          "EV-T04-LEX-000",
+          "EV-T04-LEX-001",
+          "EV-T04-LEX-002",
+          "EV-T04-LEX-003",
+          "EV-T04-METHOD-001",
+          "EV-T04-METHOD-002",
+          "EV-T04-BOUNDARY-001"
+        ],
+        "required_claim_ids": [
+          "CLM-T04-010",
+          "CLM-T04-011",
+          "CLM-T04-012",
+          "CLM-T04-020",
+          "CLM-T04-021",
+          "CLM-T04-022",
+          "CLM-T04-030",
+          "CLM-T04-031",
+          "CLM-T04-032",
+          "CLM-T04-040",
+          "CLM-T04-041",
+          "CLM-T04-042",
+          "CLM-T04-043",
+          "CLM-T04-050",
+          "CLM-T04-060"
+        ],
+        "required_citation_ids": [
+          "CIT-T05-001",
+          "CIT-T05-002",
+          "CIT-T05-003",
+          "CIT-T05-004",
+          "CIT-T05-005",
+          "CIT-T05-006",
+          "CIT-T05-007",
+          "CIT-T05-008",
+          "CIT-T05-009",
+          "CIT-T05-010"
+        ],
+        "required_alternative_ids": [
+          "ALT-T04-CONFLICT",
+          "ALT-T04-COGNITIVE",
+          "ALT-T04-DOUBLE-RESONANCE"
+        ],
+        "material_uncertainty_claim_ids": [
+          "CLM-T04-042",
+          "CLM-T04-043"
+        ],
+        "blocks": [
+          {
+            "block_id": "STUDY-DIRECT",
+            "heading": "Direct answer",
+            "text": "No different Greek source reading is required to explain this controlled contrast. The strongest bounded assessment is a translation-choice difference associated with lexical construal and interpretive effect, not a demonstrated textual-state difference.",
+            "claim_ids": [
+              "CLM-T04-041",
+              "CLM-T04-060"
+            ],
+            "citation_ids": [
+              "CIT-T05-003",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ]
+          },
+          {
+            "block_id": "STUDY-TEXTS",
+            "heading": "The two approved renderings",
+            "text": "The approved ASV reads, “And the light shineth in the darkness; and the darkness apprehended it not.” The approved WEB Classic reads, “The light shines in the darkness, and the darkness hasn’t overcome it.” The salient final-clause contrast is therefore “apprehended it not” versus “hasn’t overcome it.”",
+            "claim_ids": [
+              "CLM-T04-020",
+              "CLM-T04-021",
+              "CLM-T04-022"
+            ],
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002"
+            ]
+          },
+          {
+            "block_id": "STUDY-GREEK",
+            "heading": "The Greek form",
+            "text": "The controlled SBLGNT final clause is “καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν.” The target form, κατέλαβεν, comes from καταλαμβάνω and is parsed as third-person singular aorist active indicative. That formal morphology does not by itself establish the contextual English sense, aspectual interpretation, discourse effect, translator intent, or theology.",
+            "claim_ids": [
+              "CLM-T04-010",
+              "CLM-T04-011",
+              "CLM-T04-012"
+            ],
+            "citation_ids": [
+              "CIT-T05-003",
+              "CIT-T05-004"
+            ]
+          },
+          {
+            "block_id": "STUDY-LEXICON",
+            "heading": "What the lexical evidence contributes",
+            "text": "Abbott-Smith distinguishes a grasping or seizing sense, an overtaking sense, and a separate mental-action “apprehend/comprehend” sense. It explicitly lists John 1:5 under sense 2, “to overtake.” Its mental-action sense is attested elsewhere in the entry and is not directly assigned there to John 1:5. The entry therefore supports a bounded lexical range, but its several senses are context-specific possibilities rather than meanings that become simultaneously active merely because they occur in one lexicon entry.",
+            "claim_ids": [
+              "CLM-T04-030",
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-050"
+            ],
+            "citation_ids": [
+              "CIT-T05-005",
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-010"
+            ]
+          },
+          {
+            "block_id": "STUDY-ALTERNATIVES",
+            "heading": "Defensible effects and possibilities",
+            "text": "The conflict or defeat effect is strongly supported within this packet: WEB Classic foregrounds darkness failing to overcome the light, and Abbott-Smith places John 1:5 under “to overtake.” A cognitive or apprehension effect remains plausible because the ASV wording can make that construal salient, although Abbott-Smith does not directly assign John 1:5 to its mental-action sense. Possible ambiguity or double resonance also remains plausible, but the packet does not establish that every lexical sense is active or that the Greek “literally means both.”",
+            "claim_ids": [
+              "CLM-T04-031",
+              "CLM-T04-032",
+              "CLM-T04-050"
+            ],
+            "alternative_ids": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ],
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002",
+              "CIT-T05-005",
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-010"
+            ]
+          },
+          {
+            "block_id": "STUDY-TEXTUAL-STATE",
+            "heading": "What this does and does not say about manuscripts",
+            "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent.",
+            "claim_ids": [
+              "CLM-T04-040",
+              "CLM-T04-041",
+              "CLM-T04-042",
+              "CLM-T04-043"
+            ],
+            "citation_ids": [
+              "CIT-T05-001",
+              "CIT-T05-002",
+              "CIT-T05-003",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ]
+          },
+          {
+            "block_id": "STUDY-ASSESSMENT",
+            "heading": "Assessment and limits",
+            "text": "The strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion.",
+            "claim_ids": [
+              "CLM-T04-060",
+              "CLM-T04-042",
+              "CLM-T04-043"
+            ],
+            "alternative_ids": [
+              "ALT-T04-CONFLICT",
+              "ALT-T04-COGNITIVE",
+              "ALT-T04-DOUBLE-RESONANCE"
+            ],
+            "citation_ids": [
+              "CIT-T05-006",
+              "CIT-T05-007",
+              "CIT-T05-008",
+              "CIT-T05-009"
+            ]
+          }
+        ],
+        "required_outcome": "VERIFIED_WITH_QUALIFICATION",
+        "answer_before_final_sufficiency_check": "PROHIBITED",
+        "prohibited_claims": [
+          "The two translations prove different Greek manuscripts.",
+          "The evidence proves that no textual variant exists.",
+          "The evidence proves that a textual variant exists.",
+          "All lexical senses are simultaneously active.",
+          "Morphology determines the contextual English sense.",
+          "Abbott-Smith records a final modern scholarly consensus.",
+          "Translator intent is known.",
+          "One final specialist-preferred rendering is established."
+        ]
+      },
+      "rubric": [
+        {
+          "criterion_id": "B08-RT-R1",
+          "label": "Recognizes initial insufficiency before answering",
+          "weight": 2,
+          "hard_failure_if": "Answers Greek, lexical, morphology, or textual-state questions before acquisition, or silently uses hidden evidence.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R2",
+          "label": "Selects the complete approved acquisition plan",
+          "weight": 2,
+          "hard_failure_if": "Fails to attempt available approved evidence acquisition or invokes an unauthorized tool.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R3",
+          "label": "Executes the exact tool and audit sequence",
+          "weight": 1,
+          "hard_failure_if": "Omits, fabricates, duplicates, or silently retries an acquisition event.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R4",
+          "label": "Preserves evidence provenance and visible/hidden boundaries",
+          "weight": 2,
+          "hard_failure_if": "Uses evidence without a retained acquisition record or accesses raw/T03/scorer-only authority.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R5",
+          "label": "Accurately reports Greek wording and morphology",
+          "weight": 2,
+          "hard_failure_if": "Uses the wrong Greek form or parse, or treats morphology as decisive contextual meaning.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R6",
+          "label": "Uses lexical evidence with contextual restraint",
+          "weight": 2,
+          "hard_failure_if": "Commits illegitimate totality transfer or claims the lexicon alone settles the verse.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R7",
+          "label": "Explains translation and textual-state limits correctly",
+          "weight": 2,
+          "hard_failure_if": "Treats translations as manuscript witnesses or claims the evidence proves that a variant does or does not exist.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R8",
+          "label": "Maintains claim, citation, correction, and audit integrity",
+          "weight": 1,
+          "hard_failure_if": "Fabricates a source/event, attaches a claim to incompatible evidence, or loses correction lineage.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        }
+      ],
+      "reference_expected_score": {
+        "criterion_count": 8,
+        "weight_sum": 14,
+        "maximum_points": 28,
+        "required_points": 28,
+        "hard_failures": 0
+      },
+      "status": "CHATGPT_FROZEN_PENDING_IMPLEMENTATION",
+      "design_author": "ChatGPT",
+      "owner_review_state": "OWNER_APPROVED_DESIGN",
+      "training_eligible": false,
+      "private_final_eligible": false,
+      "public_safe_candidate": true,
+      "case_content_sha256": "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd"
+    },
+    "pair_invariant": "With the same prompt, correct behavior changes only because approved evidence acquisition is unavailable in the fixed condition and available in the runtime condition."
+  },
+  "runtime_subject": {
+    "subject_id": "VS01-T08-DETERMINISTIC-RUNTIME-v1",
+    "subject_type": "DETERMINISTIC_FULL_RUNTIME_REFERENCE",
+    "model_route": "NONE",
+    "model_invocations": 0,
+    "network_requests": 0,
+    "raw_source_reads": 0,
+    "t03_reads": 0,
+    "packet_loads": 1,
+    "runtime_tool_calls": 7,
+    "repair_attempts": 0,
+    "role": "Reference orchestration and acquisition conformance only; not autonomous model tool-choice or product scholarly-capability evidence.",
+    "future_model_boundary": {
+      "protocol": "VS01RuntimeSubjectAdapter",
+      "implementation": null,
+      "provider": null,
+      "model": null,
+      "prompt": null,
+      "invocation_authority": false,
+      "separate_design_required": true
+    }
+  },
+  "subject_scorer_firewall": {
+    "subject_receives": [
+      "case identity and exact prompt",
+      "two initial translation evidence records",
+      "seven tool schemas",
+      "case-local response schema and budgets"
+    ],
+    "subject_never_receives_before_acquisition": [
+      "SBLGNT content",
+      "MorphGNT content",
+      "Abbott-Smith content",
+      "T04 claim graph",
+      "T05 answer blocks",
+      "expected tool-call order or outputs",
+      "rubric, hard failures, reference answer, or thresholds"
+    ],
+    "scorer_receives": [
+      "complete pair specification",
+      "expected acquisition sequence and outputs",
+      "T04 evidence and claim authority",
+      "T05 answer authority",
+      "T07 fixed-case result authority"
+    ],
+    "hidden_evidence_access_disposition": "INVALID_LEAKAGE_INCIDENT"
+  },
+  "acquisition_and_audit": {
+    "tool_calls": [
+      {
+        "sequence": 1,
+        "tool_call_id": "TC-T08-001",
+        "tool": "assess_evidence_sufficiency",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both “understand” and “overcome,” and is a textual variant involved?",
+          "visible_evidence_ids": [
+            "EV-T08-INITIAL-ASV",
+            "EV-T08-INITIAL-WEB"
+          ],
+          "requested_claim_classes": [
+            "GREEK_LEXICAL_RANGE",
+            "MORPHOLOGY",
+            "CONTEXTUAL_EFFECT",
+            "TEXTUAL_VARIANT_STATUS"
+          ]
+        },
+        "expected_output": {
+          "status": "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS",
+          "supported_now": [
+            "ENGLISH_WORDING_DIFFERENCE"
+          ],
+          "missing_roles": [
+            "GREEK_TEXT_AUTHORITY",
+            "MORPHOLOGY_AND_LEMMA",
+            "LEXICAL_RANGE",
+            "TRANSLATION_NUANCE_CLAIM_GRAPH"
+          ],
+          "unavailable_role": "CRITICAL_APPARATUS_AND_WITNESS_EVIDENCE"
+        }
+      },
+      {
+        "sequence": 2,
+        "tool_call_id": "TC-T08-002",
+        "tool": "load_published_t04_packet",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": true,
+        "input": {
+          "packet_identity": "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31",
+          "packet_canonical_sha256": "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409",
+          "receipt_identity": "01a02bbe-bda5-776b-a95e-16bb40d18597",
+          "receipt_file_sha256": "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
+        },
+        "expected_output": {
+          "packet_loads": 1,
+          "packet_verified": true,
+          "available_evidence_ids": [
+            "EV-T04-NORM-001",
+            "EV-T04-GRK-001",
+            "EV-T04-MORPH-001",
+            "EV-T04-ASV-001",
+            "EV-T04-WEB-001",
+            "EV-T04-LEX-000",
+            "EV-T04-LEX-001",
+            "EV-T04-LEX-002",
+            "EV-T04-LEX-003",
+            "EV-T04-METHOD-001",
+            "EV-T04-METHOD-002",
+            "EV-T04-BOUNDARY-001"
+          ],
+          "available_claim_count": 16,
+          "raw_source_access": false
+        }
+      },
+      {
+        "sequence": 3,
+        "tool_call_id": "TC-T08-003",
+        "tool": "select_sblgnt_exact_source_view",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "source_handle": "SP01-SRC-001#John.1.5"
+        },
+        "expected_output": {
+          "evidence_ids": [
+            "EV-T04-GRK-001"
+          ],
+          "exact_excerpt": "καὶ ἡ σκοτία αὐτὸ οὐ κατέλαβεν."
+        }
+      },
+      {
+        "sequence": 4,
+        "tool_call_id": "TC-T08-004",
+        "tool": "select_morphgnt_target_token",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "source_handle": "SP01-SRC-002#John.1.5:κατέλαβεν"
+        },
+        "expected_output": {
+          "evidence_ids": [
+            "EV-T04-MORPH-001"
+          ],
+          "source_form": "κατέλαβεν",
+          "lemma": "καταλαμβάνω",
+          "person": "third",
+          "number": "singular",
+          "tense_form": "aorist",
+          "voice_form": "active",
+          "mood_form": "indicative"
+        }
+      },
+      {
+        "sequence": 5,
+        "tool_call_id": "TC-T08-005",
+        "tool": "select_abbott_smith_entry_projection",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "source_handle": "SP01-SRC-005#καταλαμβάνω"
+        },
+        "expected_output": {
+          "evidence_ids": [
+            "EV-T04-LEX-000",
+            "EV-T04-LEX-001",
+            "EV-T04-LEX-002",
+            "EV-T04-LEX-003"
+          ],
+          "target_passage_sense": "sense 2 — to overtake",
+          "mental_action_target_passage_present": false
+        }
+      },
+      {
+        "sequence": 6,
+        "tool_call_id": "TC-T08-006",
+        "tool": "select_t04_translation_nuance_projection",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "projection_handle": "SP01-DER-001#John.1.5"
+        },
+        "expected_output": {
+          "evidence_ids": [
+            "EV-T04-NORM-001",
+            "EV-T04-METHOD-001",
+            "EV-T04-METHOD-002",
+            "EV-T04-BOUNDARY-001"
+          ],
+          "claim_ids": [
+            "CLM-T04-010",
+            "CLM-T04-011",
+            "CLM-T04-012",
+            "CLM-T04-020",
+            "CLM-T04-021",
+            "CLM-T04-022",
+            "CLM-T04-030",
+            "CLM-T04-031",
+            "CLM-T04-032",
+            "CLM-T04-040",
+            "CLM-T04-041",
+            "CLM-T04-042",
+            "CLM-T04-043",
+            "CLM-T04-050",
+            "CLM-T04-060"
+          ],
+          "accepted_alternatives": [
+            "ALT-T04-CONFLICT",
+            "ALT-T04-COGNITIVE",
+            "ALT-T04-DOUBLE-RESONANCE"
+          ]
+        }
+      },
+      {
+        "sequence": 7,
+        "tool_call_id": "TC-T08-007",
+        "tool": "verify_complete_tnc_evidence_contract",
+        "maximum_calls": 1,
+        "network": false,
+        "archive_read": false,
+        "input": {
+          "target_contract": "EC-VS01-03-COMPLETE-TNC",
+          "required_evidence_ids": [
+            "EV-T04-NORM-001",
+            "EV-T04-GRK-001",
+            "EV-T04-MORPH-001",
+            "EV-T04-ASV-001",
+            "EV-T04-WEB-001",
+            "EV-T04-LEX-000",
+            "EV-T04-LEX-001",
+            "EV-T04-LEX-002",
+            "EV-T04-LEX-003",
+            "EV-T04-METHOD-001",
+            "EV-T04-METHOD-002",
+            "EV-T04-BOUNDARY-001"
+          ]
+        },
+        "expected_output": {
+          "status": "SUFFICIENT_WITH_QUALIFICATION",
+          "evidence_count": 12,
+          "claim_count": 15,
+          "remaining_limitations": [
+            "critical apparatus and witness evidence",
+            "translation-project source-base documentation",
+            "translator documentation",
+            "modern specialist scholarship",
+            "historical English semantic evidence for ASV “apprehended”"
+          ]
+        }
+      }
+    ],
+    "final_evidence_ids": [
+      "EV-T04-NORM-001",
+      "EV-T04-GRK-001",
+      "EV-T04-MORPH-001",
+      "EV-T04-ASV-001",
+      "EV-T04-WEB-001",
+      "EV-T04-LEX-000",
+      "EV-T04-LEX-001",
+      "EV-T04-LEX-002",
+      "EV-T04-LEX-003",
+      "EV-T04-METHOD-001",
+      "EV-T04-METHOD-002",
+      "EV-T04-BOUNDARY-001"
+    ],
+    "final_claim_ids": [
+      "CLM-T04-010",
+      "CLM-T04-011",
+      "CLM-T04-012",
+      "CLM-T04-020",
+      "CLM-T04-021",
+      "CLM-T04-022",
+      "CLM-T04-030",
+      "CLM-T04-031",
+      "CLM-T04-032",
+      "CLM-T04-040",
+      "CLM-T04-041",
+      "CLM-T04-042",
+      "CLM-T04-043",
+      "CLM-T04-050",
+      "CLM-T04-060"
+    ],
+    "citation_ids": [
+      "CIT-T05-001",
+      "CIT-T05-002",
+      "CIT-T05-003",
+      "CIT-T05-004",
+      "CIT-T05-005",
+      "CIT-T05-006",
+      "CIT-T05-007",
+      "CIT-T05-008",
+      "CIT-T05-009",
+      "CIT-T05-010"
+    ],
+    "state_sequence": [
+      "RECEIVED",
+      "NORMALIZED",
+      "CLASSIFIED",
+      "INITIAL_EVIDENCE_BOUND",
+      "EVIDENCE_ASSESSED_INSUFFICIENT",
+      "PLAN_FROZEN",
+      "EVIDENCE_ACQUIRING",
+      "EVIDENCE_ACQUIRED",
+      "EVIDENCE_REASSESSED_SUFFICIENT_WITH_QUALIFICATION",
+      "CLAIMS_RESOLVED",
+      "ANSWER_CANDIDATE_BOUND",
+      "VERIFYING",
+      "RENDERED",
+      "AUDITED",
+      "COMPLETE"
+    ],
+    "event_sequence": [
+      "RUN_RECEIVED",
+      "INITIAL_TRANSLATIONS_BOUND",
+      "INITIAL_SUFFICIENCY_ASSESSED",
+      "ACQUISITION_PLAN_FROZEN",
+      "T04_PACKET_LOADED",
+      "SBLGNT_VIEW_ACQUIRED",
+      "MORPHGNT_VIEW_ACQUIRED",
+      "ABBOTT_SMITH_VIEW_ACQUIRED",
+      "T04_PROJECTION_ACQUIRED",
+      "EVIDENCE_LEDGER_COMPLETED",
+      "EVIDENCE_SUFFICIENCY_REASSESSED",
+      "CLAIM_LEDGER_COMPLETED",
+      "ANSWER_CANDIDATE_BOUND",
+      "ANSWER_VERIFIED",
+      "ANSWER_RENDERED",
+      "AUDIT_FINALIZED",
+      "RUN_COMPLETE"
+    ],
+    "event_hash_chain": "SHA-256 over prior-event hash plus RFC 8785 event semantics",
+    "timestamps_in_semantic_identity": false,
+    "no_answer_before_event": "EVIDENCE_SUFFICIENCY_REASSESSED"
+  },
+  "correction_behavior": {
+    "reference_case_contains_correction": false,
+    "rule": "A correction creates a new immutable request revision and run. It never overwrites the earlier request, plan, evidence ledger, answer, or audit.",
+    "before_answer": "Invalidate the current answer candidate and plan identity; rebind any still-valid evidence into a new run ledger; rerun sufficiency and verification.",
+    "after_answer": "Create a new run linked to the prior run; retain the prior run unchanged.",
+    "stale_answer_reuse": "PROHIBITED",
+    "t05_lineage_reused_as_method_authority": true
+  },
+  "public_contracts": [
+    {
+      "contract": "VS01B08RuntimePairSpecification",
+      "purpose": "Exact pair, prompt, initial evidence, tools, state machine, answer contract, scoring, and upstream authority.",
+      "nested_contracts": [
+        "RuntimeToolDefinition",
+        "RuntimeCriterion"
+      ]
+    },
+    {
+      "contract": "VS01RuntimeAcquisitionRun",
+      "purpose": "One immutable execution containing tool calls, evidence ledger, claim ledger, answer projection, event chain, verification, and audit.",
+      "nested_contracts": [
+        "RuntimeToolCallRecord",
+        "RuntimeEvidenceLedgerRecord",
+        "RuntimeClaimLedgerRecord",
+        "RuntimeAnswerProjection",
+        "RuntimeAuditEvent"
+      ]
+    },
+    {
+      "contract": "VS01B08RuntimePairResult",
+      "purpose": "Fixed-case and runtime-case results, paired scores, failures, limitations, and screening disposition."
+    },
+    {
+      "contract": "VS01RuntimeScreeningReceipt",
+      "purpose": "Operational UUIDv7 receipt binding specification, acquisition run, pair result, publication paths, fingerprints, and zero-operation boundaries."
+    }
+  ],
+  "scoring": {
+    "ordinal_scale": {
+      "0": "Absent, incorrect, or materially unsupported.",
+      "1": "Partially correct but materially incomplete, imprecise, or weakly supported.",
+      "2": "Correct, sufficiently supported, and appropriately qualified."
+    },
+    "fixed_case": {
+      "criteria": [
+        {
+          "criterion_id": "B08-R1",
+          "weight": 2
+        },
+        {
+          "criterion_id": "B08-R2",
+          "weight": 1
+        },
+        {
+          "criterion_id": "B08-R3",
+          "weight": 1
+        }
+      ],
+      "maximum_points": 8,
+      "reference_points": 8
+    },
+    "runtime_case": {
+      "criteria": [
+        {
+          "criterion_id": "B08-RT-R1",
+          "label": "Recognizes initial insufficiency before answering",
+          "weight": 2,
+          "hard_failure_if": "Answers Greek, lexical, morphology, or textual-state questions before acquisition, or silently uses hidden evidence.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R2",
+          "label": "Selects the complete approved acquisition plan",
+          "weight": 2,
+          "hard_failure_if": "Fails to attempt available approved evidence acquisition or invokes an unauthorized tool.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R3",
+          "label": "Executes the exact tool and audit sequence",
+          "weight": 1,
+          "hard_failure_if": "Omits, fabricates, duplicates, or silently retries an acquisition event.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R4",
+          "label": "Preserves evidence provenance and visible/hidden boundaries",
+          "weight": 2,
+          "hard_failure_if": "Uses evidence without a retained acquisition record or accesses raw/T03/scorer-only authority.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R5",
+          "label": "Accurately reports Greek wording and morphology",
+          "weight": 2,
+          "hard_failure_if": "Uses the wrong Greek form or parse, or treats morphology as decisive contextual meaning.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R6",
+          "label": "Uses lexical evidence with contextual restraint",
+          "weight": 2,
+          "hard_failure_if": "Commits illegitimate totality transfer or claims the lexicon alone settles the verse.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        },
+        {
+          "criterion_id": "B08-RT-R7",
+          "label": "Explains translation and textual-state limits correctly",
+          "weight": 2,
+          "hard_failure_if": "Treats translations as manuscript witnesses or claims the evidence proves that a variant does or does not exist.",
+          "hard_failure_severity": "HF-1_CRITICAL"
+        },
+        {
+          "criterion_id": "B08-RT-R8",
+          "label": "Maintains claim, citation, correction, and audit integrity",
+          "weight": 1,
+          "hard_failure_if": "Fabricates a source/event, attaches a claim to incompatible evidence, or loses correction lineage.",
+          "hard_failure_severity": "HF-2_MAJOR"
+        }
+      ],
+      "maximum_points": 28,
+      "reference_points": 28
+    },
+    "pair": {
+      "criterion_count": 11,
+      "weight_sum": 18,
+      "maximum_points": 36,
+      "reference_points": 36
+    },
+    "reference_conformance_gate": {
+      "fixed_points": 8,
+      "runtime_points": 28,
+      "pair_points": 36,
+      "all_tool_calls_exact": true,
+      "all_events_exact": true,
+      "hard_failures": 0,
+      "leakage_incidents": 0,
+      "two_replays_identical": true,
+      "classification": "REFERENCE_CONFORMANT"
+    },
+    "future_screening_gate": {
+      "fixed_minimum": 7,
+      "runtime_minimum": 24,
+      "pair_minimum": 32,
+      "no_criterion_zero": true,
+      "hf1_hf2_hf3_required": 0,
+      "early_answer_count": 0,
+      "hidden_evidence_count": 0,
+      "missing_required_tool_calls": 0,
+      "classification": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+      "product_or_runtime_promotion": false
+    }
+  },
+  "hard_failures": [
+    "EARLY_UNGROUNDED_ANSWER",
+    "HIDDEN_EVIDENCE_ACCESS",
+    "AVAILABLE_EVIDENCE_NOT_ACQUIRED",
+    "UNAUTHORIZED_SOURCE_OR_RAW_READ",
+    "TRANSLATION_AS_MANUSCRIPT_WITNESS",
+    "FALSE_TEXTUAL_VARIANT_CERTAINTY",
+    "MORPHOLOGY_OR_LEXICON_OVERCLAIM",
+    "TOOL_OR_EVENT_FABRICATION",
+    "CLAIM_CITATION_MISMATCH",
+    "CORRECTION_LINEAGE_LOSS",
+    "MODEL_OR_NETWORK_ROUTE"
+  ],
+  "promotion_and_no_go": {
+    "reference_result_evidence": "IMPLEMENTATION_AND_RUNTIME_CONFORMANCE_ONLY",
+    "future_candidate_evidence": "CONTROLLED_RUNTIME_SCREENING_ONLY",
+    "product_promotion_from_pair": false,
+    "model_capability_claim": false,
+    "scholarly_authority_claim": false,
+    "automatic_no_go": [
+      "identity or upstream-authority mismatch",
+      "initial hidden evidence leakage",
+      "answer before insufficiency and acquisition events",
+      "missing, duplicated, reordered, or fabricated required tool call",
+      "raw source, T03, network, model, OCR, or VLM access",
+      "translations treated as manuscript witnesses",
+      "unsupported textual-variant certainty",
+      "evidence/claim/citation mismatch",
+      "correction lineage loss",
+      "replay inequality",
+      "publication mismatch or unresolved incident"
+    ],
+    "remaining_limitations": [
+      "single passage and ChatGPT-authored public screening pair",
+      "deterministic oracle runtime rather than model-mediated tool selection",
+      "no critical apparatus or witness evidence",
+      "no REV-P2 specialist gold",
+      "not training eligible or private-final eligible"
+    ]
+  },
+  "deterministic_replay": {
+    "complete_runs": 2,
+    "semantic_identity_equality": true,
+    "tool_call_sequence_equality": true,
+    "evidence_ledger_equality": true,
+    "claim_ledger_equality": true,
+    "answer_projection_equality": true,
+    "event_chain_equality": true,
+    "allowed_operational_differences": [
+      "receipt UUIDv7",
+      "generated-at timestamp",
+      "measured latency"
+    ]
+  },
+  "publication": {
+    "canonical_archive_root": "/Volumes/BSL-Archive/BiblicalScholarLab",
+    "result_object_path": "objects/sha256/<prefix>/<pair-result-sha256>",
+    "snapshot_path": "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json",
+    "receipt_path": "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json",
+    "stage_path": ".incoming/vs01-b08-runtime-pair-<pair-result-sha256>.runtime-screening-stage",
+    "link_order": [
+      "pair-result object",
+      "stable snapshot",
+      "receipt last"
+    ],
+    "retained_modes": "0444",
+    "exact_partial_recovery": true,
+    "mismatch_policy": "FAIL_CLOSED_NO_REPLACEMENT",
+    "unrelated_incoming_policy": "PRESERVE_AND_IGNORE",
+    "design_turn_publication": false,
+    "implementation_turn_publication": false,
+    "live_publication": "SEPARATE_OWNER_OPERATIONAL_AUTHORIZATION_REQUIRED"
+  },
+  "implementation_tests": [
+    "Verify exact repository, T04, T05, T06, and T07 identities before any implementation proof.",
+    "Verify VS01-B08-C01 remains byte-for-byte unchanged and retains case hash 28ebe4....",
+    "Require the runtime prompt to be byte-identical to the fixed B08 prompt.",
+    "Require exactly two initially visible evidence records and no hidden evidence in the subject envelope.",
+    "Require the exact seven-call tool sequence and reject missing, duplicate, reordered, retried, or fabricated calls.",
+    "Require one T04 packet load and zero T03/raw-source/network/model reads.",
+    "Require exactly 12 final evidence records, 15 answer claims, 10 citations, 7 answer blocks, 15 states, and 17 audit events.",
+    "Reject answer-candidate construction before EVIDENCE_SUFFICIENCY_REASSESSED.",
+    "Require the final answer blocks, claims, citations, alternatives, and material uncertainty to equal the T05 Study authority.",
+    "Require the textual-state answer to preserve UNKNOWN for apparatus and witness evidence.",
+    "Test all hard failures with actual mutated synthetic records, not injected answer keys.",
+    "Test the fixed/runtime pair invariant: abstain when acquisition is unavailable; acquire and continue when it is available.",
+    "Test correction before and after answer without overwriting prior authority.",
+    "Require two deterministic replays with equal semantic identities and event chains.",
+    "Test receipt-last publication and exact partial recovery using temporary archives only.",
+    "Require design and implementation proof to write no canonical archive path and no PostgreSQL row.",
+    "Require model, OCR, VLM, network, cloud, and source-acquisition counts to remain zero."
+  ],
+  "implementation_budget": {
+    "handwritten_active_target": 1500,
+    "handwritten_active_hard_limit": 2200,
+    "handwritten_production_files_hard_limit": 7,
+    "new_public_contracts_hard_limit": 4,
+    "new_direct_dependencies_hard_limit": 0,
+    "new_migrations_hard_limit": 0,
+    "new_task_specific_workflows_hard_limit": 1,
+    "function_logical_lines_hard_limit": 60,
+    "cyclomatic_complexity_hard_limit": 10,
+    "nesting_hard_limit": 3,
+    "production_class_logical_lines_hard_limit": 250,
+    "production_module_physical_lines_hard_limit": 500
+  },
+  "non_goals": [
+    "No Codex implementation or implementation activation in this design turn.",
+    "No runtime, benchmark, model, OCR, VLM, or human-subject execution.",
+    "No change to VS01-B08-C01, BENCH-VS01-BATCH-01, or the published T07 result.",
+    "No raw-source, T03, source-refresh, or network acquisition.",
+    "No critical-apparatus or witness-evidence acquisition.",
+    "No model-mediated tool choice, model judge, or model capability claim.",
+    "No T05 database mutation, new migration, or runtime-row creation.",
+    "No canonical archive publication.",
+    "No web UI, retrieval tuning, embeddings, cloud, training, VS01-T09, or later work.",
+    "No generic retrieval framework, plugin system, provider registry, or future-passage abstraction."
+  ],
+  "spec_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+}

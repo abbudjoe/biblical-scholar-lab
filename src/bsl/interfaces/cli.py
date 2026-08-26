@@ -16,6 +16,7 @@ from bsl.application.john15_study_runtime import execute_john15_study
 from bsl.application.source_acquisition import acquire_source
 from bsl.application.source_admission import compile_source_plan
 from bsl.application.vs01_benchmark_scoring import run_reference_campaign
+from bsl.application.vs01_runtime_screening import run_runtime_pair
 from bsl.contracts.archive import ArchiveReadiness
 from bsl.infrastructure.macos_volume import inspect_volume
 
@@ -77,6 +78,9 @@ def _parser() -> JsonArgumentParser:
     batch = benchmark_commands.add_parser("vs01-batch-01")
     batch.add_argument("--subject", required=True, choices=("deterministic-reference",))
     batch.add_argument("--dry-run", action="store_true")
+    runtime_pair = benchmark_commands.add_parser("vs01-b08-runtime-pair")
+    runtime_pair.add_argument("--subject", required=True, choices=("deterministic-runtime",))
+    runtime_pair.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -187,17 +191,32 @@ def _page(args: argparse.Namespace) -> int:
 
 
 def _benchmark(args: argparse.Namespace) -> int:
-    if args.benchmark_command != "vs01-batch-01" or args.subject != "deterministic-reference":
-        return _emit_error("INVALID_CLI_INPUT", "unsupported benchmark or subject")
-    specification, result, receipt, published = run_reference_campaign(dry_run=args.dry_run)
-    output = {
-        "execution_specification": specification.model_dump(mode="json"),
-        "run_result": result.model_dump(mode="json"),
-        "receipt": receipt.model_dump(mode="json"),
-        "published": published,
-    }
-    print(json.dumps(output, ensure_ascii=False, sort_keys=True))
-    return int(result.disposition != "REFERENCE_CONFORMANT")
+    if args.benchmark_command == "vs01-batch-01" and args.subject == "deterministic-reference":
+        specification, result, receipt, published = run_reference_campaign(dry_run=args.dry_run)
+        output = {
+            "execution_specification": specification.model_dump(mode="json"),
+            "run_result": result.model_dump(mode="json"),
+            "receipt": receipt.model_dump(mode="json"),
+            "published": published,
+        }
+        print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+        return int(result.disposition != "REFERENCE_CONFORMANT")
+    if args.benchmark_command == "vs01-b08-runtime-pair" and args.subject == "deterministic-runtime":
+        try:
+            specification, run, result, receipt, published = run_runtime_pair(dry_run=args.dry_run)
+        except (OSError, ValueError):
+            return _emit_error("OPERATION_FAILED", "runtime screening operation failed")
+        output = {
+            "pair_specification": specification.model_dump(mode="json"),
+            "acquisition_run": run.model_dump(mode="json"),
+            "pair_result": result.model_dump(mode="json"),
+            "receipt": receipt.model_dump(mode="json"),
+            "published": published,
+        }
+        print(json.dumps(output, ensure_ascii=False, sort_keys=True))
+        success = result.disposition == "REFERENCE_CONFORMANT" or receipt.disposition == "VERIFIED_EXISTING"
+        return int(not success)
+    return _emit_error("INVALID_CLI_INPUT", "unsupported benchmark or subject")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
