@@ -44,6 +44,10 @@ CASE = _authority(CASE_PATH, CASE_FILE_SHA256, "case_content_sha256", CASE_IDENT
 SPEC = _authority(SPEC_PATH, SPEC_FILE_SHA256, "spec_identity", SPEC_IDENTITY)
 PROMPT = cast(str, CASE["prompt"])
 CORRECTION_PROMPT = f"{PROMPT}\n[SYNTHETIC_CORRECTION] Emphasize the retained textual-state uncertainty."
+CORRECTION_ANSWER_SENTENCE = (
+    "Correction emphasis: apparatus and witness evidence remain absent, so the broader textual-critical state "
+    "remains unknown."
+)
 TOOL_PLAN = cast(list[dict[str, Any]], CASE["tool_plan"])
 TOOL_NAMES = tuple(cast(str, item["tool"]) for item in TOOL_PLAN)
 EVIDENCE_IDS = tuple(cast(list[str], CASE["answer_contract"]["required_evidence_ids"]))
@@ -234,8 +238,8 @@ def plan_identity(request: str, calls: tuple[dict[str, Any], ...]) -> str:
     return canonical_sha256({"request_identity": request, "tool_calls": calls})
 
 
-def answer_identity(request: str) -> str:
-    return canonical_sha256({"request_identity": request, **dict(zip(_LEDGER_FIELDS, _LEDGER_HASHES, strict=True))})
+def answer_identity(request: str, ledger_hashes: tuple[str, ...] = _LEDGER_HASHES) -> str:
+    return canonical_sha256({"request_identity": request, **dict(zip(_LEDGER_FIELDS, ledger_hashes, strict=True))})
 
 
 def expected_events(request: str, plan: str, answer: str) -> tuple[dict[str, Any], ...]:
@@ -271,9 +275,12 @@ def acquisition_variant_payload(
     supersedes_request: str | None,
     supersedes_run: str | None,
 ) -> dict[str, Any]:
+    from bsl.application.vs01_runtime_reference import answer_blocks_for, ledger_hashes_for
+
     request = request_identity(case_id, prompt, revision, supersedes_request)
     calls = expected_tool_calls(prompt)
-    plan, answer = plan_identity(request, calls), answer_identity(request)
+    blocks, hashes = answer_blocks_for(prompt), ledger_hashes_for(prompt)
+    plan, answer = plan_identity(request, calls), answer_identity(request, hashes)
     payload = dict(_REFERENCE) | {
         "case_id": case_id,
         "prompt": prompt,
@@ -283,6 +290,7 @@ def acquisition_variant_payload(
         "supersedes_run_identity": supersedes_run,
         "plan_identity": plan,
         "tool_calls": calls,
+        "answer_blocks": blocks,
         "audit_events": expected_events(request, plan, answer),
         "answer_projection_identity": answer,
     }
@@ -319,7 +327,7 @@ def _result_schema(schema: dict[str, Any]) -> None:
 
 
 def _receipt_schema(schema: dict[str, Any]) -> None:
-    from bsl.infrastructure.runtime_screening_store import screening_receipt_schema
+    from bsl.application.vs01_runtime_scoring import screening_receipt_schema
 
     screening_receipt_schema(schema)
 
@@ -478,6 +486,7 @@ class VS01RuntimeScreeningReceipt(BaseModel):
     authority_fingerprints_initial: tuple[tuple[str, Sha256], ...]
     authority_fingerprints_pre_store: tuple[tuple[str, Sha256], ...]
     authority_fingerprints_post_store: tuple[tuple[str, Sha256], ...]
+    canonical_recovery_state: Literal["EMPTY", "OBJECT_ONLY", "OBJECT_AND_SNAPSHOT", "COMPLETE"] | None
     operation_ledger: RuntimeControllerLedger
     retained_publication_receipt: VS01RuntimeScreeningReceipt | None
     retained_publication_receipt_id: UUID | None

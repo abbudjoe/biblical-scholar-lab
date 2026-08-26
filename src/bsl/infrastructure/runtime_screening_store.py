@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import stat
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 from uuid import UUID
 
 import rfc8785
@@ -26,7 +27,6 @@ from bsl.contracts.runtime_screening import (
 from bsl.infrastructure.benchmark_store import (
     _existing_file,  # pyright: ignore[reportPrivateUsage]
     _fsync,  # pyright: ignore[reportPrivateUsage]
-    _link,  # pyright: ignore[reportPrivateUsage]
     _read_exact,  # pyright: ignore[reportPrivateUsage]
     _read_regular,  # pyright: ignore[reportPrivateUsage]
     _safe_directory,  # pyright: ignore[reportPrivateUsage]
@@ -54,6 +54,28 @@ class RetainedPublicationAuthority:
     retained_receipt_file_sha256: str
 
 
+CanonicalRecoveryState = Literal["EMPTY", "OBJECT_ONLY", "OBJECT_AND_SNAPSHOT", "COMPLETE"]
+
+
+@dataclass(frozen=True)
+class PublicationInspection:
+    recovery_state: CanonicalRecoveryState
+    retained: RetainedPublicationAuthority | None
+
+
+@dataclass(frozen=True)
+class _StoreContext:
+    result: VS01B08RuntimePairResult
+    run: VS01RuntimeAcquisitionRun
+    root: Path
+    fingerprints: tuple[tuple[str, str], ...]
+    ledger: RuntimeControllerLedger
+    loader: Callable[[], tuple[tuple[str, str], ...]]
+    implementation_commit: str
+    new_uuid: Callable[[], UUID]
+    now: Callable[[], datetime]
+
+
 def canonical_pair_result_bytes(result: VS01B08RuntimePairResult) -> bytes:
     return rfc8785.dumps(result.model_dump(mode="json"))
 
@@ -63,17 +85,27 @@ def publication_paths(result_sha256: str) -> tuple[str, str, str, str]:
     return (f"objects/sha256/{result_sha256[:2]}/{result_sha256}", SNAPSHOT_PATH, RECEIPT_PATH, stage)
 
 
-def _ledger_state(disposition: str) -> tuple[int, int, int, int, bool, bool]:
-    return {
-        "DRY_RUN_VALIDATED": (0, 0, 0, 0, False, False),
-        "REFERENCE_NONCONFORMANT": (0, 0, 0, 0, False, False),
-        "REFERENCE_CONFORMANT": (FRESH_PUBLICATION_VERIFICATIONS, 1, 1, 3, True, False),
-        "VERIFIED_EXISTING": (VERIFIED_EXISTING_VERIFICATIONS, 0, 0, 0, False, True),
-    }[disposition]
+def _ledger_state(
+    disposition: str, recovery_state: CanonicalRecoveryState | None
+) -> tuple[int, int, int, int, bool, bool]:
+    states: dict[tuple[str, CanonicalRecoveryState | None], tuple[int, int, int, int, bool, bool]] = {
+        ("DRY_RUN_VALIDATED", None): (0, 0, 0, 0, False, False),
+        ("REFERENCE_NONCONFORMANT", None): (0, 0, 0, 0, False, False),
+        ("REFERENCE_CONFORMANT", "EMPTY"): (FRESH_PUBLICATION_VERIFICATIONS, 1, 1, 3, True, False),
+        ("REFERENCE_CONFORMANT", "OBJECT_ONLY"): (FRESH_PUBLICATION_VERIFICATIONS, 1, 1, 2, True, False),
+        ("REFERENCE_CONFORMANT", "OBJECT_AND_SNAPSHOT"): (FRESH_PUBLICATION_VERIFICATIONS, 1, 1, 1, True, False),
+        ("VERIFIED_EXISTING", "COMPLETE"): (VERIFIED_EXISTING_VERIFICATIONS, 0, 0, 0, False, True),
+    }
+    try:
+        return states[(disposition, recovery_state)]
+    except KeyError:
+        raise ValueError("runtime screening recovery state contradicts disposition") from None
 
 
 def validate_screening_receipt(receipt: VS01RuntimeScreeningReceipt) -> None:
-    verifications, attempts, successes, writes, published, existing = _ledger_state(receipt.disposition)
+    verifications, attempts, successes, writes, published, existing = _ledger_state(
+        receipt.disposition, receipt.canonical_recovery_state
+    )
     ledger = receipt.operation_ledger
     phases = (
         receipt.authority_fingerprints_initial,
@@ -119,50 +151,6 @@ def validate_screening_receipt(receipt: VS01RuntimeScreeningReceipt) -> None:
         raise ValueError("runtime screening receipt authority differs")
 
 
-def screening_receipt_schema(schema: dict[str, Any]) -> None:
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
-    variants: list[dict[str, Any]] = []
-    for disposition in ("DRY_RUN_VALIDATED", "REFERENCE_CONFORMANT", "REFERENCE_NONCONFORMANT", "VERIFIED_EXISTING"):
-        verify, attempts, successes, writes, published, existing = _ledger_state(disposition)
-        ledger = {
-            "subject_invocations": 2,
-            "broker_tool_calls": 14,
-            "scoring_invocations": 1,
-            "acquisition_runs_constructed": 2,
-            "pair_results_constructed": 1,
-            "receipts_constructed": 1,
-            "store_verification_attempts": verify,
-            "publication_attempts": attempts,
-            "successful_publications": successes,
-            "canonical_archive_writes": writes,
-            **dict.fromkeys(_FORBIDDEN_LEDGER_FIELDS, 0),
-        }
-        retained = {"type": "string", "format": "uuid"} if existing else {"type": "null"}
-        retained_sha = {"type": "string", "pattern": "^[0-9a-f]{64}$"} if existing else {"type": "null"}
-        variants.append(
-            {
-                "properties": {
-                    "disposition": {"const": disposition},
-                    "published": {"const": published},
-                    "verified_existing": {"const": existing},
-                    "operation_ledger": {"const": ledger},
-                    "pair_result": {
-                        "properties": {
-                            "disposition": {"not": {"const": "REFERENCE_CONFORMANT"}}
-                            if disposition == "REFERENCE_NONCONFORMANT"
-                            else {"const": "REFERENCE_CONFORMANT"}
-                        }
-                    },
-                    "retained_publication_receipt": {"type": "object"} if existing else {"type": "null"},
-                    "retained_publication_receipt_id": retained,
-                    "retained_publication_receipt_file_sha256": retained_sha,
-                }
-            }
-        )
-    schema["oneOf"] = variants
-
-
 def build_screening_receipt(
     result: VS01B08RuntimePairResult,
     run: VS01RuntimeAcquisitionRun,
@@ -171,6 +159,7 @@ def build_screening_receipt(
     *,
     pre_store_fingerprints: tuple[tuple[str, str], ...],
     post_store_fingerprints: tuple[tuple[str, str], ...],
+    recovery_state: CanonicalRecoveryState | None,
     operation_ledger: RuntimeControllerLedger,
     disposition: str,
     implementation_commit: str,
@@ -196,6 +185,7 @@ def build_screening_receipt(
         "authority_fingerprints_initial": fingerprints,
         "authority_fingerprints_pre_store": pre_store_fingerprints,
         "authority_fingerprints_post_store": post_store_fingerprints,
+        "canonical_recovery_state": recovery_state,
         "operation_ledger": operation_ledger,
         "retained_publication_receipt": retained.retained_receipt if retained else None,
         "retained_publication_receipt_id": retained.retained_receipt_id if retained else None,
@@ -242,6 +232,7 @@ def complete_store_decision(
             fingerprints,
             pre_store_fingerprints=fingerprints,
             post_store_fingerprints=fingerprints,
+            recovery_state=None,
             operation_ledger=_increment(ledger, receipts_constructed=1),
             disposition=disposition,
             implementation_commit=implementation_commit,
@@ -249,57 +240,56 @@ def complete_store_decision(
             now=now,
         )
         return receipt, False
-    return _complete_non_dry(
-        result,
-        run,
-        root,
-        fingerprints,
-        ledger,
-        authority_loader=authority_loader,
-        implementation_commit=implementation_commit,
-        new_uuid=new_uuid,
-        now=now,
-    )
-
-
-def _complete_non_dry(
-    result: VS01B08RuntimePairResult,
-    run: VS01RuntimeAcquisitionRun,
-    root: Path,
-    fingerprints: tuple[tuple[str, str], ...],
-    ledger: RuntimeControllerLedger,
-    *,
-    authority_loader: Callable[[], tuple[tuple[str, str], ...]] | None,
-    implementation_commit: str,
-    new_uuid: Callable[[], UUID],
-    now: Callable[[], datetime],
-) -> tuple[VS01RuntimeScreeningReceipt, bool]:
     if authority_loader is None:
         raise ValueError("non-dry runtime store path requires an authority reload")
-    pre_store = authority_loader()
-    if pre_store != fingerprints:
+    context = _StoreContext(
+        result, run, root, fingerprints, ledger, authority_loader, implementation_commit, new_uuid, now
+    )
+    return _complete_non_dry(context)
+
+
+def _complete_non_dry(context: _StoreContext) -> tuple[VS01RuntimeScreeningReceipt, bool]:
+    result, run, root = context.result, context.run, context.root
+    fingerprints, authority_loader = context.fingerprints, context.loader
+    if (pre_store := authority_loader()) != fingerprints:
         raise ValueError("upstream runtime authority changed before store decision")
-    checked = _increment(ledger, store_verification_attempts=1)
-    retained = verify_existing(
+    checked = _increment(context.ledger, store_verification_attempts=1)
+    inspection = verify_existing(
         root,
         result,
         canonical_pair_result_bytes(result),
-        implementation_commit=implementation_commit,
+        implementation_commit=context.implementation_commit,
         fingerprints=fingerprints,
     )
-    post_store = authority_loader()
-    if post_store != fingerprints:
-        raise ValueError("upstream runtime authority changed after store decision")
-    increments = {"receipts_constructed": 1}
-    disposition, published = "VERIFIED_EXISTING", False
-    if retained is None:
-        increments |= {
-            "store_verification_attempts": 1,
-            "publication_attempts": 1,
-            "successful_publications": 1,
-            "canonical_archive_writes": 3,
-        }
-        disposition, published = "REFERENCE_CONFORMANT", True
+    if inspection.recovery_state == "COMPLETE":
+        retained, post_store = _retained_post_store(root, result, inspection, authority_loader, fingerprints)
+        receipt = build_screening_receipt(
+            result,
+            run,
+            root,
+            fingerprints,
+            pre_store_fingerprints=pre_store,
+            post_store_fingerprints=post_store,
+            recovery_state="COMPLETE",
+            operation_ledger=_increment(checked, receipts_constructed=1),
+            disposition="VERIFIED_EXISTING",
+            implementation_commit=context.implementation_commit,
+            new_uuid=context.new_uuid,
+            now=context.now,
+            retained=retained,
+        )
+        return receipt, False
+    result_writes = _prepare_result_store(root, result, inspection.recovery_state)
+    if (post_store := authority_loader()) != fingerprints:
+        raise ValueError("upstream runtime authority changed after store mutation")
+    expected_writes = result_writes + 1
+    increments = {
+        "receipts_constructed": 1,
+        "store_verification_attempts": 1,
+        "publication_attempts": 1,
+        "successful_publications": 1,
+        "canonical_archive_writes": expected_writes,
+    }
     receipt = build_screening_receipt(
         result,
         run,
@@ -307,16 +297,38 @@ def _complete_non_dry(
         fingerprints,
         pre_store_fingerprints=pre_store,
         post_store_fingerprints=post_store,
+        recovery_state=inspection.recovery_state,
         operation_ledger=_increment(checked, **increments),
-        disposition=disposition,
-        implementation_commit=implementation_commit,
-        new_uuid=new_uuid,
-        now=now,
-        retained=retained,
+        disposition="REFERENCE_CONFORMANT",
+        implementation_commit=context.implementation_commit,
+        new_uuid=context.new_uuid,
+        now=context.now,
     )
-    if published:
-        publish_runtime_screening(root, result, receipt)
-    return receipt, published
+    if result_writes + publish_runtime_screening(root, result, receipt) != expected_writes:
+        raise ValueError("runtime screening canonical-write ledger differs")
+    return receipt, True
+
+
+def _retained_post_store(
+    root: Path,
+    result: VS01B08RuntimePairResult,
+    inspection: PublicationInspection,
+    loader: Callable[[], tuple[tuple[str, str], ...]],
+    fingerprints: tuple[tuple[str, str], ...],
+) -> tuple[RetainedPublicationAuthority, tuple[tuple[str, str], ...]]:
+    retained = inspection.retained
+    if retained is None:
+        raise ValueError("complete runtime screening publication lacks retained authority")
+    result_bytes = canonical_pair_result_bytes(result)
+    _clean_exact_stage(
+        root,
+        hashlib.sha256(result_bytes).hexdigest(),
+        {"object": result_bytes, "snapshot": result_bytes, "receipt": _receipt_bytes(retained.retained_receipt)},
+    )
+    post_store = loader()
+    if post_store != fingerprints:
+        raise ValueError("upstream runtime authority changed after store decision")
+    return retained, post_store
 
 
 def _receipt_bytes(receipt: VS01RuntimeScreeningReceipt) -> bytes:
@@ -366,27 +378,34 @@ def verify_existing(
     *,
     implementation_commit: str,
     fingerprints: tuple[tuple[str, str], ...],
-) -> RetainedPublicationAuthority | None:
+) -> PublicationInspection:
     result_sha = hashlib.sha256(result_bytes).hexdigest()
     resolved = tuple(_existing_file(root, item) for item in publication_paths(result_sha)[:3])
-    paths, states = tuple(item[0] for item in resolved), tuple(item[1] for item in resolved)
-    if not any(states):
-        return None
-    if states[2] and not all(states[:2]) or states[1] and not states[0]:
+    paths = tuple(item[0] for item in resolved)
+    states = cast(tuple[bool, bool, bool], tuple(item[1] for item in resolved))
+    recovery = {
+        (False, False, False): "EMPTY",
+        (True, False, False): "OBJECT_ONLY",
+        (True, True, False): "OBJECT_AND_SNAPSHOT",
+        (True, True, True): "COMPLETE",
+    }.get(states)
+    if recovery is None:
         raise ValueError("runtime screening publication prerequisite is missing")
-    _read_exact(paths[0], result_bytes)
+    if states[0]:
+        _read_exact(paths[0], result_bytes)
     if states[1]:
         _read_exact(paths[1], result_bytes)
-    if not states[2]:
-        return None
-    return _validated_receipt(
-        paths[2],
-        root,
-        result,
-        result_bytes,
-        implementation_commit=implementation_commit,
-        fingerprints=fingerprints,
-    )
+    retained = None
+    if states[2]:
+        retained = _validated_receipt(
+            paths[2],
+            root,
+            result,
+            result_bytes,
+            implementation_commit=implementation_commit,
+            fingerprints=fingerprints,
+        )
+    return PublicationInspection(cast(CanonicalRecoveryState, recovery), retained)
 
 
 def _clean_exact_stage(root: Path, result_sha: str, payloads: dict[str, bytes]) -> None:
@@ -409,34 +428,60 @@ def _clean_exact_stage(root: Path, result_sha: str, payloads: dict[str, bytes]) 
     _fsync(incoming)
 
 
-def publish_runtime_screening(
-    root: Path,
-    result: VS01B08RuntimePairResult,
-    receipt: VS01RuntimeScreeningReceipt,
-) -> None:
+def _link_exact(source: Path, destination: Path, expected: bytes) -> bool:
+    try:
+        os.link(source, destination, follow_symlinks=False)
+    except FileExistsError:
+        _read_exact(destination, expected)
+        return False
+    _fsync(destination.parent)
+    return True
+
+
+def _prepare_result_store(root: Path, result: VS01B08RuntimePairResult, recovery: CanonicalRecoveryState) -> int:
     result_bytes = canonical_pair_result_bytes(result)
     result_sha = hashlib.sha256(result_bytes).hexdigest()
+    payloads = {"object": result_bytes, "snapshot": result_bytes}
+    _clean_exact_stage(root, result_sha, payloads)
     stage = _safe_directory(root, ".incoming", Path(publication_paths(result_sha)[3]).name)
-    payloads = {"object": result_bytes, "snapshot": result_bytes, "receipt": _receipt_bytes(receipt)}
-    contents = {item.name: item for item in stage.iterdir()}
-    if set(contents) - set(payloads):
-        raise ValueError("result-bound runtime screening stage contains unexpected content")
     for name, data in payloads.items():
-        path = stage / name
-        _read_exact(path, data) if name in contents else _write_immutable(path, data)
+        _write_immutable(stage / name, data)
     destinations = tuple(root / item for item in publication_paths(result_sha)[:3])
-    for name, destination in zip(payloads, destinations, strict=True):
+    first_missing = {"EMPTY": 0, "OBJECT_ONLY": 1, "OBJECT_AND_SNAPSHOT": 2}[recovery]
+    writes = 0
+    for index, name in enumerate(payloads):
+        if index < first_missing:
+            continue
+        destination = destinations[index]
         _safe_directory(root, *destination.relative_to(root).parent.parts)
-        _link(stage / name, destination, payloads[name])
-    if (
-        verify_existing(
-            root,
-            result,
-            result_bytes,
-            implementation_commit=receipt.implementation_commit,
-            fingerprints=receipt.authority_fingerprints_initial,
-        )
-        is None
-    ):
+        writes += int(_link_exact(stage / name, destination, payloads[name]))
+    _clean_exact_stage(root, result_sha, payloads)
+    if writes != 2 - first_missing:
+        raise ValueError("runtime screening result-link recovery differs")
+    return writes
+
+
+def publish_runtime_screening(
+    root: Path, result: VS01B08RuntimePairResult, receipt: VS01RuntimeScreeningReceipt
+) -> int:
+    result_bytes = canonical_pair_result_bytes(result)
+    result_sha = hashlib.sha256(result_bytes).hexdigest()
+    payloads = {"receipt": _receipt_bytes(receipt)}
+    _clean_exact_stage(root, result_sha, payloads)
+    stage = _safe_directory(root, ".incoming", Path(publication_paths(result_sha)[3]).name)
+    _write_immutable(stage / "receipt", payloads["receipt"])
+    destination = root / publication_paths(result_sha)[2]
+    _safe_directory(root, *destination.relative_to(root).parent.parts)
+    if not _link_exact(stage / "receipt", destination, payloads["receipt"]):
+        raise ValueError("runtime screening receipt link was not newly created")
+    verified = verify_existing(
+        root,
+        result,
+        result_bytes,
+        implementation_commit=receipt.implementation_commit,
+        fingerprints=receipt.authority_fingerprints_initial,
+    )
+    if verified.recovery_state != "COMPLETE" or verified.retained is None:
         raise ValueError("runtime screening publication verification failed")
     _clean_exact_stage(root, result_sha, payloads)
+    return 1

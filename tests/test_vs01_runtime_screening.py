@@ -1,3 +1,4 @@
+# ruff: noqa: SIM905
 from __future__ import annotations
 
 import copy
@@ -9,7 +10,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 import pytest
@@ -22,6 +23,9 @@ import bsl.infrastructure.runtime_screening_store as screening_store
 import bsl.interfaces.cli as cli
 from bsl.application.vs01_benchmark import load_benchmark_authority
 from bsl.application.vs01_runtime_reference import (
+    DeterministicRuntimeSubject,
+    RuntimeSubjectTrace,
+    RuntimeToolBroker,
     complete_runtime_pair,
     corrected_runtime,
     execute_reference_runtime,
@@ -31,6 +35,7 @@ from bsl.application.vs01_runtime_scoring import score_runtime_pair
 from bsl.application.vs01_runtime_screening import compile_pair_specification
 from bsl.contracts.runtime_screening import (
     CASE_IDENTITY,
+    CORRECTION_ANSWER_SENTENCE,
     CORRECTION_PROMPT,
     EVENT_SEQUENCE,
     FINGERPRINT_NAMES,
@@ -42,12 +47,12 @@ from bsl.contracts.runtime_screening import (
     TOOL_NAMES,
     RuntimeControllerLedger,
     VS01B08RuntimePairResult,
-    VS01B08RuntimePairSpecification,
     VS01RuntimeAcquisitionRun,
     VS01RuntimeScreeningReceipt,
     canonical_sha256,
 )
 from bsl.infrastructure.runtime_screening_store import (
+    CanonicalRecoveryState,
     RetainedPublicationAuthority,
     build_screening_receipt,
     canonical_pair_result_bytes,
@@ -112,13 +117,11 @@ def _no_go() -> VS01B08RuntimePairResult:
     return VS01B08RuntimePairResult.model_validate_json(rfc8785.dumps(_rehash(payload, "pair_result_identity")))
 
 
-def _ledger(disposition: str) -> RuntimeControllerLedger:
-    store, attempts, success, writes = {
-        "DRY_RUN_VALIDATED": (0, 0, 0, 0),
-        "REFERENCE_NONCONFORMANT": (0, 0, 0, 0),
-        "REFERENCE_CONFORMANT": (2, 1, 1, 3),
-        "VERIFIED_EXISTING": (1, 0, 0, 0),
-    }[disposition]
+def _ledger(disposition: str, recovery: str | None = None) -> RuntimeControllerLedger:
+    recovery = recovery or ({"REFERENCE_CONFORMANT": "EMPTY", "VERIFIED_EXISTING": "COMPLETE"}.get(disposition))
+    live, existing = disposition == "REFERENCE_CONFORMANT", disposition == "VERIFIED_EXISTING"
+    store, attempts, success = 2 * int(live) + int(existing), int(live), int(live)
+    writes = {"EMPTY": 3, "OBJECT_ONLY": 2, "OBJECT_AND_SNAPSHOT": 1}.get(recovery or "", 0)
     values = dict.fromkeys(RuntimeControllerLedger.model_fields, 0)
     values |= {
         "subject_invocations": 2,
@@ -141,7 +144,9 @@ def _receipt(
     disposition: str,
     retained: RetainedPublicationAuthority | None = None,
     new_uuid: Callable[[], UUID] = UUID1,
+    recovery: str | None = None,
 ) -> VS01RuntimeScreeningReceipt:
+    recovery = recovery or ({"REFERENCE_CONFORMANT": "EMPTY", "VERIFIED_EXISTING": "COMPLETE"}.get(disposition))
     return build_screening_receipt(
         result,
         _synthetic_run(),
@@ -149,13 +154,66 @@ def _receipt(
         FINGERPRINTS,
         pre_store_fingerprints=FINGERPRINTS,
         post_store_fingerprints=FINGERPRINTS,
-        operation_ledger=_ledger(disposition),
+        recovery_state=recovery,
+        operation_ledger=_ledger(disposition, recovery),
         disposition=disposition,
         implementation_commit="a" * 40,
         new_uuid=new_uuid,
         now=NOW,
         retained=retained,
     )
+
+
+def _publish(root: Path, result: VS01B08RuntimePairResult, receipt: VS01RuntimeScreeningReceipt) -> None:
+    writes = screening_store._prepare_result_store(  # pyright: ignore[reportPrivateUsage]
+        root, result, cast(CanonicalRecoveryState, receipt.canonical_recovery_state or "EMPTY")
+    )
+    assert (
+        writes + publish_runtime_screening(root, result, receipt) == receipt.operation_ledger.canonical_archive_writes
+    )
+
+
+def _inspect(root: Path, result: VS01B08RuntimePairResult) -> Any:
+    return verify_existing(
+        root,
+        result,
+        canonical_pair_result_bytes(result),
+        implementation_commit="a" * 40,
+        fingerprints=FINGERPRINTS,
+    )
+
+
+def _live_campaign(
+    root: Path,
+    loader: Callable[[], tuple[tuple[str, str], ...]],
+    new_uuid: Callable[[], UUID] = UUID1,
+) -> tuple[Any, ...]:
+    projection, template = _static()
+    return complete_runtime_pair(
+        compile_pair_specification(),
+        projection,
+        template,
+        FIXED_CASE_RESULT_IDENTITY,
+        FINGERPRINTS,
+        root,
+        dry_run=False,
+        authority_loader=loader,
+        implementation_commit="a" * 40,
+        new_uuid=new_uuid,
+        now=NOW,
+        _case_id=SYNTHETIC_CASE_ID,
+    )
+
+
+def _published_authority(
+    root: Path,
+) -> tuple[VS01B08RuntimePairResult, VS01RuntimeScreeningReceipt, RetainedPublicationAuthority]:
+    result = _result()
+    live = _receipt(root, result, "REFERENCE_CONFORMANT")
+    _publish(root, result, live)
+    inspected = _inspect(root, result)
+    assert inspected.retained
+    return result, live, inspected.retained
 
 
 def test_frozen_authority_and_exact_public_shapes() -> None:
@@ -216,20 +274,15 @@ def test_authority_compilation_and_reload_are_read_only(tmp_path: Path, monkeypa
 
 
 @pytest.mark.parametrize(
-    ("target", "field"),
+    "case",
     (
-        ("initial", "runtime_evidence_id"),
-        ("initial", "source_handle"),
-        ("initial", "source_role"),
-        ("initial", "state"),
-        ("initial", "exact_excerpt"),
-        ("tool", "input_schema_json"),
-        ("tool", "output_schema_json"),
-        ("budget", "calls_per_tool"),
-        ("output", "answer_blocks"),
-    ),
+        "initial:runtime_evidence_id initial:source_handle initial:source_role initial:state "
+        "initial:exact_excerpt tool:input_schema_json tool:output_schema_json budget:calls_per_tool "
+        "output:answer_blocks"
+    ).split(),
 )
-def test_positive_subject_firewall_rejects_every_changed_authority(target: str, field: str) -> None:
+def test_positive_subject_firewall_rejects_every_changed_authority(case: str) -> None:
+    target, field = case.split(":")
     projection, _run = _static()
     changed = copy.deepcopy(projection)
     if target == "initial":
@@ -261,6 +314,7 @@ def test_subject_order_broker_and_genuine_correction_lineage() -> None:
     assert corrected.prompt != before.prompt and corrected.request_identity != before.request_identity
     assert corrected.plan_identity != before.plan_identity
     assert corrected.answer_projection_identity != before.answer_projection_identity
+    assert CORRECTION_ANSWER_SENTENCE in corrected.answer_blocks[5].text
     assert corrected.acquisition_run_identity != before.acquisition_run_identity
     assert corrected.supersedes_request_identity == before.request_identity
     assert corrected.supersedes_run_identity == before.acquisition_run_identity
@@ -268,6 +322,51 @@ def test_subject_order_broker_and_genuine_correction_lineage() -> None:
     assert json.loads(corrected.tool_calls[0].input_json)["prompt"] == CORRECTION_PROMPT
     with pytest.raises(ValueError):
         corrected_runtime(corrected, correction_package)
+
+
+@pytest.mark.parametrize("part", ("initial", "final", "missing", "reordered", "fabricated", "previous"))
+def test_correction_rejects_false_or_nonbroker_trace(part: str) -> None:
+    projection, template = _static()
+    before = execute_reference_runtime(template, subject_package_from_projection(projection, case_id=SYNTHETIC_CASE_ID))
+    package = subject_package_from_projection(projection, case_id=SYNTHETIC_CASE_ID, prompt=CORRECTION_PROMPT)
+
+    class BrokenSubject:
+        def run(self, value: Any, broker: RuntimeToolBroker) -> RuntimeSubjectTrace:
+            if part == "previous":
+                object.__setattr__(before, "prompt", "mutated")
+            if part == "fabricated":
+                return DeterministicRuntimeSubject().run(value, RuntimeToolBroker(CORRECTION_PROMPT))
+            trace = DeterministicRuntimeSubject().run(value, broker)
+            calls = trace.tool_calls
+            if part == "missing":
+                calls = calls[:-1]
+            elif part == "reordered":
+                calls = (calls[1], calls[0], *calls[2:])
+            return RuntimeSubjectTrace(
+                "changed" if part == "initial" else trace.initial_assessment,
+                calls,
+                "changed" if part == "final" else trace.final_sufficiency,
+            )
+
+    with pytest.raises(ValueError):
+        corrected_runtime(before, package, BrokenSubject())
+
+
+@pytest.mark.parametrize("part", ("answer_projection", "answer_identity", "supersession"))
+def test_correction_rejects_rehashed_prior_answer_or_lineage(part: str) -> None:
+    projection, template = _static()
+    before = execute_reference_runtime(template, subject_package_from_projection(projection, case_id=SYNTHETIC_CASE_ID))
+    package = subject_package_from_projection(projection, case_id=SYNTHETIC_CASE_ID, prompt=CORRECTION_PROMPT)
+    payload = corrected_runtime(before, package).model_dump(mode="json")
+    if part == "answer_projection":
+        payload["answer_blocks"] = before.model_dump(mode="json")["answer_blocks"]
+        payload["answer_projection_identity"] = before.answer_projection_identity
+    elif part == "answer_identity":
+        payload["answer_projection_identity"] = before.answer_projection_identity
+    else:
+        payload["supersedes_request_identity"] = "0" * 64
+    with pytest.raises(ValidationError):
+        VS01RuntimeAcquisitionRun.model_validate_json(rfc8785.dumps(_rehash(payload, "acquisition_run_identity")))
 
 
 @pytest.mark.parametrize(
@@ -308,49 +407,63 @@ def test_run_rejects_rehashed_internal_record_mutations(part: str) -> None:
         VS01RuntimeAcquisitionRun.model_validate_json(rfc8785.dumps(_rehash(payload, "acquisition_run_identity")))
 
 
-@pytest.mark.parametrize(
-    "part",
-    (
-        "fixed_id",
-        "fixed_points",
-        "criterion_id",
-        "weight",
-        "score",
-        "points",
-        "hard_failure",
-        "leakage",
-        "replay",
-        "tools",
-        "events",
-        "limitations",
-        "disposition",
-    ),
-)
-def test_pair_result_rejects_rehashed_contradictions(part: str) -> None:
+def test_acquisition_run_draft_rejects_rehashed_semantic_mutation() -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is external")
+    payload = _synthetic_run().model_dump(mode="json")
+    payload["claim_ledger"][0]["proposition"] = "changed"
+    schema = json.loads((ROOT / "contracts/json-schema/runtime-screening/acquisition-run.schema.json").read_text())
+    assert not jsonschema.Draft202012Validator(schema).is_valid(_rehash(payload, "acquisition_run_identity"))
+
+
+PAIR_MUTATIONS: dict[str, tuple[tuple[str | int, ...], Any]] = {
+    "fixed_id": (("fixed_case_result_identity",), "0" * 64),
+    "fixed_points": (("fixed_points",), 7),
+    "criterion_id": (("runtime_criteria", 0, "criterion_id"), "changed"),
+    "weight": (("runtime_criteria", 0, "weight"), 3),
+    "score": (("runtime_criteria", 0, "score"), 1),
+    "points": (("runtime_criteria", 0, "points"), 0),
+    "criterion_arithmetic": (("runtime_criteria", 0, "score"), 1),
+    "runtime_arithmetic": (("runtime_points",), 27),
+    "pair_arithmetic": (("pair_points",), 35),
+    "hard_failure": (("hard_failures",), [HARD_FAILURES[0]]),
+    "duplicate_hard_failure": (("hard_failures",), [HARD_FAILURES[0]] * 2),
+    "unauthorized_hard_failure": (("hard_failures",), ["UNAUTHORIZED"]),
+    "leakage": (("leakage_incidents",), 1),
+    "replay": (("replay_run_identities", 1), "0" * 64),
+    "acquisition_replay": (("acquisition_run_identity",), "0" * 64),
+    "tools": (("tool_calls_observed",), 6),
+    "events": (("events_observed",), 16),
+    "limitations": (("limitations", 0), "changed"),
+    "disposition": (("disposition",), "RUNTIME_SCREENING_NO_GO"),
+    "state_combination": (("disposition",), "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"),
+}
+
+
+def _set_path(payload: dict[str, Any], path: tuple[str | int, ...], value: Any) -> None:
+    target: Any = payload
+    for step in path[:-1]:
+        target = target[step]
+    target[path[-1]] = value
+
+
+def _pair_adversary(part: str) -> dict[str, Any]:
     payload = _result().model_dump(mode="json")
-    if part == "fixed_id":
-        payload["fixed_case_result_identity"] = "0" * 64
-    elif part == "fixed_points":
-        payload["fixed_points"] = 7
-        payload["pair_points"] = 35
-    elif part in {"criterion_id", "weight", "score", "points"}:
-        payload["runtime_criteria"][0][part] = 1 if part != "criterion_id" else "changed"
-    elif part == "hard_failure":
-        payload["hard_failures"] = [HARD_FAILURES[0]]
-    elif part == "leakage":
-        payload["leakage_incidents"] = 1
-    elif part == "replay":
-        payload["replay_run_identities"][1] = "0" * 64
-    elif part == "tools":
-        payload["tool_calls_observed"] = 6
-    elif part == "events":
-        payload["events_observed"] = 16
-    elif part == "limitations":
-        payload["limitations"][0] = "changed"
-    else:
-        payload["disposition"] = "RUNTIME_SCREENING_NO_GO"
+    _set_path(payload, *PAIR_MUTATIONS[part])
+    if part == "score":
+        criterion = payload["runtime_criteria"][0]
+        criterion["points"] = criterion["weight"]
+    return _rehash(payload, "pair_result_identity")
+
+
+@pytest.mark.parametrize("part", PAIR_MUTATIONS)
+def test_pair_result_draft202012_matches_material_state_machine(part: str) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is external")
+    payload = _pair_adversary(part)
     with pytest.raises(ValidationError):
-        VS01B08RuntimePairResult.model_validate_json(rfc8785.dumps(_rehash(payload, "pair_result_identity")))
+        VS01B08RuntimePairResult.model_validate_json(rfc8785.dumps(payload))
+    schema = json.loads((ROOT / "contracts/json-schema/runtime-screening/pair-result.schema.json").read_text())
+    validator = jsonschema.Draft202012Validator(schema)
+    assert validator.is_valid(_result().model_dump(mode="json")) and not validator.is_valid(payload)
 
 
 def test_controller_ledgers_reload_and_retained_receipt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -365,29 +478,15 @@ def test_controller_ledgers_reload_and_retained_receipt(tmp_path: Path, monkeypa
         loads.append(1)
         return FINGERPRINTS
 
-    live = complete_runtime_pair(
-        *arguments,
-        dry_run=False,
-        authority_loader=loader,
-        implementation_commit="a" * 40,
-        new_uuid=UUID1,
-        now=NOW,
-        _case_id=SYNTHETIC_CASE_ID,
-    )
+    live = _live_campaign(tmp_path, loader)
     assert len(loads) == 2 and live[3].operation_ledger == _ledger("REFERENCE_CONFORMANT")
+    assert live[3].canonical_recovery_state == "EMPTY"
     assert live[3].published and live[4]
     ids = iter((UUID("01900000-0000-7000-8000-000000000002"),))
-    existing = complete_runtime_pair(
-        *arguments,
-        dry_run=False,
-        authority_loader=loader,
-        implementation_commit="a" * 40,
-        new_uuid=lambda: next(ids),
-        now=NOW,
-        _case_id=SYNTHETIC_CASE_ID,
-    )
+    existing = _live_campaign(tmp_path, loader, lambda: next(ids))
     receipt = existing[3]
     assert receipt.operation_ledger == _ledger("VERIFIED_EXISTING") and receipt.verified_existing
+    assert receipt.canonical_recovery_state == "COMPLETE"
     assert receipt.retained_publication_receipt == live[3]
     assert receipt.retained_publication_receipt_id == live[3].receipt_id
     assert (
@@ -403,7 +502,6 @@ def test_controller_ledgers_reload_and_retained_receipt(tmp_path: Path, monkeypa
 def test_changed_authority_load_stops_before_mutation(
     phase: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    projection, template = _static()
     tmp_path.joinpath(".incoming").mkdir()
     calls = 0
     original = screening_store.verify_existing
@@ -417,119 +515,225 @@ def test_changed_authority_load_stops_before_mutation(
     changed = (("t04", "0" * 64), *FINGERPRINTS[1:])
     values = iter((changed,) if phase == "pre" else (FINGERPRINTS, changed))
     with pytest.raises(ValueError, match="authority changed"):
-        complete_runtime_pair(
-            compile_pair_specification(),
-            projection,
-            template,
-            FIXED_CASE_RESULT_IDENTITY,
-            FINGERPRINTS,
-            tmp_path,
-            dry_run=False,
-            authority_loader=lambda: next(values),
-            implementation_commit="a" * 40,
-            _case_id=SYNTHETIC_CASE_ID,
-        )
+        _live_campaign(tmp_path, lambda: next(values))
     assert calls == (0 if phase == "pre" else 1)
+    result_sha = hashlib.sha256(canonical_pair_result_bytes(_result())).hexdigest()
+    exists = tuple((tmp_path / path).exists() for path in publication_paths(result_sha)[:3])
+    assert exists == ((False, False, False) if phase == "pre" else (True, True, False))
     assert list(tmp_path.joinpath(".incoming").iterdir()) == []
 
 
-@pytest.mark.parametrize("part", ("count", "flags", "disposition", "pair", "retained_id", "retained_sha"))
-def test_receipt_rejects_rehashed_contradictions(part: str, tmp_path: Path) -> None:
-    result = _result()
-    if part.startswith("retained"):
-        tmp_path.joinpath(".incoming").mkdir()
-        published = _receipt(tmp_path, result, "REFERENCE_CONFORMANT")
-        publish_runtime_screening(tmp_path, result, published)
-        retained = verify_existing(
-            tmp_path,
-            result,
-            canonical_pair_result_bytes(result),
-            implementation_commit="a" * 40,
-            fingerprints=FINGERPRINTS,
-        )
-        assert retained
-        payload = _receipt(
-            tmp_path,
-            result,
-            "VERIFIED_EXISTING",
-            retained,
-            new_uuid=lambda: UUID("01900000-0000-7000-8000-000000000002"),
-        ).model_dump(mode="json")
-    else:
-        payload = _receipt(tmp_path, result, "DRY_RUN_VALIDATED").model_dump(mode="json")
-    if part == "count":
-        payload["operation_ledger"]["subject_invocations"] = 3
-    elif part == "flags":
-        payload["published"] = True
-    elif part == "disposition":
-        payload["disposition"] = "REFERENCE_CONFORMANT"
-    elif part == "pair":
-        payload["pair_result"]["fixed_points"] = 7
-    elif part == "retained_id":
-        payload["retained_publication_receipt_id"] = "01900000-0000-7000-8000-000000000099"
-    else:
-        payload["retained_publication_receipt_file_sha256"] = "0" * 64
-    with pytest.raises(ValidationError):
-        VS01RuntimeScreeningReceipt.model_validate_json(rfc8785.dumps(_rehash(payload, "receipt_canonical_sha256")))
-
-
-@pytest.mark.parametrize("part", ("acquisition", "commit", "fingerprints", "pair_result", "noncanonical", "mutable"))
-def test_retained_receipt_full_store_binding(part: str, tmp_path: Path) -> None:
+def test_store_ordering_places_post_reload_between_result_and_receipt_links(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     tmp_path.joinpath(".incoming").mkdir()
-    result = _result()
-    receipt = _receipt(tmp_path, result, "REFERENCE_CONFORMANT")
-    publish_runtime_screening(tmp_path, result, receipt)
-    result_sha = hashlib.sha256(canonical_pair_result_bytes(result)).hexdigest()
-    path = tmp_path / publication_paths(result_sha)[2]
-    if part == "mutable":
-        path.chmod(0o644)
-    else:
-        payload = receipt.model_dump(mode="json")
-        if part == "acquisition":
-            payload["acquisition_run_identity"] = "0" * 64
-        elif part == "commit":
-            payload["implementation_commit"] = "b" * 40
-        elif part == "fingerprints":
-            payload["authority_fingerprints_initial"][0][1] = "0" * 64
-        elif part == "pair_result":
-            payload["pair_result_identity"] = "0" * 64
-        payload = _rehash(payload, "receipt_canonical_sha256")
-        path.chmod(0o644)
-        path.write_bytes(rfc8785.dumps(payload) + (b"\n" if part == "noncanonical" else b""))
-        path.chmod(0o444)
-    with pytest.raises(ValueError):
-        verify_existing(
-            tmp_path,
-            result,
-            canonical_pair_result_bytes(result),
-            implementation_commit="a" * 40,
-            fingerprints=FINGERPRINTS,
-        )
+    events: list[str] = []
+    real_verify = screening_store.verify_existing
+    real_link = screening_store._link_exact  # pyright: ignore[reportPrivateUsage]
+    real_clean = screening_store._clean_exact_stage  # pyright: ignore[reportPrivateUsage]
+    links = 0
+    reloads = 0
+
+    def loader():
+        nonlocal reloads
+        reloads += 1
+        events.append(f"reload:{reloads}")
+        return FINGERPRINTS
+
+    def checked(*args: Any, **kwargs: Any):
+        value = real_verify(*args, **kwargs)
+        events.append(f"verify:{value.recovery_state}")
+        return value
+
+    def linked(source: Path, destination: Path, expected: bytes) -> bool:
+        nonlocal links
+        value = real_link(source, destination, expected)
+        links += 1
+        events.append(f"link:{links}")
+        return value
+
+    def cleaned(*args: Any, **kwargs: Any) -> None:
+        real_clean(*args, **kwargs)
+        events.append("cleanup")
+
+    monkeypatch.setattr(screening_store, "verify_existing", checked)
+    monkeypatch.setattr(screening_store, "_link_exact", linked)
+    monkeypatch.setattr(screening_store, "_clean_exact_stage", cleaned)
+    _live_campaign(tmp_path, loader)
+    assert [event for event in events if event != "cleanup"] == (
+        "reload:1 verify:EMPTY link:1 link:2 reload:2 link:3 verify:COMPLETE".split()
+    )
+    assert events.index("link:2") < events.index("cleanup", events.index("link:2")) < events.index("reload:2")
+    assert events.index("verify:COMPLETE") < len(events) - 1 and events[-1] == "cleanup"
+    events.clear()
+    reloads = 0
+    _live_campaign(tmp_path, loader, lambda: UUID("01900000-0000-7000-8000-000000000002"))
+    assert [event for event in events if event != "cleanup"] == ("reload:1 verify:COMPLETE reload:2".split())
 
 
-def test_receipt_last_store_recovery_modes_and_partial_writes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+RECOVERY_CASES = {
+    "before_object": ("EMPTY", 3, "REFERENCE_CONFORMANT"),
+    "after_object": ("OBJECT_ONLY", 2, "REFERENCE_CONFORMANT"),
+    "after_snapshot": ("OBJECT_AND_SNAPSHOT", 1, "REFERENCE_CONFORMANT"),
+    "after_receipt": ("COMPLETE", 0, "VERIFIED_EXISTING"),
+}
+
+
+@pytest.mark.parametrize("failure", RECOVERY_CASES)
+def test_interrupted_prefix_recovery_records_only_current_turn_links(
+    failure: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    recovery, writes, disposition = RECOVERY_CASES[failure]
     tmp_path.joinpath(".incoming").mkdir()
     unrelated = tmp_path / ".incoming/unrelated"
-    unrelated.write_text("keep")
+    unrelated.write_text("preserved")
     real_write = os.write
 
     def partial(fd: int, data: bytes | memoryview) -> int:
         return real_write(fd, bytes(data[: max(1, len(data) // 3)]))
 
     monkeypatch.setattr(benchmark_store.os, "write", partial)
+    real_link = screening_store._link_exact  # pyright: ignore[reportPrivateUsage]
+    calls = 0
+
+    def interrupted(source: Path, destination: Path, expected: bytes) -> bool:
+        nonlocal calls
+        calls += 1
+        if failure == "before_object" and calls == 1:
+            raise OSError("synthetic interruption")
+        value = real_link(source, destination, expected)
+        if calls == {"after_object": 1, "after_snapshot": 2, "after_receipt": 3}.get(failure):
+            raise OSError("synthetic interruption")
+        return value
+
+    monkeypatch.setattr(screening_store, "_link_exact", interrupted)
+    ids = iter((UUID1(), UUID("01900000-0000-7000-8000-000000000002")))
+    with pytest.raises(OSError, match="synthetic interruption"):
+        _live_campaign(tmp_path, lambda: FINGERPRINTS, lambda: next(ids))
     result = _result()
-    receipt = _receipt(tmp_path, result, "REFERENCE_CONFORMANT")
-    publish_runtime_screening(tmp_path, result, receipt)
-    retained = verify_existing(
-        tmp_path,
-        result,
-        canonical_pair_result_bytes(result),
-        implementation_commit="a" * 40,
-        fingerprints=FINGERPRINTS,
-    )
-    assert retained and retained.retained_receipt == receipt and unrelated.read_text() == "keep"
+    inspected = _inspect(tmp_path, result)
+    assert inspected.recovery_state == recovery
     result_sha = hashlib.sha256(canonical_pair_result_bytes(result)).hexdigest()
-    assert all(stat.S_IMODE((tmp_path / path).stat().st_mode) == 0o444 for path in publication_paths(result_sha)[:3])
+    paths = tuple(tmp_path / value for value in publication_paths(result_sha)[:3])
+    retained_bytes = {path: path.read_bytes() for path in paths if path.exists()}
+    monkeypatch.setattr(screening_store, "_link_exact", real_link)
+    receipt = _live_campaign(tmp_path, lambda: FINGERPRINTS, lambda: next(ids))[3]
+    assert receipt.disposition == disposition
+    assert receipt.canonical_recovery_state == recovery
+    assert receipt.operation_ledger.canonical_archive_writes == writes
+    assert all(path.read_bytes() == data for path, data in retained_bytes.items())
+    assert all(stat.S_IMODE(path.stat().st_mode) == 0o444 for path in paths)
+    assert unrelated.read_text() == "preserved"
+
+
+def test_receipt_cross_phase_hash_equality_remains_cryptographic(tmp_path: Path) -> None:
+    payload = _receipt(tmp_path, _result(), "DRY_RUN_VALIDATED").model_dump(mode="json")
+    payload["authority_fingerprints_post_store"][0][1] = "0" * 64
+    with pytest.raises(ValidationError):
+        VS01RuntimeScreeningReceipt.model_validate_json(rfc8785.dumps(_rehash(payload, "receipt_canonical_sha256")))
+
+
+RECEIPT_MUTATIONS: dict[str, tuple[tuple[str | int, ...], Any]] = {
+    "top_acquisition": (("acquisition_run_identity",), "0" * 64),
+    "top_pair": (("pair_result_identity",), "0" * 64),
+    "result_sha": (("pair_result_file_sha256",), "0" * 64),
+    "disposition": (("disposition",), "DRY_RUN_VALIDATED"),
+    "published": (("published",), False),
+    "verified": (("verified_existing",), True),
+    "recovery": (("canonical_recovery_state",), "COMPLETE"),
+    "recovery_writes": (("operation_ledger", "canonical_archive_writes"), 2),
+    "archive_shape": (("archive_paths", 0), "relative"),
+    "fingerprint_name": (("authority_fingerprints_pre_store", 0, 0), "changed"),
+    "retained_uuid": (("retained_publication_receipt_id",), "not-a-uuid"),
+    "retained_sha": (("retained_publication_receipt_file_sha256",), "short"),
+    "receipt_uuid": (("receipt_id",), "01900000-0000-6000-8000-000000000001"),
+    "implementation_commit": (("implementation_commit",), "a" * 39),
+}
+RECEIPT_SCHEMA_ADVERSARIES = (
+    *RECEIPT_MUTATIONS,
+    *"nested_acquisition nested_pair archive_order fingerprint_order phase_shape retained_presence".split(),
+    *"retained_disposition retained_published retained_verified".split(),
+    *(f"ledger:{field}" for field in RuntimeControllerLedger.model_fields),
+)
+
+
+def _receipt_adversary(part: str, root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    result, live, retained = _published_authority(root)
+    verified = _receipt(
+        root,
+        result,
+        "VERIFIED_EXISTING",
+        retained,
+        new_uuid=lambda: UUID("01900000-0000-7000-8000-000000000002"),
+    )
+    retained_part = part.startswith("retained_") and part != "retained_presence"
+    base = verified if retained_part else live
+    if part in {"recovery", "recovery_writes"}:
+        state = "OBJECT_ONLY" if part == "recovery" else "OBJECT_AND_SNAPSHOT"
+        base = _receipt(root, result, "REFERENCE_CONFORMANT", recovery=state)
+    payload = base.model_dump(mode="json")
+    original = copy.deepcopy(payload)
+    if part in RECEIPT_MUTATIONS:
+        _set_path(payload, *RECEIPT_MUTATIONS[part])
+    elif part.startswith("ledger:"):
+        field = part.split(":", 1)[1]
+        payload["operation_ledger"][field] += 1
+    elif part in {"nested_acquisition", "nested_pair"}:
+        field, value = ("acquisition_run_identity", "0" * 64) if part.endswith("acquisition") else ("fixed_points", 7)
+        payload["pair_result"][field] = value
+        _rehash(payload["pair_result"], "pair_result_identity")
+    elif part in {"archive_order", "fingerprint_order"}:
+        values = payload["archive_paths"] if part == "archive_order" else payload["authority_fingerprints_pre_store"]
+        values[0], values[1] = values[1], values[0]
+    elif part == "phase_shape":
+        payload["authority_fingerprints_post_store"].pop()
+    elif part == "retained_presence":
+        payload["retained_publication_receipt"] = copy.deepcopy(payload)
+    else:
+        retained = payload["retained_publication_receipt"]
+        key, value = {
+            "retained_disposition": ("disposition", "DRY_RUN_VALIDATED"),
+            "retained_published": ("published", False),
+            "retained_verified": ("verified_existing", True),
+        }[part]
+        retained[key] = value
+        _rehash(retained, "receipt_canonical_sha256")
+    return original, _rehash(payload, "receipt_canonical_sha256")
+
+
+@pytest.mark.parametrize("part", RECEIPT_SCHEMA_ADVERSARIES)
+def test_screening_receipt_draft202012_matches_material_state_machine(part: str, tmp_path: Path) -> None:
+    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is external")
+    tmp_path.joinpath(".incoming").mkdir()
+    original, payload = _receipt_adversary(part, tmp_path)
+    with pytest.raises((ValidationError, ValueError)):
+        VS01RuntimeScreeningReceipt.model_validate_json(rfc8785.dumps(payload))
+    schema = json.loads((ROOT / "contracts/json-schema/runtime-screening/screening-receipt.schema.json").read_text())
+    validator = jsonschema.Draft202012Validator(schema)
+    assert validator.is_valid(original) and not validator.is_valid(payload)
+
+
+@pytest.mark.parametrize("part", ("commit", "fingerprints", "noncanonical", "mutable"))
+def test_retained_receipt_full_store_binding(part: str, tmp_path: Path) -> None:
+    tmp_path.joinpath(".incoming").mkdir()
+    result, receipt, _retained = _published_authority(tmp_path)
+    path = tmp_path / receipt.archive_paths[2]
+    if part == "mutable":
+        path.chmod(0o644)
+    else:
+        payload = receipt.model_dump(mode="json")
+        if part == "commit":
+            payload["implementation_commit"] = "b" * 40
+        elif part == "fingerprints":
+            payload["authority_fingerprints_initial"][0][1] = "0" * 64
+        payload = _rehash(payload, "receipt_canonical_sha256")
+        path.chmod(0o644)
+        path.write_bytes(rfc8785.dumps(payload) + (b"\n" if part == "noncanonical" else b""))
+        path.chmod(0o444)
+    with pytest.raises(ValueError):
+        _inspect(tmp_path, result)
 
 
 def test_cli_redacts_failures(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
@@ -540,39 +744,3 @@ def test_cli_redacts_failures(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Ca
     assert cli.main(["benchmark", "vs01-b08-runtime-pair", "--subject", "deterministic-runtime"]) == 2
     output = capsys.readouterr().out
     assert "secret path" not in output and json.loads(output)["error"]["code"] == "OPERATION_FAILED"
-
-
-@pytest.mark.parametrize("contract", ("specification", "run", "result", "receipt"))
-def test_pydantic_and_draft202012_reject_rehashed_outer_adversaries(contract: str, tmp_path: Path) -> None:
-    jsonschema = pytest.importorskip("jsonschema", reason="Draft 2020-12 validator is external")
-    pair, run, result = compile_pair_specification(), _synthetic_run(), _result()
-    model, value, identity, schema_name = {
-        "specification": (
-            VS01B08RuntimePairSpecification,
-            pair.model_dump(mode="json"),
-            "specification_identity",
-            "pair-specification",
-        ),
-        "run": (VS01RuntimeAcquisitionRun, run.model_dump(mode="json"), "acquisition_run_identity", "acquisition-run"),
-        "result": (VS01B08RuntimePairResult, result.model_dump(mode="json"), "pair_result_identity", "pair-result"),
-        "receipt": (
-            VS01RuntimeScreeningReceipt,
-            _receipt(tmp_path, result, "DRY_RUN_VALIDATED").model_dump(mode="json"),
-            "receipt_canonical_sha256",
-            "screening-receipt",
-        ),
-    }[contract]
-    if contract == "specification":
-        value["prompt"] = "changed"
-    elif contract == "run":
-        value["claim_ledger"][0]["proposition"] = "changed"
-    elif contract == "result":
-        value["fixed_points"] = 7
-        value["pair_points"] = 35
-    else:
-        value["operation_ledger"]["subject_invocations"] = 3
-    value = _rehash(value, identity)
-    with pytest.raises((ValidationError, ValueError)):
-        model.model_validate_json(rfc8785.dumps(value))
-    schema = json.loads((ROOT / f"contracts/json-schema/runtime-screening/{schema_name}.schema.json").read_text())
-    assert not jsonschema.Draft202012Validator(schema).is_valid(value)

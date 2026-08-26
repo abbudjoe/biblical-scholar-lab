@@ -134,17 +134,17 @@
     {
       "contract": "VS01RuntimeAcquisitionRun", "schema_version": "1.0", "owning_design": "VS01-T08",
       "schema_path": "contracts/json-schema/runtime-screening/acquisition-run.schema.json",
-      "owning_task": "VS01-T08", "sha256": "9bc19f370c6aa340787a357082ee3792de202bfe6027cd42112a2db7f1130f6e"
+      "owning_task": "VS01-T08", "sha256": "9b2b3f65a7f71b42dc1cc9d3cf97e2232cfad006df337062b51e8e7736ff4e0a"
     },
     {
       "contract": "VS01B08RuntimePairResult", "schema_version": "1.0", "owning_design": "VS01-T08",
       "schema_path": "contracts/json-schema/runtime-screening/pair-result.schema.json",
-      "owning_task": "VS01-T08", "sha256": "71b7c5a9deca86d690f35b26ecc22bd3f81330a5071d7f8ce51d31effb4e3e60"
+      "owning_task": "VS01-T08", "sha256": "0c9be59ddcb1a2aaf1bf6cca5296ed17816f7a7c33f975760acdda6332b0b03f"
     },
     {
       "contract": "VS01RuntimeScreeningReceipt", "schema_version": "1.0", "owning_design": "VS01-T08",
       "schema_path": "contracts/json-schema/runtime-screening/screening-receipt.schema.json",
-      "owning_task": "VS01-T08", "sha256": "66113b75c153c35a01e2c8e2461c0b72b001efa588ba148926450d4a68e79f95"
+      "owning_task": "VS01-T08", "sha256": "71aa7850eef6c9bf9a94755c00a1b5205e32a03f91f8bcffa2b26da746a7b0bc"
     }
   ]
 }

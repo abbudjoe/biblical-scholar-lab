@@ -1759,7 +1759,7 @@
           "ALT-T04-COGNITIVE",
           "ALT-T04-DOUBLE-RESONANCE"
         ],
-        "acquisition_run_identity": "05459a4a180a7cd571a04a604cfc25151a4cffaa424dcbb12104d31364c4a833",
+        "acquisition_run_identity": "b9569e010cc21b31987c6ec995a43239ae037c511081268811d47e77f85e0568",
         "answer_blocks": [
           {
             "alternative_ids": [],
@@ -1864,7 +1864,7 @@
               "CLM-T04-043"
             ],
             "heading": "What this does and does not say about manuscripts",
-            "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent."
+            "text": "The English wording difference does not by itself prove that the translations were based on different Greek manuscripts. Within this controlled comparison, no different Greek source reading is required to explain the contrast. Whether the ASV and WEB projects used identical complete Greek base editions is not established, and the broader textual-critical state of John 1:5 remains unknown here because apparatus and witness evidence are absent. Correction emphasis: apparatus and witness evidence remain absent, so the broader textual-critical state remains unknown."
           },
           {
             "alternative_ids": [
@@ -1888,7 +1888,7 @@
             "text": "The strongest source-verifiable conclusion is therefore a translation-choice contrast associated with lexical construal and interpretive effect, with conflict or overtaking more directly supported in this bounded packet and cognitive or double-resonance readings retained as plausible alternatives. The packet does not establish translator intent, current scholarly consensus, one final contextual sense, one specialist-preferred rendering, or a theological conclusion."
           }
         ],
-        "answer_projection_identity": "8703d2578a932db907548923e6b58c5075b52bcb26430a34428447d5ebd7cfcd",
+        "answer_projection_identity": "65b157d135ecca7a81e78cc5e9eccaf720db76aa597c0df016f77deee34194d8",
         "audit_events": [
           {
             "artifact_ref": "9b3022a424a8ad665e214a4d388b18d6e7888f317d05d3a48cf30c923bf78768",
@@ -1975,38 +1975,38 @@
             "sequence": 12
           },
           {
-            "artifact_ref": "8703d2578a932db907548923e6b58c5075b52bcb26430a34428447d5ebd7cfcd",
+            "artifact_ref": "65b157d135ecca7a81e78cc5e9eccaf720db76aa597c0df016f77deee34194d8",
             "event": "ANSWER_CANDIDATE_BOUND",
-            "event_semantic_sha256": "f7dd5eff363a42554524036aa61d8b50bbfabd374c6c3734b7af16db20f7e27e",
+            "event_semantic_sha256": "ba47a426d34acac8a99361679b82cf76fa510e92d018bc82a99f9cc6e7bb0f30",
             "previous_event_sha256": "2cd3d7e9e05f4a5bc5ec2aaf225b1ca48d01427a6482218d9651623da9fa38e2",
             "sequence": 13
           },
           {
-            "artifact_ref": "8703d2578a932db907548923e6b58c5075b52bcb26430a34428447d5ebd7cfcd",
+            "artifact_ref": "65b157d135ecca7a81e78cc5e9eccaf720db76aa597c0df016f77deee34194d8",
             "event": "ANSWER_VERIFIED",
-            "event_semantic_sha256": "0770d654d434f2e0a33cccff4eaf01ab0edd5fdacbcdfddce7adc773367e9a4e",
-            "previous_event_sha256": "f7dd5eff363a42554524036aa61d8b50bbfabd374c6c3734b7af16db20f7e27e",
+            "event_semantic_sha256": "78482149a12644ceacb94fb15986cbf10af5ae90406bd7544fe9a06c307fdd8e",
+            "previous_event_sha256": "ba47a426d34acac8a99361679b82cf76fa510e92d018bc82a99f9cc6e7bb0f30",
             "sequence": 14
           },
           {
-            "artifact_ref": "8703d2578a932db907548923e6b58c5075b52bcb26430a34428447d5ebd7cfcd",
+            "artifact_ref": "65b157d135ecca7a81e78cc5e9eccaf720db76aa597c0df016f77deee34194d8",
             "event": "ANSWER_RENDERED",
-            "event_semantic_sha256": "4b5146fda4af8b9f50cbd836def889787b6d23eb5420a886c3b965e8fa9e675e",
-            "previous_event_sha256": "0770d654d434f2e0a33cccff4eaf01ab0edd5fdacbcdfddce7adc773367e9a4e",
+            "event_semantic_sha256": "56c59a7144331183f02ad907864a1701d35ad4abb12e7c56a791109c2e0b8d3d",
+            "previous_event_sha256": "78482149a12644ceacb94fb15986cbf10af5ae90406bd7544fe9a06c307fdd8e",
             "sequence": 15
           },
           {
             "artifact_ref": "d9708ba1e9eb90c17204434d9f7d43b5da33b6f8301b97967b9862b1388657e7",
             "event": "AUDIT_FINALIZED",
-            "event_semantic_sha256": "ecbc2e9323bada982b5f08348aac9f16f0737a5a11543fed0bdf46fa6135f7a6",
-            "previous_event_sha256": "4b5146fda4af8b9f50cbd836def889787b6d23eb5420a886c3b965e8fa9e675e",
+            "event_semantic_sha256": "f2939f776805cd9429d522f9dedd6824169d09c5ce69a3951ee20d03c0da90fc",
+            "previous_event_sha256": "56c59a7144331183f02ad907864a1701d35ad4abb12e7c56a791109c2e0b8d3d",
             "sequence": 16
           },
           {
             "artifact_ref": "d9708ba1e9eb90c17204434d9f7d43b5da33b6f8301b97967b9862b1388657e7",
             "event": "RUN_COMPLETE",
-            "event_semantic_sha256": "2279b34101e4c2f92d255470c16fd360cfa5b8d628b37469b2e0d0ce043db60a",
-            "previous_event_sha256": "ecbc2e9323bada982b5f08348aac9f16f0737a5a11543fed0bdf46fa6135f7a6",
+            "event_semantic_sha256": "b98860cf23a7a4348c112c412a0aca503b9d759e774cee4c7c89d3e6440da003",
+            "previous_event_sha256": "f2939f776805cd9429d522f9dedd6824169d09c5ce69a3951ee20d03c0da90fc",
             "sequence": 17
           }
         ],

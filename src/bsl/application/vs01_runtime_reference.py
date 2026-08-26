@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -12,9 +13,10 @@ import rfc8785
 from uuid6 import uuid7
 
 from bsl.contracts.runtime_screening import (
-    _LEDGER_HASHES,  # pyright: ignore[reportPrivateUsage]
+    _LEDGER_FIELDS,  # pyright: ignore[reportPrivateUsage]
     _REFERENCE,  # pyright: ignore[reportPrivateUsage]
     ALTERNATIVE_IDS,
+    CORRECTION_ANSWER_SENTENCE,
     CORRECTION_PROMPT,
     INITIAL_EVIDENCE,
     PROMPT,
@@ -97,6 +99,20 @@ class RuntimeSubjectTrace:
     initial_assessment: str
     tool_calls: tuple[RuntimeToolCallRecord, ...]
     final_sufficiency: str
+
+
+def answer_blocks_for(prompt: str) -> tuple[dict[str, Any], ...]:
+    blocks = tuple(dict(item) for item in cast(list[dict[str, Any]], _REFERENCE["answer_blocks"]))
+    if prompt != CORRECTION_PROMPT:
+        return blocks
+    corrected = list(blocks)
+    corrected[5] |= {"text": f"{corrected[5]['text']} {CORRECTION_ANSWER_SENTENCE}"}
+    return tuple(corrected)
+
+
+def ledger_hashes_for(prompt: str) -> tuple[str, ...]:
+    values = tuple(_REFERENCE[field] for field in _LEDGER_FIELDS[:-1]) + (answer_blocks_for(prompt),)
+    return tuple(canonical_sha256(value) for value in values)
 
 
 class RuntimeToolBroker:
@@ -237,12 +253,23 @@ def execute_reference_runtime(
 ) -> VS01RuntimeAcquisitionRun:
     if package.case_id == "VS01-B08-RUNTIME-C01" and not _real_authorized:
         raise ValueError("real T08 execution requires separate operational authorization")
-    trace = (subject or DeterministicRuntimeSubject()).run(package, RuntimeToolBroker(package.prompt))
-    if trace.initial_assessment != "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS":
-        raise ValueError("runtime subject failed to record initial insufficiency")
-    if trace.final_sufficiency != "SUFFICIENT_WITH_QUALIFICATION":
-        raise ValueError("runtime subject failed final sufficiency reassessment")
+    trace = _validated_trace(package, subject)
     return _construct_run(template, package, trace)
+
+
+def _validated_trace(package: RuntimeSubjectPackage, subject: VS01RuntimeSubjectAdapter | None) -> RuntimeSubjectTrace:
+    broker = RuntimeToolBroker(package.prompt)
+    trace = (subject or DeterministicRuntimeSubject()).run(package, broker)
+    calls = tuple(item.model_dump(mode="json") for item in trace.tool_calls)
+    exact = (
+        trace.initial_assessment == "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS",
+        trace.final_sufficiency == "SUFFICIENT_WITH_QUALIFICATION",
+        calls == expected_tool_calls(package.prompt),
+        trace.tool_calls == broker.calls,
+    )
+    if not all(exact):
+        raise ValueError("runtime subject trace authority differs")
+    return trace
 
 
 def corrected_runtime(
@@ -258,8 +285,11 @@ def corrected_runtime(
         or package.prompt != CORRECTION_PROMPT
     ):
         raise ValueError("corrected runtime authority differs")
-    trace = (subject or DeterministicRuntimeSubject()).run(package, RuntimeToolBroker(package.prompt))
-    rerun = _construct_run(
+    previous_bytes = rfc8785.dumps(previous.model_dump(mode="json"))
+    trace = _validated_trace(package, subject)
+    if rfc8785.dumps(previous.model_dump(mode="json")) != previous_bytes:
+        raise ValueError("corrected runtime mutated the prior run")
+    return _construct_run(
         previous,
         package,
         trace,
@@ -267,7 +297,6 @@ def corrected_runtime(
         supersedes_request=previous.request_identity,
         supersedes_run=previous.acquisition_run_identity,
     )
-    return rerun
 
 
 def _construct_run(
@@ -281,7 +310,8 @@ def _construct_run(
 ) -> VS01RuntimeAcquisitionRun:
     request = request_identity(package.case_id, package.prompt, revision, supersedes_request)
     calls = tuple(item.model_dump(mode="json") for item in trace.tool_calls)
-    plan, answer = plan_identity(request, calls), answer_identity(request)
+    blocks, hashes = answer_blocks_for(package.prompt), ledger_hashes_for(package.prompt)
+    plan, answer = plan_identity(request, calls), answer_identity(request, hashes)
     body: dict[str, Any] = template.model_dump(
         mode="json",
         exclude={
@@ -292,7 +322,10 @@ def _construct_run(
             "supersedes_request_identity",
             "supersedes_run_identity",
             "plan_identity",
+            "initial_assessment",
             "tool_calls",
+            "answer_blocks",
+            "final_sufficiency",
             "audit_events",
             "answer_projection_identity",
             "acquisition_run_identity",
@@ -305,7 +338,10 @@ def _construct_run(
         "supersedes_request_identity": supersedes_request,
         "supersedes_run_identity": supersedes_run,
         "plan_identity": plan,
+        "initial_assessment": trace.initial_assessment,
         "tool_calls": calls,
+        "answer_blocks": blocks,
+        "final_sufficiency": trace.final_sufficiency,
         "audit_events": expected_events(request, plan, answer),
         "answer_projection_identity": answer,
     }
@@ -316,6 +352,42 @@ def _construct_run(
 
 def _synthetic_initial_payload() -> dict[str, Any]:
     return acquisition_variant_payload(SYNTHETIC_CASE_ID, PROMPT, 1, None, None)
+
+
+def acquisition_variants() -> tuple[dict[str, Any], ...]:
+    synthetic = _synthetic_initial_payload()
+    return (
+        acquisition_variant_payload("VS01-B08-RUNTIME-C01", PROMPT, 1, None, None),
+        synthetic,
+        acquisition_variant_payload(
+            SYNTHETIC_CASE_ID,
+            CORRECTION_PROMPT,
+            2,
+            cast(str, synthetic["request_identity"]),
+            cast(str, synthetic["acquisition_run_identity"]),
+        ),
+    )
+
+
+def _receipt_binding(result: dict[str, Any]) -> dict[str, Any]:
+    from bsl.infrastructure.runtime_screening_store import publication_paths
+
+    result_sha = hashlib.sha256(rfc8785.dumps(result)).hexdigest()
+    return {
+        "properties": {
+            "acquisition_run_identity": {"const": result["acquisition_run_identity"]},
+            "pair_result": {"const": result},
+            "pair_result_identity": {"const": result["pair_result_identity"]},
+            "pair_result_file_sha256": {"const": result_sha},
+            "archive_paths": {"const": list(publication_paths(result_sha))},
+        }
+    }
+
+
+def reference_receipt_binding_schema() -> dict[str, Any]:
+    from bsl.application.vs01_runtime_scoring import reference_result_payloads
+
+    return {"oneOf": [_receipt_binding(result) for result in reference_result_payloads()]}
 
 
 def validate_acquisition_run(run: VS01RuntimeAcquisitionRun) -> None:
@@ -331,7 +403,8 @@ def validate_acquisition_run(run: VS01RuntimeAcquisitionRun) -> None:
         namespace_valid = run.case_id == SYNTHETIC_CASE_ID and run.prompt == CORRECTION_PROMPT
     calls = expected_tool_calls(run.prompt)
     request = request_identity(run.case_id, run.prompt, run.request_revision, run.supersedes_request_identity)
-    plan, answer = plan_identity(request, calls), answer_identity(request)
+    hashes = ledger_hashes_for(run.prompt)
+    plan, answer = plan_identity(request, calls), answer_identity(request, hashes)
     records = (run.evidence_ledger, run.claim_ledger, run.citation_ledger, run.answer_blocks)
     exact = (
         run.pair_specification_identity == SPEC_IDENTITY,
@@ -340,8 +413,7 @@ def validate_acquisition_run(run: VS01RuntimeAcquisitionRun) -> None:
         run.request_identity == request,
         run.plan_identity == plan,
         tuple(item.model_dump(mode="json") for item in run.tool_calls) == calls,
-        tuple(canonical_sha256([item.model_dump(mode="json") for item in value]) for value in records)
-        == _LEDGER_HASHES,
+        tuple(canonical_sha256([item.model_dump(mode="json") for item in value]) for value in records) == hashes,
         run.initial_assessment == "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS",
         run.accepted_alternative_ids == ALTERNATIVE_IDS,
         run.material_unknown_claim_ids == UNKNOWN_CLAIM_IDS,
@@ -358,16 +430,7 @@ def validate_acquisition_run(run: VS01RuntimeAcquisitionRun) -> None:
 
 def acquisition_run_schema(schema: dict[str, Any]) -> None:
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    real = acquisition_variant_payload("VS01-B08-RUNTIME-C01", PROMPT, 1, None, None)
-    synthetic = _synthetic_initial_payload()
-    correction = acquisition_variant_payload(
-        SYNTHETIC_CASE_ID,
-        CORRECTION_PROMPT,
-        2,
-        cast(str, synthetic["request_identity"]),
-        cast(str, synthetic["acquisition_run_identity"]),
-    )
-    schema["oneOf"] = [{"const": value} for value in (real, synthetic, correction)]
+    schema["oneOf"] = [{"const": value} for value in acquisition_variants()]
 
 
 def _ledger(current: RuntimeControllerLedger | None = None, **increments: int) -> RuntimeControllerLedger:

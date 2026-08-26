@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import rfc8785
 
+from bsl.application.vs01_runtime_reference import acquisition_variants
 from bsl.contracts.runtime_screening import (
     CLAIM_IDS,
     EVENT_SEQUENCE,
     EVIDENCE_IDS,
+    FINGERPRINT_NAMES,
     FIXED_CASE_RESULT_IDENTITY,
     HARD_FAILURES,
     LIMITATIONS,
@@ -15,6 +17,7 @@ from bsl.contracts.runtime_screening import (
     SPEC_IDENTITY,
     STATE_SEQUENCE,
     TOOL_NAMES,
+    RuntimeControllerLedger,
     RuntimeCriterion,
     VS01B08RuntimePairResult,
     VS01B08RuntimePairSpecification,
@@ -35,6 +38,7 @@ FAILURE_CRITERIA = {
     "CORRECTION_LINEAGE_LOSS": (7,),
     "MODEL_OR_NETWORK_ROUTE": (1, 3),
 }
+_MODEL_ROUTE_FIELDS = ("model_invocations", "network_invocations", "ocr_invocations", "vlm_invocations")
 TEXT_FAILURES = {
     "TRANSLATION_AS_MANUSCRIPT_WITNESS": ("translations are manuscript witnesses", "prove different greek manuscripts"),
     "FALSE_TEXTUAL_VARIANT_CERTAINTY": ("no textual variant exists", "a textual variant exists"),
@@ -171,18 +175,68 @@ def validate_pair_result(result: VS01B08RuntimePairResult) -> None:
         raise ValueError("runtime pair-result authority differs")
 
 
-def _state_schema(*, reference: bool) -> dict[str, Any]:
+def reference_result_payload(acquisition_identity: str) -> dict[str, Any]:
+    criteria = tuple(
+        RuntimeCriterion(criterion_id=item["criterion_id"], weight=item["weight"], score=2, points=2 * item["weight"])
+        for item in SPEC["scoring"]["runtime_case"]["criteria"]
+    )
+    draft = VS01B08RuntimePairResult.model_construct(
+        pair_specification_identity=SPEC_IDENTITY,
+        acquisition_run_identity=acquisition_identity,
+        fixed_case_result_identity=FIXED_CASE_RESULT_IDENTITY,
+        fixed_points=8,
+        runtime_criteria=criteria,
+        runtime_points=28,
+        pair_points=36,
+        tool_calls_observed=7,
+        events_observed=17,
+        hard_failures=(),
+        leakage_incidents=0,
+        replay_run_identities=(acquisition_identity, acquisition_identity),
+        disposition="REFERENCE_CONFORMANT",
+        limitations=LIMITATIONS,
+        pair_result_identity="0" * 64,
+    )
+    body = draft.model_dump(mode="json", exclude={"pair_result_identity"})
+    return body | {"pair_result_identity": canonical_sha256(body)}
+
+
+def reference_result_payloads() -> tuple[dict[str, Any], ...]:
+    return tuple(reference_result_payload(str(item["acquisition_run_identity"])) for item in acquisition_variants())
+
+
+def _reference_state_schema(payload: dict[str, Any]) -> dict[str, Any]:
+    excluded = {"disposition", "pair_result_identity"}
+    return {"properties": {key: {"const": value} for key, value in payload.items() if key not in excluded}}
+
+
+def _criterion_schema(item: dict[str, Any], *, reference: bool, allow_zero: bool = False) -> dict[str, Any]:
+    scores = (2,) if reference else ((0, 1, 2) if allow_zero else (1, 2))
+    return {
+        "properties": {"criterion_id": {"const": item["criterion_id"]}, "weight": {"const": item["weight"]}},
+        "oneOf": [
+            {"properties": {"score": {"const": score}, "points": {"const": score * item["weight"]}}} for score in scores
+        ],
+    }
+
+
+def _future_state_schema() -> dict[str, Any]:
+    configured = SPEC["scoring"]["runtime_case"]["criteria"]
     properties: dict[str, Any] = {
-        "fixed_points": {"const": 8} if reference else {"minimum": 7},
-        "runtime_points": {"const": 28} if reference else {"minimum": 24},
-        "pair_points": {"const": 36} if reference else {"minimum": 32},
+        "fixed_points": {"minimum": 7},
+        "runtime_points": {"minimum": 24},
+        "pair_points": {"minimum": 32},
         "tool_calls_observed": {"const": 7},
         "events_observed": {"const": 17},
         "hard_failures": {"maxItems": 0},
         "leakage_incidents": {"const": 0},
+        "limitations": {"const": list(LIMITATIONS)},
+        "runtime_criteria": {
+            "prefixItems": [_criterion_schema(item, reference=False) for item in configured],
+            "minItems": 8,
+            "maxItems": 8,
+        },
     }
-    score = {"const": 2} if reference else {"minimum": 1}
-    properties["runtime_criteria"] = {"prefixItems": [{"properties": {"score": score}} for _ in range(8)]}
     return {"properties": properties}
 
 
@@ -191,18 +245,117 @@ def pair_result_schema(schema: dict[str, Any]) -> None:
     schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
     schema["properties"]["fixed_case_result_identity"] = {"const": FIXED_CASE_RESULT_IDENTITY}
     schema["properties"]["limitations"] = {"const": list(LIMITATIONS)}
-    reference, future = _state_schema(reference=True), _state_schema(reference=False)
+    schema["properties"]["hard_failures"] |= {"items": {"enum": list(HARD_FAILURES)}, "uniqueItems": True}
+    configured = SPEC["scoring"]["runtime_case"]["criteria"]
+    schema["properties"]["runtime_criteria"] = {
+        "prefixItems": [_criterion_schema(item, reference=False, allow_zero=True) for item in configured],
+        "minItems": 8,
+        "maxItems": 8,
+    }
+    payloads = reference_result_payloads()
+    reference = {"oneOf": [{"const": payload} for payload in payloads]}
+    reference_state = {"oneOf": [_reference_state_schema(payload) for payload in payloads]}
+    future = _future_state_schema()
     schema["oneOf"] = [
         {"properties": {"disposition": {"const": "REFERENCE_CONFORMANT"}}, "allOf": [reference]},
         {
             "properties": {"disposition": {"const": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"}},
-            "allOf": [future, {"not": reference}],
+            "allOf": [future, {"not": reference_state}],
         },
         {
             "properties": {"disposition": {"const": "RUNTIME_SCREENING_NO_GO"}},
-            "not": {"anyOf": [reference, {"allOf": [future, {"not": reference}]}]},
+            "not": {"anyOf": [reference_state, {"allOf": [future, {"not": reference_state}]}]},
         },
     ]
+
+
+def screening_receipt_schema(schema: dict[str, Any]) -> None:
+    from bsl.application.vs01_runtime_reference import reference_receipt_binding_schema
+    from bsl.infrastructure.runtime_screening_store import _ledger_state  # pyright: ignore[reportPrivateUsage]
+
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    uuid7 = {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"}
+    schema["properties"] |= {
+        "receipt_id": uuid7,
+        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "pair_specification_identity": {"const": SPEC_IDENTITY},
+        "archive_root": {"type": "string", "pattern": "^/"},
+        "authority_fingerprints_initial": _fingerprint_schema(),
+        "authority_fingerprints_pre_store": _fingerprint_schema(),
+        "authority_fingerprints_post_store": _fingerprint_schema(),
+    }
+    states = (
+        ("DRY_RUN_VALIDATED", None),
+        ("REFERENCE_NONCONFORMANT", None),
+        ("REFERENCE_CONFORMANT", "EMPTY"),
+        ("REFERENCE_CONFORMANT", "OBJECT_ONLY"),
+        ("REFERENCE_CONFORMANT", "OBJECT_AND_SNAPSHOT"),
+        ("VERIFIED_EXISTING", "COMPLETE"),
+    )
+    variants: list[dict[str, Any]] = []
+    for disposition, recovery in states:
+        _verify, _attempts, _success, _writes, published, existing = _ledger_state(disposition, cast(Any, recovery))
+        retained = {
+            "type": "object",
+            "properties": {
+                "disposition": {"const": "REFERENCE_CONFORMANT"},
+                "published": {"const": True},
+                "verified_existing": {"const": False},
+            },
+        }
+        properties = {
+            "disposition": {"const": disposition},
+            "published": {"const": published},
+            "verified_existing": {"const": existing},
+            "canonical_recovery_state": {"const": recovery},
+            "operation_ledger": {"const": _ledger_payload(disposition, recovery)},
+            "pair_result": {
+                "properties": {
+                    "disposition": {"not": {"const": "REFERENCE_CONFORMANT"}}
+                    if disposition == "REFERENCE_NONCONFORMANT"
+                    else {"const": "REFERENCE_CONFORMANT"}
+                }
+            },
+            "retained_publication_receipt": retained if existing else {"type": "null"},
+            "retained_publication_receipt_id": uuid7 if existing else {"type": "null"},
+            "retained_publication_receipt_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            if existing
+            else {"type": "null"},
+        }
+        variant: dict[str, Any] = {"properties": properties}
+        if disposition != "REFERENCE_NONCONFORMANT":
+            variant["allOf"] = [reference_receipt_binding_schema()]
+        variants.append(variant)
+    schema["oneOf"] = variants
+
+
+def _fingerprint_schema() -> dict[str, Any]:
+    sha = {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    pairs = [
+        {"type": "array", "prefixItems": [{"const": name}, sha], "minItems": 2, "maxItems": 2}
+        for name in FINGERPRINT_NAMES
+    ]
+    return {"type": "array", "prefixItems": pairs, "minItems": len(pairs), "maxItems": len(pairs)}
+
+
+def _ledger_payload(disposition: str, recovery: str | None) -> dict[str, int]:
+    from bsl.infrastructure.runtime_screening_store import _ledger_state  # pyright: ignore[reportPrivateUsage]
+
+    verify, attempts, success, writes, _published, _existing = _ledger_state(disposition, cast(Any, recovery))
+    payload = dict.fromkeys(RuntimeControllerLedger.model_fields, 0)
+    payload.update(
+        subject_invocations=2,
+        broker_tool_calls=14,
+        scoring_invocations=1,
+        acquisition_runs_constructed=2,
+        pair_results_constructed=1,
+        receipts_constructed=1,
+        store_verification_attempts=verify,
+        publication_attempts=attempts,
+        successful_publications=success,
+        canonical_archive_writes=writes,
+    )
+    return payload
 
 
 def _lineage_lost(run: VS01RuntimeAcquisitionRun) -> bool:
@@ -213,13 +366,7 @@ def _lineage_lost(run: VS01RuntimeAcquisitionRun) -> bool:
 
 
 def _model_route(run: VS01RuntimeAcquisitionRun) -> bool:
-    counters = run.operation_counters
-    return bool(
-        counters.model_invocations
-        or counters.network_invocations
-        or counters.ocr_invocations
-        or counters.vlm_invocations
-    )
+    return any(getattr(run.operation_counters, name) for name in _MODEL_ROUTE_FIELDS)
 
 
 def evaluate_hard_failures(
