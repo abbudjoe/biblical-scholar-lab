@@ -1,0 +1,55 @@
+name: vs01-t09b-web-ci
+on: {pull_request: {branches: [main]}}
+permissions: {contents: read}
+jobs:
+  vs01-t09b-web-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: "3.12"}
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with: {version: "0.11.7"}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with: {node-version: "24.20.0"}
+      - run: npm install --global pnpm@11.24.0
+      - run: uv sync --frozen
+      - run: uv lock --check
+      - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        working-directory: web
+      - name: Generated drift, Biome, TypeScript, and Vitest
+        working-directory: web
+        run: |
+          pnpm check:generated
+          pnpm lint
+          pnpm typecheck
+          pnpm test
+      - name: Deterministic build and committed dist drift
+        working-directory: web
+        run: |
+          find dist -mindepth 1 -delete
+          pnpm build
+          cp -R dist "$RUNNER_TEMP/dist-first"
+          find dist -mindepth 1 -delete
+          pnpm build
+          diff -r "$RUNNER_TEMP/dist-first" dist
+          pnpm check:dist
+          git diff --exit-code -- dist src/generated
+      - name: Focused loopback API tests
+        run: uv run pytest tests/test_vs01_web.py
+      - name: Install Chromium and run browser, keyboard, reflow, and axe tests
+        working-directory: web
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:browser
+      - name: Exact head and committed diff
+        env: {BASE_SHA: "${{ github.event.pull_request.base.sha }}", HEAD_SHA: "${{ github.event.pull_request.head.sha }}"}
+        run: |
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          git diff --check "${BASE_SHA}...${HEAD_SHA}"

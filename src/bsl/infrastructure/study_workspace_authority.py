@@ -5,6 +5,7 @@ import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 import rfc8785
 from pydantic import ValidationError
@@ -208,3 +209,13 @@ def load_study_workspace_authority(archive_root: Path) -> StudyWorkspaceAuthorit
     ):
         raise ValueError("T08 acquisition-run identity binding differs")
     return StudyWorkspaceAuthority(result, t08_receipt, run, fixture, page_receipt)
+
+
+def read_t06_page_asset(archive_root: Path, variant: Literal["base", "degraded"]) -> bytes:
+    """Read one frozen T06 PNG through the same descriptor-relative authority boundary."""
+    index = 0 if variant == "base" else 1
+    expected = (BASE_SHA256, BASE_BYTES) if variant == "base" else (DEGRADED_SHA256, DEGRADED_BYTES)
+    data = _immutable(archive_root, T06_PATHS[index])
+    if (hashlib.sha256(data).hexdigest(), len(data)) != expected:
+        raise ValueError(f"canonical T06 {variant} page differs")
+    return data

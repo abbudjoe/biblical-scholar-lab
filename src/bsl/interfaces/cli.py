@@ -6,19 +6,9 @@ import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, NoReturn
 
-from bsl.application.archive_initialization import initialize_archive
-from bsl.application.john15_evidence import generate_john15_evidence
-from bsl.application.john15_normalization import normalize_john15
-from bsl.application.john15_page_fixture import generate_john15_page_fixture
-from bsl.application.john15_study_runtime import execute_john15_study
-from bsl.application.source_acquisition import acquire_source
-from bsl.application.source_admission import compile_source_plan
-from bsl.application.vs01_benchmark_scoring import run_reference_campaign
-from bsl.application.vs01_runtime_screening import run_runtime_pair
 from bsl.contracts.archive import ArchiveReadiness
-from bsl.infrastructure.macos_volume import inspect_volume
 
 PRIVATE_RECEIPT = Path(".local/evidence/VS01-T01/archive-preflight.json")
 
@@ -30,6 +20,82 @@ class CliInputError(ValueError):
 class JsonArgumentParser(argparse.ArgumentParser):
     def error(self, message: str) -> NoReturn:
         raise CliInputError(message)
+
+
+def initialize_archive(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.archive_initialization import initialize_archive as operation
+
+    return operation(*args, **kwargs)
+
+
+def generate_john15_evidence(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.john15_evidence import generate_john15_evidence as operation
+
+    return operation(*args, **kwargs)
+
+
+def normalize_john15(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.john15_normalization import normalize_john15 as operation
+
+    return operation(*args, **kwargs)
+
+
+def generate_john15_page_fixture(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.john15_page_fixture import generate_john15_page_fixture as operation
+
+    return operation(*args, **kwargs)
+
+
+def execute_john15_study(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.john15_study_runtime import execute_john15_study as operation
+
+    return operation(*args, **kwargs)
+
+
+def acquire_source(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.source_acquisition import acquire_source as operation
+
+    return operation(*args, **kwargs)
+
+
+def compile_source_plan(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.source_admission import compile_source_plan as operation
+
+    return operation(*args, **kwargs)
+
+
+def run_reference_campaign(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.vs01_benchmark_scoring import run_reference_campaign as operation
+
+    return operation(*args, **kwargs)
+
+
+def run_runtime_pair(*args: Any, **kwargs: Any) -> Any:
+    from bsl.application.vs01_runtime_screening import run_runtime_pair as operation
+
+    return operation(*args, **kwargs)
+
+
+def inspect_volume(*args: Any, **kwargs: Any) -> Any:
+    from bsl.infrastructure.macos_volume import inspect_volume as operation
+
+    return operation(*args, **kwargs)
+
+
+def run_vs01_web(*args: Any, **kwargs: Any) -> Any:
+    from bsl.interfaces.vs01_web import run_vs01_web as operation
+
+    return operation(*args, **kwargs)
+
+
+def _loopback_port(value: str) -> int:
+    try:
+        port = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("port must be an integer from 1024 through 65535") from None
+    if not 1024 <= port <= 65535:
+        raise argparse.ArgumentTypeError("port must be an integer from 1024 through 65535")
+    return port
 
 
 def _parser() -> JsonArgumentParser:
@@ -81,6 +147,10 @@ def _parser() -> JsonArgumentParser:
     runtime_pair = benchmark_commands.add_parser("vs01-b08-runtime-pair")
     runtime_pair.add_argument("--subject", required=True, choices=("deterministic-runtime",))
     runtime_pair.add_argument("--dry-run", action="store_true")
+    web = commands.add_parser("web")
+    web_commands = web.add_subparsers(dest="web_command", required=True)
+    vs01 = web_commands.add_parser("vs01")
+    vs01.add_argument("--port", required=True, type=_loopback_port)
     return parser
 
 
@@ -236,6 +306,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _page(args)
         if args.command == "benchmark":
             return _benchmark(args)
+        if args.command == "web" and args.web_command == "vs01":
+            run_vs01_web(args.port)
+            return 0
         return _emit_error("INVALID_CLI_INPUT", "unsupported command")
     except CliInputError as exc:
         return _emit_error("INVALID_CLI_INPUT", str(exc))

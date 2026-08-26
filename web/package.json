@@ -1,0 +1,39 @@
+{
+  "name": "bsl-vs01-study-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": "24.20.0"
+  },
+  "scripts": {
+    "build": "vite build && node scripts/build-manifest.mjs",
+    "check:dist": "node scripts/build-manifest.mjs --check",
+    "check:generated": "node scripts/generate-schema.mjs --check",
+    "generate": "node scripts/generate-schema.mjs",
+    "lint": "biome check .",
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@biomejs/biome": "2.5.10",
+    "@playwright/test": "1.62.1",
+    "@testing-library/react": "14.3.1",
+    "@types/node": "24.13.3",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "6.1.0",
+    "jsdom": "30.0.1",
+    "typescript": "5.9.3",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}
