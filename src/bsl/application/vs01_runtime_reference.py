@@ -199,7 +199,7 @@ def audit_subject_package(package: RuntimeSubjectPackage) -> None:
         package.tool_schemas == expected_tools,
         package.calls_per_tool == 1,
         package.retries == package.fallbacks == 0,
-        package.output_schema == tuple(_PROJECTION["output_schema"].items()),
+        package.output_schema == tuple(sorted(_PROJECTION["output_schema"].items())),
         not any(field in rendered for field in FORBIDDEN_SUBJECT_FIELDS),
         not any(value.startswith(("/", "file:", "postgres")) for value in (package.case_id, package.prompt)),
     )
@@ -231,7 +231,7 @@ def subject_package_from_projection(
         "calls_per_tool": projection["budgets"]["calls_per_tool"],
         "retries": projection["budgets"]["retries"],
         "fallbacks": projection["budgets"]["fallbacks"],
-        "output_schema": tuple(projection["output_schema"].items()),
+        "output_schema": tuple(sorted(projection["output_schema"].items())),
     }
     payload["package_identity"] = canonical_sha256(
         {
