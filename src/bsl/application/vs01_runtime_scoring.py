@@ -8,7 +8,11 @@ from bsl.contracts.runtime_screening import (
     CLAIM_IDS,
     EVENT_SEQUENCE,
     EVIDENCE_IDS,
+    FIXED_CASE_RESULT_IDENTITY,
     HARD_FAILURES,
+    LIMITATIONS,
+    SPEC,
+    SPEC_IDENTITY,
     STATE_SEQUENCE,
     TOOL_NAMES,
     RuntimeCriterion,
@@ -18,13 +22,6 @@ from bsl.contracts.runtime_screening import (
     canonical_sha256,
 )
 
-LIMITATIONS = (
-    "single passage and ChatGPT-authored public screening pair",
-    "deterministic oracle runtime rather than model-mediated tool selection",
-    "no critical apparatus or witness evidence",
-    "no REV-P2 specialist gold",
-    "not training eligible or private-final eligible",
-)
 FAILURE_CRITERIA = {
     "EARLY_UNGROUNDED_ANSWER": (0,),
     "HIDDEN_EVIDENCE_ACCESS": (0, 3),
@@ -111,6 +108,8 @@ def _fabricated(run: VS01RuntimeAcquisitionRun, reference: VS01RuntimeAcquisitio
 def _ledger_mismatch(run: VS01RuntimeAcquisitionRun, reference: VS01RuntimeAcquisitionRun) -> bool:
     return not all(
         (
+            tuple(item.model_dump(mode="json") for item in run.evidence_ledger)
+            == tuple(item.model_dump(mode="json") for item in reference.evidence_ledger),
             tuple(item.model_dump(mode="json") for item in run.claim_ledger)
             == tuple(item.model_dump(mode="json") for item in reference.claim_ledger),
             tuple(item.model_dump(mode="json") for item in run.citation_ledger)
@@ -120,6 +119,90 @@ def _ledger_mismatch(run: VS01RuntimeAcquisitionRun, reference: VS01RuntimeAcqui
             tuple(item.claim_id for item in run.claim_ledger) == CLAIM_IDS,
         )
     )
+
+
+def _passing_state(result: VS01B08RuntimePairResult, *, reference: bool) -> bool:
+    scores = tuple(item.score for item in result.runtime_criteria)
+    common = (
+        not result.hard_failures,
+        result.leakage_incidents == 0,
+        result.tool_calls_observed == 7,
+        result.events_observed == 17,
+        result.replay_run_identities[0] == result.replay_run_identities[1] == result.acquisition_run_identity,
+        result.limitations == LIMITATIONS,
+    )
+    if reference:
+        return all(common) and (result.fixed_points, result.runtime_points, result.pair_points, scores) == (
+            8,
+            28,
+            36,
+            (2,) * 8,
+        )
+    return all(common) and all(
+        (result.fixed_points >= 7, result.runtime_points >= 24, result.pair_points >= 32, all(scores))
+    )
+
+
+def validate_pair_result(result: VS01B08RuntimePairResult) -> None:
+    configured = SPEC["scoring"]["runtime_case"]["criteria"]
+    reference = _passing_state(result, reference=True)
+    future = _passing_state(result, reference=False) and not reference
+    state = {
+        "REFERENCE_CONFORMANT": reference,
+        "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS": future,
+        "RUNTIME_SCREENING_NO_GO": not reference and not future,
+    }[result.disposition]
+    body = result.model_dump(mode="json", exclude={"pair_result_identity"})
+    exact = (
+        result.pair_specification_identity == SPEC_IDENTITY,
+        result.fixed_case_result_identity == FIXED_CASE_RESULT_IDENTITY,
+        tuple(item.criterion_id for item in result.runtime_criteria)
+        == tuple(item["criterion_id"] for item in configured),
+        tuple(item.weight for item in result.runtime_criteria) == tuple(item["weight"] for item in configured),
+        result.runtime_points == sum(item.points for item in result.runtime_criteria),
+        result.pair_points == result.fixed_points + result.runtime_points,
+        len(result.hard_failures) == len(set(result.hard_failures)),
+        set(result.hard_failures) <= set(HARD_FAILURES),
+        result.limitations == LIMITATIONS,
+        state,
+        result.pair_result_identity == canonical_sha256(body),
+    )
+    if not all(exact):
+        raise ValueError("runtime pair-result authority differs")
+
+
+def _state_schema(*, reference: bool) -> dict[str, Any]:
+    properties: dict[str, Any] = {
+        "fixed_points": {"const": 8} if reference else {"minimum": 7},
+        "runtime_points": {"const": 28} if reference else {"minimum": 24},
+        "pair_points": {"const": 36} if reference else {"minimum": 32},
+        "tool_calls_observed": {"const": 7},
+        "events_observed": {"const": 17},
+        "hard_failures": {"maxItems": 0},
+        "leakage_incidents": {"const": 0},
+    }
+    score = {"const": 2} if reference else {"minimum": 1}
+    properties["runtime_criteria"] = {"prefixItems": [{"properties": {"score": score}} for _ in range(8)]}
+    return {"properties": properties}
+
+
+def pair_result_schema(schema: dict[str, Any]) -> None:
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
+    schema["properties"]["fixed_case_result_identity"] = {"const": FIXED_CASE_RESULT_IDENTITY}
+    schema["properties"]["limitations"] = {"const": list(LIMITATIONS)}
+    reference, future = _state_schema(reference=True), _state_schema(reference=False)
+    schema["oneOf"] = [
+        {"properties": {"disposition": {"const": "REFERENCE_CONFORMANT"}}, "allOf": [reference]},
+        {
+            "properties": {"disposition": {"const": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"}},
+            "allOf": [future, {"not": reference}],
+        },
+        {
+            "properties": {"disposition": {"const": "RUNTIME_SCREENING_NO_GO"}},
+            "not": {"anyOf": [reference, {"allOf": [future, {"not": reference}]}]},
+        },
+    ]
 
 
 def _lineage_lost(run: VS01RuntimeAcquisitionRun) -> bool:

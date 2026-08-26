@@ -36,6 +36,555 @@
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "oneOf": [
+    {
+      "allOf": [
+        {
+          "properties": {
+            "events_observed": {
+              "const": 17
+            },
+            "fixed_points": {
+              "const": 8
+            },
+            "hard_failures": {
+              "maxItems": 0
+            },
+            "leakage_incidents": {
+              "const": 0
+            },
+            "pair_points": {
+              "const": 36
+            },
+            "runtime_criteria": {
+              "prefixItems": [
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "const": 2
+                    }
+                  }
+                }
+              ]
+            },
+            "runtime_points": {
+              "const": 28
+            },
+            "tool_calls_observed": {
+              "const": 7
+            }
+          }
+        }
+      ],
+      "properties": {
+        "disposition": {
+          "const": "REFERENCE_CONFORMANT"
+        }
+      }
+    },
+    {
+      "allOf": [
+        {
+          "properties": {
+            "events_observed": {
+              "const": 17
+            },
+            "fixed_points": {
+              "minimum": 7
+            },
+            "hard_failures": {
+              "maxItems": 0
+            },
+            "leakage_incidents": {
+              "const": 0
+            },
+            "pair_points": {
+              "minimum": 32
+            },
+            "runtime_criteria": {
+              "prefixItems": [
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "score": {
+                      "minimum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "runtime_points": {
+              "minimum": 24
+            },
+            "tool_calls_observed": {
+              "const": 7
+            }
+          }
+        },
+        {
+          "not": {
+            "properties": {
+              "events_observed": {
+                "const": 17
+              },
+              "fixed_points": {
+                "const": 8
+              },
+              "hard_failures": {
+                "maxItems": 0
+              },
+              "leakage_incidents": {
+                "const": 0
+              },
+              "pair_points": {
+                "const": 36
+              },
+              "runtime_criteria": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  }
+                ]
+              },
+              "runtime_points": {
+                "const": 28
+              },
+              "tool_calls_observed": {
+                "const": 7
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "disposition": {
+          "const": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"
+        }
+      }
+    },
+    {
+      "not": {
+        "anyOf": [
+          {
+            "properties": {
+              "events_observed": {
+                "const": 17
+              },
+              "fixed_points": {
+                "const": 8
+              },
+              "hard_failures": {
+                "maxItems": 0
+              },
+              "leakage_incidents": {
+                "const": 0
+              },
+              "pair_points": {
+                "const": 36
+              },
+              "runtime_criteria": {
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "score": {
+                        "const": 2
+                      }
+                    }
+                  }
+                ]
+              },
+              "runtime_points": {
+                "const": 28
+              },
+              "tool_calls_observed": {
+                "const": 7
+              }
+            }
+          },
+          {
+            "allOf": [
+              {
+                "properties": {
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_points": {
+                    "minimum": 7
+                  },
+                  "hard_failures": {
+                    "maxItems": 0
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "pair_points": {
+                    "minimum": 32
+                  },
+                  "runtime_criteria": {
+                    "prefixItems": [
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "minimum": 24
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "not": {
+                  "properties": {
+                    "events_observed": {
+                      "const": 17
+                    },
+                    "fixed_points": {
+                      "const": 8
+                    },
+                    "hard_failures": {
+                      "maxItems": 0
+                    },
+                    "leakage_incidents": {
+                      "const": 0
+                    },
+                    "pair_points": {
+                      "const": 36
+                    },
+                    "runtime_criteria": {
+                      "prefixItems": [
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "score": {
+                              "const": 2
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "runtime_points": {
+                      "const": 28
+                    },
+                    "tool_calls_observed": {
+                      "const": 7
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "disposition": {
+          "const": "RUNTIME_SCREENING_NO_GO"
+        }
+      }
+    }
+  ],
   "properties": {
     "acquisition_run_identity": {
       "pattern": "^[0-9a-f]{64}$",
@@ -63,9 +612,7 @@
       "type": "integer"
     },
     "fixed_case_result_identity": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Fixed Case Result Identity",
-      "type": "string"
+      "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
     },
     "fixed_points": {
       "maximum": 8,
@@ -86,11 +633,13 @@
       "type": "integer"
     },
     "limitations": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Limitations",
-      "type": "array"
+      "const": [
+        "single passage and ChatGPT-authored public screening pair",
+        "deterministic oracle runtime rather than model-mediated tool selection",
+        "no critical apparatus or witness evidence",
+        "no REV-P2 specialist gold",
+        "not training eligible or private-final eligible"
+      ]
     },
     "pair_points": {
       "maximum": 36,
@@ -123,146 +672,10 @@
       "type": "array"
     },
     "runtime_criteria": {
-      "maxItems": 8,
-      "minItems": 8,
-      "prefixItems": [
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R1"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R2"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R3"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R4"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R5"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R6"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R7"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeCriterion"
-            },
-            {
-              "properties": {
-                "criterion_id": {
-                  "const": "B08-RT-R8"
-                }
-              },
-              "required": [
-                "criterion_id"
-              ]
-            }
-          ]
-        }
-      ],
+      "items": {
+        "$ref": "#/$defs/RuntimeCriterion"
+      },
+      "title": "Runtime Criteria",
       "type": "array"
     },
     "runtime_points": {

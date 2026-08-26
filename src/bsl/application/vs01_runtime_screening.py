@@ -51,8 +51,14 @@ from bsl.contracts.runtime_screening import (
     RuntimeToolDefinition,
     VS01B08RuntimePairSpecification,
     VS01RuntimeAcquisitionRun,
+    answer_identity,
     canonical_sha256,
+    expected_events,
+    expected_tool_calls,
+    plan_identity,
+    request_identity,
 )
+from bsl.infrastructure.benchmark_store import _inventory  # pyright: ignore[reportPrivateUsage]
 from bsl.infrastructure.page_fixture_store import verify_existing as verify_t06_existing
 
 ROOT = Path(__file__).parents[3]
@@ -227,38 +233,23 @@ def compile_pair_specification() -> VS01B08RuntimePairSpecification:
     )
 
 
+def specification_schema(schema: dict[str, Any]) -> None:
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["const"] = compile_pair_specification().model_dump(mode="json")
+
+
 def _subject_projection(pair: VS01B08RuntimePairSpecification) -> dict[str, Any]:
     visible = CASE["initial_evidence_contract"]["visible_evidence"]
-    tools = sorted(pair.tool_definitions, key=lambda item: item.name)
     return {
         "schema_version": "1.0",
         "projection_id": "VS01-T08-RUNTIME-SUBJECT-PROJECTION-v1",
         "case_id": pair.runtime_case_id,
         "prompt": pair.prompt,
         "initial_evidence": visible,
-        "tool_schemas": [item.model_dump(mode="json") for item in tools],
+        "tool_schemas": [item.model_dump(mode="json") for item in pair.tool_definitions],
         "budgets": {"calls_per_tool": 1, "retries": 0, "fallbacks": 0},
         "output_schema": {"structured_acquisition_run": True, "answer_blocks": 7},
     }
-
-
-def _tool_calls() -> tuple[RuntimeToolCallRecord, ...]:
-    records: list[RuntimeToolCallRecord] = []
-    for item in TOOL_PLAN:
-        input_json = rfc8785.dumps(item["input"]).decode()
-        output_json = rfc8785.dumps(item["expected_output"]).decode()
-        records.append(
-            RuntimeToolCallRecord(
-                sequence=item["sequence"],
-                tool_call_id=item["tool_call_id"],
-                tool=item["tool"],
-                input_json=input_json,
-                output_json=output_json,
-                input_sha256=canonical_sha256(item["input"]),
-                output_sha256=canonical_sha256(item["expected_output"]),
-            )
-        )
-    return tuple(records)
 
 
 def _evidence(packet: Any) -> tuple[RuntimeEvidenceRecord, ...]:
@@ -329,37 +320,6 @@ def _citations_and_blocks(
     return citations, blocks
 
 
-def _events() -> tuple[RuntimeAuditEvent, ...]:
-    previous: str | None = None
-    records: list[RuntimeAuditEvent] = []
-    refs = (
-        "request",
-        "initial-evidence",
-        "assessment",
-        "plan",
-        *(item["tool_call_id"] for item in TOOL_PLAN[1:]),
-        "sufficiency",
-        "claim-ledger",
-        "answer",
-        "verification",
-        "rendering",
-        "audit",
-        "run",
-    )
-    for sequence, (event, artifact) in enumerate(zip(EVENT_SEQUENCE, refs, strict=True), 1):
-        payload = {"sequence": sequence, "event": event, "artifact_ref": artifact, "previous_event_sha256": previous}
-        record = RuntimeAuditEvent(
-            sequence=sequence,
-            event=event,
-            artifact_ref=artifact,
-            previous_event_sha256=previous,
-            event_semantic_sha256=canonical_sha256(payload),
-        )
-        records.append(record)
-        previous = record.event_semantic_sha256
-    return tuple(records)
-
-
 def compile_reference_run(pair: VS01B08RuntimePairSpecification, t04: Any) -> VS01RuntimeAcquisitionRun:
     _request, execution = _verified_execution(t04)
     study = _answer(execution, "STUDY")
@@ -369,14 +329,21 @@ def compile_reference_run(pair: VS01B08RuntimePairSpecification, t04: Any) -> VS
     ):
         raise ValueError("T05 Study answer authority differs")
     citations, blocks = _citations_and_blocks(execution, study)
+    request = request_identity(pair.runtime_case_id, pair.prompt, 1, None)
+    calls = tuple(RuntimeToolCallRecord.model_validate(item) for item in expected_tool_calls(pair.prompt))
+    call_payloads = tuple(item.model_dump(mode="json") for item in calls)
+    plan, answer = plan_identity(request, call_payloads), answer_identity(request)
     payload: dict[str, Any] = {
         "pair_specification_identity": pair.specification_identity,
         "case_id": pair.runtime_case_id,
         "prompt": pair.prompt,
         "request_revision": 1,
+        "request_identity": request,
+        "supersedes_request_identity": None,
         "supersedes_run_identity": None,
+        "plan_identity": plan,
         "initial_assessment": "INSUFFICIENT_FOR_REQUESTED_GREEK_AND_TEXTUAL_CRITICAL_CLAIMS",
-        "tool_calls": _tool_calls(),
+        "tool_calls": calls,
         "evidence_ledger": _evidence(t04.packet),
         "claim_ledger": _claims(t04.packet),
         "citation_ledger": citations,
@@ -385,7 +352,9 @@ def compile_reference_run(pair: VS01B08RuntimePairSpecification, t04: Any) -> VS
         "material_unknown_claim_ids": UNKNOWN_CLAIM_IDS,
         "final_sufficiency": "SUFFICIENT_WITH_QUALIFICATION",
         "state_sequence": STATE_SEQUENCE,
-        "audit_events": _events(),
+        "audit_events": tuple(
+            RuntimeAuditEvent.model_validate(item) for item in expected_events(request, plan, answer)
+        ),
         "operation_counters": RuntimeOperationCounters(
             packet_loads=1,
             raw_source_reads=0,
@@ -397,6 +366,7 @@ def compile_reference_run(pair: VS01B08RuntimePairSpecification, t04: Any) -> VS
             database_writes=0,
             archive_writes=0,
         ),
+        "answer_projection_identity": answer,
     }
     payload["acquisition_run_identity"] = canonical_sha256(
         VS01RuntimeAcquisitionRun.model_construct(**payload, acquisition_run_identity="0" * 64).model_dump(
@@ -404,6 +374,35 @@ def compile_reference_run(pair: VS01B08RuntimePairSpecification, t04: Any) -> VS
         )
     )
     return VS01RuntimeAcquisitionRun.model_validate(payload)
+
+
+def _fingerprints(
+    root: Path, t04: Any, t05: Any, t06: Any, t07: Any, receipt: Any, receipt_sha: str
+) -> tuple[tuple[str, str], ...]:
+    return (
+        ("t04", _authority_fingerprint(t04)),
+        ("t05", canonical_sha256(t05)),
+        ("t06", canonical_sha256(t06.model_dump(mode="json"))),
+        ("t07", canonical_sha256((t07.run_result_identity, str(receipt.receipt_id), receipt_sha))),
+        ("archive_root", _inventory(root, contents=False)),
+        ("incoming_inventory", _inventory(root / ".incoming", contents=True)),
+    )
+
+
+def reload_runtime_authority_fingerprints(
+    root: Path = CANONICAL_ARCHIVE_ROOT,
+    *,
+    _t05_verifier: Callable[[Any], dict[str, Any]] = verify_t05_owner,
+) -> tuple[tuple[str, str], ...]:
+    _validate_repo_authority()
+    t04 = load_t04_authority(root)
+    t05 = _t05_verifier(t04)
+    fixture, base, degraded, fixture_bytes = _fixture_assets()
+    t06 = verify_t06_existing(root, fixture, base, degraded, fixture_bytes)
+    if t06 is None or str(t06.receipt_identity) != "01a034c2-d6e4-73f4-91b2-7410e7453783":
+        raise ValueError("published T06 authority differs")
+    t07, receipt, receipt_sha = _load_t07(root)
+    return _fingerprints(root, t04, t05, t06, t07, receipt, receipt_sha)
 
 
 def _scorer_plan(pair: VS01B08RuntimePairSpecification) -> dict[str, Any]:
@@ -450,12 +449,7 @@ def compile_runtime_authority(
         raise ValueError("published T07 fixed B08 result differs")
     run = compile_reference_run(pair, t04)
     projection = _subject_projection(pair)
-    fingerprints = (
-        ("t04", _authority_fingerprint(t04)),
-        ("t05", canonical_sha256(t05)),
-        ("t06", canonical_sha256(t06.model_dump(mode="json"))),
-        ("t07", canonical_sha256((t07.run_result_identity, str(receipt.receipt_id), receipt_sha))),
-    )
+    fingerprints = _fingerprints(archive_root, t04, t05, t06, t07, receipt, receipt_sha)
     return CompiledRuntimeAuthority(
         pair,
         projection,
@@ -489,6 +483,7 @@ def run_runtime_pair(
         authority.authority_fingerprints,
         archive_root,
         dry_run=dry_run,
+        authority_loader=lambda: reload_runtime_authority_fingerprints(archive_root),
         implementation_commit=_implementation_commit,
         new_uuid=_new_uuid or uuid7,
         now=_now or (lambda: datetime.now(UTC)),

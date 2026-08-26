@@ -15,10 +15,14 @@ CommitSha = Annotated[str, Field(pattern=r"^[0-9a-f]{40}$")]
 ROOT = Path(__file__).parents[3]
 CASE_PATH = ROOT / "design/approved/VS01-B08-RUNTIME-C01.json"
 SPEC_PATH = ROOT / "design/approved/VS01-T08-runtime-pair-spec.json"
+FIXTURE_PATH = ROOT / "fixtures/VS01-T08/reference-runtime-run.json"
 CASE_FILE_SHA256 = "a7fc02da5ed8fda15ee29cba79cff8b037b2abc66352107f87165a0bfbea9f0f"
 CASE_IDENTITY = "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd"
 SPEC_FILE_SHA256 = "9e49e2f2b540a54c1d945991eb6500a52c0a7873136630d8bf49854efeb765ba"
 SPEC_IDENTITY = "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+FIXED_CASE_RESULT_IDENTITY = "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+TOOL_SCHEMA_IDENTITY = "303b36c0a040dc0d3c27487b048569e321e51d742d1dfc51691e68a8fafb6695"
+SYNTHETIC_CASE_ID = "SYN-VS01-B08-RUNTIME-C01"
 
 
 def canonical_sha256(value: Any) -> str:
@@ -26,7 +30,8 @@ def canonical_sha256(value: Any) -> str:
 
 
 def _authority(path: Path, file_sha: str, identity_name: str, identity: str) -> dict[str, Any]:
-    if hashlib.sha256(data := path.read_bytes()).hexdigest() != file_sha:
+    data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != file_sha:
         raise ValueError(f"frozen runtime authority hash differs: {path.name}")
     value = cast(dict[str, Any], json.loads(data))
     claimed = value.pop(identity_name)
@@ -38,6 +43,7 @@ def _authority(path: Path, file_sha: str, identity_name: str, identity: str) -> 
 CASE = _authority(CASE_PATH, CASE_FILE_SHA256, "case_content_sha256", CASE_IDENTITY)
 SPEC = _authority(SPEC_PATH, SPEC_FILE_SHA256, "spec_identity", SPEC_IDENTITY)
 PROMPT = cast(str, CASE["prompt"])
+CORRECTION_PROMPT = f"{PROMPT}\n[SYNTHETIC_CORRECTION] Emphasize the retained textual-state uncertainty."
 TOOL_PLAN = cast(list[dict[str, Any]], CASE["tool_plan"])
 TOOL_NAMES = tuple(cast(str, item["tool"]) for item in TOOL_PLAN)
 EVIDENCE_IDS = tuple(cast(list[str], CASE["answer_contract"]["required_evidence_ids"]))
@@ -49,18 +55,28 @@ BLOCK_IDS = tuple(cast(str, item["block_id"]) for item in CASE["answer_contract"
 STATE_SEQUENCE = tuple(cast(list[str], CASE["runtime_state_sequence"]))
 EVENT_SEQUENCE = tuple(cast(list[str], CASE["audit_event_sequence"]))
 HARD_FAILURES = tuple(cast(list[str], SPEC["hard_failures"]))
+LIMITATIONS = tuple(cast(list[str], SPEC["promotion_and_no_go"]["remaining_limitations"]))
+INITIAL_EVIDENCE = tuple(cast(list[dict[str, Any]], CASE["initial_evidence_contract"]["visible_evidence"]))
 PUBLICATION_PATHS = (
     "objects/sha256/<prefix>/<pair-result-sha256>",
     "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json",
     "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json",
     ".incoming/vs01-b08-runtime-pair-<pair-result-sha256>.runtime-screening-stage",
 )
-REAL_COUNTER_NAMES = (
-    ("real_subject_invocations", "real_broker_tool_calls", "real_scoring_invocations")
-    + ("real_acquisition_runs", "real_pair_results", "real_receipts", "real_publications")
-    + ("canonical_archive_writes", "database_writes", "t03_raw_source_reads")
-    + ("model_ocr_vlm_network_cloud_invocations",)
+FINGERPRINT_NAMES = ("t04", "t05", "t06", "t07", "archive_root", "incoming_inventory")
+FRESH_PUBLICATION_VERIFICATIONS = 2
+VERIFIED_EXISTING_VERIFICATIONS = 1
+_REFERENCE = cast(dict[str, Any], json.loads(FIXTURE_PATH.read_bytes()))
+_LEDGER_FIELDS = ("evidence_ledger", "claim_ledger", "citation_ledger", "answer_blocks")
+_LEDGER_HASHES = (
+    "fb72d7cbd234f3be742b789de59093c204400b14b0ed888ba6a42d30b3a40645",
+    "bcd68e48c4e3a895bfcea299f2a2165db093affceb30a34bfc08c1d7fbfd25d5",
+    "1e0bdf98569221f5c1cb4ec58349264ef217db622ebb9295dfe392c15b291292",
+    "8c4ccc54107dfa54c250cb1fe88cd9914d4d4b18b9332484d596584e6cdc5dbe",
 )
+for _field, _digest in zip(_LEDGER_FIELDS, _LEDGER_HASHES, strict=True):
+    if canonical_sha256(_REFERENCE[_field]) != _digest:
+        raise ValueError(f"reference runtime {_field} authority differs")
 
 
 class StrictRecord(BaseModel):
@@ -86,12 +102,11 @@ class RuntimeToolCallRecord(StrictRecord):
     @model_validator(mode="after")
     def canonical_payloads(self) -> Self:
         for text, digest in ((self.input_json, self.input_sha256), (self.output_json, self.output_sha256)):
-            value = json.loads(text)
-            if (
-                not isinstance(value, dict)
-                or rfc8785.dumps(cast(dict[str, Any], value)).decode() != text
-                or canonical_sha256(cast(dict[str, Any], value)) != digest
-            ):
+            value: Any = json.loads(text)
+            if not isinstance(value, dict):
+                raise ValueError("runtime tool-call payload is not a JSON object")
+            mapping = cast(dict[str, Any], value)
+            if rfc8785.dumps(mapping).decode() != text or canonical_sha256(mapping) != digest:
                 raise ValueError("runtime tool-call payload is not canonical or hash-bound")
         return self
 
@@ -169,20 +184,111 @@ class RuntimeOperationCounters(StrictRecord):
     archive_writes: int = Field(ge=0)
 
 
-def _tuple_const(values: tuple[Any, ...]) -> dict[str, Any]:
-    return {"const": [list(cast(tuple[Any, ...], item)) if isinstance(item, tuple) else item for item in values]}
+class RuntimeControllerLedger(StrictRecord):
+    subject_invocations: int = Field(ge=0)
+    broker_tool_calls: int = Field(ge=0)
+    scoring_invocations: int = Field(ge=0)
+    acquisition_runs_constructed: int = Field(ge=0)
+    pair_results_constructed: int = Field(ge=0)
+    receipts_constructed: int = Field(ge=0)
+    store_verification_attempts: int = Field(ge=0)
+    publication_attempts: int = Field(ge=0)
+    successful_publications: int = Field(ge=0)
+    canonical_archive_writes: int = Field(ge=0)
+    database_writes: int = Field(ge=0)
+    t03_reads: int = Field(ge=0)
+    raw_source_reads: int = Field(ge=0)
+    model_invocations: int = Field(ge=0)
+    ocr_invocations: int = Field(ge=0)
+    vlm_invocations: int = Field(ge=0)
+    network_invocations: int = Field(ge=0)
+    cloud_invocations: int = Field(ge=0)
 
 
-def _fixed_records(schema: dict[str, Any], field: str, name: str, values: tuple[str, ...]) -> None:
-    item = schema["properties"][field]["items"]
-    schema["properties"][field] = {
-        "type": "array",
-        "prefixItems": [
-            {"allOf": [item, {"properties": {name: {"const": value}}, "required": [name]}]} for value in values
-        ],
-        "minItems": len(values),
-        "maxItems": len(values),
+def expected_tool_calls(prompt: str) -> tuple[dict[str, Any], ...]:
+    records: list[dict[str, Any]] = []
+    for index, item in enumerate(TOOL_PLAN):
+        inputs = dict(item["input"])
+        if index == 0:
+            inputs["prompt"] = prompt
+        input_json, output_json = rfc8785.dumps(inputs).decode(), rfc8785.dumps(item["expected_output"]).decode()
+        records.append(
+            {
+                "sequence": item["sequence"],
+                "tool_call_id": item["tool_call_id"],
+                "tool": item["tool"],
+                "input_json": input_json,
+                "output_json": output_json,
+                "input_sha256": canonical_sha256(inputs),
+                "output_sha256": canonical_sha256(item["expected_output"]),
+            }
+        )
+    return tuple(records)
+
+
+def request_identity(case_id: str, prompt: str, revision: int, supersedes: str | None) -> str:
+    return canonical_sha256({"case_id": case_id, "prompt": prompt, "revision": revision, "supersedes": supersedes})
+
+
+def plan_identity(request: str, calls: tuple[dict[str, Any], ...]) -> str:
+    return canonical_sha256({"request_identity": request, "tool_calls": calls})
+
+
+def answer_identity(request: str) -> str:
+    return canonical_sha256({"request_identity": request, **dict(zip(_LEDGER_FIELDS, _LEDGER_HASHES, strict=True))})
+
+
+def expected_events(request: str, plan: str, answer: str) -> tuple[dict[str, Any], ...]:
+    refs = (
+        request,
+        _LEDGER_HASHES[0],
+        request,
+        plan,
+        *(item["tool_call_id"] for item in TOOL_PLAN[1:6]),
+        _LEDGER_HASHES[0],
+        TOOL_PLAN[6]["tool_call_id"],
+        _LEDGER_HASHES[1],
+        answer,
+        answer,
+        answer,
+        plan,
+        plan,
+    )
+    previous: str | None = None
+    records: list[dict[str, Any]] = []
+    for sequence, (event, artifact) in enumerate(zip(EVENT_SEQUENCE, refs, strict=True), 1):
+        payload = {"sequence": sequence, "event": event, "artifact_ref": artifact, "previous_event_sha256": previous}
+        payload["event_semantic_sha256"] = canonical_sha256(payload)
+        records.append(payload)
+        previous = payload["event_semantic_sha256"]
+    return tuple(records)
+
+
+def acquisition_variant_payload(
+    case_id: str,
+    prompt: str,
+    revision: int,
+    supersedes_request: str | None,
+    supersedes_run: str | None,
+) -> dict[str, Any]:
+    request = request_identity(case_id, prompt, revision, supersedes_request)
+    calls = expected_tool_calls(prompt)
+    plan, answer = plan_identity(request, calls), answer_identity(request)
+    payload = dict(_REFERENCE) | {
+        "case_id": case_id,
+        "prompt": prompt,
+        "request_revision": revision,
+        "request_identity": request,
+        "supersedes_request_identity": supersedes_request,
+        "supersedes_run_identity": supersedes_run,
+        "plan_identity": plan,
+        "tool_calls": calls,
+        "audit_events": expected_events(request, plan, answer),
+        "answer_projection_identity": answer,
     }
+    payload.pop("acquisition_run_identity", None)
+    payload["acquisition_run_identity"] = canonical_sha256(payload)
+    return payload
 
 
 def _upstream_constants() -> tuple[tuple[str, str], ...]:
@@ -195,93 +301,27 @@ def _upstream_constants() -> tuple[tuple[str, str], ...]:
 
 
 def _spec_schema(schema: dict[str, Any]) -> None:
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    constants = {
-        "pair_id": "BENCH-VS01-B08-PAIR-01",
-        "prompt": PROMPT,
-        "fixed_case_id": "VS01-B08-C01",
-        "fixed_case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
-        "runtime_case_id": "VS01-B08-RUNTIME-C01",
-        "runtime_case_content_sha256": CASE_IDENTITY,
-        "specification_identity": SPEC_IDENTITY,
-    }
-    for name, value in constants.items():
-        schema["properties"][name] = {"const": value}
-    for name, values in (
-        ("upstream_authority", _upstream_constants()),
-        ("initial_evidence_ids", ("EV-T08-INITIAL-ASV", "EV-T08-INITIAL-WEB")),
-        ("required_evidence_ids", EVIDENCE_IDS),
-        ("required_claim_ids", CLAIM_IDS),
-        ("required_citation_ids", CITATION_IDS),
-        ("required_alternative_ids", ALTERNATIVE_IDS),
-        ("material_unknown_claim_ids", UNKNOWN_CLAIM_IDS),
-        ("required_block_ids", BLOCK_IDS),
-        ("required_state_sequence", STATE_SEQUENCE),
-        ("required_event_sequence", EVENT_SEQUENCE),
-        ("hard_failures", HARD_FAILURES),
-        (
-            "allowed_dispositions",
-            (
-                "REFERENCE_CONFORMANT",
-                "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
-                "RUNTIME_SCREENING_NO_GO",
-            ),
-        ),
-        ("publication_paths", PUBLICATION_PATHS),
-    ):
-        schema["properties"][name] = _tuple_const(values)
-    _fixed_records(schema, "tool_definitions", "name", TOOL_NAMES)
-    for field, values in (
-        ("fixed_criteria", (("B08-R1", 2), ("B08-R2", 1), ("B08-R3", 1))),
-        (
-            "runtime_criteria",
-            tuple((item["criterion_id"], item["weight"]) for item in SPEC["scoring"]["runtime_case"]["criteria"]),
-        ),
-        (
-            "required_counts",
-            (("evidence", 12), ("claims", 15), ("citations", 10), ("blocks", 7), ("states", 15), ("events", 17)),
-        ),
-        ("future_thresholds", (("fixed", 7), ("runtime", 24), ("pair", 32))),
-    ):
-        schema["properties"][field] = _tuple_const(values)
+    from bsl.application.vs01_runtime_screening import specification_schema
+
+    specification_schema(schema)
 
 
 def _run_schema(schema: dict[str, Any]) -> None:
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
-    schema["properties"]["prompt"] = {"const": PROMPT}
-    schema["properties"]["state_sequence"] = _tuple_const(STATE_SEQUENCE)
-    schema["properties"]["accepted_alternative_ids"] = _tuple_const(ALTERNATIVE_IDS)
-    schema["properties"]["material_unknown_claim_ids"] = _tuple_const(UNKNOWN_CLAIM_IDS)
-    _fixed_records(schema, "tool_calls", "tool", TOOL_NAMES)
-    _fixed_records(schema, "evidence_ledger", "evidence_id", EVIDENCE_IDS)
-    _fixed_records(schema, "claim_ledger", "claim_id", CLAIM_IDS)
-    _fixed_records(schema, "citation_ledger", "citation_id", CITATION_IDS)
-    _fixed_records(schema, "answer_blocks", "block_id", BLOCK_IDS)
-    _fixed_records(schema, "audit_events", "event", EVENT_SEQUENCE)
+    from bsl.application.vs01_runtime_reference import acquisition_run_schema
+
+    acquisition_run_schema(schema)
 
 
 def _result_schema(schema: dict[str, Any]) -> None:
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
-    criteria = tuple(item["criterion_id"] for item in SPEC["scoring"]["runtime_case"]["criteria"])
-    _fixed_records(schema, "runtime_criteria", "criterion_id", criteria)
+    from bsl.application.vs01_runtime_scoring import pair_result_schema
+
+    pair_result_schema(schema)
 
 
 def _receipt_schema(schema: dict[str, Any]) -> None:
-    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["properties"]["pair_specification_identity"] = {"const": SPEC_IDENTITY}
-    schema["properties"]["archive_paths"] = {
-        "type": "array",
-        "prefixItems": [
-            {"type": "string", "pattern": r"^objects/sha256/[0-9a-f]{2}/[0-9a-f]{64}$"},
-            {"const": PUBLICATION_PATHS[1]},
-            {"const": PUBLICATION_PATHS[2]},
-            {"type": "string", "pattern": r"^\.incoming/vs01-b08-runtime-pair-[0-9a-f]{64}\.runtime-screening-stage$"},
-        ],
-        "minItems": 4,
-        "maxItems": 4,
-    }
+    from bsl.infrastructure.runtime_screening_store import screening_receipt_schema
+
+    screening_receipt_schema(schema)
 
 
 class VS01B08RuntimePairSpecification(BaseModel):
@@ -319,15 +359,14 @@ class VS01B08RuntimePairSpecification(BaseModel):
     @model_validator(mode="after")
     def exact_authority(self) -> Self:
         exact = (
-            self.pair_id == "BENCH-VS01-B08-PAIR-01",
-            self.prompt == PROMPT,
-            (self.fixed_case_id, self.fixed_case_content_sha256)
-            == ("VS01-B08-C01", SPEC["upstream_authorities"]["t07"]["fixed_case_content_sha256"]),
-            (self.runtime_case_id, self.runtime_case_content_sha256) == ("VS01-B08-RUNTIME-C01", CASE_IDENTITY),
+            (self.pair_id, self.prompt, self.runtime_case_id, self.runtime_case_content_sha256)
+            == ("BENCH-VS01-B08-PAIR-01", PROMPT, "VS01-B08-RUNTIME-C01", CASE_IDENTITY),
+            (self.fixed_case_id, self.fixed_case_content_sha256, self.fixed_reference_score)
+            == ("VS01-B08-C01", "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a", (8, 8)),
             self.upstream_authority == _upstream_constants(),
             self.initial_evidence_ids == ("EV-T08-INITIAL-ASV", "EV-T08-INITIAL-WEB"),
             tuple(item.name for item in self.tool_definitions) == TOOL_NAMES,
-            all(item.maximum_calls == 1 for item in self.tool_definitions),
+            canonical_sha256([item.model_dump(mode="json") for item in self.tool_definitions]) == TOOL_SCHEMA_IDENTITY,
             self.required_evidence_ids == EVIDENCE_IDS,
             self.required_claim_ids == CLAIM_IDS,
             self.required_citation_ids == CITATION_IDS,
@@ -360,8 +399,11 @@ class VS01RuntimeAcquisitionRun(BaseModel):
     pair_specification_identity: Sha256
     case_id: str
     prompt: str
-    request_revision: int = Field(ge=1)
+    request_revision: int = Field(ge=1, le=2)
+    request_identity: Sha256
+    supersedes_request_identity: Sha256 | None
     supersedes_run_identity: Sha256 | None
+    plan_identity: Sha256
     initial_assessment: str
     tool_calls: tuple[RuntimeToolCallRecord, ...]
     evidence_ledger: tuple[RuntimeEvidenceRecord, ...]
@@ -374,39 +416,14 @@ class VS01RuntimeAcquisitionRun(BaseModel):
     state_sequence: tuple[str, ...]
     audit_events: tuple[RuntimeAuditEvent, ...]
     operation_counters: RuntimeOperationCounters
+    answer_projection_identity: Sha256
     acquisition_run_identity: Sha256
 
     @model_validator(mode="after")
-    def identity_and_boundary(self) -> Self:
-        boundary = (
-            tuple(item.tool for item in self.tool_calls)
-            + tuple(item.evidence_id for item in self.evidence_ledger)
-            + tuple(item.claim_id for item in self.claim_ledger)
-            + tuple(item.citation_id for item in self.citation_ledger)
-            + tuple(item.block_id for item in self.answer_blocks)
-            + self.state_sequence
-            + tuple(item.event for item in self.audit_events)
-            + self.accepted_alternative_ids
-            + self.material_unknown_claim_ids
-        )
-        expected_boundary = (
-            TOOL_NAMES
-            + EVIDENCE_IDS
-            + CLAIM_IDS
-            + CITATION_IDS
-            + BLOCK_IDS
-            + STATE_SEQUENCE
-            + EVENT_SEQUENCE
-            + ALTERNATIVE_IDS
-            + UNKNOWN_CLAIM_IDS
-        )
-        if self.pair_specification_identity != SPEC_IDENTITY or self.prompt != PROMPT or boundary != expected_boundary:
-            raise ValueError("runtime acquisition authority differs")
-        if self.request_revision == 1 and self.supersedes_run_identity is not None:
-            raise ValueError("initial runtime request cannot supersede a run")
-        expected = canonical_sha256(self.model_dump(mode="json", exclude={"acquisition_run_identity"}))
-        if self.acquisition_run_identity != expected:
-            raise ValueError("runtime acquisition identity differs")
+    def exact_state(self) -> Self:
+        from bsl.application.vs01_runtime_reference import validate_acquisition_run
+
+        validate_acquisition_run(self)
         return self
 
 
@@ -427,21 +444,16 @@ class VS01B08RuntimePairResult(BaseModel):
     leakage_incidents: int = Field(ge=0)
     replay_run_identities: tuple[Sha256, Sha256]
     disposition: Literal[
-        "REFERENCE_CONFORMANT",
-        "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
-        "RUNTIME_SCREENING_NO_GO",
+        "REFERENCE_CONFORMANT", "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS", "RUNTIME_SCREENING_NO_GO"
     ]
     limitations: tuple[str, ...]
     pair_result_identity: Sha256
 
     @model_validator(mode="after")
-    def identity_and_arithmetic(self) -> Self:
-        runtime = sum(item.points for item in self.runtime_criteria)
-        if (self.runtime_points, self.pair_points) != (runtime, self.fixed_points + runtime):
-            raise ValueError("runtime pair-result arithmetic differs")
-        expected = canonical_sha256(self.model_dump(mode="json", exclude={"pair_result_identity"}))
-        if self.pair_specification_identity != SPEC_IDENTITY or self.pair_result_identity != expected:
-            raise ValueError("runtime pair-result identity differs")
+    def exact_state(self) -> Self:
+        from bsl.application.vs01_runtime_scoring import validate_pair_result
+
+        validate_pair_result(self)
         return self
 
 
@@ -455,6 +467,7 @@ class VS01RuntimeScreeningReceipt(BaseModel):
     implementation_commit: CommitSha
     pair_specification_identity: Sha256
     acquisition_run_identity: Sha256
+    pair_result: VS01B08RuntimePairResult
     pair_result_identity: Sha256
     pair_result_file_sha256: Sha256
     archive_root: str
@@ -462,39 +475,17 @@ class VS01RuntimeScreeningReceipt(BaseModel):
     disposition: Literal["DRY_RUN_VALIDATED", "REFERENCE_CONFORMANT", "REFERENCE_NONCONFORMANT", "VERIFIED_EXISTING"]
     published: bool
     verified_existing: bool
-    authority_fingerprints_before: tuple[tuple[str, Sha256], ...]
-    authority_fingerprints_after: tuple[tuple[str, Sha256], ...]
-    real_operation_counters: tuple[tuple[str, int], ...]
+    authority_fingerprints_initial: tuple[tuple[str, Sha256], ...]
+    authority_fingerprints_pre_store: tuple[tuple[str, Sha256], ...]
+    authority_fingerprints_post_store: tuple[tuple[str, Sha256], ...]
+    operation_ledger: RuntimeControllerLedger
+    retained_publication_receipt: VS01RuntimeScreeningReceipt | None
+    retained_publication_receipt_id: UUID | None
+    retained_publication_receipt_file_sha256: Sha256 | None
 
     @model_validator(mode="after")
-    def operational_identity(self) -> Self:
-        if self.receipt_id.version != 7 or self.generated_at.tzinfo is None or self.generated_at.utcoffset() is None:
-            raise ValueError("runtime screening receipt UUID or timestamp differs")
-        payload = self.model_dump(mode="json", exclude={"receipt_canonical_sha256"})
-        if self.pair_specification_identity != SPEC_IDENTITY or self.receipt_canonical_sha256 != canonical_sha256(
-            payload
-        ):
-            raise ValueError("runtime screening receipt identity differs")
-        result_sha = self.pair_result_file_sha256
-        paths = (
-            f"objects/sha256/{result_sha[:2]}/{result_sha}",
-            PUBLICATION_PATHS[1],
-            PUBLICATION_PATHS[2],
-            f".incoming/vs01-b08-runtime-pair-{result_sha}.runtime-screening-stage",
-        )
-        state = {
-            "DRY_RUN_VALIDATED": (False, False),
-            "REFERENCE_CONFORMANT": (True, False),
-            "REFERENCE_NONCONFORMANT": (False, False),
-            "VERIFIED_EXISTING": (False, True),
-        }[self.disposition]
-        valid = (
-            self.archive_paths == paths,
-            (self.published, self.verified_existing) == state,
-            self.authority_fingerprints_before == self.authority_fingerprints_after,
-            tuple(name for name, _value in self.real_operation_counters) == REAL_COUNTER_NAMES,
-            all(value == 0 for _name, value in self.real_operation_counters),
-        )
-        if not all(valid):
-            raise ValueError("runtime screening receipt operation differs")
+    def exact_state(self) -> Self:
+        from bsl.infrastructure.runtime_screening_store import validate_screening_receipt
+
+        validate_screening_receipt(self)
         return self

@@ -1,172 +1,1265 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
-  "properties": {
-    "acquisition_run_identity": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Acquisition Run Identity",
-      "type": "string"
+  "$defs": {
+    "RuntimeControllerLedger": {
+      "additionalProperties": false,
+      "properties": {
+        "acquisition_runs_constructed": {
+          "minimum": 0,
+          "title": "Acquisition Runs Constructed",
+          "type": "integer"
+        },
+        "broker_tool_calls": {
+          "minimum": 0,
+          "title": "Broker Tool Calls",
+          "type": "integer"
+        },
+        "canonical_archive_writes": {
+          "minimum": 0,
+          "title": "Canonical Archive Writes",
+          "type": "integer"
+        },
+        "cloud_invocations": {
+          "minimum": 0,
+          "title": "Cloud Invocations",
+          "type": "integer"
+        },
+        "database_writes": {
+          "minimum": 0,
+          "title": "Database Writes",
+          "type": "integer"
+        },
+        "model_invocations": {
+          "minimum": 0,
+          "title": "Model Invocations",
+          "type": "integer"
+        },
+        "network_invocations": {
+          "minimum": 0,
+          "title": "Network Invocations",
+          "type": "integer"
+        },
+        "ocr_invocations": {
+          "minimum": 0,
+          "title": "Ocr Invocations",
+          "type": "integer"
+        },
+        "pair_results_constructed": {
+          "minimum": 0,
+          "title": "Pair Results Constructed",
+          "type": "integer"
+        },
+        "publication_attempts": {
+          "minimum": 0,
+          "title": "Publication Attempts",
+          "type": "integer"
+        },
+        "raw_source_reads": {
+          "minimum": 0,
+          "title": "Raw Source Reads",
+          "type": "integer"
+        },
+        "receipts_constructed": {
+          "minimum": 0,
+          "title": "Receipts Constructed",
+          "type": "integer"
+        },
+        "scoring_invocations": {
+          "minimum": 0,
+          "title": "Scoring Invocations",
+          "type": "integer"
+        },
+        "store_verification_attempts": {
+          "minimum": 0,
+          "title": "Store Verification Attempts",
+          "type": "integer"
+        },
+        "subject_invocations": {
+          "minimum": 0,
+          "title": "Subject Invocations",
+          "type": "integer"
+        },
+        "successful_publications": {
+          "minimum": 0,
+          "title": "Successful Publications",
+          "type": "integer"
+        },
+        "t03_reads": {
+          "minimum": 0,
+          "title": "T03 Reads",
+          "type": "integer"
+        },
+        "vlm_invocations": {
+          "minimum": 0,
+          "title": "Vlm Invocations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subject_invocations",
+        "broker_tool_calls",
+        "scoring_invocations",
+        "acquisition_runs_constructed",
+        "pair_results_constructed",
+        "receipts_constructed",
+        "store_verification_attempts",
+        "publication_attempts",
+        "successful_publications",
+        "canonical_archive_writes",
+        "database_writes",
+        "t03_reads",
+        "raw_source_reads",
+        "model_invocations",
+        "ocr_invocations",
+        "vlm_invocations",
+        "network_invocations",
+        "cloud_invocations"
+      ],
+      "title": "RuntimeControllerLedger",
+      "type": "object"
     },
-    "archive_paths": {
-      "maxItems": 4,
-      "minItems": 4,
-      "prefixItems": [
-        {
-          "pattern": "^objects/sha256/[0-9a-f]{2}/[0-9a-f]{64}$",
+    "RuntimeCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "title": "Criterion Id",
           "type": "string"
         },
+        "points": {
+          "minimum": 0,
+          "title": "Points",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "weight": {
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "weight",
+        "score",
+        "points"
+      ],
+      "title": "RuntimeCriterion",
+      "type": "object"
+    },
+    "VS01B08RuntimePairResult": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "oneOf": [
         {
-          "const": "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json"
+          "allOf": [
+            {
+              "properties": {
+                "events_observed": {
+                  "const": 17
+                },
+                "fixed_points": {
+                  "const": 8
+                },
+                "hard_failures": {
+                  "maxItems": 0
+                },
+                "leakage_incidents": {
+                  "const": 0
+                },
+                "pair_points": {
+                  "const": 36
+                },
+                "runtime_criteria": {
+                  "prefixItems": [
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "const": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "runtime_points": {
+                  "const": 28
+                },
+                "tool_calls_observed": {
+                  "const": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "disposition": {
+              "const": "REFERENCE_CONFORMANT"
+            }
+          }
         },
         {
-          "const": "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json"
+          "allOf": [
+            {
+              "properties": {
+                "events_observed": {
+                  "const": 17
+                },
+                "fixed_points": {
+                  "minimum": 7
+                },
+                "hard_failures": {
+                  "maxItems": 0
+                },
+                "leakage_incidents": {
+                  "const": 0
+                },
+                "pair_points": {
+                  "minimum": 32
+                },
+                "runtime_criteria": {
+                  "prefixItems": [
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "score": {
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  ]
+                },
+                "runtime_points": {
+                  "minimum": 24
+                },
+                "tool_calls_observed": {
+                  "const": 7
+                }
+              }
+            },
+            {
+              "not": {
+                "properties": {
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "maxItems": 0
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "runtime_criteria": {
+                    "prefixItems": [
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "disposition": {
+              "const": "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS"
+            }
+          }
         },
         {
-          "pattern": "^\\.incoming/vs01-b08-runtime-pair-[0-9a-f]{64}\\.runtime-screening-stage$",
-          "type": "string"
+          "not": {
+            "anyOf": [
+              {
+                "properties": {
+                  "events_observed": {
+                    "const": 17
+                  },
+                  "fixed_points": {
+                    "const": 8
+                  },
+                  "hard_failures": {
+                    "maxItems": 0
+                  },
+                  "leakage_incidents": {
+                    "const": 0
+                  },
+                  "pair_points": {
+                    "const": 36
+                  },
+                  "runtime_criteria": {
+                    "prefixItems": [
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "score": {
+                            "const": 2
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "runtime_points": {
+                    "const": 28
+                  },
+                  "tool_calls_observed": {
+                    "const": 7
+                  }
+                }
+              },
+              {
+                "allOf": [
+                  {
+                    "properties": {
+                      "events_observed": {
+                        "const": 17
+                      },
+                      "fixed_points": {
+                        "minimum": 7
+                      },
+                      "hard_failures": {
+                        "maxItems": 0
+                      },
+                      "leakage_incidents": {
+                        "const": 0
+                      },
+                      "pair_points": {
+                        "minimum": 32
+                      },
+                      "runtime_criteria": {
+                        "prefixItems": [
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "score": {
+                                "minimum": 1
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "runtime_points": {
+                        "minimum": 24
+                      },
+                      "tool_calls_observed": {
+                        "const": 7
+                      }
+                    }
+                  },
+                  {
+                    "not": {
+                      "properties": {
+                        "events_observed": {
+                          "const": 17
+                        },
+                        "fixed_points": {
+                          "const": 8
+                        },
+                        "hard_failures": {
+                          "maxItems": 0
+                        },
+                        "leakage_incidents": {
+                          "const": 0
+                        },
+                        "pair_points": {
+                          "const": 36
+                        },
+                        "runtime_criteria": {
+                          "prefixItems": [
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "score": {
+                                  "const": 2
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "runtime_points": {
+                          "const": 28
+                        },
+                        "tool_calls_observed": {
+                          "const": 7
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "properties": {
+            "disposition": {
+              "const": "RUNTIME_SCREENING_NO_GO"
+            }
+          }
         }
       ],
-      "type": "array"
-    },
-    "archive_root": {
-      "title": "Archive Root",
-      "type": "string"
-    },
-    "authority_fingerprints_after": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
+      "properties": {
+        "acquisition_run_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Acquisition Run Identity",
+          "type": "string"
+        },
+        "contract": {
+          "const": "VS01B08RuntimePairResult",
+          "default": "VS01B08RuntimePairResult",
+          "title": "Contract",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "REFERENCE_CONFORMANT",
+            "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+            "RUNTIME_SCREENING_NO_GO"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "events_observed": {
+          "minimum": 0,
+          "title": "Events Observed",
+          "type": "integer"
+        },
+        "fixed_case_result_identity": {
+          "const": "eb3ae952a7cb62911e259350ca847299b95f1661daf98be879c86f646ae1c880"
+        },
+        "fixed_points": {
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Fixed Points",
+          "type": "integer"
+        },
+        "hard_failures": {
+          "items": {
             "type": "string"
           },
-          {
-            "pattern": "^[0-9a-f]{64}$",
-            "type": "string"
-          }
-        ],
-        "type": "array"
-      },
-      "title": "Authority Fingerprints After",
-      "type": "array"
-    },
-    "authority_fingerprints_before": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
+          "title": "Hard Failures",
+          "type": "array"
+        },
+        "leakage_incidents": {
+          "minimum": 0,
+          "title": "Leakage Incidents",
+          "type": "integer"
+        },
+        "limitations": {
+          "const": [
+            "single passage and ChatGPT-authored public screening pair",
+            "deterministic oracle runtime rather than model-mediated tool selection",
+            "no critical apparatus or witness evidence",
+            "no REV-P2 specialist gold",
+            "not training eligible or private-final eligible"
+          ]
+        },
+        "pair_points": {
+          "maximum": 36,
+          "minimum": 0,
+          "title": "Pair Points",
+          "type": "integer"
+        },
+        "pair_result_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pair Result Identity",
+          "type": "string"
+        },
+        "pair_specification_identity": {
+          "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+        },
+        "replay_run_identities": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          ],
+          "title": "Replay Run Identities",
+          "type": "array"
+        },
+        "runtime_criteria": {
+          "items": {
+            "$ref": "#/$defs/RuntimeCriterion"
           },
-          {
-            "pattern": "^[0-9a-f]{64}$",
-            "type": "string"
-          }
-        ],
-        "type": "array"
+          "title": "Runtime Criteria",
+          "type": "array"
+        },
+        "runtime_points": {
+          "maximum": 28,
+          "minimum": 0,
+          "title": "Runtime Points",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "tool_calls_observed": {
+          "minimum": 0,
+          "title": "Tool Calls Observed",
+          "type": "integer"
+        }
       },
-      "title": "Authority Fingerprints Before",
-      "type": "array"
-    },
-    "contract": {
-      "const": "VS01RuntimeScreeningReceipt",
-      "default": "VS01RuntimeScreeningReceipt",
-      "title": "Contract",
-      "type": "string"
-    },
-    "disposition": {
-      "enum": [
-        "DRY_RUN_VALIDATED",
-        "REFERENCE_CONFORMANT",
-        "REFERENCE_NONCONFORMANT",
-        "VERIFIED_EXISTING"
+      "required": [
+        "pair_specification_identity",
+        "acquisition_run_identity",
+        "fixed_case_result_identity",
+        "fixed_points",
+        "runtime_criteria",
+        "runtime_points",
+        "pair_points",
+        "tool_calls_observed",
+        "events_observed",
+        "hard_failures",
+        "leakage_incidents",
+        "replay_run_identities",
+        "disposition",
+        "limitations",
+        "pair_result_identity"
       ],
-      "title": "Disposition",
-      "type": "string"
+      "title": "VS01B08RuntimePairResult",
+      "type": "object"
     },
-    "generated_at": {
-      "format": "date-time",
-      "title": "Generated At",
-      "type": "string"
-    },
-    "implementation_commit": {
-      "pattern": "^[0-9a-f]{40}$",
-      "title": "Implementation Commit",
-      "type": "string"
-    },
-    "pair_result_file_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Pair Result File Sha256",
-      "type": "string"
-    },
-    "pair_result_identity": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Pair Result Identity",
-      "type": "string"
-    },
-    "pair_specification_identity": {
-      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
-    },
-    "published": {
-      "title": "Published",
-      "type": "boolean"
-    },
-    "real_operation_counters": {
-      "items": {
-        "maxItems": 2,
-        "minItems": 2,
-        "prefixItems": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "integer"
+    "VS01RuntimeScreeningReceipt": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "disposition": {
+              "const": "DRY_RUN_VALIDATED"
+            },
+            "operation_ledger": {
+              "const": {
+                "acquisition_runs_constructed": 2,
+                "broker_tool_calls": 14,
+                "canonical_archive_writes": 0,
+                "cloud_invocations": 0,
+                "database_writes": 0,
+                "model_invocations": 0,
+                "network_invocations": 0,
+                "ocr_invocations": 0,
+                "pair_results_constructed": 1,
+                "publication_attempts": 0,
+                "raw_source_reads": 0,
+                "receipts_constructed": 1,
+                "scoring_invocations": 1,
+                "store_verification_attempts": 0,
+                "subject_invocations": 2,
+                "successful_publications": 0,
+                "t03_reads": 0,
+                "vlm_invocations": 0
+              }
+            },
+            "pair_result": {
+              "properties": {
+                "disposition": {
+                  "const": "REFERENCE_CONFORMANT"
+                }
+              }
+            },
+            "published": {
+              "const": false
+            },
+            "retained_publication_receipt": {
+              "type": "null"
+            },
+            "retained_publication_receipt_file_sha256": {
+              "type": "null"
+            },
+            "retained_publication_receipt_id": {
+              "type": "null"
+            },
+            "verified_existing": {
+              "const": false
+            }
           }
-        ],
-        "type": "array"
+        },
+        {
+          "properties": {
+            "disposition": {
+              "const": "REFERENCE_CONFORMANT"
+            },
+            "operation_ledger": {
+              "const": {
+                "acquisition_runs_constructed": 2,
+                "broker_tool_calls": 14,
+                "canonical_archive_writes": 3,
+                "cloud_invocations": 0,
+                "database_writes": 0,
+                "model_invocations": 0,
+                "network_invocations": 0,
+                "ocr_invocations": 0,
+                "pair_results_constructed": 1,
+                "publication_attempts": 1,
+                "raw_source_reads": 0,
+                "receipts_constructed": 1,
+                "scoring_invocations": 1,
+                "store_verification_attempts": 2,
+                "subject_invocations": 2,
+                "successful_publications": 1,
+                "t03_reads": 0,
+                "vlm_invocations": 0
+              }
+            },
+            "pair_result": {
+              "properties": {
+                "disposition": {
+                  "const": "REFERENCE_CONFORMANT"
+                }
+              }
+            },
+            "published": {
+              "const": true
+            },
+            "retained_publication_receipt": {
+              "type": "null"
+            },
+            "retained_publication_receipt_file_sha256": {
+              "type": "null"
+            },
+            "retained_publication_receipt_id": {
+              "type": "null"
+            },
+            "verified_existing": {
+              "const": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "disposition": {
+              "const": "REFERENCE_NONCONFORMANT"
+            },
+            "operation_ledger": {
+              "const": {
+                "acquisition_runs_constructed": 2,
+                "broker_tool_calls": 14,
+                "canonical_archive_writes": 0,
+                "cloud_invocations": 0,
+                "database_writes": 0,
+                "model_invocations": 0,
+                "network_invocations": 0,
+                "ocr_invocations": 0,
+                "pair_results_constructed": 1,
+                "publication_attempts": 0,
+                "raw_source_reads": 0,
+                "receipts_constructed": 1,
+                "scoring_invocations": 1,
+                "store_verification_attempts": 0,
+                "subject_invocations": 2,
+                "successful_publications": 0,
+                "t03_reads": 0,
+                "vlm_invocations": 0
+              }
+            },
+            "pair_result": {
+              "properties": {
+                "disposition": {
+                  "not": {
+                    "const": "REFERENCE_CONFORMANT"
+                  }
+                }
+              }
+            },
+            "published": {
+              "const": false
+            },
+            "retained_publication_receipt": {
+              "type": "null"
+            },
+            "retained_publication_receipt_file_sha256": {
+              "type": "null"
+            },
+            "retained_publication_receipt_id": {
+              "type": "null"
+            },
+            "verified_existing": {
+              "const": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "disposition": {
+              "const": "VERIFIED_EXISTING"
+            },
+            "operation_ledger": {
+              "const": {
+                "acquisition_runs_constructed": 2,
+                "broker_tool_calls": 14,
+                "canonical_archive_writes": 0,
+                "cloud_invocations": 0,
+                "database_writes": 0,
+                "model_invocations": 0,
+                "network_invocations": 0,
+                "ocr_invocations": 0,
+                "pair_results_constructed": 1,
+                "publication_attempts": 0,
+                "raw_source_reads": 0,
+                "receipts_constructed": 1,
+                "scoring_invocations": 1,
+                "store_verification_attempts": 1,
+                "subject_invocations": 2,
+                "successful_publications": 0,
+                "t03_reads": 0,
+                "vlm_invocations": 0
+              }
+            },
+            "pair_result": {
+              "properties": {
+                "disposition": {
+                  "const": "REFERENCE_CONFORMANT"
+                }
+              }
+            },
+            "published": {
+              "const": false
+            },
+            "retained_publication_receipt": {
+              "type": "object"
+            },
+            "retained_publication_receipt_file_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "retained_publication_receipt_id": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "verified_existing": {
+              "const": true
+            }
+          }
+        }
+      ],
+      "properties": {
+        "acquisition_run_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Acquisition Run Identity",
+          "type": "string"
+        },
+        "archive_paths": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Archive Paths",
+          "type": "array"
+        },
+        "archive_root": {
+          "title": "Archive Root",
+          "type": "string"
+        },
+        "authority_fingerprints_initial": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Authority Fingerprints Initial",
+          "type": "array"
+        },
+        "authority_fingerprints_post_store": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Authority Fingerprints Post Store",
+          "type": "array"
+        },
+        "authority_fingerprints_pre_store": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Authority Fingerprints Pre Store",
+          "type": "array"
+        },
+        "contract": {
+          "const": "VS01RuntimeScreeningReceipt",
+          "default": "VS01RuntimeScreeningReceipt",
+          "title": "Contract",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "DRY_RUN_VALIDATED",
+            "REFERENCE_CONFORMANT",
+            "REFERENCE_NONCONFORMANT",
+            "VERIFIED_EXISTING"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "implementation_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Implementation Commit",
+          "type": "string"
+        },
+        "operation_ledger": {
+          "$ref": "#/$defs/RuntimeControllerLedger"
+        },
+        "pair_result": {
+          "$ref": "#/$defs/VS01B08RuntimePairResult"
+        },
+        "pair_result_file_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pair Result File Sha256",
+          "type": "string"
+        },
+        "pair_result_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pair Result Identity",
+          "type": "string"
+        },
+        "pair_specification_identity": {
+          "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+        },
+        "published": {
+          "title": "Published",
+          "type": "boolean"
+        },
+        "receipt_canonical_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Receipt Canonical Sha256",
+          "type": "string"
+        },
+        "receipt_id": {
+          "format": "uuid",
+          "title": "Receipt Id",
+          "type": "string"
+        },
+        "retained_publication_receipt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VS01RuntimeScreeningReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retained_publication_receipt_file_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Retained Publication Receipt File Sha256"
+        },
+        "retained_publication_receipt_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Retained Publication Receipt Id"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "verified_existing": {
+          "title": "Verified Existing",
+          "type": "boolean"
+        }
       },
-      "title": "Real Operation Counters",
-      "type": "array"
-    },
-    "receipt_canonical_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Receipt Canonical Sha256",
-      "type": "string"
-    },
-    "receipt_id": {
-      "format": "uuid",
-      "title": "Receipt Id",
-      "type": "string"
-    },
-    "schema_version": {
-      "const": "1.0",
-      "default": "1.0",
-      "title": "Schema Version",
-      "type": "string"
-    },
-    "verified_existing": {
-      "title": "Verified Existing",
-      "type": "boolean"
+      "required": [
+        "receipt_id",
+        "generated_at",
+        "receipt_canonical_sha256",
+        "implementation_commit",
+        "pair_specification_identity",
+        "acquisition_run_identity",
+        "pair_result",
+        "pair_result_identity",
+        "pair_result_file_sha256",
+        "archive_root",
+        "archive_paths",
+        "disposition",
+        "published",
+        "verified_existing",
+        "authority_fingerprints_initial",
+        "authority_fingerprints_pre_store",
+        "authority_fingerprints_post_store",
+        "operation_ledger",
+        "retained_publication_receipt",
+        "retained_publication_receipt_id",
+        "retained_publication_receipt_file_sha256"
+      ],
+      "title": "VS01RuntimeScreeningReceipt",
+      "type": "object"
     }
   },
-  "required": [
-    "receipt_id",
-    "generated_at",
-    "receipt_canonical_sha256",
-    "implementation_commit",
-    "pair_specification_identity",
-    "acquisition_run_identity",
-    "pair_result_identity",
-    "pair_result_file_sha256",
-    "archive_root",
-    "archive_paths",
-    "disposition",
-    "published",
-    "verified_existing",
-    "authority_fingerprints_before",
-    "authority_fingerprints_after",
-    "real_operation_counters"
-  ],
-  "title": "VS01RuntimeScreeningReceipt",
-  "type": "object"
+  "$ref": "#/$defs/VS01RuntimeScreeningReceipt"
 }

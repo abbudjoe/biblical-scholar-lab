@@ -33,13 +33,380 @@
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "const": {
+    "allowed_dispositions": [
+      "REFERENCE_CONFORMANT",
+      "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
+      "RUNTIME_SCREENING_NO_GO"
+    ],
+    "contract": "VS01B08RuntimePairSpecification",
+    "fixed_case_content_sha256": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a",
+    "fixed_case_id": "VS01-B08-C01",
+    "fixed_criteria": [
+      [
+        "B08-R1",
+        2
+      ],
+      [
+        "B08-R2",
+        1
+      ],
+      [
+        "B08-R3",
+        1
+      ]
+    ],
+    "fixed_reference_score": [
+      8,
+      8
+    ],
+    "future_thresholds": [
+      [
+        "fixed",
+        7
+      ],
+      [
+        "runtime",
+        24
+      ],
+      [
+        "pair",
+        32
+      ]
+    ],
+    "hard_failures": [
+      "EARLY_UNGROUNDED_ANSWER",
+      "HIDDEN_EVIDENCE_ACCESS",
+      "AVAILABLE_EVIDENCE_NOT_ACQUIRED",
+      "UNAUTHORIZED_SOURCE_OR_RAW_READ",
+      "TRANSLATION_AS_MANUSCRIPT_WITNESS",
+      "FALSE_TEXTUAL_VARIANT_CERTAINTY",
+      "MORPHOLOGY_OR_LEXICON_OVERCLAIM",
+      "TOOL_OR_EVENT_FABRICATION",
+      "CLAIM_CITATION_MISMATCH",
+      "CORRECTION_LINEAGE_LOSS",
+      "MODEL_OR_NETWORK_ROUTE"
+    ],
+    "initial_evidence_ids": [
+      "EV-T08-INITIAL-ASV",
+      "EV-T08-INITIAL-WEB"
+    ],
+    "material_unknown_claim_ids": [
+      "CLM-T04-042",
+      "CLM-T04-043"
+    ],
+    "pair_id": "BENCH-VS01-B08-PAIR-01",
+    "prompt": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both \u201cunderstand\u201d and \u201covercome,\u201d and is a textual variant involved?",
+    "publication_paths": [
+      "objects/sha256/<prefix>/<pair-result-sha256>",
+      "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json",
+      "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json",
+      ".incoming/vs01-b08-runtime-pair-<pair-result-sha256>.runtime-screening-stage"
+    ],
+    "required_alternative_ids": [
+      "ALT-T04-CONFLICT",
+      "ALT-T04-COGNITIVE",
+      "ALT-T04-DOUBLE-RESONANCE"
+    ],
+    "required_block_ids": [
+      "STUDY-DIRECT",
+      "STUDY-TEXTS",
+      "STUDY-GREEK",
+      "STUDY-LEXICON",
+      "STUDY-ALTERNATIVES",
+      "STUDY-TEXTUAL-STATE",
+      "STUDY-ASSESSMENT"
+    ],
+    "required_citation_ids": [
+      "CIT-T05-001",
+      "CIT-T05-002",
+      "CIT-T05-003",
+      "CIT-T05-004",
+      "CIT-T05-005",
+      "CIT-T05-006",
+      "CIT-T05-007",
+      "CIT-T05-008",
+      "CIT-T05-009",
+      "CIT-T05-010"
+    ],
+    "required_claim_ids": [
+      "CLM-T04-010",
+      "CLM-T04-011",
+      "CLM-T04-012",
+      "CLM-T04-020",
+      "CLM-T04-021",
+      "CLM-T04-022",
+      "CLM-T04-030",
+      "CLM-T04-031",
+      "CLM-T04-032",
+      "CLM-T04-040",
+      "CLM-T04-041",
+      "CLM-T04-042",
+      "CLM-T04-043",
+      "CLM-T04-050",
+      "CLM-T04-060"
+    ],
+    "required_counts": [
+      [
+        "evidence",
+        12
+      ],
+      [
+        "claims",
+        15
+      ],
+      [
+        "citations",
+        10
+      ],
+      [
+        "blocks",
+        7
+      ],
+      [
+        "states",
+        15
+      ],
+      [
+        "events",
+        17
+      ]
+    ],
+    "required_event_sequence": [
+      "RUN_RECEIVED",
+      "INITIAL_TRANSLATIONS_BOUND",
+      "INITIAL_SUFFICIENCY_ASSESSED",
+      "ACQUISITION_PLAN_FROZEN",
+      "T04_PACKET_LOADED",
+      "SBLGNT_VIEW_ACQUIRED",
+      "MORPHGNT_VIEW_ACQUIRED",
+      "ABBOTT_SMITH_VIEW_ACQUIRED",
+      "T04_PROJECTION_ACQUIRED",
+      "EVIDENCE_LEDGER_COMPLETED",
+      "EVIDENCE_SUFFICIENCY_REASSESSED",
+      "CLAIM_LEDGER_COMPLETED",
+      "ANSWER_CANDIDATE_BOUND",
+      "ANSWER_VERIFIED",
+      "ANSWER_RENDERED",
+      "AUDIT_FINALIZED",
+      "RUN_COMPLETE"
+    ],
+    "required_evidence_ids": [
+      "EV-T04-NORM-001",
+      "EV-T04-GRK-001",
+      "EV-T04-MORPH-001",
+      "EV-T04-ASV-001",
+      "EV-T04-WEB-001",
+      "EV-T04-LEX-000",
+      "EV-T04-LEX-001",
+      "EV-T04-LEX-002",
+      "EV-T04-LEX-003",
+      "EV-T04-METHOD-001",
+      "EV-T04-METHOD-002",
+      "EV-T04-BOUNDARY-001"
+    ],
+    "required_state_sequence": [
+      "RECEIVED",
+      "NORMALIZED",
+      "CLASSIFIED",
+      "INITIAL_EVIDENCE_BOUND",
+      "EVIDENCE_ASSESSED_INSUFFICIENT",
+      "PLAN_FROZEN",
+      "EVIDENCE_ACQUIRING",
+      "EVIDENCE_ACQUIRED",
+      "EVIDENCE_REASSESSED_SUFFICIENT_WITH_QUALIFICATION",
+      "CLAIMS_RESOLVED",
+      "ANSWER_CANDIDATE_BOUND",
+      "VERIFYING",
+      "RENDERED",
+      "AUDITED",
+      "COMPLETE"
+    ],
+    "runtime_case_content_sha256": "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd",
+    "runtime_case_id": "VS01-B08-RUNTIME-C01",
+    "runtime_criteria": [
+      [
+        "B08-RT-R1",
+        2
+      ],
+      [
+        "B08-RT-R2",
+        2
+      ],
+      [
+        "B08-RT-R3",
+        1
+      ],
+      [
+        "B08-RT-R4",
+        2
+      ],
+      [
+        "B08-RT-R5",
+        2
+      ],
+      [
+        "B08-RT-R6",
+        2
+      ],
+      [
+        "B08-RT-R7",
+        2
+      ],
+      [
+        "B08-RT-R8",
+        1
+      ]
+    ],
+    "schema_version": "1.0",
+    "spec_id": "VS01-T08-FULL-RUNTIME-PAIR-v1",
+    "specification_identity": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51",
+    "tool_definitions": [
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"prompt\":{\"const\":\"You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both \u201cunderstand\u201d and \u201covercome,\u201d and is a textual variant involved?\"},\"requested_claim_classes\":{\"maxItems\":4,\"minItems\":4,\"prefixItems\":[{\"const\":\"GREEK_LEXICAL_RANGE\"},{\"const\":\"MORPHOLOGY\"},{\"const\":\"CONTEXTUAL_EFFECT\"},{\"const\":\"TEXTUAL_VARIANT_STATUS\"}],\"type\":\"array\"},\"visible_evidence_ids\":{\"maxItems\":2,\"minItems\":2,\"prefixItems\":[{\"const\":\"EV-T08-INITIAL-ASV\"},{\"const\":\"EV-T08-INITIAL-WEB\"}],\"type\":\"array\"}},\"required\":[\"prompt\",\"visible_evidence_ids\",\"requested_claim_classes\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "assess_evidence_sufficiency",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"missing_roles\":{\"maxItems\":4,\"minItems\":4,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"status\":{\"type\":\"string\"},\"supported_now\":{\"maxItems\":1,\"minItems\":1,\"prefixItems\":[{\"type\":\"string\"}],\"type\":\"array\"},\"unavailable_role\":{\"type\":\"string\"}},\"required\":[\"status\",\"supported_now\",\"missing_roles\",\"unavailable_role\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"packet_canonical_sha256\":{\"const\":\"9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409\"},\"packet_identity\":{\"const\":\"aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31\"},\"receipt_file_sha256\":{\"const\":\"02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4\"},\"receipt_identity\":{\"const\":\"01a02bbe-bda5-776b-a95e-16bb40d18597\"}},\"required\":[\"packet_identity\",\"packet_canonical_sha256\",\"receipt_identity\",\"receipt_file_sha256\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "load_published_t04_packet",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"available_claim_count\":{\"type\":\"integer\"},\"available_evidence_ids\":{\"maxItems\":12,\"minItems\":12,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"packet_loads\":{\"type\":\"integer\"},\"packet_verified\":{\"type\":\"boolean\"},\"raw_source_access\":{\"type\":\"boolean\"}},\"required\":[\"packet_loads\",\"packet_verified\",\"available_evidence_ids\",\"available_claim_count\",\"raw_source_access\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"source_handle\":{\"const\":\"SP01-SRC-001#John.1.5\"}},\"required\":[\"source_handle\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "select_sblgnt_exact_source_view",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"evidence_ids\":{\"maxItems\":1,\"minItems\":1,\"prefixItems\":[{\"type\":\"string\"}],\"type\":\"array\"},\"exact_excerpt\":{\"type\":\"string\"}},\"required\":[\"evidence_ids\",\"exact_excerpt\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"source_handle\":{\"const\":\"SP01-SRC-002#John.1.5:\u03ba\u03b1\u03c4\u03ad\u03bb\u03b1\u03b2\u03b5\u03bd\"}},\"required\":[\"source_handle\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "select_morphgnt_target_token",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"evidence_ids\":{\"maxItems\":1,\"minItems\":1,\"prefixItems\":[{\"type\":\"string\"}],\"type\":\"array\"},\"lemma\":{\"type\":\"string\"},\"mood_form\":{\"type\":\"string\"},\"number\":{\"type\":\"string\"},\"person\":{\"type\":\"string\"},\"source_form\":{\"type\":\"string\"},\"tense_form\":{\"type\":\"string\"},\"voice_form\":{\"type\":\"string\"}},\"required\":[\"evidence_ids\",\"source_form\",\"lemma\",\"person\",\"number\",\"tense_form\",\"voice_form\",\"mood_form\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"source_handle\":{\"const\":\"SP01-SRC-005#\u03ba\u03b1\u03c4\u03b1\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03c9\"}},\"required\":[\"source_handle\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "select_abbott_smith_entry_projection",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"evidence_ids\":{\"maxItems\":4,\"minItems\":4,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"mental_action_target_passage_present\":{\"type\":\"boolean\"},\"target_passage_sense\":{\"type\":\"string\"}},\"required\":[\"evidence_ids\",\"target_passage_sense\",\"mental_action_target_passage_present\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"projection_handle\":{\"const\":\"SP01-DER-001#John.1.5\"}},\"required\":[\"projection_handle\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "select_t04_translation_nuance_projection",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"accepted_alternatives\":{\"maxItems\":3,\"minItems\":3,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"claim_ids\":{\"maxItems\":15,\"minItems\":15,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"evidence_ids\":{\"maxItems\":4,\"minItems\":4,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"}},\"required\":[\"evidence_ids\",\"claim_ids\",\"accepted_alternatives\"],\"type\":\"object\"}"
+      },
+      {
+        "input_schema_json": "{\"additionalProperties\":false,\"properties\":{\"required_evidence_ids\":{\"maxItems\":12,\"minItems\":12,\"prefixItems\":[{\"const\":\"EV-T04-NORM-001\"},{\"const\":\"EV-T04-GRK-001\"},{\"const\":\"EV-T04-MORPH-001\"},{\"const\":\"EV-T04-ASV-001\"},{\"const\":\"EV-T04-WEB-001\"},{\"const\":\"EV-T04-LEX-000\"},{\"const\":\"EV-T04-LEX-001\"},{\"const\":\"EV-T04-LEX-002\"},{\"const\":\"EV-T04-LEX-003\"},{\"const\":\"EV-T04-METHOD-001\"},{\"const\":\"EV-T04-METHOD-002\"},{\"const\":\"EV-T04-BOUNDARY-001\"}],\"type\":\"array\"},\"target_contract\":{\"const\":\"EC-VS01-03-COMPLETE-TNC\"}},\"required\":[\"target_contract\",\"required_evidence_ids\"],\"type\":\"object\"}",
+        "maximum_calls": 1,
+        "name": "verify_complete_tnc_evidence_contract",
+        "output_schema_json": "{\"additionalProperties\":false,\"properties\":{\"claim_count\":{\"type\":\"integer\"},\"evidence_count\":{\"type\":\"integer\"},\"remaining_limitations\":{\"maxItems\":5,\"minItems\":5,\"prefixItems\":[{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"},{\"type\":\"string\"}],\"type\":\"array\"},\"status\":{\"type\":\"string\"}},\"required\":[\"status\",\"evidence_count\",\"claim_count\",\"remaining_limitations\"],\"type\":\"object\"}"
+      }
+    ],
+    "upstream_authority": [
+      [
+        "t04.packet_identity",
+        "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"
+      ],
+      [
+        "t04.packet_canonical_sha256",
+        "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
+      ],
+      [
+        "t04.receipt_identity",
+        "01a02bbe-bda5-776b-a95e-16bb40d18597"
+      ],
+      [
+        "t04.receipt_file_sha256",
+        "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
+      ],
+      [
+        "t05.canonical_run_id",
+        "01a030a1-c3ca-76f6-b4c8-f74392e2cd91"
+      ],
+      [
+        "t05.canonical_session_id",
+        "01a030a1-c3cb-72d0-aac0-19da47db369e"
+      ],
+      [
+        "t05.request_revision",
+        "2"
+      ],
+      [
+        "t05.supersedes_run_id",
+        "null"
+      ],
+      [
+        "t05.request_identity",
+        "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef"
+      ],
+      [
+        "t05.execution_record_identity",
+        "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc"
+      ],
+      [
+        "t05.brief_answer_identity",
+        "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0"
+      ],
+      [
+        "t05.study_answer_identity",
+        "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd"
+      ],
+      [
+        "t05.study_markdown_sha256",
+        "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6"
+      ],
+      [
+        "t05.catalog_sha256",
+        "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4"
+      ],
+      [
+        "t06.fixture_identity",
+        "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"
+      ],
+      [
+        "t07.benchmark_batch_id",
+        "BENCH-VS01-BATCH-01"
+      ],
+      [
+        "t07.benchmark_markdown_sha256",
+        "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff"
+      ],
+      [
+        "t07.benchmark_cases_sha256",
+        "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f"
+      ],
+      [
+        "t07.run_result_identity",
+        "2f5838b85627c257d94436ff2aed94d2bf3528ed478b6ae2a3e2f81f7db9ae7f"
+      ],
+      [
+        "t07.run_result_file_sha256",
+        "32649b32eafeea121f6c0eea9aa43819863ed07a528577f2a40c2ff3847ee853"
+      ],
+      [
+        "t07.publication_receipt_identity",
+        "01a03a85-e49b-7d1c-b737-b560fd9a17df"
+      ],
+      [
+        "t07.fixed_case_id",
+        "VS01-B08-C01"
+      ],
+      [
+        "t07.fixed_case_content_sha256",
+        "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+      ]
+    ]
+  },
   "properties": {
     "allowed_dispositions": {
-      "const": [
-        "REFERENCE_CONFORMANT",
-        "RUNTIME_SCREENING_PASS_WITH_EXPLICIT_LIMITATIONS",
-        "RUNTIME_SCREENING_NO_GO"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Dispositions",
+      "type": "array"
     },
     "contract": {
       "const": "VS01B08RuntimePairSpecification",
@@ -48,26 +415,30 @@
       "type": "string"
     },
     "fixed_case_content_sha256": {
-      "const": "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Fixed Case Content Sha256",
+      "type": "string"
     },
     "fixed_case_id": {
-      "const": "VS01-B08-C01"
+      "title": "Fixed Case Id",
+      "type": "string"
     },
     "fixed_criteria": {
-      "const": [
-        [
-          "B08-R1",
-          2
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
         ],
-        [
-          "B08-R2",
-          1
-        ],
-        [
-          "B08-R3",
-          1
-        ]
-      ]
+        "type": "array"
+      },
+      "title": "Fixed Criteria",
+      "type": "array"
     },
     "fixed_reference_score": {
       "maxItems": 2,
@@ -86,238 +457,169 @@
       "type": "array"
     },
     "future_thresholds": {
-      "const": [
-        [
-          "fixed",
-          7
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
         ],
-        [
-          "runtime",
-          24
-        ],
-        [
-          "pair",
-          32
-        ]
-      ]
+        "type": "array"
+      },
+      "title": "Future Thresholds",
+      "type": "array"
     },
     "hard_failures": {
-      "const": [
-        "EARLY_UNGROUNDED_ANSWER",
-        "HIDDEN_EVIDENCE_ACCESS",
-        "AVAILABLE_EVIDENCE_NOT_ACQUIRED",
-        "UNAUTHORIZED_SOURCE_OR_RAW_READ",
-        "TRANSLATION_AS_MANUSCRIPT_WITNESS",
-        "FALSE_TEXTUAL_VARIANT_CERTAINTY",
-        "MORPHOLOGY_OR_LEXICON_OVERCLAIM",
-        "TOOL_OR_EVENT_FABRICATION",
-        "CLAIM_CITATION_MISMATCH",
-        "CORRECTION_LINEAGE_LOSS",
-        "MODEL_OR_NETWORK_ROUTE"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Hard Failures",
+      "type": "array"
     },
     "initial_evidence_ids": {
-      "const": [
-        "EV-T08-INITIAL-ASV",
-        "EV-T08-INITIAL-WEB"
-      ]
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Initial Evidence Ids",
+      "type": "array"
     },
     "material_unknown_claim_ids": {
-      "const": [
-        "CLM-T04-042",
-        "CLM-T04-043"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Material Unknown Claim Ids",
+      "type": "array"
     },
     "pair_id": {
-      "const": "BENCH-VS01-B08-PAIR-01"
+      "title": "Pair Id",
+      "type": "string"
     },
     "prompt": {
-      "const": "You have only the supplied ASV and WEB Classic wording for John 1:5. Does the Greek mean both \u201cunderstand\u201d and \u201covercome,\u201d and is a textual variant involved?"
+      "title": "Prompt",
+      "type": "string"
     },
     "publication_paths": {
-      "const": [
-        "objects/sha256/<prefix>/<pair-result-sha256>",
-        "snapshots/benchmark/vs01-b08-runtime-pair/reference-screening.json",
-        "manifests/benchmark/vs01-b08-runtime-pair/reference-screening/runtime-screening-receipt.json",
-        ".incoming/vs01-b08-runtime-pair-<pair-result-sha256>.runtime-screening-stage"
-      ]
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Publication Paths",
+      "type": "array"
     },
     "required_alternative_ids": {
-      "const": [
-        "ALT-T04-CONFLICT",
-        "ALT-T04-COGNITIVE",
-        "ALT-T04-DOUBLE-RESONANCE"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Alternative Ids",
+      "type": "array"
     },
     "required_block_ids": {
-      "const": [
-        "STUDY-DIRECT",
-        "STUDY-TEXTS",
-        "STUDY-GREEK",
-        "STUDY-LEXICON",
-        "STUDY-ALTERNATIVES",
-        "STUDY-TEXTUAL-STATE",
-        "STUDY-ASSESSMENT"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Block Ids",
+      "type": "array"
     },
     "required_citation_ids": {
-      "const": [
-        "CIT-T05-001",
-        "CIT-T05-002",
-        "CIT-T05-003",
-        "CIT-T05-004",
-        "CIT-T05-005",
-        "CIT-T05-006",
-        "CIT-T05-007",
-        "CIT-T05-008",
-        "CIT-T05-009",
-        "CIT-T05-010"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Citation Ids",
+      "type": "array"
     },
     "required_claim_ids": {
-      "const": [
-        "CLM-T04-010",
-        "CLM-T04-011",
-        "CLM-T04-012",
-        "CLM-T04-020",
-        "CLM-T04-021",
-        "CLM-T04-022",
-        "CLM-T04-030",
-        "CLM-T04-031",
-        "CLM-T04-032",
-        "CLM-T04-040",
-        "CLM-T04-041",
-        "CLM-T04-042",
-        "CLM-T04-043",
-        "CLM-T04-050",
-        "CLM-T04-060"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Claim Ids",
+      "type": "array"
     },
     "required_counts": {
-      "const": [
-        [
-          "evidence",
-          12
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
         ],
-        [
-          "claims",
-          15
-        ],
-        [
-          "citations",
-          10
-        ],
-        [
-          "blocks",
-          7
-        ],
-        [
-          "states",
-          15
-        ],
-        [
-          "events",
-          17
-        ]
-      ]
+        "type": "array"
+      },
+      "title": "Required Counts",
+      "type": "array"
     },
     "required_event_sequence": {
-      "const": [
-        "RUN_RECEIVED",
-        "INITIAL_TRANSLATIONS_BOUND",
-        "INITIAL_SUFFICIENCY_ASSESSED",
-        "ACQUISITION_PLAN_FROZEN",
-        "T04_PACKET_LOADED",
-        "SBLGNT_VIEW_ACQUIRED",
-        "MORPHGNT_VIEW_ACQUIRED",
-        "ABBOTT_SMITH_VIEW_ACQUIRED",
-        "T04_PROJECTION_ACQUIRED",
-        "EVIDENCE_LEDGER_COMPLETED",
-        "EVIDENCE_SUFFICIENCY_REASSESSED",
-        "CLAIM_LEDGER_COMPLETED",
-        "ANSWER_CANDIDATE_BOUND",
-        "ANSWER_VERIFIED",
-        "ANSWER_RENDERED",
-        "AUDIT_FINALIZED",
-        "RUN_COMPLETE"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Event Sequence",
+      "type": "array"
     },
     "required_evidence_ids": {
-      "const": [
-        "EV-T04-NORM-001",
-        "EV-T04-GRK-001",
-        "EV-T04-MORPH-001",
-        "EV-T04-ASV-001",
-        "EV-T04-WEB-001",
-        "EV-T04-LEX-000",
-        "EV-T04-LEX-001",
-        "EV-T04-LEX-002",
-        "EV-T04-LEX-003",
-        "EV-T04-METHOD-001",
-        "EV-T04-METHOD-002",
-        "EV-T04-BOUNDARY-001"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Evidence Ids",
+      "type": "array"
     },
     "required_state_sequence": {
-      "const": [
-        "RECEIVED",
-        "NORMALIZED",
-        "CLASSIFIED",
-        "INITIAL_EVIDENCE_BOUND",
-        "EVIDENCE_ASSESSED_INSUFFICIENT",
-        "PLAN_FROZEN",
-        "EVIDENCE_ACQUIRING",
-        "EVIDENCE_ACQUIRED",
-        "EVIDENCE_REASSESSED_SUFFICIENT_WITH_QUALIFICATION",
-        "CLAIMS_RESOLVED",
-        "ANSWER_CANDIDATE_BOUND",
-        "VERIFYING",
-        "RENDERED",
-        "AUDITED",
-        "COMPLETE"
-      ]
+      "items": {
+        "type": "string"
+      },
+      "title": "Required State Sequence",
+      "type": "array"
     },
     "runtime_case_content_sha256": {
-      "const": "a1fdd253614df0ca7789a44372dabb895dcfda042656104ab68c9c6b351c17dd"
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Runtime Case Content Sha256",
+      "type": "string"
     },
     "runtime_case_id": {
-      "const": "VS01-B08-RUNTIME-C01"
+      "title": "Runtime Case Id",
+      "type": "string"
     },
     "runtime_criteria": {
-      "const": [
-        [
-          "B08-RT-R1",
-          2
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
         ],
-        [
-          "B08-RT-R2",
-          2
-        ],
-        [
-          "B08-RT-R3",
-          1
-        ],
-        [
-          "B08-RT-R4",
-          2
-        ],
-        [
-          "B08-RT-R5",
-          2
-        ],
-        [
-          "B08-RT-R6",
-          2
-        ],
-        [
-          "B08-RT-R7",
-          2
-        ],
-        [
-          "B08-RT-R8",
-          1
-        ]
-      ]
+        "type": "array"
+      },
+      "title": "Runtime Criteria",
+      "type": "array"
     },
     "schema_version": {
       "const": "1.0",
@@ -332,229 +634,33 @@
       "type": "string"
     },
     "specification_identity": {
-      "const": "98c5df4b4906261cd96fa194ecf2035474633bdc9988388886c8b081e1835f51"
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Specification Identity",
+      "type": "string"
     },
     "tool_definitions": {
-      "maxItems": 7,
-      "minItems": 7,
-      "prefixItems": [
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "assess_evidence_sufficiency"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "load_published_t04_packet"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "select_sblgnt_exact_source_view"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "select_morphgnt_target_token"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "select_abbott_smith_entry_projection"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "select_t04_translation_nuance_projection"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/RuntimeToolDefinition"
-            },
-            {
-              "properties": {
-                "name": {
-                  "const": "verify_complete_tnc_evidence_contract"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          ]
-        }
-      ],
+      "items": {
+        "$ref": "#/$defs/RuntimeToolDefinition"
+      },
+      "title": "Tool Definitions",
       "type": "array"
     },
     "upstream_authority": {
-      "const": [
-        [
-          "t04.packet_identity",
-          "aebcbb50fc8383f2f4f395bc71116563325c1fde237427dc8c1bc8140e8ebe31"
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
         ],
-        [
-          "t04.packet_canonical_sha256",
-          "9f81621785924161cc4861e2af9f010bd18e822b60199d62a6327eff44ea0409"
-        ],
-        [
-          "t04.receipt_identity",
-          "01a02bbe-bda5-776b-a95e-16bb40d18597"
-        ],
-        [
-          "t04.receipt_file_sha256",
-          "02272e1ec458a33e449aa93f9508a57d4eaacf3d9dccc48888f3952bbe96dad4"
-        ],
-        [
-          "t05.canonical_run_id",
-          "01a030a1-c3ca-76f6-b4c8-f74392e2cd91"
-        ],
-        [
-          "t05.canonical_session_id",
-          "01a030a1-c3cb-72d0-aac0-19da47db369e"
-        ],
-        [
-          "t05.request_revision",
-          "2"
-        ],
-        [
-          "t05.supersedes_run_id",
-          "null"
-        ],
-        [
-          "t05.request_identity",
-          "5b0d413278c3dcf03421989dcec84228a828d13236a232977b448b14bd0b68ef"
-        ],
-        [
-          "t05.execution_record_identity",
-          "f0697ce01cfa4579223a59042e49de7377d3ec5dee7cca29468bbab3cfba20cc"
-        ],
-        [
-          "t05.brief_answer_identity",
-          "b97e895bfc640d0020f7146cd88112fd0f6f9ec8669bfab316c8d49688aef2a0"
-        ],
-        [
-          "t05.study_answer_identity",
-          "f18264255ab9117cdd7fa40d9da35c614d31a9bfcabce7a5e95e7b0a040424fd"
-        ],
-        [
-          "t05.study_markdown_sha256",
-          "aa32440433e71db2c74c24b2b43ec6f5ba077a15b5231517f5750eafb27b0cc6"
-        ],
-        [
-          "t05.catalog_sha256",
-          "b712aeed326f78fdfbb7d69d3fdf2816f6f6446b8bbefad0449aa525cd4552e4"
-        ],
-        [
-          "t06.fixture_identity",
-          "929ddc1c1aeb1e976a70cfbceb238f0ef6a55e8ca1b354a0210463cec50b4d9b"
-        ],
-        [
-          "t07.benchmark_batch_id",
-          "BENCH-VS01-BATCH-01"
-        ],
-        [
-          "t07.benchmark_markdown_sha256",
-          "f1f0be8a3be9b4f56de0968ad3f166306a4fdfbdd57e7a45a5d972bbb50b66ff"
-        ],
-        [
-          "t07.benchmark_cases_sha256",
-          "4241a0bf5baf50a12ce5fe6dcfef6ed5492cde410f3d92f5aad8a9f26ba3113f"
-        ],
-        [
-          "t07.run_result_identity",
-          "2f5838b85627c257d94436ff2aed94d2bf3528ed478b6ae2a3e2f81f7db9ae7f"
-        ],
-        [
-          "t07.run_result_file_sha256",
-          "32649b32eafeea121f6c0eea9aa43819863ed07a528577f2a40c2ff3847ee853"
-        ],
-        [
-          "t07.publication_receipt_identity",
-          "01a03a85-e49b-7d1c-b737-b560fd9a17df"
-        ],
-        [
-          "t07.fixed_case_id",
-          "VS01-B08-C01"
-        ],
-        [
-          "t07.fixed_case_content_sha256",
-          "28ebe4b02d19b316e027b2c68dce02114e7a40c1f050bba357a4b8cb43d5529a"
-        ]
-      ]
+        "type": "array"
+      },
+      "title": "Upstream Authority",
+      "type": "array"
     }
   },
   "required": [
