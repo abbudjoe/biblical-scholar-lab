@@ -1,0 +1,93 @@
+{
+  "action_pins": {
+    "actions/checkout": "11d5960a326750d5838078e36cf38b85af677262",
+    "actions/setup-node": "49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-python": "a26af69be951a213d495a4c3e4e4022e16d87065",
+    "astral-sh/setup-uv": "d0cc045d04ccac9d8b7881df0226f9e82c39688e"
+  },
+  "counts": {
+    "all_new_direct_dependencies": 17,
+    "python_runtime_direct": 2,
+    "web_development_direct": 12,
+    "web_runtime_direct": 3
+  },
+  "network_boundary": {
+    "application_runtime_traffic": 0,
+    "package_registry_network_only": true,
+    "registries": [
+      "https://pypi.org/",
+      "https://registry.npmjs.org/",
+      "https://nodejs.org/",
+      "https://github.com/actions/",
+      "https://github.com/astral-sh/setup-uv",
+      "https://cdn.playwright.dev/"
+    ]
+  },
+  "node": "24.20.0",
+  "npm_direct_dependencies": {
+    "development": {
+      "@axe-core/playwright": "4.13.0",
+      "@biomejs/biome": "2.5.10",
+      "@playwright/test": "1.62.1",
+      "@testing-library/react": "14.3.1",
+      "@types/node": "24.13.3",
+      "@types/react": "18.3.31",
+      "@types/react-dom": "18.3.7",
+      "@vitejs/plugin-react": "6.1.0",
+      "jsdom": "30.0.1",
+      "typescript": "5.9.3",
+      "vite": "8.2.2",
+      "vitest": "4.1.11"
+    },
+    "runtime": {
+      "ajv": "8.20.0",
+      "react": "18.3.1",
+      "react-dom": "18.3.1"
+    }
+  },
+  "playwright": {
+    "browser": "Chrome for Testing 151.0.7922.34",
+    "chromium_revision": "1234",
+    "package": "@playwright/test@1.62.1"
+  },
+  "pnpm": "11.24.0",
+  "probe_results": [
+    {
+      "command": "official Node, PyPI, npm, and action-tag metadata queries",
+      "exit_status": 0
+    },
+    {
+      "command": "pnpm add exact runtime and twelve development families --strict-peer-dependencies",
+      "exit_status": 0
+    },
+    {
+      "command": "pnpm install --frozen-lockfile --strict-peer-dependencies",
+      "exit_status": 0
+    },
+    {
+      "command": "pnpm exec playwright install chromium",
+      "exit_status": 0
+    },
+    {
+      "command": "uv add --no-sync fastapi==0.141.1 uvicorn==0.52.4; uv lock --check",
+      "exit_status": 0
+    },
+    {
+      "command": "uv sync --frozen --no-install-project; import exact FastAPI/Uvicorn stack",
+      "exit_status": 0
+    }
+  ],
+  "python_runtime_direct_dependencies": {
+    "fastapi": "0.141.1",
+    "uvicorn": "0.52.4"
+  },
+  "resolved_compatibility": {
+    "exact_version_lockfiles_produced": true,
+    "fastapi_starlette_pydantic": "FastAPI 0.141.1 resolved Starlette 1.6.0 with existing Pydantic 2.13.4 under Python 3.12.12.",
+    "forbidden_dependency_family_present": false,
+    "node_engines": "Node 24.20.0 satisfies Vite 8.2.2, plugin-react 6.1.0, Vitest 4.1.11, jsdom 30.0.1, Playwright 1.62.1, and pnpm 11.24.0 engines.",
+    "react_peers": "React and React DOM 18.3.1 satisfy @testing-library/react 14.3.1 and the selected React 18 type packages.",
+    "vite_peers": "Vite 8.2.2 satisfies @vitejs/plugin-react 6.1.0 and Vitest 4.1.11 peer ranges."
+  },
+  "timestamp_utc": "2026-08-26T20:10:05Z"
+}
