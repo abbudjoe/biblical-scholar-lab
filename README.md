@@ -2,7 +2,7 @@
 
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09` design is owner-approved and `VS01-T09A` is active; `VS01-T09B` and `VS01-T09-OP01` are not authorized or started, and `VS01-T10` and later work have not started.
+Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is owner-authorized and active. `VS01-T09-OP01` is not authorized or started, and `VS01-T10` and later work remain unstarted.
 
 ## Authority
 
@@ -36,8 +36,8 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 - `VS01-T06` is complete and canonically published.
 - `VS01-T07` operational publication is complete.
 - `VS01-T08` implementation, Hotfix01, and operational publication are complete: acquisition-run identity `3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e`, pair-result identity `f73ffd20f5096f2b465f3bd91bdb093f4d44a1c9fa5f717f6589ea5ae11d9426`, pair-result file SHA-256 `04c9b4680a0d612bda05508da65720eb583587ebb83ab6f766ac151f1c656222`, publication receipt UUID `01a03f23-35e7-7ef4-b482-d84dafa77010`, receipt canonical SHA-256 `8af561aba1c2d0df41ba58f8bd65f6a93de547b5353e8be7eac2c1ece505fac9`, and receipt file SHA-256 `1b2498a08e9221ab53dde1c9dea59e021cf1c361356f24b6420e872c96d638b6`.
-- `VS01-T09` design is owner-approved and `VS01-T09A` is active.
-- `VS01-T09B` and `VS01-T09-OP01` are not authorized or started; `VS01-T10` and later work have not started.
+- `VS01-T09A` is complete and merged; `VS01-T09B` is owner-authorized and active.
+- `VS01-T09-OP01` is not authorized or started; `VS01-T10` and later work remain unstarted.
 
 ## Current approved baseline
 
@@ -112,10 +112,11 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-VS01-T06-SYNTHETIC-PAGE-FIXTURE-v1` — completed historical T06 authorization; the fixture is canonically published
 - `ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1` — completed historical T07 harness authorization; operational publication is complete
 - `ACT-VS01-T08-FULL-RUNTIME-PAIR-v1` — completed historical T08 implementation authorization; Hotfix01 and operational publication are complete
-- `ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1` — active T09A canonical Study workspace projection authorization; T09B and T09-OP01 are not authorized
+- `ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1` — completed T09A canonical Study workspace projection authorization
+- `ACT-VS01-T09B-LOOPBACK-STUDY-WEB-v1` — active T09B loopback Study web authorization; T09-OP01 is not authorized
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09` design is owner-approved and `VS01-T09A` is active; `VS01-T09B` and `VS01-T09-OP01` are not authorized or started, and `VS01-T10` and later work have not started.
+The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is owner-authorized and active. `VS01-T09-OP01` is not authorized or started, and `VS01-T10` and later work remain unstarted.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "assets": [
+    {
+      "path": "assets/index-BOFjoYbQ.js",
+      "media_type": "text/javascript; charset=utf-8",
+      "byte_count": 186690,
+      "sha256": "291a5c6eb7ae993145968ce06da6902064d27edd12becdee72720ee826a5a11f"
+    },
+    {
+      "path": "assets/index-z-vdkAHH.css",
+      "media_type": "text/css; charset=utf-8",
+      "byte_count": 2212,
+      "sha256": "f34d8174a6bf9f56b22a2180974235d9618fbc3cab506b999fdf8e3c1b799049"
+    },
+    {
+      "path": "index.html",
+      "media_type": "text/html; charset=utf-8",
+      "byte_count": 409,
+      "sha256": "5aa2ff8b436df8ac1f1aaa0b671e208a1e5838e201996b5ccc94651d775fba53"
+    }
+  ]
+}
