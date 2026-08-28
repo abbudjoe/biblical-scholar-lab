@@ -1,0 +1,383 @@
+{
+  "schema_version": "1.0",
+  "handoff_id": "DR-31-DESIGN-PERSISTENCE-SOL-v1",
+  "task_id": "DR-31-DESIGN-PERSISTENCE-CONT01",
+  "date": "2026-08-28",
+  "disposition": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "design/dr31-biblos-translation-nuance-recharter",
+  "pull_request": {
+    "title": "DR-31: pause and recharter Biblical Scholar Lab for Biblos",
+    "required_state": "DRAFT_UNAPPROVED_UNMERGED",
+    "number": "RECORDED_IN_PR_COMPLETION_COMMENT",
+    "url": "RECORDED_IN_PR_COMPLETION_COMMENT"
+  },
+  "authority": {
+    "top_level_review": "TOPLEVEL-REREVIEW-BSL-DR31-REPAIR01-20260828-01",
+    "candidate_prompt_sha256": "692907b12dbf922474fb14b4f68af88ed93f105724ecdde2de7ec8b295ec465b",
+    "original_owner_authorization_sha256": "6ea08ab065601f657e014200afd42c8a7faedb840ec7666cc6486ac1fbbc58c9",
+    "continuation_prompt_sha256": "3ea9c45fd09d3a3fb32de070415ec67252438a86a2970ae7035172b66e4f6aed",
+    "implementation_activation_manifest_waiver": "EXACT_DESIGN_PERSISTENCE_ONLY",
+    "simplicity_waiver_owner_approved": true,
+    "owner": "Joseph Abbud",
+    "expiration": "DRAFT_PR_COMPLETION_COMMENT",
+    "inferred_authority": false
+  },
+  "git_identities": {
+    "base": {
+      "commit": "3f52895459aefb84e6e6a7da8870f12e5f653e76",
+      "tree": "cbe157cad80adf42127871a9859db11707a7b278"
+    },
+    "design_package": {
+      "commit": "f63fec33ad41a714107dded6f764fbd24ef33a41",
+      "tree": "0cf3c90a062fdaae13c148047404eedf2d9c9f97",
+      "parent": "3f52895459aefb84e6e6a7da8870f12e5f653e76"
+    },
+    "simplicity_waiver": {
+      "commit": "47b67e5d6aa55b2b1f5957f9d8f36999faf982a0",
+      "tree": "aa83e7f0148e1e0e514d87daf8a15fb5dd527241",
+      "parent": "f63fec33ad41a714107dded6f764fbd24ef33a41"
+    },
+    "final_handoff": {
+      "commit": "RECORDED_IN_PR_COMPLETION_COMMENT",
+      "tree": "RECORDED_IN_PR_COMPLETION_COMMENT",
+      "parent": "47b67e5d6aa55b2b1f5957f9d8f36999faf982a0",
+      "self_reference_note": "The files determine this commit and tree; exact identities are bound in the completion comment without another commit."
+    }
+  },
+  "lab_start_authority": {
+    "merged_pr": 21,
+    "status": "PAUSED_AFTER_VS01_T09B",
+    "t09_op01": "OPTIONAL_DEFERRED_OFF_CRITICAL_PATH_UNSTARTED_UNAUTHORIZED",
+    "t10_and_later": "UNSTARTED_UNAUTHORIZED"
+  },
+  "biblos_consumer_authority": {
+    "repository": "abbudjoe/biblos",
+    "main": "c1c9649fcb656603ff9752abc280ba446b49c083",
+    "tree": "9230c04e04f5a5b754f64dd8d00df7df968a45da",
+    "merged_pr": 6,
+    "p0_d11_sha256": "f3b70816bd392bfbe23c29e84c76bdf983b8effc8f800b2b0e76ed4c6831c1fa",
+    "p1_t12_blob": "7af7b18dc2e103e7bf72d843bf4ee8680180a1ce",
+    "p1_t13_blob": "852b931f0d2d411cfb2b24e05d8f440589cea416"
+  },
+  "package": {
+    "zip_sha256": "2c0959f91626efab57dc96c9cf44492332f7b786a3bfddfc5fa191110301bc5c",
+    "zip_bytes": 42814,
+    "uncompressed_semantic_bytes": 119285,
+    "member_hashes_verified": 9,
+    "sidecars_verified": 2,
+    "relative_links_verified": 105,
+    "maximum_heading_depth": 3,
+    "semantic_invariants_verified": 25,
+    "rejected_scaffolding": 0,
+    "members": {
+      "README.md": {
+        "sha256": "9c86b45726f8bdf236bfd2646cdd795f48ddc220e7a1d603d4b03d18471de555",
+        "bytes": 23591,
+        "lines": 142,
+        "nonblank_lines": 108
+      },
+      "design/APPROVED_BASELINE_SUMMARY.md": {
+        "sha256": "a539e74bebe0f978b6477eb2210cfd039b018e02412d3cbf0fde4f5d4d10b051",
+        "bytes": 6262,
+        "lines": 168,
+        "nonblank_lines": 122
+      },
+      "design/DECISION_INDEX.md": {
+        "sha256": "a4e6f6c3de10e0081103e139543a494a5cc3d1fc3ccd3251cdb8c0efe5fbddab",
+        "bytes": 23509,
+        "lines": 153,
+        "nonblank_lines": 120
+      },
+      "design/PACKAGE_STATUS.md": {
+        "sha256": "77d7191523e1809f3b4cde863ebbd99fc35bd243bac89492ceb1fa7a8a8629c8",
+        "bytes": 5940,
+        "lines": 188,
+        "nonblank_lines": 133
+      },
+      "design/TERMINOLOGY_REGISTRY.md": {
+        "sha256": "10f436b67e1fd5a15363ce432a85277cc3fa89a30faa3eee2ca37d1796656646",
+        "bytes": 7973,
+        "lines": 122,
+        "nonblank_lines": 99
+      },
+      "design/approved/BSL-STATUS-01-paused-after-vs01-t09b.md": {
+        "sha256": "075698306df1c16bc127baa50d79d46a60d7a7705e919c7eaeb336968b132ce1",
+        "bytes": 7355,
+        "lines": 180,
+        "nonblank_lines": 136
+      },
+      "design/approved/BSL-STATUS-01-paused-after-vs01-t09b.sha256": {
+        "sha256": "8585d748912437d8e61cd167db505c7785aa963e8a591177c98ee93173a1f566",
+        "bytes": 122,
+        "lines": 1,
+        "nonblank_lines": 1
+      },
+      "design/approved/DR-31-biblos-translation-nuance-laboratory-recharter-and-annotation-package-authority.md": {
+        "sha256": "e34185591f7c2c035241f93d7dffa302b51a0f23704512371d0b8f07b469da2d",
+        "bytes": 44362,
+        "lines": 1276,
+        "nonblank_lines": 934
+      },
+      "design/approved/DR-31-biblos-translation-nuance-laboratory-recharter-and-annotation-package-authority.sha256": {
+        "sha256": "b3e8c6b97e473924a395e52b220876195d00ad96f87b6c476a356f4783b6506b",
+        "bytes": 171,
+        "lines": 1,
+        "nonblank_lines": 1
+      }
+    }
+  },
+  "cross_project_contracts": [
+    {
+      "owner": "Biblos",
+      "contract": "TranslationAnnotationPackage v1",
+      "role": "consumer schema",
+      "implemented": false
+    },
+    {
+      "owner": "Biblical Scholar Notes",
+      "contract": "ReaderAnnotationProjection v1",
+      "role": "normative editorial export schema",
+      "implemented": false
+    },
+    {
+      "owner": "Biblical Scholar Lab",
+      "contract": "TranslationAnnotationCompilationReceipt v1",
+      "role": "compilation receipt",
+      "implemented": false
+    }
+  ],
+  "simplicity_waiver": {
+    "path": "design/approved/SIMPLICITY-WAIVER-DR31-DESIGN-PERSISTENCE-v1.md",
+    "sha256": "cd89ae342c5127a6e7e0ba8a82a92480a70d52336072544ca2aa33ebe2bee620",
+    "bytes": 3545,
+    "lines": 95,
+    "chatgpt_disposition": "CHATGPT_SIMPLICITY_WAIVER_RECOMMENDED",
+    "owner": "Joseph Abbud",
+    "nonblank_additions": 1444,
+    "nonblank_deletions": 63,
+    "substantive_total": 1507,
+    "threshold": 1500,
+    "excess": 7,
+    "scope": "EXACT_DESIGN_PERSISTENCE_ROOT_TURN_ONLY",
+    "not_precedent": true
+  },
+  "changed_paths": {
+    "count": 12,
+    "design_status": [
+      "README.md",
+      "design/APPROVED_BASELINE_SUMMARY.md",
+      "design/DECISION_INDEX.md",
+      "design/PACKAGE_STATUS.md",
+      "design/TERMINOLOGY_REGISTRY.md",
+      "design/approved/BSL-STATUS-01-paused-after-vs01-t09b.md",
+      "design/approved/BSL-STATUS-01-paused-after-vs01-t09b.sha256",
+      "design/approved/DR-31-biblos-translation-nuance-laboratory-recharter-and-annotation-package-authority.md",
+      "design/approved/DR-31-biblos-translation-nuance-laboratory-recharter-and-annotation-package-authority.sha256"
+    ],
+    "waiver": [
+      "design/approved/SIMPLICITY-WAIVER-DR31-DESIGN-PERSISTENCE-v1.md"
+    ],
+    "handoff": [
+      "handoffs/DR-31/DR-31-DESIGN-PERSISTENCE-SOL-v1.md",
+      "handoffs/DR-31/DR-31-DESIGN-PERSISTENCE-SOL-v1.json"
+    ]
+  },
+  "local_validation": {
+    "package_structure": "PASS_EXACT_NINE_SAFE_MEMBERS",
+    "package_hashes": "PASS_9_OF_9",
+    "sidecars": "PASS_2_OF_2",
+    "encoding_and_whitespace": "PASS_9_OF_9",
+    "relative_links": "PASS_105_OF_105",
+    "semantic_invariants": "PASS_25_OF_25",
+    "contract_ownership": "PASS_EXACTLY_3",
+    "python": {
+      "uv_sync_frozen": "PASS",
+      "uv_lock_check": "PASS",
+      "ruff_format": "PASS_156_FILES",
+      "ruff_check": "PASS",
+      "pyright": "PASS_0_ERRORS_0_WARNINGS_0_INFORMATION",
+      "pytest": "PASS_641_PASSED_163_SKIPPED",
+      "coverage": "PASS_90.35_PERCENT_BRANCH",
+      "warnings": "51_PREEXISTING_MACOS_TEMP_CLEANUP"
+    },
+    "web": {
+      "node": "24.20.0",
+      "pnpm": "11.24.0",
+      "playwright": "1.62.1",
+      "chromium_revision": "1234",
+      "install_frozen": "PASS",
+      "generated": "PASS",
+      "lint": "PASS_15_FILES",
+      "typecheck": "PASS",
+      "vitest": "PASS_6_TESTS",
+      "double_build": "PASS_BYTE_IDENTICAL",
+      "dist": "PASS",
+      "playwright_axe": "PASS_7_TESTS"
+    },
+    "post_waiver": {
+      "waiver_byte_identity": "PASS",
+      "waiver_commit_scope_parent": "PASS",
+      "changed_paths": "PASS_EXACT_10_BEFORE_HANDOFF",
+      "unchanged_surfaces": "PASS",
+      "git_diff_check": "PASS",
+      "git_fsck_full": "PASS_39_DANGLING_BLOBS_4_DANGLING_TREES_NO_CORRUPTION",
+      "uv_lock_check": "PASS_32_PACKAGES_RESOLVED",
+      "schema_registry_targeted_test": "PASS_1_TEST"
+    }
+  },
+  "no_change_fingerprints": {
+    "src": {
+      "files": 37,
+      "sha256": "2711168211649f7ba07a8e1630949b6b32aa1c7c6d3952dd064e88950df9c62d"
+    },
+    "tests": {
+      "files": 15,
+      "sha256": "73f4cd64dbfa1f81a5aa067e1584ae705dc948169bcbf5caad5379e9d75d4328"
+    },
+    "web": {
+      "files": 26,
+      "sha256": "32120eacb9a5dc43cb2539e076aba16976ab4b64d86bc3888b8b04fca551258d"
+    },
+    "workflows": {
+      "files": 3,
+      "sha256": "42de2861d470e8ce65b8e517b9afc915bde4f2fe658366cc6b7ec25066fbde66",
+      "tree": "0478cbc2965facfcc7f638fc28e5ff36f798f9ed"
+    },
+    "contracts": {
+      "files": 31,
+      "sha256": "60ad406051359724925aa175b7401b3be6de9d3b22979a80f69cf44a6c1c8d9b"
+    },
+    "schemas": {
+      "files": 30,
+      "sha256": "0768dc4731c9a51ae194a5f871ef1af8e1158657a44ef32f54548d2ceda17b5a",
+      "tree": "f919d22b786394d36822b52f868a60135e9998ce"
+    },
+    "migrations": {
+      "files": 1,
+      "sha256": "75e1cdf000d293a01ad5a8b1aa0db73cd8bc8c052275f40c9d3b6ee66c42eaa7"
+    },
+    "fixtures": {
+      "files": 9,
+      "sha256": "15c88dd5bd83df013d17861bc341ff040e317945a987a29a7ad593f63e45bf78"
+    },
+    "activations": {
+      "files": 34,
+      "sha256": "8d661568480fa90586d2778fbe04d63977f0729957af9a2db5c61658403034ec"
+    },
+    "profiles": {
+      "files": 2,
+      "sha256": "81e950efb3f7ab35b7ce896b906e451ea8f0a2c1604c8d62944cad148895fc58"
+    },
+    "persistent_store_and_migration_surface": {
+      "files": 8,
+      "sha256": "1106cd1211c901d16d1ba709acb0d284f66c5f6d1646685af26f6ab6e8198a0c"
+    },
+    "contract_registry": {
+      "sha256": "315966bf6bf7750fdc904ebc212caa733e97ea89865fccef39537b57edd1ed44",
+      "blob": "cbd1a21310ce5b6ccb0a604a6aa55b5812cce04d"
+    },
+    "pyproject_toml": "299ff6b8aee734f979415bfdd80bb278a785bcc750b8fe66c10813f2eb655300",
+    "uv_lock": "2765494520b3b4cc1c033fac992ae16e9be521105e38faf34bcdb42a3277be63",
+    "web_package_json": "41b233bbe1ac82b5ad8b84b6028be35e18464da2b35f38a5decb905704fddd75",
+    "web_pnpm_lock": "f1be4cdcdd03640db6ff6bef0258c46bc619c50d134fc9382231fd158d0f2924"
+  },
+  "complexity_receipt": {
+    "approved_design_status_files_changed": 9,
+    "new_approved_design_records": 2,
+    "new_checksum_sidecars": 2,
+    "modified_navigation_status_files": 5,
+    "approved_simplicity_waiver_files": 1,
+    "execution_handoff_files": 2,
+    "production_implementation_lines": 0,
+    "test_implementation_lines": 0,
+    "new_schemas": 0,
+    "new_public_contracts": 0,
+    "new_dependencies": 0,
+    "lockfile_changes": 0,
+    "migrations": 0,
+    "endpoints": 0,
+    "persistent_stores": 0,
+    "source_plans": 0,
+    "successor_activations": 0,
+    "model_provider_cloud_training_artifacts": 0,
+    "package_substantive_lines": 1507,
+    "waiver_lines_separately_reported": 95,
+    "handoff_markdown_lines": 394,
+    "handoff_json_lines": 383,
+    "handoff_total_lines": 777,
+    "simplicity_disposition": "PASS_WITH_EXACT_OWNER_APPROVED_WAIVER"
+  },
+  "github_auth": {
+    "mode": "GH_CLI_EXISTING_AUTH",
+    "active_login": "abbudjoe",
+    "command": "gh auth status --active --hostname github.com",
+    "token_override_environment_variables": "ABSENT",
+    "stored_token_retrieved_or_modified": false,
+    "evidence": "REDACTED_STANDARD_GH_AUTH_STATUS"
+  },
+  "exact_head_ci": {
+    "binding_validation": true,
+    "head": "RECORDED_IN_PR_COMPLETION_COMMENT",
+    "workflows": [
+      {
+        "name": "vs01-t01-ci",
+        "run_id": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "url": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "conclusion": "RECORDED_IN_PR_COMPLETION_COMMENT"
+      },
+      {
+        "name": "vs01-t05-ci",
+        "run_id": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "url": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "conclusion": "RECORDED_IN_PR_COMPLETION_COMMENT"
+      },
+      {
+        "name": "vs01-t09b-web-ci",
+        "run_id": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "url": "RECORDED_IN_PR_COMPLETION_COMMENT",
+        "conclusion": "RECORDED_IN_PR_COMPLETION_COMMENT"
+      }
+    ],
+    "sequencing_note": "Runs begin only after this pair is committed and pushed; exact results are bound in the completion comment without another commit."
+  },
+  "zero_prohibited_operations": {
+    "implementation_or_successor_activations": 0,
+    "production_or_test_implementation": 0,
+    "schema_or_contract_registry_changes": 0,
+    "dependency_or_lock_changes": 0,
+    "workflow_or_migration_changes": 0,
+    "endpoint_or_persistent_store_changes": 0,
+    "source_or_benchmark_work": 0,
+    "notes_ingestion_or_package_compilation": 0,
+    "owner_archive_reads_or_writes": 0,
+    "owner_database_connections_or_writes": 0,
+    "t09_op01_or_t10_operations": 0,
+    "model_ocr_vlm_provider_calls": 0,
+    "cloud_or_luna_operations": 0,
+    "training_or_deployment_operations": 0,
+    "billable_operations": 0,
+    "review_requests_or_ready_transitions": 0,
+    "approvals_or_merge_operations": 0,
+    "force_push_rebase_reset_amend": 0
+  },
+  "risks_and_decisions": [
+    "The exact package is seven substantive lines above the default DR-30 threshold and is covered only by the exact committed, expiring, nonprecedential owner-approved waiver.",
+    "Local PostgreSQL integration tests skipped because database environment variables were absent; exact-head vs01-t05-ci provides the pinned ephemeral service and no owner database was used.",
+    "Git fsck reports existing dangling blobs and trees but no corruption or dangling commit.",
+    "Final head/tree and exact CI identities are recorded in the completion comment to avoid self-referential commit mutation.",
+    "The pull request remains draft, unapproved, and unmerged for independent exact-head review."
+  ],
+  "assembly_dod": {
+    "continuation_authority": "met",
+    "preserved_design_start_state": "met",
+    "stale_draft_replacement": "met",
+    "exact_waiver_commit": "met",
+    "post_waiver_validation": "met",
+    "fresh_handoff_pair_and_independent_review": "met",
+    "final_twelve_path_head": "not-started",
+    "draft_pr_and_exact_head_ci": "not-started",
+    "completion_comment_and_stop": "not-started"
+  },
+  "merge_authority": false
+}

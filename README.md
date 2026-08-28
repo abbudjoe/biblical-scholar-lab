@@ -2,7 +2,7 @@
 
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
-Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is owner-authorized and active. `VS01-T09-OP01` is not authorized or started, and `VS01-T10` and later work remain unstarted.
+Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is merged and complete at pause-entry implementation commit `3f52895459aefb84e6e6a7da8870f12e5f653e76`, tree `cbe157cad80adf42127871a9859db11707a7b278`. Those hashes identify the last completed implementation baseline before design persistence; the current Git `main` after persistence is established by repository history and the post-merge receipt. The program is formally `PAUSED_AFTER_VS01_T09B`. `VS01-T09-OP01` is optional editorial acceptance, deferred indefinitely, and not on the critical path. `VS01-T10` and later original tasks remain unstarted and unauthorized.
 
 ## Authority
 
@@ -23,6 +23,8 @@ See [`DESIGN_GOVERNANCE.md`](DESIGN_GOVERNANCE.md) and [`design/DECISION_INDEX.m
 
 Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROVED_BASELINE_SUMMARY.md), [`design/TERMINOLOGY_REGISTRY.md`](design/TERMINOLOGY_REGISTRY.md), and [`design/PACKAGE_STATUS.md`](design/PACKAGE_STATUS.md).
 
+Current recharter authority: [`BSL-STATUS-01`](design/approved/BSL-STATUS-01-paused-after-vs01-t09b.md) and [`DR-31`](design/approved/DR-31-biblos-translation-nuance-laboratory-recharter-and-annotation-package-authority.md).
+
 ## Current implementation status
 
 - W00A1a and W00C are merged historical governance implementation; governance implementation is closed.
@@ -36,8 +38,25 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 - `VS01-T06` is complete and canonically published.
 - `VS01-T07` operational publication is complete.
 - `VS01-T08` implementation, Hotfix01, and operational publication are complete: acquisition-run identity `3ac851b431e75b14b5d50fcb24a16e6243e19eca1f916d8ed81cb95969c9337e`, pair-result identity `f73ffd20f5096f2b465f3bd91bdb093f4d44a1c9fa5f717f6589ea5ae11d9426`, pair-result file SHA-256 `04c9b4680a0d612bda05508da65720eb583587ebb83ab6f766ac151f1c656222`, publication receipt UUID `01a03f23-35e7-7ef4-b482-d84dafa77010`, receipt canonical SHA-256 `8af561aba1c2d0df41ba58f8bd65f6a93de547b5353e8be7eac2c1ece505fac9`, and receipt file SHA-256 `1b2498a08e9221ab53dde1c9dea59e021cf1c361356f24b6420e872c96d638b6`.
-- `VS01-T09A` is complete and merged; `VS01-T09B` is owner-authorized and active.
-- `VS01-T09-OP01` is not authorized or started; `VS01-T10` and later work remain unstarted.
+- `VS01-T09A` is complete and merged.
+- `VS01-T09-ERRATA-01` is complete and merged.
+- `VS01-T09B` is complete and merged at `3f52895459aefb84e6e6a7da8870f12e5f653e76`, tree `cbe157cad80adf42127871a9859db11707a7b278`.
+- `VS01-T09-OP01` is `OPTIONAL_EDITORIAL_ACCEPTANCE`, `DEFERRED_INDEFINITELY`, and `NOT_ON_CRITICAL_PATH`.
+- `VS01-T10` and later original tasks are unstarted and unauthorized.
+- Foundation-model family or capacity selection for adaptation or hosting, continued pretraining, Translation Nuance mid-training, SFT, retrieval/tool fine-tuning, preference optimization, model merging, quantization, distillation, learned-model serving, cloud training, adapted-model hosting, `TNEVAL-A4`, and training/campaign-controller implementation are `DORMANT_PENDING_TRAINING_REACTIVATION_GATE`, `NOT_ON_CURRENT_CRITICAL_PATH`, and `NOT_IMPLEMENTATION_AUTHORITY`.
+- `TNEVAL-A0` is a future deterministic retrieval baseline requiring a separate bounded design or activation and no provider. `TNEVAL-A1` through `TNEVAL-A3` are `UNSTARTED`, `NOT_AUTHORIZED`, `NOT_ON_CURRENT_CRITICAL_PATH`, `ELIGIBLE_FOR_SEPARATE_BOUNDED_API_EVALUATION_AUTHORITY`, and `NOT_GATED_BY_TRAINING_REACTIVATION`.
+
+## Current program role
+
+Biblos is the sole production Bible reader. Biblical Scholar Notes is the editorial master. Biblical Scholar Lab is the source, evidence, annotation-validation, operation-specific rights-validation, deterministic package-compilation, receipt, reference-validation, benchmark, API-evaluation, and optional future model-research laboratory supporting Biblos.
+
+Exactly three cross-project contracts are recognized:
+
+- `TranslationAnnotationPackage v1` — normative consumer schema owned by Biblos.
+- `ReaderAnnotationProjection v1` — normative editorial export schema owned by Biblical Scholar Notes.
+- `TranslationAnnotationCompilationReceipt v1` — normative producer receipt owned by Biblical Scholar Lab.
+
+The Lab is not a required Biblos runtime service. No implementation of these contracts, John 13 source work, package compilation, provider/API evaluation, model work, cloud work, or training is authorized by the recharter alone. A later A1–A3 evaluation may be authorized separately without satisfying the training-reactivation gate, but only after its package, evidence, benchmark, rights, privacy, retention, cost, provider, and operational controls are frozen.
 
 ## Current approved baseline
 
@@ -71,6 +90,7 @@ Implementation navigation: [`design/APPROVED_BASELINE_SUMMARY.md`](design/APPROV
 - `DR-28` — Integrated Logical Architecture and Contract Registry, including the modular-monolith-first system, PostgreSQL authoritative records, the Thunderbolt research archive and deletable private vault, project-owned configuration and inference gateways, source acquisition and freshness, PostgreSQL work control, embedding/reranker bake-off and index contracts, retention and erasure, and the IA-00–IA-11 implementation gates
 - `DR-29` — Local Desktop, Mobile Client, Quantization, and Distillation Architecture, including Mac mini M4 local inference as the first edge priority, Apple-silicon MacBook support, a secure paired-Mac/Lambda mobile-client architecture, the Local Scholar Node boundary, MLX-LM and llama.cpp runtime comparison, 8B–12B local model quantization, optional 2B–4B distillation and on-phone inference, native mobile OCR, explicit route disclosure, and LE-00–LE-13 implementation gates
 - `DR-30` — Implementation Readiness, Simplicity, and Anti-Slop Contract, including immutable activation manifests, vertical-slice-first implementation, globally unique code identifiers, hard code/complexity/dependency budgets, anti-scaffolding and anti-placeholder rules, public-repository review governance, the initial Mac mini/MacBook execution topology, and IR-00–IR-06 readiness gates
+- `DR-31` — Biblos Translation Nuance Laboratory Recharter and Annotation Package Authority, including the final Biblos/Notes/Lab role allocation, exact three-contract boundary, merged Biblos consumer authority, deterministic package and detached-receipt posture, API-first evaluation, conjunctive training reactivation, formal pause, and anti-duplication requirements
 
 Supporting official-source verification for DR-02 revision 2 is recorded under `design/evidence/`.
 
@@ -113,10 +133,10 @@ Supporting official-source verification for DR-02 revision 2 is recorded under `
 - `ACT-VS01-T07-R01-BENCHMARK-HARNESS-v1` — completed historical T07 harness authorization; operational publication is complete
 - `ACT-VS01-T08-FULL-RUNTIME-PAIR-v1` — completed historical T08 implementation authorization; Hotfix01 and operational publication are complete
 - `ACT-VS01-T09A-STUDY-WORKSPACE-PROJECTION-v1` — completed T09A canonical Study workspace projection authorization
-- `ACT-VS01-T09B-LOOPBACK-STUDY-WEB-v1` — active T09B loopback Study web authorization; T09-OP01 is not authorized
+- `ACT-VS01-T09B-LOOPBACK-STUDY-WEB-v1` — completed historical T09B authorization; implementation is merged at `3f52895459aefb84e6e6a7da8870f12e5f653e76`; T09-OP01 remains optional and deferred
 
 ## Preimplementation design status
 
-The approved design baseline remains intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is owner-authorized and active. `VS01-T09-OP01` is not authorized or started, and `VS01-T10` and later work remain unstarted.
+The approved design baseline and all completed artifacts remain intact. W00C, VS01-T01, and R02 are merged historical foundation. `VS01-T02` is complete, the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A`, `VS01-T09-ERRATA-01`, and `VS01-T09B` are complete and merged. The Lab is `PAUSED_AFTER_VS01_T09B`. `VS01-T09-OP01` is optional editorial acceptance, deferred indefinitely, and not on the critical path. `VS01-T10` and later original tasks remain unstarted and unauthorized. Training, learned-model serving or conversion, cloud-training, adapted-model hosting, and `TNEVAL-A4` paths remain dormant pending the conjunctive DR-31 training-reactivation gate in section 21. `TNEVAL-A0` through `TNEVAL-A3` remain unstarted and unauthorized; A1–A3 are eligible only for a separately bounded API-evaluation authority and are not gated by training reactivation.
 
 Clean-room review: [`audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md`](audits/PREIMPLEMENTATION-CLEAN-ROOM-REVIEW-2026-08-17.md).
