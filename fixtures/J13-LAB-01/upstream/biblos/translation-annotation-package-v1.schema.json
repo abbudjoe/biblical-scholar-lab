@@ -1,0 +1,485 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:biblos:schema:translation-annotation-package-v1",
+  "title": "TranslationAnnotationPackage v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_series_id",
+    "package_revision",
+    "target",
+    "annotations",
+    "claim_summaries",
+    "source_citations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "translation-annotation-package-v1"
+    },
+    "package_series_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "package_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "supersedes_package_file_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/annotation"
+      }
+    },
+    "claim_summaries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim_summary"
+      }
+    },
+    "source_citations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source_citation"
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "plain_text": {
+      "type": "string",
+      "minLength": 1,
+      "x-biblos-plain-text-only": true,
+      "x-biblos-plain-text-profile": "plain-text-v1"
+    },
+    "verse_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "book_id",
+        "chapter",
+        "verse"
+      ],
+      "properties": {
+        "book_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "chapter": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "verse": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "passage_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/verse_reference"
+        },
+        "end": {
+          "$ref": "#/$defs/verse_reference"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scripture_package_id",
+        "scripture_package_content_sha256",
+        "translation_id",
+        "translation_version",
+        "canon_id",
+        "versification_id",
+        "passage_range"
+      ],
+      "properties": {
+        "scripture_package_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "scripture_package_content_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "translation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "translation_version": {
+          "$ref": "#/$defs/plain_text"
+        },
+        "canon_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "versification_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "passage_range": {
+          "$ref": "#/$defs/passage_range"
+        }
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_id",
+        "anchor_order",
+        "anchor_role",
+        "book_id",
+        "chapter",
+        "verse",
+        "utf16_start",
+        "utf16_length",
+        "expected_phrase",
+        "verse_text_sha256",
+        "scripture_package_id",
+        "scripture_package_content_sha256"
+      ],
+      "properties": {
+        "anchor_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "anchor_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "anchor_role": {
+          "enum": [
+            "primary",
+            "supporting"
+          ]
+        },
+        "book_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "chapter": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "verse": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "utf16_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "utf16_length": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expected_phrase": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verse_text_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scripture_package_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "scripture_package_content_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "x-biblos-exact-source-bound-utf16-anchor-validation": true
+    },
+    "operation_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "authority_id",
+        "basis_record_ids",
+        "limitations"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "allowed",
+            "disallowed",
+            "requires_review"
+          ]
+        },
+        "authority_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "basis_record_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/plain_text"
+          }
+        }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reader_delivery",
+        "retrieval",
+        "evaluation",
+        "training",
+        "public_sharing"
+      ],
+      "properties": {
+        "reader_delivery": {
+          "$ref": "#/$defs/operation_decision"
+        },
+        "retrieval": {
+          "$ref": "#/$defs/operation_decision"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/operation_decision"
+        },
+        "training": {
+          "$ref": "#/$defs/operation_decision"
+        },
+        "public_sharing": {
+          "$ref": "#/$defs/operation_decision"
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annotation_issue_id",
+        "annotation_revision",
+        "source_study_record_id",
+        "source_reader_annotation_id",
+        "issue_category",
+        "anchors",
+        "short_note",
+        "full_note_paragraphs",
+        "interpretive_limits",
+        "claim_reference_ids",
+        "source_reference_ids",
+        "editorial_state",
+        "source_verification_state",
+        "scholarly_review_label",
+        "lifecycle_state",
+        "eligibility"
+      ],
+      "properties": {
+        "annotation_issue_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "annotation_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "supersedes_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_study_record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "source_reader_annotation_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "issue_category": {
+          "enum": [
+            "lexical_semantics",
+            "grammar_and_syntax",
+            "idiom",
+            "wordplay",
+            "repeated_vocabulary",
+            "textual_variant",
+            "punctuation_or_clause_grouping",
+            "semantic_shift",
+            "translation_expansion_or_compression",
+            "discourse_or_narrative_effect",
+            "translation_choice"
+          ]
+        },
+        "anchors": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "properties": {
+              "anchor_role": {
+                "const": "primary"
+              }
+            },
+            "required": [
+              "anchor_role"
+            ]
+          },
+          "minContains": 1,
+          "items": {
+            "$ref": "#/$defs/anchor"
+          }
+        },
+        "short_note": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/plain_text"
+            },
+            {
+              "maxLength": 320
+            }
+          ]
+        },
+        "full_note_paragraphs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/plain_text"
+          }
+        },
+        "interpretive_limits": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/plain_text"
+          }
+        },
+        "claim_reference_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "source_reference_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "editorial_state": {
+          "enum": [
+            "draft",
+            "owner_approved"
+          ]
+        },
+        "source_verification_state": {
+          "enum": [
+            "pending",
+            "verified",
+            "rejected"
+          ]
+        },
+        "scholarly_review_label": {
+          "enum": [
+            "not_scholarly_reviewed",
+            "model_assisted_editorial_review",
+            "human_scholarly_reviewed",
+            "domain_expert_reviewed"
+          ]
+        },
+        "lifecycle_state": {
+          "enum": [
+            "active",
+            "superseded",
+            "retired",
+            "withdrawn"
+          ]
+        },
+        "eligibility": {
+          "$ref": "#/$defs/eligibility"
+        }
+      },
+      "x-biblos-aggregate-full-note-unicode-scalars-max": 2400,
+      "x-biblos-consecutive-anchor-order": true
+    },
+    "claim_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_reference_id",
+        "claim_summary",
+        "source_reference_ids"
+      ],
+      "properties": {
+        "claim_reference_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claim_summary": {
+          "$ref": "#/$defs/plain_text"
+        },
+        "source_reference_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        }
+      }
+    },
+    "source_citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_reference_id",
+        "source_version_id",
+        "citation_display",
+        "exact_locator",
+        "attribution",
+        "display_limitations"
+      ],
+      "properties": {
+        "source_reference_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "source_version_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "citation_display": {
+          "$ref": "#/$defs/plain_text"
+        },
+        "exact_locator": {
+          "$ref": "#/$defs/plain_text"
+        },
+        "attribution": {
+          "$ref": "#/$defs/plain_text"
+        },
+        "display_limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/plain_text"
+          }
+        }
+      }
+    }
+  },
+  "x-biblos-plain-text-only": true,
+  "x-biblos-plain-text-profile": "plain-text-v1",
+  "x-biblos-reject-duplicate-decoded-object-member-names": true,
+  "x-biblos-whole-candidate-atomic-rejection": true,
+  "x-biblos-complete-active-snapshot": true,
+  "x-biblos-no-self-referential-file-hash": true
+}

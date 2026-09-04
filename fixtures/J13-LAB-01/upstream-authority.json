@@ -1,0 +1,217 @@
+{
+  "task_id": "J13-LAB-01",
+  "lab": {
+    "repository": "abbudjoe/biblical-scholar-lab",
+    "commit": "dca0d48e38528037f8c5bb7f510705f3324714de",
+    "tree": "261b0fcbddf7462ae9a98f924aeab84891edb653"
+  },
+  "notes_tree_chain": [
+    {
+      "path": "reader-annotations",
+      "tree": "ba763d2333746fd8d4bf417d1ab98d7da635fc06"
+    },
+    {
+      "path": "reader-annotations/john",
+      "tree": "8bc673adfa439508823ea67699130823b767aece"
+    },
+    {
+      "path": "reader-annotations/john/13",
+      "tree": "cb9e75bfb6ba0b5e0c434a7e72779649d54ca585"
+    }
+  ],
+  "files": [
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/reader-annotation-projection-v1.schema.json",
+      "git_blob": "bc8c2e7648486b572d5cb674bd3ff0931832bbce",
+      "sha256": "8102fb1f5e6fc5f6f876cee2c1f1392b81151a2b40340e65265c38268b095e63",
+      "byte_count": 23467,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/reader-annotation-projection-v1.schema.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/J13-PILOT-01-owner-editorial-decision.md",
+      "git_blob": "51bd3ae41720108d232366d4e3620277141e213b",
+      "sha256": "737b24a9400d586b62674df1ba775db198391d3cb5d20fe78a1172d06fd82c94",
+      "byte_count": 3070,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/J13-PILOT-01-owner-editorial-decision.md"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "sources/source-registry.md",
+      "git_blob": "bd0de6e149feccc630fd5c211267926edb3b8041",
+      "sha256": "784782342e651a894280032595f3644dee6d1a69ac77e085734c4b85564880f0",
+      "byte_count": 14975,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/source-registry.md"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "studies/john/john-13-01-38-loved-to-the-end-washed-and-commanded.md",
+      "git_blob": "b1d27e6150eef83d7bdbe1191ecc2a2d316f87d6",
+      "sha256": "9f764364ce618f73104368ba01d1c0662ce0e9af2906a901a8efcfaeaa254866",
+      "byte_count": 38570,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/john-13-01-38-loved-to-the-end-washed-and-commanded.md"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-01-to-the-end.r2.json",
+      "git_blob": "686e70d47b1616c919c7f17dc6c15119db652a04",
+      "sha256": "361328b03698409003dda39d3538d7ba73a6fad70e38407d69d5a67d2c3b7908",
+      "byte_count": 14107,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-01-to-the-end.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-08-no-share-with-me.r2.json",
+      "git_blob": "87d0b3721bf43669715c26e3a0bbc2c8f6d914b5",
+      "sha256": "b71b86a85fbb93870a6eae4ba7f5cd827dfa440eb4543362df4c1052d05e642e",
+      "byte_count": 14200,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-08-no-share-with-me.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-10-bathed-versus-washed.r2.json",
+      "git_blob": "9b557077e63d600722b1d3a8bb823353274240e3",
+      "sha256": "18d3477bb95ac1a8e8afe08d10d31dd1b13f063fe6bd0b99723c16211a7dd801",
+      "byte_count": 15509,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-10-bathed-versus-washed.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-15-example-or-pattern.r2.json",
+      "git_blob": "032b28f289a254984adba8112c0b8f1c7ab86a81",
+      "sha256": "fc0d66d7a586731872c4715718ed84e98c4c25790558185b58ad1c64dc54e690",
+      "byte_count": 14402,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-15-example-or-pattern.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-17-blessed-or-happy.r2.json",
+      "git_blob": "27832320c35f444cedfe061bce4c8e7fd0ea75a4",
+      "sha256": "a036eda7aca5a41ca8ef90defa4d0f978073848a1527e2244835dbe3cedf7fcb",
+      "byte_count": 14074,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-17-blessed-or-happy.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-19-i-am-or-i-am-he.r2.json",
+      "git_blob": "baa2161bb5d603a36adc37800fc659cd67abfde5",
+      "sha256": "a222d7c1f55f184cb365b96ad2695214a38d7ce7948f10da46ef13697f376eee",
+      "byte_count": 13870,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-19-i-am-or-i-am-he.r2.json"
+    },
+    {
+      "repository": "abbudjoe/biblical-scholar-notes",
+      "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+      "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+      "source_path": "reader-annotations/john/13/tan-john-13-30-night-symbolism.r1.json",
+      "git_blob": "4881554bf15ee957bc4a0beba3c415148c58befa",
+      "sha256": "d5a7209088ff03054abaf5c1cc6adde02de3465429ea51e1332ba1cd5ff4c696",
+      "byte_count": 13984,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-30-night-symbolism.r1.json"
+    },
+    {
+      "repository": "abbudjoe/biblos",
+      "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+      "source_path": "ios/Packages/BiblosCore/Sources/BiblosCore/Resources/translation-annotation-package-v1.schema.json",
+      "git_blob": "305d726343f5931f9a1d50810563600e73c7367a",
+      "sha256": "f4ed1437b95c037d619b93c9e414948eb8f8fb4f5602b365c9cf250956aefd49",
+      "byte_count": 11701,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/translation-annotation-package-v1.schema.json"
+    },
+    {
+      "repository": "abbudjoe/biblos",
+      "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+      "source_path": "scripture/packages/engwebp-2020-2242945d71ca925b/manifest.json",
+      "git_blob": "564c098e77ca80c8706f34e4a293df161fd74560",
+      "sha256": "1a5caadeee5b724f6efdaa6fe24c784606285f93b85db2f14ba9d7c0db74ced5",
+      "byte_count": 205605,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.manifest.json"
+    },
+    {
+      "repository": "abbudjoe/biblos",
+      "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+      "source_path": "scripture/packages/engwebp-2020-2242945d71ca925b/books/43-john.json",
+      "git_blob": "fdade036180b4a8c0f178e2c7eefad74dc697e8b",
+      "sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2",
+      "byte_count": 363613,
+      "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.43-john.json"
+    }
+  ],
+  "consumer_conformance_references": [
+    {
+      "source_path": "ios/Packages/BiblosCore/Sources/BiblosCore/TranslationAnnotationPackageTransport.swift",
+      "git_blob": "d486b5cd428b21602637777d2f3bc89488146e4f",
+      "sha256": "c85dd7e59d0326ce0d56b0ff982674fa2cc37723da71c18056e4d2444c12009b",
+      "byte_count": 67738,
+      "repository": "abbudjoe/biblos",
+      "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7"
+    },
+    {
+      "source_path": "ios/Packages/BiblosCore/Tests/BiblosCoreTests/TranslationAnnotationPackageTests.swift",
+      "git_blob": "9165efa56e6830c6c0608d9f93e4bd04627c0f54",
+      "sha256": "5e4ab30276914252e1251cb0f3c48a1dfa590039f94823e29d624397b6af464a",
+      "byte_count": 53350,
+      "repository": "abbudjoe/biblos",
+      "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7"
+    }
+  ],
+  "supplemental_authority": {
+    "title": "J13-LAB-01 — PLAIN-TEXT PROFILE RESOLUTION AND CONTINUATION",
+    "sha256": "53c5a7e081be88039d129b48896320331d70dd8f01c52f59897225f29b861d73",
+    "owner": "Joseph Abbud"
+  },
+  "retrieval_method": "Allowlisted read-only GitHub GET at pinned commits; exact Git blob base64 decoded; Git SHA-1, SHA-256 and bytes verified without normalization.",
+  "nonallowlisted_upstream_reads": 0,
+  "deferred_records_read": [],
+  "target": {
+    "scripture_package_id": "engwebp-2020-2242945d71ca925b",
+    "scripture_package_content_sha256": "464933e34cf7e1e612da082d1d5c34309cea5e3cecf4657c2eb594f358c211f8",
+    "translation_id": "world-english-bible",
+    "translation_version": "2020-stable-capture-sha256-2242945d71ca925bda03d9f87e6de7abd59fa57fb0c3227dc649043bd757eb65",
+    "canon_id": "protestant-66",
+    "versification_id": "engwebp-2020",
+    "passage_range": {
+      "start": {
+        "book_id": "john",
+        "chapter": 13,
+        "verse": 1
+      },
+      "end": {
+        "book_id": "john",
+        "chapter": 13,
+        "verse": 38
+      }
+    },
+    "manifest_path": "scripture/packages/engwebp-2020-2242945d71ca925b/manifest.json",
+    "manifest_git_blob_sha1": "564c098e77ca80c8706f34e4a293df161fd74560",
+    "book_transport_path": "scripture/packages/engwebp-2020-2242945d71ca925b/books/43-john.json",
+    "book_transport_git_blob_sha1": "fdade036180b4a8c0f178e2c7eefad74dc697e8b",
+    "book_transport_file_sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2"
+  }
+}

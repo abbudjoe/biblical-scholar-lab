@@ -1,5 +1,9 @@
 # Package Status
 
+## J13-LAB-01 bounded reactivation
+
+J13-LAB-01 is the only reactivated bounded Lab task: independent verification and non-activatable package-candidate compilation under [the exact v3 activation](../activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json). No source admission is activated. T09-OP01, T10, TNEVAL-A0 through A4, old model/training/cloud paths, and later work remain unstarted and unauthorized. Owner package review is required before any Biblos admission or merge claim.
+
 ## Current disposition
 
 ```text
@@ -67,7 +71,7 @@ Exactly three cross-project contracts exist:
 | `ReaderAnnotationProjection v1` | Biblical Scholar Notes | consume exact bounded editorial export; do not define in the Lab |
 | `TranslationAnnotationCompilationReceipt v1` | Biblical Scholar Lab | future Lab-owned producer receipt; not implemented |
 
-No contract implementation is authorized by this status.
+This status alone grants no implementation authority; J13-LAB-01 activates the bounded receipt implementation.
 
 ## Deferred and unstarted work
 
@@ -171,7 +175,7 @@ P1-T05 implementation work in Biblos is not a dependency for this Lab design sta
 
 ## Next eligible program action
 
-No implementation action is active.
+J13-LAB-01 alone is active under the bounded authority above.
 
 A future next step requires a new bounded handoff from the top-level program. Possible later design work may include:
 

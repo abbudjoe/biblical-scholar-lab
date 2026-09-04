@@ -1,5 +1,9 @@
 # Design Decision Index
 
+## J13-LAB-01 bounded reactivation
+
+J13-LAB-01 is the only reactivated bounded Lab task: independent verification and non-activatable package-candidate compilation under [the exact v3 activation](../activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json). No source admission is activated. T09-OP01, T10, TNEVAL-A0 through A4, old model/training/cloud paths, and later work remain unstarted and unauthorized. Owner package review is required before any Biblos admission or merge claim.
+
 | ID | Title | Status | Approved | File |
 |---|---|---|---|---|
 | DR-01 | Version-One Product Contract | APPROVED | 2026-08-15 | [`approved/DR-01-version-one-product-contract.md`](approved/DR-01-version-one-product-contract.md) |
