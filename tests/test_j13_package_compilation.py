@@ -6,10 +6,16 @@ from test_source_acquisition import no_network as no_network
 
 from bsl.infrastructure.j13_authority import UnicodeHelper, decode
 
+_UNICODE_HELPER = pytest.StashKey[UnicodeHelper]()
+
 
 @pytest.fixture(scope="session")
 def unicode_helper(request):
+    if _UNICODE_HELPER in request.config.stash:
+        return request.config.stash[_UNICODE_HELPER]
     helper = UnicodeHelper()
+    request.config.stash[_UNICODE_HELPER] = helper
+    request.session.addfinalizer(helper.close)
     request.config.pluginmanager.get_plugin("terminalreporter").write_line(
         "J13_NATIVE_RUNTIME "
         + json.dumps(
@@ -20,8 +26,7 @@ def unicode_helper(request):
             }
         )
     )
-    yield helper
-    helper.close()
+    return helper
 
 
 REJECTED = (
