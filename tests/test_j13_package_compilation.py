@@ -8,8 +8,18 @@ from bsl.infrastructure.j13_authority import UnicodeHelper, decode
 
 
 @pytest.fixture(scope="session")
-def unicode_helper():
+def unicode_helper(request):
     helper = UnicodeHelper()
+    request.config.pluginmanager.get_plugin("terminalreporter").write_line(
+        "J13_NATIVE_RUNTIME "
+        + json.dumps(
+            {
+                "swift_version": helper.runtime,
+                "os_identity": helper.os_identity,
+                "helper_source_sha256": helper.source_sha256,
+            }
+        )
+    )
     yield helper
     helper.close()
 
