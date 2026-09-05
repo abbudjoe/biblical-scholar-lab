@@ -1,5 +1,9 @@
 # Biblical Scholar Lab — Design Baseline
 
+## J13-LAB-01 bounded reactivation
+
+J13-LAB-01 is the only reactivated bounded Lab task: independent verification and non-activatable package-candidate compilation under [the exact v3 activation](activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json). No source admission is activated. T09-OP01, T10, TNEVAL-A0 through A4, old model/training/cloud paths, and later work remain unstarted and unauthorized. Owner package review is required before any Biblos admission or merge claim.
+
 This repository is the authoritative design and implementation record for Biblical Scholar Lab.
 
 Governance implementation is closed. `VS01-T01` and its R02 APFS compatibility repair are merged historical foundation. `VS01-T02` is complete: the canonical archive is initialized, six authoritative source snapshots are admitted, and source acquisition is closed for VS-01. `VS01-T03`, `VS01-T04`, and `VS01-T06` are complete and canonically published. `VS01-T05` is complete and persisted. `VS01-T07` operational publication is complete. `VS01-T08` implementation, Hotfix01, and operational publication are complete. `VS01-T09A` is complete and merged at `95d587a2b09d8c07ac7574050a5d7afa0969a625` with workspace identity `9f9f9dd44384d90da5b3918e96ad3623e1235016f6283d224259cba9b670816d`; `VS01-T09B` is merged and complete at pause-entry implementation commit `3f52895459aefb84e6e6a7da8870f12e5f653e76`, tree `cbe157cad80adf42127871a9859db11707a7b278`. Those hashes identify the last completed implementation baseline before design persistence; the current Git `main` after persistence is established by repository history and the post-merge receipt. The program is formally `PAUSED_AFTER_VS01_T09B`. `VS01-T09-OP01` is optional editorial acceptance, deferred indefinitely, and not on the critical path. `VS01-T10` and later original tasks remain unstarted and unauthorized.

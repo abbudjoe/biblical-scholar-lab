@@ -1,0 +1,315 @@
+{
+  "schema_version": "reader-annotation-projection-v1",
+  "projection_id": "rap:tan:john.13.17:blessed-or-happy",
+  "projection_revision": 2,
+  "supersedes_projection_revision": 1,
+  "source_study_authority": {
+    "repository": "abbudjoe/biblical-scholar-notes",
+    "commit_sha": "8063ebf17c9a4729a63cabe1f043bfc613414fdd",
+    "tree_sha": "1c993d60ed6f68cb050fc7cda09203dd416d28f7",
+    "path": "studies/john/john-13-01-38-loved-to-the-end-washed-and-commanded.md",
+    "git_blob_sha1": "b1d27e6150eef83d7bdbe1191ecc2a2d316f87d6",
+    "study_record_id": "BSL-STUDY-JOHN-13-01-38-001"
+  },
+  "consumer_authority": {
+    "repository": "abbudjoe/biblos",
+    "commit_sha": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+    "tree_sha": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+    "package_schema_version": "translation-annotation-package-v1",
+    "schema_path": "ios/Packages/BiblosCore/Sources/BiblosCore/Resources/translation-annotation-package-v1.schema.json",
+    "schema_git_blob_sha1": "305d726343f5931f9a1d50810563600e73c7367a",
+    "schema_sha256": "f4ed1437b95c037d619b93c9e414948eb8f8fb4f5602b365c9cf250956aefd49",
+    "domain_contract_path": "ios/Packages/BiblosCore/Sources/BiblosCore/TranslationAnnotationPackage.swift",
+    "domain_contract_git_blob_sha1": "b859f6117b55fd523748ec9b83d73aa03b626445",
+    "transport_validator_path": "ios/Packages/BiblosCore/Sources/BiblosCore/TranslationAnnotationPackageTransport.swift",
+    "transport_validator_git_blob_sha1": "d486b5cd428b21602637777d2f3bc89488146e4f"
+  },
+  "target_scripture_authority": {
+    "scripture_package_id": "engwebp-2020-2242945d71ca925b",
+    "scripture_package_content_sha256": "464933e34cf7e1e612da082d1d5c34309cea5e3cecf4657c2eb594f358c211f8",
+    "translation_id": "world-english-bible",
+    "translation_version": "2020-stable-capture-sha256-2242945d71ca925bda03d9f87e6de7abd59fa57fb0c3227dc649043bd757eb65",
+    "canon_id": "protestant-66",
+    "versification_id": "engwebp-2020",
+    "passage_range": {
+      "start": {
+        "book_id": "john",
+        "chapter": 13,
+        "verse": 1
+      },
+      "end": {
+        "book_id": "john",
+        "chapter": 13,
+        "verse": 38
+      }
+    },
+    "manifest_path": "scripture/packages/engwebp-2020-2242945d71ca925b/manifest.json",
+    "manifest_git_blob_sha1": "564c098e77ca80c8706f34e4a293df161fd74560",
+    "book_transport_path": "scripture/packages/engwebp-2020-2242945d71ca925b/books/43-john.json",
+    "book_transport_git_blob_sha1": "fdade036180b4a8c0f178e2c7eefad74dc697e8b",
+    "book_transport_file_sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2"
+  },
+  "annotation": {
+    "annotation_issue_id": "tan:john.13.17:blessed-or-happy",
+    "annotation_revision": 2,
+    "supersedes_annotation_revision": 1,
+    "source_study_record_id": "BSL-STUDY-JOHN-13-01-38-001",
+    "source_reader_annotation_id": "rap:tan:john.13.17:blessed-or-happy",
+    "issue_category": "semantic_shift",
+    "anchors": [
+      {
+        "anchor_id": "anchor:tan:john.13.17:blessed-or-happy:1",
+        "anchor_order": 1,
+        "anchor_role": "primary",
+        "book_id": "john",
+        "chapter": 13,
+        "verse": 17,
+        "utf16_start": 26,
+        "utf16_length": 7,
+        "expected_phrase": "blessed",
+        "verse_text_sha256": "31b81442dd4d0c41e0c09b3207543d6ed1266a70dd8bc2aaa84f48a7420cb246",
+        "scripture_package_id": "engwebp-2020-2242945d71ca925b",
+        "scripture_package_content_sha256": "464933e34cf7e1e612da082d1d5c34309cea5e3cecf4657c2eb594f358c211f8",
+        "translation_id": "world-english-bible",
+        "translation_version": "2020-stable-capture-sha256-2242945d71ca925bda03d9f87e6de7abd59fa57fb0c3227dc649043bd757eb65",
+        "canon_id": "protestant-66",
+        "versification_id": "engwebp-2020"
+      }
+    ],
+    "short_note": "WEB uses “blessed,” while the KJV says “happy.” Greek μακάριοι describes a state of blessedness or favor, not simply a passing emotion. Jesus ties it to doing what he taught, not merely knowing it.",
+    "full_note_paragraphs": [
+      "WEB renders μακάριοι as “blessed,” while the KJV uses “happy.”",
+      "In modern English, “happy” often suggests a temporary feeling. The Greek points more broadly to a blessed or favored condition.",
+      "Jesus also makes the condition practical. The disciples are blessed if they do what they know. The verse doesn’t promise constant pleasant emotion."
+    ],
+    "interpretive_limits": [
+      "μακάριοι doesn’t guarantee uninterrupted happiness or comfort.",
+      "The word’s force in this verse is shaped by the condition “if you do them.”",
+      "No single English word captures every association of the Greek adjective."
+    ],
+    "source_verification_state": "pending",
+    "lifecycle_state": "active"
+  },
+  "claim_assertions": [
+    {
+      "claim_assertion_id": "claim:john.13.17:blessed-or-happy:1",
+      "claim_text": "The bound WEB verse uses “blessed,” while the KJV comparison uses “happy.”",
+      "support_level": "directly_attested",
+      "source_assertion_ids": [
+        "source:john.13.17:blessed-or-happy:english"
+      ]
+    },
+    {
+      "claim_assertion_id": "claim:john.13.17:blessed-or-happy:2",
+      "claim_text": "Greek μακάριοι describes a blessed or favored condition rather than merely a passing emotion.",
+      "support_level": "strongly_supported",
+      "source_assertion_ids": [
+        "source:john.13.17:blessed-or-happy:greek",
+        "source:john.13.17:blessed-or-happy:morphology",
+        "source:john.13.17:blessed-or-happy:lexicon"
+      ]
+    },
+    {
+      "claim_assertion_id": "claim:john.13.17:blessed-or-happy:3",
+      "claim_text": "The verse explicitly ties the condition to doing what Jesus has shown.",
+      "support_level": "directly_attested",
+      "source_assertion_ids": [
+        "source:john.13.17:blessed-or-happy:greek",
+        "source:john.13.17:blessed-or-happy:english"
+      ]
+    }
+  ],
+  "source_assertions": [
+    {
+      "source_assertion_id": "source:john.13.17:blessed-or-happy:greek",
+      "source_class": "greek_text",
+      "requirement_state": "current_editorial_assertion",
+      "editorial_sources": [
+        {
+          "source_handle": "SP01-SRC-001#John.13.1-38",
+          "exact_locator": "John 13:17",
+          "rights_posture": "open_license_attribution_pending_exact_lock",
+          "rights_note": "SBLGNT is CC BY 4.0. Exact John 13 bytes and attribution remain pending Lab verification."
+        }
+      ],
+      "verification_state": "pending",
+      "lab_snapshot_assessment": "potentially_sufficient_pending_exact_scope_check",
+      "missing_source_classes": [],
+      "lab_verification_request": "Verify the exact John 13 Greek verse against the admitted SBLGNT snapshot."
+    },
+    {
+      "source_assertion_id": "source:john.13.17:blessed-or-happy:morphology",
+      "source_class": "morphology",
+      "requirement_state": "current_editorial_assertion",
+      "editorial_sources": [
+        {
+          "source_handle": "SP01-SRC-002#John.13.17:μακάριοι",
+          "exact_locator": "John 13:17, μακάριοι",
+          "rights_posture": "rights_review_pending",
+          "rights_note": "MorphGNT is an approved editorial source component. Exact revision, token, and rights record remain pending Lab verification."
+        }
+      ],
+      "verification_state": "pending",
+      "lab_snapshot_assessment": "potentially_sufficient_pending_exact_scope_check",
+      "missing_source_classes": [],
+      "lab_verification_request": "Verify the exact form, lemma, and morphology against the admitted MorphGNT snapshot."
+    },
+    {
+      "source_assertion_id": "source:john.13.17:blessed-or-happy:lexicon",
+      "source_class": "lexicon",
+      "requirement_state": "current_editorial_assertion",
+      "editorial_sources": [
+        {
+          "source_handle": "SP01-SRC-005#μακάριος",
+          "exact_locator": "μακάριος",
+          "rights_posture": "public_domain_pending_exact_lock",
+          "rights_note": "Abbott-Smith is a public-domain source component. The exact entry and artifact remain pending Lab verification."
+        }
+      ],
+      "verification_state": "pending",
+      "lab_snapshot_assessment": "potentially_sufficient_pending_exact_scope_check",
+      "missing_source_classes": [],
+      "lab_verification_request": "Verify the bounded lexical range in the exact admitted Abbott-Smith entry."
+    },
+    {
+      "source_assertion_id": "source:john.13.17:blessed-or-happy:english",
+      "source_class": "english_comparison",
+      "requirement_state": "current_editorial_assertion",
+      "editorial_sources": [
+        {
+          "source_handle": "SP01-SRC-004#John.13.1-38",
+          "exact_locator": "John 13:17",
+          "rights_posture": "public_domain_pending_exact_lock",
+          "rights_note": "The WEB is public domain with trademark integrity requirements. The exact Biblos package is bound separately, but Lab verification remains pending."
+        },
+        {
+          "source_handle": "SP01-SRC-003#John.13.1-38",
+          "exact_locator": "John 13:17",
+          "rights_posture": "public_domain_pending_exact_lock",
+          "rights_note": "The ASV is public domain. Exact digital-edition identity remains pending Lab verification."
+        },
+        {
+          "source_handle": "EDITORIAL-SRC-KJV-001#John.13.1-38",
+          "exact_locator": "John 13:17",
+          "rights_posture": "public_domain_pending_exact_lock",
+          "rights_note": "The KJV comparison is public domain in the United States. Exact digital-edition identity and jurisdictional handling remain pending review."
+        }
+      ],
+      "verification_state": "pending",
+      "lab_snapshot_assessment": "unknown_pending_lab_review",
+      "missing_source_classes": [],
+      "lab_verification_request": "Verify the exact WEB, ASV, and KJV wording and edition identities."
+    },
+    {
+      "source_assertion_id": "source:john.13.17:blessed-or-happy:apparatus",
+      "source_class": "critical_apparatus",
+      "requirement_state": "not_required",
+      "editorial_sources": [],
+      "verification_state": "not_applicable",
+      "lab_snapshot_assessment": "not_applicable",
+      "missing_source_classes": [],
+      "lab_verification_request": "No critical-apparatus claim is part of this bounded revision-one issue."
+    }
+  ],
+  "editorial": {
+    "editorial_state": "draft",
+    "scholarly_review_label": "model_assisted_editorial_review",
+    "candidate_disposition": "proposed_for_review",
+    "preferred_owner_revision_cycle": false,
+    "authored_at": "2026-09-03",
+    "authoring_authority_ids": [
+      "UP-01",
+      "UP-01-ERRATUM-01",
+      "UP-01-A01",
+      "J13-PILOT-01"
+    ],
+    "history": [
+      {
+        "projection_revision": 1,
+        "event": "initial_draft_authored",
+        "date": "2026-08-31",
+        "authority_id": "J13-PILOT-01",
+        "summary": "Initial revision-one editorial draft authored for top-level contract, anchor, source, rights, and prose review."
+      },
+      {
+        "projection_revision": 2,
+        "event": "owner_revision",
+        "date": "2026-09-03",
+        "authority_id": "J13-PILOT-01",
+        "summary": "Joseph fixed the reader-facing prose and claim summaries and advanced this issue to the first John 13 Lab-verification batch. The record remains draft, source verification remains pending, and operation eligibility remains unchanged."
+      }
+    ]
+  },
+  "requested_operation_eligibility": {
+    "reader_delivery": {
+      "decision": "requires_review",
+      "authority_id": "J13-PILOT-01",
+      "basis_record_ids": [
+        "BSL-STUDY-JOHN-13-01-38-001",
+        "rap:tan:john.13.17:blessed-or-happy"
+      ],
+      "limitations": [
+        "Pending owner approval, Lab source and rights verification, and Biblos package compilation."
+      ]
+    },
+    "retrieval": {
+      "decision": "requires_review",
+      "authority_id": "J13-PILOT-01",
+      "basis_record_ids": [
+        "BSL-STUDY-JOHN-13-01-38-001",
+        "rap:tan:john.13.17:blessed-or-happy"
+      ],
+      "limitations": [
+        "Pending owner approval and Lab verification of claim and source assertions."
+      ]
+    },
+    "evaluation": {
+      "decision": "requires_review",
+      "authority_id": "J13-PILOT-01",
+      "basis_record_ids": [
+        "BSL-STUDY-JOHN-13-01-38-001",
+        "rap:tan:john.13.17:blessed-or-happy"
+      ],
+      "limitations": [
+        "Pending separate evaluation authority, contamination review, and source verification."
+      ]
+    },
+    "training": {
+      "decision": "disallowed",
+      "authority_id": "UP-01-A01",
+      "basis_record_ids": [
+        "BSL-STUDY-JOHN-13-01-38-001",
+        "rap:tan:john.13.17:blessed-or-happy"
+      ],
+      "limitations": [
+        "Training is disallowed by default. Separate owner, rights, source, and training authority would be required."
+      ]
+    },
+    "public_sharing": {
+      "decision": "requires_review",
+      "authority_id": "J13-PILOT-01",
+      "basis_record_ids": [
+        "BSL-STUDY-JOHN-13-01-38-001",
+        "rap:tan:john.13.17:blessed-or-happy"
+      ],
+      "limitations": [
+        "Pending owner approval and rights review of the exact reader prose."
+      ]
+    }
+  },
+  "lab_verification": {
+    "state": "pending",
+    "repository": "abbudjoe/biblical-scholar-lab",
+    "paused_commit_sha": "dca0d48e38528037f8c5bb7f510705f3324714de",
+    "paused_tree_sha": "261b0fcbddf7462ae9a98f924aeab84891edb653",
+    "requested_checks": [
+      "Verify the exact phrase and UTF-16 anchor against the bound WEB John 13:17 string.",
+      "Verify μακάριοι against admitted Greek, morphology, and lexicon snapshots.",
+      "Verify the KJV and WEB comparison wording and rights.",
+      "Review the prose to avoid equating blessing with constant positive emotion."
+    ],
+    "missing_source_classes": [],
+    "package_compilation_requested": false,
+    "package_compilation_eligible": false
+  }
+}

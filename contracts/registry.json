@@ -150,6 +150,14 @@
       "contract": "VS01StudyWorkspaceProjection", "schema_version": "1.0", "owning_design": "VS01-T09",
       "schema_path": "contracts/json-schema/study-workspace/vs01-study-workspace-projection.schema.json",
       "owning_task": "VS01-T09A", "sha256": "5d84d095195bd1f78b10c6a67969d35fa3accb3c400294a0471c94d4528386d2"
+    },
+    {
+      "contract": "TranslationAnnotationCompilationReceipt",
+      "schema_version": "translation-annotation-compilation-receipt-v1",
+      "owning_design": "DR-31",
+      "schema_path": "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v1.schema.json",
+      "owning_task": "J13-LAB-01",
+      "sha256": "e161c569d44cbf0156d381068568fb1b1fa9fc83d3a48396f4bd05fdbe4b9704"
     }
   ]
 }

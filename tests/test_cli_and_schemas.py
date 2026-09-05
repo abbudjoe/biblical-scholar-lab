@@ -53,6 +53,7 @@ from bsl.contracts.runtime_screening import (
 )
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.contracts.study_workspace import VS01StudyWorkspaceProjection
+from bsl.contracts.translation_annotation_compilation import TranslationAnnotationCompilationReceipt
 from bsl.interfaces.cli import main
 
 ROOT = Path(__file__).parents[1]
@@ -141,6 +142,10 @@ SCHEMAS = (
         ROOT / "contracts/json-schema/study-workspace/vs01-study-workspace-projection.schema.json",
         VS01StudyWorkspaceProjection,
     ),
+    (
+        ROOT / "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v1.schema.json",
+        TranslationAnnotationCompilationReceipt,
+    ),
 )
 
 
@@ -219,7 +224,7 @@ def test_audit_schema_has_typed_operations_and_no_open_count_objects() -> None:
 
 
 def test_benchmark_schemas_are_strict_draft_2020_12_and_fixed_shape() -> None:
-    for path, model in SCHEMAS[-8:-4]:
+    for path, model in SCHEMAS[21:25]:
         schema = json.loads(path.read_text())
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
         assert schema["additionalProperties"] is False

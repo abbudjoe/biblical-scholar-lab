@@ -1,0 +1,2360 @@
+{
+  "schema_version": "1.0",
+  "project_id": "biblical-scholar-lab",
+  "activation_id": "ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3",
+  "task_id": "J13-LAB-01",
+  "turn_id": "J13-LAB-01-ASTRA-v1",
+  "codex_run_id": "01a06e4f-3d4a-7e23-a8f1-a135750c6c44",
+  "status": "READY_FOR_CHATGPT_REVIEW",
+  "repository": "abbudjoe/biblical-scholar-lab",
+  "branch": "codex/j13-lab-01-verify-and-compile",
+  "base_sha": "dca0d48e38528037f8c5bb7f510705f3324714de",
+  "implementation_head_sha": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+  "pr_url": "https://github.com/abbudjoe/biblical-scholar-lab/pull/23",
+  "github_actor_login": "abbudjoe",
+  "github_auth_mode": "GH_CLI_EXISTING_AUTH",
+  "github_auth_preflight": {
+    "hostname": "github.com",
+    "active_login": "abbudjoe",
+    "auth_healthy": true,
+    "token_override_present": false,
+    "token_exposed": false
+  },
+  "objective": "Persist exact Notes and Biblos input authority, independently verify the six owner-selected John 13 ReaderAnnotationProjection records against the exact Biblos WEB package and existing admitted Lab source snapshots, formally reject the John 13:30 literary-symbolism record, compile every independently verified record into a deterministic non-activatable TranslationAnnotationPackage v1 candidate, and emit a Lab-owned TranslationAnnotationCompilationReceipt v1.",
+  "acceptance_criteria": [
+    "The root turn is executed by GPT-6 Astra at high reasoning under the exact task-specific owner override and one-field activation-schema exception; otherwise it stops before mutation.",
+    "Exact activation and upstream authority are persisted in a dedicated authority commit.",
+    "All six selected records and the John 13:30 rejection receive exact independent dispositions; deferred records remain unread and out of scope.",
+    "Every VERIFIED_FOR_PACKAGE_CANDIDATE record is included and every other record is excluded with an exact receipt reason.",
+    "The deterministic package candidate validates against exact Biblos authority, remains non-activatable, and has exact reproducible bytes and sidecar.",
+    "TranslationAnnotationCompilationReceipt v1 is implemented as the sole new Lab public contract, validates through Pydantic and Draft 2020-12, and binds every input, decision, accepted/excluded record, package hash, source authority, rights decision, and remaining owner gate.",
+    "The human summary is concise and sufficient for owner package review.",
+    "No source admission, archive/database mutation, Notes/Biblos mutation, model/provider/cloud/training activity, T09-OP01, T10, or later work occurs.",
+    "All focused, adversarial, full regression, coverage, drift, Git-integrity, artifact-reproduction, and exact-head CI gates pass.",
+    "One draft PR is open at an exact handoff-only head and stops at READY_FOR_CHATGPT_REVIEW.",
+    "Final handoff-head identity and CI results are supplied by the subsequent completion comment. No future result is claimed in this snapshot."
+  ],
+  "design_conformance": {
+    "status": "CONFORMING",
+    "approved_design_ids": [
+      "BSL-STATUS-01",
+      "DR-06",
+      "DR-07",
+      "DR-09",
+      "DR-10",
+      "DR-16",
+      "DR-20",
+      "DR-21",
+      "DR-22",
+      "DR-24",
+      "DR-28",
+      "DR-30",
+      "DR-31",
+      "J13-LAB-01",
+      "J13-PILOT-01",
+      "BIBLOS-P1-T12",
+      "J13-LAB-01-NOTES-TREE-CORRECTION-2026-09-04",
+      "J13-LAB-01-ASTRA-HIGH-OVERRIDE-2026-09-04",
+      "J13-LAB-01-GPT6-ASTRA-HIGH-OVERRIDE-2026-09-04",
+      "OWNER-NATIVE-FOUNDATION-CONTINUATION",
+      "OWNER-VERIFICATION-COMPLETION-WAIVER",
+      "OWNER-MACOS-CI-RUNNER-AND-REPAIR-COMMIT-AUTHORIZATION"
+    ],
+    "unapproved_design_changes_executed": false
+  },
+  "changes": [
+    {
+      "authority": {
+        "active_root": "GPT-6 Astra / high",
+        "owner_override": "Joseph Abbud, J13-LAB-01 only; AGENTS.md and general activation schema unchanged.",
+        "activation_schema_exception": "Unmodified repository schema produced exactly one /root_turn/model const gpt-5.6 error; an in-memory copy changing only that const to gpt-6 validated with zero errors. Preserved authority evidence; no activation regeneration.",
+        "base_commit": "dca0d48e38528037f8c5bb7f510705f3324714de",
+        "base_tree": "261b0fcbddf7462ae9a98f924aeab84891edb653",
+        "authority_commit": "c63ffca069930adb98e8467d2889c980d649a013",
+        "authority_tree": "b02fa68167b638330506b9aaa12d6fc5033fb5c8",
+        "implementation_commit": "27c8a959720b4d7ec8fac38573baf259a2af6135",
+        "implementation_tree": "d4ea754e40a5f57eea90e68781655a74b4dcabd2",
+        "parent_chain": [
+          "dca0d48e38528037f8c5bb7f510705f3324714de",
+          "c63ffca069930adb98e8467d2889c980d649a013",
+          "27c8a959720b4d7ec8fac38573baf259a2af6135",
+          "615bf00fe889851570efd18c3f7a3f896ce2449b",
+          "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715"
+        ],
+        "final_head_binding": "Final handoff-only commit has the test-session repair implementation head as sole parent. Its SHA/tree and exact-head CI are supplied by the completion comment. All original and repair commits remain intact.",
+        "activation_sha256": "6b3ed11fbd47113bdc7e5ec8abe3b9491119e0d06377b30c7ccdd389dc4e22d4",
+        "activation_sidecar_sha256": "a369eb158f3b2ef491c2d24345081776a2f93c0ad5b4a52186640242308dc436",
+        "owner_zip_sha256": "7811f5c588ee29509657006dcc2b15f999da115f14a628fa937ef85be11c8653",
+        "owner_zip_members": [
+          {
+            "path": "ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json",
+            "sha256": "6b3ed11fbd47113bdc7e5ec8abe3b9491119e0d06377b30c7ccdd389dc4e22d4",
+            "bytes": 21481
+          },
+          {
+            "path": "ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.sha256",
+            "sha256": "a369eb158f3b2ef491c2d24345081776a2f93c0ad5b4a52186640242308dc436",
+            "bytes": 134
+          }
+        ],
+        "upstream_authority_sha256": "e3ff1619cf1621fcf046eae9ad9198455cf54a306f6573353e43e153e3e1277a",
+        "upstream_manifest": {
+          "task_id": "J13-LAB-01",
+          "lab": {
+            "repository": "abbudjoe/biblical-scholar-lab",
+            "commit": "dca0d48e38528037f8c5bb7f510705f3324714de",
+            "tree": "261b0fcbddf7462ae9a98f924aeab84891edb653"
+          },
+          "notes_tree_chain": [
+            {
+              "path": "reader-annotations",
+              "tree": "ba763d2333746fd8d4bf417d1ab98d7da635fc06"
+            },
+            {
+              "path": "reader-annotations/john",
+              "tree": "8bc673adfa439508823ea67699130823b767aece"
+            },
+            {
+              "path": "reader-annotations/john/13",
+              "tree": "cb9e75bfb6ba0b5e0c434a7e72779649d54ca585"
+            }
+          ],
+          "files": [
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/reader-annotation-projection-v1.schema.json",
+              "git_blob": "bc8c2e7648486b572d5cb674bd3ff0931832bbce",
+              "sha256": "8102fb1f5e6fc5f6f876cee2c1f1392b81151a2b40340e65265c38268b095e63",
+              "byte_count": 23467,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/reader-annotation-projection-v1.schema.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/J13-PILOT-01-owner-editorial-decision.md",
+              "git_blob": "51bd3ae41720108d232366d4e3620277141e213b",
+              "sha256": "737b24a9400d586b62674df1ba775db198391d3cb5d20fe78a1172d06fd82c94",
+              "byte_count": 3070,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/J13-PILOT-01-owner-editorial-decision.md"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "sources/source-registry.md",
+              "git_blob": "bd0de6e149feccc630fd5c211267926edb3b8041",
+              "sha256": "784782342e651a894280032595f3644dee6d1a69ac77e085734c4b85564880f0",
+              "byte_count": 14975,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/source-registry.md"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "studies/john/john-13-01-38-loved-to-the-end-washed-and-commanded.md",
+              "git_blob": "b1d27e6150eef83d7bdbe1191ecc2a2d316f87d6",
+              "sha256": "9f764364ce618f73104368ba01d1c0662ce0e9af2906a901a8efcfaeaa254866",
+              "byte_count": 38570,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/john-13-01-38-loved-to-the-end-washed-and-commanded.md"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-01-to-the-end.r2.json",
+              "git_blob": "686e70d47b1616c919c7f17dc6c15119db652a04",
+              "sha256": "361328b03698409003dda39d3538d7ba73a6fad70e38407d69d5a67d2c3b7908",
+              "byte_count": 14107,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-01-to-the-end.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-08-no-share-with-me.r2.json",
+              "git_blob": "87d0b3721bf43669715c26e3a0bbc2c8f6d914b5",
+              "sha256": "b71b86a85fbb93870a6eae4ba7f5cd827dfa440eb4543362df4c1052d05e642e",
+              "byte_count": 14200,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-08-no-share-with-me.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-10-bathed-versus-washed.r2.json",
+              "git_blob": "9b557077e63d600722b1d3a8bb823353274240e3",
+              "sha256": "18d3477bb95ac1a8e8afe08d10d31dd1b13f063fe6bd0b99723c16211a7dd801",
+              "byte_count": 15509,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-10-bathed-versus-washed.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-15-example-or-pattern.r2.json",
+              "git_blob": "032b28f289a254984adba8112c0b8f1c7ab86a81",
+              "sha256": "fc0d66d7a586731872c4715718ed84e98c4c25790558185b58ad1c64dc54e690",
+              "byte_count": 14402,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-15-example-or-pattern.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-17-blessed-or-happy.r2.json",
+              "git_blob": "27832320c35f444cedfe061bce4c8e7fd0ea75a4",
+              "sha256": "a036eda7aca5a41ca8ef90defa4d0f978073848a1527e2244835dbe3cedf7fcb",
+              "byte_count": 14074,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-17-blessed-or-happy.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-19-i-am-or-i-am-he.r2.json",
+              "git_blob": "baa2161bb5d603a36adc37800fc659cd67abfde5",
+              "sha256": "a222d7c1f55f184cb365b96ad2695214a38d7ce7948f10da46ef13697f376eee",
+              "byte_count": 13870,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-19-i-am-or-i-am-he.r2.json"
+            },
+            {
+              "repository": "abbudjoe/biblical-scholar-notes",
+              "commit": "5c151955bdb98ea3780e2a3a538199fc6e4a3513",
+              "tree": "5897c7b7c1e8eb1827ff9817fa23cbcfc2d309ba",
+              "source_path": "reader-annotations/john/13/tan-john-13-30-night-symbolism.r1.json",
+              "git_blob": "4881554bf15ee957bc4a0beba3c415148c58befa",
+              "sha256": "d5a7209088ff03054abaf5c1cc6adde02de3465429ea51e1332ba1cd5ff4c696",
+              "byte_count": 13984,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-30-night-symbolism.r1.json"
+            },
+            {
+              "repository": "abbudjoe/biblos",
+              "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+              "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+              "source_path": "ios/Packages/BiblosCore/Sources/BiblosCore/Resources/translation-annotation-package-v1.schema.json",
+              "git_blob": "305d726343f5931f9a1d50810563600e73c7367a",
+              "sha256": "f4ed1437b95c037d619b93c9e414948eb8f8fb4f5602b365c9cf250956aefd49",
+              "byte_count": 11701,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/translation-annotation-package-v1.schema.json"
+            },
+            {
+              "repository": "abbudjoe/biblos",
+              "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+              "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+              "source_path": "scripture/packages/engwebp-2020-2242945d71ca925b/manifest.json",
+              "git_blob": "564c098e77ca80c8706f34e4a293df161fd74560",
+              "sha256": "1a5caadeee5b724f6efdaa6fe24c784606285f93b85db2f14ba9d7c0db74ced5",
+              "byte_count": 205605,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.manifest.json"
+            },
+            {
+              "repository": "abbudjoe/biblos",
+              "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+              "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7",
+              "source_path": "scripture/packages/engwebp-2020-2242945d71ca925b/books/43-john.json",
+              "git_blob": "fdade036180b4a8c0f178e2c7eefad74dc697e8b",
+              "sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2",
+              "byte_count": 363613,
+              "fixture_path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.43-john.json"
+            }
+          ],
+          "consumer_conformance_references": [
+            {
+              "source_path": "ios/Packages/BiblosCore/Sources/BiblosCore/TranslationAnnotationPackageTransport.swift",
+              "git_blob": "d486b5cd428b21602637777d2f3bc89488146e4f",
+              "sha256": "c85dd7e59d0326ce0d56b0ff982674fa2cc37723da71c18056e4d2444c12009b",
+              "byte_count": 67738,
+              "repository": "abbudjoe/biblos",
+              "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+              "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7"
+            },
+            {
+              "source_path": "ios/Packages/BiblosCore/Tests/BiblosCoreTests/TranslationAnnotationPackageTests.swift",
+              "git_blob": "9165efa56e6830c6c0608d9f93e4bd04627c0f54",
+              "sha256": "5e4ab30276914252e1251cb0f3c48a1dfa590039f94823e29d624397b6af464a",
+              "byte_count": 53350,
+              "repository": "abbudjoe/biblos",
+              "commit": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+              "tree": "e5cc8c9120335f96d3f0e62bdd404fb8f879d7b7"
+            }
+          ],
+          "supplemental_authority": {
+            "title": "J13-LAB-01 — PLAIN-TEXT PROFILE RESOLUTION AND CONTINUATION",
+            "sha256": "53c5a7e081be88039d129b48896320331d70dd8f01c52f59897225f29b861d73",
+            "owner": "Joseph Abbud"
+          },
+          "retrieval_method": "Allowlisted read-only GitHub GET at pinned commits; exact Git blob base64 decoded; Git SHA-1, SHA-256 and bytes verified without normalization.",
+          "nonallowlisted_upstream_reads": 0,
+          "deferred_records_read": [],
+          "target": {
+            "scripture_package_id": "engwebp-2020-2242945d71ca925b",
+            "scripture_package_content_sha256": "464933e34cf7e1e612da082d1d5c34309cea5e3cecf4657c2eb594f358c211f8",
+            "translation_id": "world-english-bible",
+            "translation_version": "2020-stable-capture-sha256-2242945d71ca925bda03d9f87e6de7abd59fa57fb0c3227dc649043bd757eb65",
+            "canon_id": "protestant-66",
+            "versification_id": "engwebp-2020",
+            "passage_range": {
+              "start": {
+                "book_id": "john",
+                "chapter": 13,
+                "verse": 1
+              },
+              "end": {
+                "book_id": "john",
+                "chapter": 13,
+                "verse": 38
+              }
+            },
+            "manifest_path": "scripture/packages/engwebp-2020-2242945d71ca925b/manifest.json",
+            "manifest_git_blob_sha1": "564c098e77ca80c8706f34e4a293df161fd74560",
+            "book_transport_path": "scripture/packages/engwebp-2020-2242945d71ca925b/books/43-john.json",
+            "book_transport_git_blob_sha1": "fdade036180b4a8c0f178e2c7eefad74dc697e8b",
+            "book_transport_file_sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2"
+          }
+        },
+        "baseline_receipt_sha256": "85452d2329cc8f432d3da073b88df95c43ab0ab79e274658d65789d2e9b6e0c1",
+        "baseline_files_verified": true,
+        "prior_unicode_block": "Unicode implementation/dependency issue; not evidence of a prior line-budget overrun. Existing blocker receipt and counterexamples retained.",
+        "repair_commit": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+        "repair_tree": "c8ace8ed622fee6dc38413943cee97c9fbe880e5",
+        "implementation_head_sha": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+        "macos_ci_owner_authorization": {
+          "recorded_at": "2026-09-05T01:43:26.236264+00:00",
+          "owner": "Joseph Abbud",
+          "owner_response": "Authorized",
+          "approved_action": {
+            "path": ".github/workflows/vs01-t01-ci.yml",
+            "change": "runs-on: ubuntu-latest -> runs-on: macos-latest",
+            "additional_repair_commit": true,
+            "preserve_existing_commits": true,
+            "complete_final_handoff_and_exact_head_ci": true
+          },
+          "other_workflows_unchanged": true,
+          "native_expectations_and_operations_unchanged": true
+        },
+        "session_fixture_repair_commit": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+        "session_fixture_repair_tree": "ac124d1705aa23fc86329e6a5f08e227db4f141d"
+      }
+    },
+    {
+      "record_decisions": [
+        {
+          "annotation_id": "tan:john.13.1:to-the-end",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [],
+          "disposition": "NEEDS_EDITORIAL_REVISION",
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.1:to-the-end:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:1",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "Πρὸ δὲ τῆς ἑορτῆς τοῦ πάσχα εἰδὼς ὁ Ἰησοῦς ὅτι ⸀ἦλθεν αὐτοῦ ἡ ὥρα ἵνα μεταβῇ ἐκ τοῦ κόσμου τούτου πρὸς τὸν πατέρα ἀγαπήσας τοὺς ἰδίους τοὺς ἐν τῷ κόσμῳ εἰς τέλος ἠγάπησεν αὐτούς. ",
+              "value_sha256": "df2fe001d0ca304783df1dd42a1336b4e4e545623d4120ef149b2ee94d5cbacc"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.1:to-the-end:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:1",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value": "041301 P- -------- Πρὸ Πρὸ πρό πρό\n041301 C- -------- δὲ δὲ δέ δέ\n041301 RA ----GSF- τῆς τῆς τῆς ὁ\n041301 N- ----GSF- ἑορτῆς ἑορτῆς ἑορτῆς ἑορτή\n041301 RA ----GSN- τοῦ τοῦ τοῦ ὁ\n041301 N- ----GSN- πάσχα πάσχα πάσχα πάσχα\n041301 V- -XAPNSM- εἰδὼς εἰδὼς εἰδώς ὁράω\n041301 RA ----NSM- ὁ ὁ ὁ ὁ\n041301 N- ----NSM- Ἰησοῦς Ἰησοῦς Ἰησοῦς Ἰησοῦς\n041301 C- -------- ὅτι ὅτι ὅτι ὅτι\n041301 V- 3AAI-S-- ⸀ἦλθεν ἦλθεν ἦλθε(ν) ἔρχομαι\n041301 RP ----GSM- αὐτοῦ αὐτοῦ αὐτοῦ αὐτός\n041301 RA ----NSF- ἡ ἡ ἡ ὁ\n041301 N- ----NSF- ὥρα ὥρα ὥρα ὥρα\n041301 C- -------- ἵνα ἵνα ἵνα ἵνα\n041301 V- 3AAS-S-- μεταβῇ μεταβῇ μεταβῇ μεταβαίνω\n041301 P- -------- ἐκ ἐκ ἐκ ἐκ\n041301 RA ----GSM- τοῦ τοῦ τοῦ ὁ\n041301 N- ----GSM- κόσμου κόσμου κόσμου κόσμος\n041301 RD ----GSM- τούτου τούτου τούτου οὗτος\n041301 P- -------- πρὸς πρὸς πρός πρός\n041301 RA ----ASM- τὸν τὸν τόν ὁ\n041301 N- ----ASM- πατέρα πατέρα πατέρα πατήρ\n041301 V- -AAPNSM- ἀγαπήσας ἀγαπήσας ἀγαπήσας ἀγαπάω\n041301 RA ----APM- τοὺς τοὺς τούς ὁ\n041301 A- ----APM- ἰδίους ἰδίους ἰδίους ἴδιος\n041301 RA ----APM- τοὺς τοὺς τούς ὁ\n041301 P- -------- ἐν ἐν ἐν ἐν\n041301 RA ----DSM- τῷ τῷ τῷ ὁ\n041301 N- ----DSM- κόσμῳ κόσμῳ κόσμῳ κόσμος\n041301 P- -------- εἰς εἰς εἰς εἰς\n041301 N- ----ASN- τέλος τέλος τέλος τέλος\n041301 V- 3AAI-S-- ἠγάπησεν ἠγάπησεν ἠγάπησε(ν) ἀγαπάω\n041301 RP ----APM- αὐτούς. αὐτούς αὐτούς αὐτός",
+              "value_sha256": "0496a04468e6c20a01494e4722bf3ba8a2d68f43f93229b6446e9fb0afeb7b29"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.1:to-the-end:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:1",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 1 \\w Now|strong=\"G1161\"\\w* \\w before|strong=\"G4253\"\\w* \\w the|strong=\"G1722\"\\w* \\w feast|strong=\"G1859\"\\w* \\w of|strong=\"G1537\"\\w* \\w the|strong=\"G1722\"\\w* \\w Passover|strong=\"G3957\"\\w*, \\w Jesus|strong=\"G2424\"\\w*, \\w knowing|strong=\"G1492\"\\w* \\w that|strong=\"G3754\"\\w* \\w his|strong=\"G1438\"\\w* \\w time|strong=\"G5610\"\\w* \\w had|strong=\"G2424\"\\w* \\w come|strong=\"G2064\"\\w* \\w that|strong=\"G3754\"\\w* \\w he|strong=\"G1161\"\\w* \\w would|strong=\"G2064\"\\w* \\w depart|strong=\"G3327\"\\w* \\w from|strong=\"G1537\"\\w* \\w this|strong=\"G3778\"\\w* \\w world|strong=\"G2889\"\\w* \\w to|strong=\"G1519\"\\w* \\w the|strong=\"G1722\"\\w* \\w Father|strong=\"G3962\"\\w*, \\w having|strong=\"G1492\"\\w* loved \\w his|strong=\"G1438\"\\w* \\w own|strong=\"G2398\"\\w* \\w who|strong=\"G3588\"\\w* \\w were|strong=\"G3588\"\\w* \\w in|strong=\"G1722\"\\w* \\w the|strong=\"G1722\"\\w* \\w world|strong=\"G2889\"\\w*, \\w he|strong=\"G1161\"\\w* loved \\w them|strong=\"G3588\"\\w* \\w to|strong=\"G1519\"\\w* \\w the|strong=\"G1722\"\\w* \\w end|strong=\"G5056\"\\w*.  ",
+              "value_sha256": "a162fbf698bd25d703d9b77e243bc436eaade73ab63411516b45adf7a4a6432f"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.1:to-the-end:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='τέλος|G5056']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value": "\n\t40\nτέλος, -ους, τό \n\n  [in LXX for קֵץ, etc.; εἰς τὸ τ., chiefly for לָנֶצַח and cognate forms ;] \n\n  end: most freq. of the termination or limit of an act or state (in NT also of the end of a period of time, cl. τελευτή), Lk 1:33, I Co 10:11, II Co 3:13, I Pe 4:7; by meton., of one who makes an end, Ro 10:4; ἕως (ἄχρι, μέκρι) τέλους, I Co 1:8, II Co 1:13, He 3:14 6:11, Re 2:26; εἰς τ., to or at the end, Mt 10:22, Mk 13:13, Lk 18:5, Jo 13:1 (or here, to the uttermost, v. Westc., in l.); τ. ἔχειν, Lk 22:37; adverbially, τὸ δὲ τέλος, finally, I Pe 3:8; of the last in a series, Re 21:6 22:13; of the issue, fate or destiny, Mt 26:58; c. gen. rei, Ro 6:21, al.; c. gen. pers., II Co 11:13, al.; of the aim or purpose, I Ti 1:5. \n  toll, custom, revenue: Ro 13:7; pl., as most usually, Mt 17:25 \n",
+              "value_sha256": "dcc3e18eb5f1cbae6bb3e491db74f87f5613b4a05e686406ac27b539d3ad9ba2"
+            }
+          ],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "361328b03698409003dda39d3538d7ba73a6fad70e38407d69d5a67d2c3b7908",
+          "reason": "John 13:1 entry allows another reading.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": "A temporal reading is available",
+          "unsupported_statement": "The temporal force is clear"
+        },
+        {
+          "annotation_id": "tan:john.13.8:no-share-with-me",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [
+            {
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:english"
+              ],
+              "assessment": "Exact bound/admitted English comparison.",
+              "claim_id": "claim:john.13.8:no-share-with-me:1",
+              "statement": "The bound WEB verse says “you have no part with me.”"
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:greek",
+                "source:john.13.8:no-share-with-me:morphology",
+                "source:john.13.8:no-share-with-me:lexicon"
+              ],
+              "assessment": "Peter refuses washing; the negative condition makes washing necessary for having a share with Jesus. The lexicon supports part/share/portion; participation is a contextual paraphrase. The limits decline sacramental conclusions absent from this wording.",
+              "claim_id": "claim:john.13.8:no-share-with-me:2",
+              "statement": "Greek μέρος can denote a part, share, or portion."
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:greek",
+                "source:john.13.8:no-share-with-me:lexicon",
+                "source:john.13.8:no-share-with-me:english"
+              ],
+              "assessment": "Peter refuses washing; the negative condition makes washing necessary for having a share with Jesus. The lexicon supports part/share/portion; participation is a contextual paraphrase. The limits decline sacramental conclusions absent from this wording.",
+              "claim_id": "claim:john.13.8:no-share-with-me:3",
+              "statement": "In this context, “no share with me” makes relational participation more explicit without settling its complete theological meaning."
+            }
+          ],
+          "disposition": "VERIFIED_FOR_PACKAGE_CANDIDATE",
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:8",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "λέγει αὐτῷ Πέτρος· Οὐ μὴ νίψῃς ⸂μου τοὺς πόδας⸃ εἰς τὸν αἰῶνα. ἀπεκρίθη ⸂Ἰησοῦς αὐτῷ⸃· Ἐὰν μὴ νίψω σε, οὐκ ἔχεις μέρος μετʼ ἐμοῦ. ",
+              "value_sha256": "28b1e52eeaa9fd58b1587515f363b3690c5b2cae93069a52db1f63df61d0098c"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:8",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value": "041308 V- 3PAI-S-- λέγει λέγει λέγει λέγω\n041308 RP ----DSM- αὐτῷ αὐτῷ αὐτῷ αὐτός\n041308 N- ----NSM- Πέτρος· Πέτρος Πέτρος Πέτρος\n041308 D- -------- Οὐ Οὐ οὐ οὐ\n041308 D- -------- μὴ μὴ μή μή\n041308 V- 2AAS-S-- νίψῃς νίψῃς νίψῃς νίπτω\n041308 RP ----GS-- ⸂μου μου μου ἐγώ\n041308 RA ----APM- τοὺς τοὺς τούς ὁ\n041308 N- ----APM- πόδας⸃ πόδας πόδας πούς\n041308 P- -------- εἰς εἰς εἰς εἰς\n041308 RA ----ASM- τὸν τὸν τόν ὁ\n041308 N- ----ASM- αἰῶνα. αἰῶνα αἰῶνα αἰών\n041308 V- 3API-S-- ἀπεκρίθη ἀπεκρίθη ἀπεκρίθη ἀποκρίνομαι\n041308 N- ----NSM- ⸂Ἰησοῦς Ἰησοῦς Ἰησοῦς Ἰησοῦς\n041308 RP ----DSM- αὐτῷ⸃· αὐτῷ αὐτῷ αὐτός\n041308 C- -------- Ἐὰν Ἐὰν ἐάν ἐάν\n041308 D- -------- μὴ μὴ μή μή\n041308 V- 1AAS-S-- νίψω νίψω νίψω νίπτω\n041308 RP ----AS-- σε, σε σε σύ\n041308 D- -------- οὐκ οὐκ οὐ οὐ\n041308 V- 2PAI-S-- ἔχεις ἔχεις ἔχεις ἔχω\n041308 N- ----ASN- μέρος μέρος μέρος μέρος\n041308 P- -------- μετ’ μετ’ μετά μετά\n041308 RP ----GS-- ἐμοῦ. ἐμοῦ ἐμοῦ ἐγώ",
+              "value_sha256": "e8fec07d5854aa9ea0fb564e26c27948bee69c53537b3a123f8abd1d06aa63a4"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:8",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 8 \\w Peter|strong=\"G4074\"\\w* \\w said|strong=\"G3004\"\\w* \\w to|strong=\"G1519\"\\w* \\w him|strong=\"G3588\"\\w*, “\\w You|strong=\"G4771\"\\w* \\w will|strong=\"G1473\"\\w* \\w never|strong=\"G3756\"\\w* \\w wash|strong=\"G3538\"\\w* \\w my|strong=\"G1473\"\\w* \\w feet|strong=\"G4228\"\\w*!”  \n\\p \\w Jesus|strong=\"G2424\"\\w* \\w answered|strong=\"G3004\"\\w* \\w him|strong=\"G3588\"\\w*, \\wj “\\+w If|strong=\"G1437\"\\+w* \\+w I|strong=\"G1473\"\\+w* don’\\+w t|strong=\"G3588\"\\+w* \\+w wash|strong=\"G3538\"\\+w* \\+w you|strong=\"G4771\"\\+w*, \\+w you|strong=\"G4771\"\\+w* \\+w have|strong=\"G2192\"\\+w* \\+w no|strong=\"G3756\"\\+w* \\+w part|strong=\"G3313\"\\+w* \\+w with|strong=\"G3326\"\\+w* \\+w me|strong=\"G1473\"\\+w*.” \\wj*   \n\\p",
+              "value_sha256": "f198270dfe7c3b8101cd3d23aece45ab0ccc59d75f1b20f4b8aefed4f97c5286"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='μέρος|G3313']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value": "\n  42\n  μέρος, -ους, τό\n\n  (< μείρομαι),\n  [in LXX chiefly for קָצֶה;]\n\n    a part, share, portion: Jo 13:8, Ac 19:27 (Page, in l.), Re 20:6 22:19; hence (cl.), lot, destiny, Mt 24:51, Lk 12:46, Re 21:8.\n    a part as opp. to the whole: Lk 11:36, Jo 19:23, Ac 5:2 23:6, Eph 4:16, Re 16:19; c. gen. (of the whole),   Lk 15:12 24:42; τ. Φαρισαίων, Ac 23:9; pl., Jo 21:6; of the divisions of a province, Mt 2:22, Ac 2:10 19:1 20:2; of the regions belonging to a city, Mt 15:21 16:13, Mk 8:10; c. gen. appos., Eph 4:9; in adverbial phrases, ἀνὰ (κατὰ) μέρος, I Co 14:27, He 9:5; μέρος τι, ἀπὸ μ., in part, Ro 11:25 15:15, 24, I Co 11:18, II Co 1:14 2:5; ἐκ μ., I Co 12:27 13:9, 12; τὸ ἐκ μ., I Co 13:10.\n    A class or category (in cl. usually ἐν μ. τιθέναι, λαβεῖν, etc.): ἐν μ., in respect of, Col 2:16; ἐν τ. μ. τούτῳ, in this respect, II Co 3:10 9:3.†\n",
+              "value_sha256": "cdc7d6a0fb48b4e995140eaf0b453cacc1087008938562947b7e42f5e8f126d6"
+            }
+          ],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "b71b86a85fbb93870a6eae4ba7f5cd827dfa440eb4543362df4c1052d05e642e",
+          "reason": "Exact source, anchor, prose and candidate-state checks passed.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": null,
+          "unsupported_statement": null
+        },
+        {
+          "annotation_id": "tan:john.13.10:bathed-versus-washed",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [
+            {
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:english"
+              ],
+              "assessment": "Exact bound/admitted English comparison.",
+              "claim_id": "claim:john.13.10:bathed-versus-washed:1",
+              "statement": "The bound WEB verse distinguishes “bathed” from “washed.”"
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:greek",
+                "source:john.13.10:bathed-versus-washed:morphology"
+              ],
+              "assessment": "The perfect passive participle identifies an already bathed person; feet are the object of the separate washing. The two entries support whole-body versus local washing. The English contrast preserves this distinction. The limits exclude variant adjudication and sacramental claims.",
+              "claim_id": "claim:john.13.10:bathed-versus-washed:2",
+              "statement": "The Greek uses λελουμένος from λούω for the bath and νίπτω for washing the feet."
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:lexicon",
+                "source:john.13.10:bathed-versus-washed:english"
+              ],
+              "assessment": "The perfect passive participle identifies an already bathed person; feet are the object of the separate washing. The two entries support whole-body versus local washing. The English contrast preserves this distinction. The limits exclude variant adjudication and sacramental claims.",
+              "claim_id": "claim:john.13.10:bathed-versus-washed:3",
+              "statement": "Using one English verb for both actions can conceal the Greek lexical contrast."
+            }
+          ],
+          "disposition": "VERIFIED_FOR_PACKAGE_CANDIDATE",
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:10",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "λέγει αὐτῷ ⸀ὁ Ἰησοῦς· Ὁ λελουμένος ⸂οὐκ ἔχει χρείαν⸃ ⸂εἰ μὴ⸃ τοὺς πόδας νίψασθαι, ἀλλʼ ἔστιν καθαρὸς ὅλος· καὶ ὑμεῖς καθαροί ἐστε, ἀλλʼ οὐχὶ πάντες. ",
+              "value_sha256": "3e6000c0c314318a447bd6a2b6166cf3539739e05476929071db081ed82671d5"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:10",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value": "041310 V- 3PAI-S-- λέγει λέγει λέγει λέγω\n041310 RP ----DSM- αὐτῷ αὐτῷ αὐτῷ αὐτός\n041310 RA ----NSM- ⸀ὁ ὁ ὁ ὁ\n041310 N- ----NSM- Ἰησοῦς· Ἰησοῦς Ἰησοῦς Ἰησοῦς\n041310 RA ----NSM- Ὁ Ὁ ὁ ὁ\n041310 V- -XMPNSM- λελουμένος λελουμένος λελουμένος λούω\n041310 D- -------- ⸂οὐκ οὐκ οὐ οὐ\n041310 V- 3PAI-S-- ἔχει ἔχει ἔχει ἔχω\n041310 N- ----ASF- χρείαν⸃ χρείαν χρείαν χρεία\n041310 C- -------- ⸂εἰ εἰ εἰ εἰ\n041310 D- -------- μὴ⸃ μὴ μή μή\n041310 RA ----APM- τοὺς τοὺς τούς ὁ\n041310 N- ----APM- πόδας πόδας πόδας πούς\n041310 V- -AMN---- νίψασθαι, νίψασθαι νίψασθαι νίπτω\n041310 C- -------- ἀλλ’ ἀλλ’ ἀλλά ἀλλά\n041310 V- 3PAI-S-- ἔστιν ἔστιν ἐστί(ν) εἰμί\n041310 A- ----NSM- καθαρὸς καθαρὸς καθαρός καθαρός\n041310 A- ----NSM- ὅλος· ὅλος ὅλος ὅλος\n041310 C- -------- καὶ καὶ καί καί\n041310 RP ----NP-- ὑμεῖς ὑμεῖς ὑμεῖς σύ\n041310 A- ----NPM- καθαροί καθαροί καθαροί καθαρός\n041310 V- 2PAI-P-- ἐστε, ἐστε ἐστέ εἰμί\n041310 C- -------- ἀλλ’ ἀλλ’ ἀλλά ἀλλά\n041310 D- -------- οὐχὶ οὐχὶ οὐχί οὐχί\n041310 A- ----NPM- πάντες. πάντες πάντες πᾶς",
+              "value_sha256": "a8fcedb584c837a26cbd9e6fe932a296ba23e03deb3b4dd45acfa9fdaa96de96"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:10",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 10 \\w Jesus|strong=\"G2424\"\\w* \\w said|strong=\"G3004\"\\w* \\w to|strong=\"G2532\"\\w* \\w him|strong=\"G3588\"\\w*, \\wj “Someone \\+w who|strong=\"G3588\"\\+w* \\+w has|strong=\"G2192\"\\+w* \\+w bathed|strong=\"G3068\"\\+w* \\+w only|strong=\"G1487\"\\+w* \\+w needs|strong=\"G5532\"\\+w* \\+w to|strong=\"G2532\"\\+w* \\+w have|strong=\"G2192\"\\+w* \\+w his|strong=\"G3956\"\\+w* \\+w feet|strong=\"G4228\"\\+w* \\+w washed|strong=\"G3538\"\\+w*, \\+w but|strong=\"G2532\"\\+w* \\+w is|strong=\"G1510\"\\+w* \\+w completely|strong=\"G3650\"\\+w* \\+w clean|strong=\"G2513\"\\+w*. \\+w You|strong=\"G5210\"\\+w* \\+w are|strong=\"G1510\"\\+w* \\+w clean|strong=\"G2513\"\\+w*, \\+w but|strong=\"G2532\"\\+w* \\+w not|strong=\"G3756\"\\+w* \\+w all|strong=\"G3956\"\\+w* \\+w of|strong=\"G2532\"\\+w* \\+w you|strong=\"G5210\"\\+w*.” \\wj*  ",
+              "value_sha256": "1d758b9a78c76762af0877a228f684e0e81d69cff05b9f2ea7d75e42608f1bfd"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='λούω|G3068']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value": "\n  5\n  λούω,\n\n  [in LXX chiefly for רחץ (freq. of ceremonial washing; cf. Deiss., BS, 226 f.);]\n\n  to bathe, wash the body: c. acc. pers., Ac 9:37 (of a dead body); id. seq. ἀπό (Deiss., BS, 226 f.), Ac 16:33; pass. ptcp. pf., Jo 13:10, He 10:22; mid., to wash oneself (Mayor, in l.; M. Pr., 155 f., 238 f.), II Pe 2:22; metaph., Re 1:5, Rec., R, mg. (cf. ἀπο-λούω).†\n  SYN.: νίπτω, used of parts of the body-hands, feet, face; πλύνω, of things, as garments, etc. (v. Le 15:11; cf. Tr., Syn., § xlv).\n",
+              "value_sha256": "a95a268a8a10b892eea75c08c56aaa8e973de6e35317fe3f4bc698d28ba8171f"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='νίπτω|G3538']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value": "\n  17\n  νίπτω, late form of νίζω,\n\n  [in LXX chiefly for רחץ;]\n\n  to wash, usually of a part of the body: c. acc. pers., Jo 13:8; τ. πόδας, Jo 13:5, 6, 8, 12, 14, I Ti 5:10; mid., reflexive, to wash oneself: Jo 9:7, 11, 15; τ. χεῖρας, Mt 15:2, Mk 7:3; τ. πόδας, Jo 13:10; τ. πρόσωπον, Mt 6:17 (in cl. Att. prose, used only in compounds; cf. ἀπο-νίπτω).†\n  SYN.: λούω (q.v.), πλύνω.\n",
+              "value_sha256": "2be388ba4a7b0078984398c3c15a4609acb8fe8d6cbacfcdc1f6ba4efec19ce9"
+            }
+          ],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "18d3477bb95ac1a8e8afe08d10d31dd1b13f063fe6bd0b99723c16211a7dd801",
+          "reason": "Exact source, anchor, prose and candidate-state checks passed.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": null,
+          "unsupported_statement": null
+        },
+        {
+          "annotation_id": "tan:john.13.15:example-or-pattern",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [],
+          "disposition": "NEEDS_EDITORIAL_REVISION",
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:14",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "εἰ οὖν ἐγὼ ἔνιψα ὑμῶν τοὺς πόδας ὁ κύριος καὶ ὁ διδάσκαλος, καὶ ὑμεῖς ὀφείλετε ἀλλήλων νίπτειν τοὺς πόδας· ",
+              "value_sha256": "b880e299cac809234f03a1c7dbf880e5934102857cde03089f75bf9deafccc73"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:15",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "ὑπόδειγμα γὰρ ἔδωκα ὑμῖν ἵνα καθὼς ἐγὼ ἐποίησα ὑμῖν καὶ ὑμεῖς ποιῆτε. ",
+              "value_sha256": "b5c504acd455abdbf92febb7942c050582057290df0c84ec4aeb5d89ac65ce40"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:15",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value": "041315 N- ----ASN- ὑπόδειγμα ὑπόδειγμα ὑπόδειγμα ὑπόδειγμα\n041315 C- -------- γὰρ γὰρ γάρ γάρ\n041315 V- 1AAI-S-- ἔδωκα ἔδωκα ἔδωκα δίδωμι\n041315 RP ----DP-- ὑμῖν ὑμῖν ὑμῖν σύ\n041315 C- -------- ἵνα ἵνα ἵνα ἵνα\n041315 C- -------- καθὼς καθὼς καθώς καθώς\n041315 RP ----NS-- ἐγὼ ἐγὼ ἐγώ ἐγώ\n041315 V- 1AAI-S-- ἐποίησα ἐποίησα ἐποίησα ποιέω\n041315 RP ----DP-- ὑμῖν ὑμῖν ὑμῖν σύ\n041315 D- -------- καὶ καὶ καί καί\n041315 RP ----NP-- ὑμεῖς ὑμεῖς ὑμεῖς σύ\n041315 V- 2PAS-P-- ποιῆτε. ποιῆτε ποιῆτε ποιέω",
+              "value_sha256": "cf8372976b797ce3305b7c27494bdcc181a267023dca731cd4f4b5724d3dacc5"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:14",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 14 \\wj \\+w If|strong=\"G1487\"\\+w* \\+w I|strong=\"G1473\"\\+w* \\+w then|strong=\"G3767\"\\+w*, \\+w the|strong=\"G2532\"\\+w* \\+w Lord|strong=\"G2962\"\\+w* \\+w and|strong=\"G2532\"\\+w* \\+w the|strong=\"G2532\"\\+w* \\+w Teacher|strong=\"G1320\"\\+w*, \\+w have|strong=\"G2532\"\\+w* \\+w washed|strong=\"G3538\"\\+w* \\+w your|strong=\"G2962\"\\+w* \\+w feet|strong=\"G4228\"\\+w*, \\+w you|strong=\"G5210\"\\+w* \\+w also|strong=\"G2532\"\\+w* \\+w ought|strong=\"G3784\"\\+w* \\+w to|strong=\"G2532\"\\+w* \\+w wash|strong=\"G3538\"\\+w* \\+w one|strong=\"G3588\"\\+w* \\+w another|strong=\"G3588\"\\+w*’\\+w s|strong=\"G2962\"\\+w* \\+w feet|strong=\"G4228\"\\+w*. \\wj*  ",
+              "value_sha256": "463bc43a9a30beae44bfd7112a084062a70a49f2d23824955049bfeebf8e68b0"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:15",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 15 \\wj \\+w For|strong=\"G1063\"\\+w* \\+w I|strong=\"G1473\"\\+w* \\+w have|strong=\"G2532\"\\+w* \\+w given|strong=\"G1325\"\\+w* \\+w you|strong=\"G5210\"\\+w* \\+w an|strong=\"G2532\"\\+w* \\+w example|strong=\"G5262\"\\+w*, \\+w that|strong=\"G2443\"\\+w* \\+w you|strong=\"G5210\"\\+w* \\+w should|strong=\"G2532\"\\+w* \\+w also|strong=\"G2532\"\\+w* \\+w do|strong=\"G4160\"\\+w* \\+w as|strong=\"G2531\"\\+w* \\+w I|strong=\"G1473\"\\+w* \\+w have|strong=\"G2532\"\\+w* \\+w done|strong=\"G4160\"\\+w* \\+w to|strong=\"G2443\"\\+w* \\+w you|strong=\"G5210\"\\+w*. \\wj*  ",
+              "value_sha256": "c760f1c61000f9077ef75b4bafc19651403d4acbf257f634b92a590fdfabc99b"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.15:example-or-pattern:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='ὑπόδειγμα|G5262']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value": "\n\t6\nὑπό-δειγμα, -τος, τό\n\n  (< ὑποδείκνυμι), \n  [in LXX: Ez 42:15, Si 44:16, II Mac 6:28, 31, IV Mac 17:23 * ;] \n\n    used by later writers (Xen. onwards) for παράδειγμα (v. Rutherford, NPhr., 62), \n  a figure, copy: He 8:5 9:23; \n  an example for imitation, Jo 13:15, Ja 5:10; for warning, He 4:11, II Pe 2:6.†\n  SYN.: ὁμοίωμα, τύπος, ὑποτύπωσις (v. DB, iii. 696b) \n",
+              "value_sha256": "e41c6bddcbea91903a91487335d8ad5ee2bccbe89157c0202887d479ed3f6a0a"
+            }
+          ],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "fc0d66d7a586731872c4715718ed84e98c4c25790558185b58ad1c64dc54e690",
+          "reason": "No demonstration sense attested.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": "ὑπόδειγμα denotes an example for imitation.",
+          "unsupported_statement": "ὑπόδειγμα can denote an example, pattern, model, or demonstration."
+        },
+        {
+          "annotation_id": "tan:john.13.17:blessed-or-happy",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [],
+          "disposition": "SOURCE_OR_RIGHTS_GAP",
+          "evidence": [],
+          "missing_sources": [
+            "EDITORIAL-SRC-KJV-001: exact KJV edition, locator, attribution and jurisdictional rights"
+          ],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "a036eda7aca5a41ca8ef90defa4d0f978073848a1527e2244835dbe3cedf7fcb",
+          "reason": "Required source, rights, component or exact locator unavailable.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": null,
+          "unsupported_statement": "The bound WEB verse uses “blessed,” while the KJV comparison uses “happy.”"
+        },
+        {
+          "annotation_id": "tan:john.13.19:i-am-or-i-am-he",
+          "checked_sources": [
+            "SP01-SRC-001",
+            "SP01-SRC-002",
+            "SP01-SRC-004",
+            "SP01-SRC-005"
+          ],
+          "claims": [
+            {
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:english"
+              ],
+              "assessment": "Exact bound/admitted English comparison.",
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:1",
+              "statement": "The bound WEB verse contains the English phrase “I am he.”"
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:greek",
+                "source:john.13.19:i-am-or-i-am-he:morphology"
+              ],
+              "assessment": "The clause ends with first-person I am and no following pronoun. WEB supplies he. Another exact Johannine occurrence establishes repeated wording. Prediction before occurrence and belief afterward support the foreknowledge limit; divine-name and Exodus claims are explicitly withheld.",
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:2",
+              "statement": "The Greek reads ἐγώ εἰμι without a separate word corresponding to “he.”"
+            },
+            {
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:greek",
+                "source:john.13.19:i-am-or-i-am-he:english"
+              ],
+              "assessment": "The clause ends with first-person I am and no following pronoun. WEB supplies he. Another exact Johannine occurrence establishes repeated wording. Prediction before occurrence and belief afterward support the foreknowledge limit; divine-name and Exodus claims are explicitly withheld.",
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:3",
+              "statement": "The supplied pronoun clarifies the immediate identification while making John’s repeated “I am” wording less visible."
+            }
+          ],
+          "disposition": "VERIFIED_FOR_PACKAGE_CANDIDATE",
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:19",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "ἀπʼ ἄρτι λέγω ὑμῖν πρὸ τοῦ γενέσθαι, ἵνα ⸂πιστεύσητε ὅταν γένηται⸃ ὅτι ἐγώ εἰμι. ",
+              "value_sha256": "849759e8e3f368a65b97baa64c10bdd200c81ac9bb206cd0d98b255c44d38360"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 6:48",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value": "ἐγώ εἰμι ὁ ἄρτος τῆς ζωῆς· ",
+              "value_sha256": "c747ef7f715656448bbb8fc2f21fea5ab4fb11757005b26c81cb7105b91e654e"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:19",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value": "041319 P- -------- ἀπ’ ἀπ’ ἀπό ἀπό\n041319 D- -------- ἄρτι ἄρτι ἄρτι ἄρτι\n041319 V- 1PAI-S-- λέγω λέγω λέγω λέγω\n041319 RP ----DP-- ὑμῖν ὑμῖν ὑμῖν σύ\n041319 P- -------- πρὸ πρὸ πρό πρό\n041319 RA ----GSN- τοῦ τοῦ τοῦ ὁ\n041319 V- -AMN---- γενέσθαι, γενέσθαι γενέσθαι γίνομαι\n041319 C- -------- ἵνα ἵνα ἵνα ἵνα\n041319 V- 2AAS-P-- ⸂πιστεύσητε πιστεύσητε πιστεύσητε πιστεύω\n041319 C- -------- ὅταν ὅταν ὅταν ὅταν\n041319 V- 3AMS-S-- γένηται⸃ γένηται γένηται γίνομαι\n041319 C- -------- ὅτι ὅτι ὅτι ὅτι\n041319 RP ----NS-- ἐγώ ἐγώ ἐγώ ἐγώ\n041319 V- 1PAI-S-- εἰμι. εἰμι εἰμί εἰμί",
+              "value_sha256": "8cf1f5ec508b27da6687bf5d3920cb20ee168cd22a51d0ce0948ef959376e5c5"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:19",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value": "\\v 19 \\wj \\+w From|strong=\"G3588\"\\+w* \\+w now|strong=\"G1096\"\\+w* \\+w on|strong=\"G1096\"\\+w*, \\+w I|strong=\"G1473\"\\+w* \\+w tell|strong=\"G3004\"\\+w* \\+w you|strong=\"G5210\"\\+w* \\+w before|strong=\"G4253\"\\+w* \\+w it|strong=\"G3754\"\\+w* \\+w happens|strong=\"G1096\"\\+w*, \\+w that|strong=\"G3754\"\\+w* \\+w when|strong=\"G3752\"\\+w* \\+w it|strong=\"G3754\"\\+w* \\+w happens|strong=\"G1096\"\\+w*, \\+w you|strong=\"G5210\"\\+w* \\+w may|strong=\"G2443\"\\+w* \\+w believe|strong=\"G4100\"\\+w* \\+w that|strong=\"G3754\"\\+w* \\+w I|strong=\"G1473\"\\+w* \\+w am|strong=\"G1510\"\\+w* \\+w he|strong=\"G3754\"\\+w*. \\wj*  ",
+              "value_sha256": "1dbe79d479892528f4e61e98af9c1a044483f206d52cb3d0eb1b337a6d6898df"
+            }
+          ],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "a222d7c1f55f184cb365b96ad2695214a38d7ce7948f10da46ef13697f376eee",
+          "reason": "Exact source, anchor, prose and candidate-state checks passed.",
+          "revision": 2,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": null,
+          "unsupported_statement": null
+        },
+        {
+          "annotation_id": "tan:john.13.30:night-symbolism",
+          "checked_sources": [],
+          "claims": [],
+          "disposition": "REJECTED_NOT_TRANSLATION_NUANCE",
+          "evidence": [],
+          "missing_sources": [],
+          "notes_bytes_unchanged": true,
+          "projection_sha256": "d5a7209088ff03054abaf5c1cc6adde02de3465429ea51e1332ba1cd5ff4c696",
+          "reason": "The translated phrase is direct. The proposed additional value is literary symbolism rather than a lexical, grammatical, textual, or translation-choice issue.",
+          "revision": 1,
+          "substitution_or_acquisition": false,
+          "suggested_replacement": null,
+          "unsupported_statement": null
+        }
+      ],
+      "accepted_roster": [
+        "tan:john.13.8:no-share-with-me",
+        "tan:john.13.10:bathed-versus-washed",
+        "tan:john.13.19:i-am-or-i-am-he"
+      ],
+      "unread_records": [
+        "tan:john.13.2:during-supper",
+        "tan:john.13.31:glorified-aorist"
+      ]
+    },
+    {
+      "substantive_measurement": {
+        "starting": 1500,
+        "added": 1959,
+        "deleted": 4,
+        "total": 1963,
+        "excess_over_original_ceiling": 463,
+        "files": [
+          {
+            "path": "src/bsl/contracts/translation_annotation_compilation.py",
+            "added": 147,
+            "deleted": 0,
+            "baseline": 147,
+            "sha256": "73f4dcb3a9b0c4fb0a4fc13be04b4d660190e54cb799f62b18fb980b8507eeda"
+          },
+          {
+            "path": "src/bsl/infrastructure/j13_authority.py",
+            "added": 199,
+            "deleted": 0,
+            "baseline": 195,
+            "sha256": "c8e041a0b18813de99b98da02a7df8685c4502328c35cd4d07836842a13f531f"
+          },
+          {
+            "path": "src/bsl/application/j13_annotation_verification.py",
+            "added": 283,
+            "deleted": 0,
+            "baseline": 271,
+            "sha256": "4983611752a3d25f2529e04e0b6cc328fd5d425a57e110e049e8613f7283b750"
+          },
+          {
+            "path": "src/bsl/application/j13_package_compilation.py",
+            "added": 260,
+            "deleted": 0,
+            "baseline": 260,
+            "sha256": "4ac3dc0d296e68060a33d529800c5f25c586ca87793423b09a2e8f51672d4dec"
+          },
+          {
+            "path": "tools/j13_lab_01_compile_candidate.py",
+            "added": 149,
+            "deleted": 0,
+            "baseline": 71,
+            "sha256": "7b57875286682befa73135f24d4478d02636d630a18897baa74b5f599306ee6b"
+          },
+          {
+            "path": "tools/j13_unicode_profile.swift",
+            "added": 87,
+            "deleted": 0,
+            "baseline": 87,
+            "sha256": "9dfeee89f5d77be5c1e856dead3c2d5519baa78b89c328b8e04688ee7b95a12b"
+          },
+          {
+            "path": "tests/test_j13_annotation_verification.py",
+            "added": 633,
+            "deleted": 0,
+            "baseline": 312,
+            "sha256": "dea1289aebd5859b54f57b9fc1b845b4165e6c6406453982a886892a726ddd72"
+          },
+          {
+            "path": "tests/test_j13_package_compilation.py",
+            "added": 177,
+            "deleted": 0,
+            "baseline": 131,
+            "sha256": "0f3180d306b017d6ab9882fd3d855da96f98cbf5d9848192625de0ca622bcf38"
+          },
+          {
+            "path": "README.md",
+            "added": 2,
+            "deleted": 0,
+            "baseline": 2,
+            "sha256": "8001b7cce0e5da2d9343f5720d0547dd5f3a79a25fd1549bba21115b79df2ef1"
+          },
+          {
+            "path": "design/DECISION_INDEX.md",
+            "added": 2,
+            "deleted": 0,
+            "baseline": 2,
+            "sha256": "c6176bad4ff01ac04ab5a5bd92404a520888009e68857cd17aee442b6fcaf4a9"
+          },
+          {
+            "path": "design/PACKAGE_STATUS.md",
+            "added": 4,
+            "deleted": 2,
+            "baseline": 6,
+            "sha256": "fb8b1da7fe0e2f4b3b4949c82a385b91c119bc00182d04ca6ae30e440e718897"
+          },
+          {
+            "path": "tests/test_cli_and_schemas.py",
+            "added": 6,
+            "deleted": 1,
+            "baseline": 7,
+            "sha256": "9d0005251d8bd9dd55efe8dee274089181bef0772d505b30005feb08267626da"
+          },
+          {
+            "path": "contracts/registry.json",
+            "added": 8,
+            "deleted": 0,
+            "baseline": 8,
+            "sha256": "f74f2440bc6465c0018147e8f32469d4ce39e5a48e031e3390f144421df383fc"
+          },
+          {
+            "path": "pyproject.toml",
+            "added": 1,
+            "deleted": 0,
+            "baseline": 1,
+            "sha256": "74989c0e01da64b55f608568597e5e470c309913fa4da03d4dbd13a49804a9c4"
+          },
+          {
+            "path": ".github/workflows/vs01-t01-ci.yml",
+            "added": 1,
+            "deleted": 1,
+            "baseline": 0,
+            "sha256": "aa5df861906bf13d4558800640519f5d49ba0aa5318559f3dd2abda3e96af2ec"
+          }
+        ],
+        "method": "Nonblank added and deleted hunk lines against approved base; comments and closing syntax counted. Exact authority, fixtures, generated schemas/artifacts/sidecars, lockfile and final handoffs reported separately."
+      },
+      "material_increases": [
+        {
+          "path": "src/bsl/infrastructure/j13_authority.py",
+          "increase": 4,
+          "reason": "Explicit cleanup after compiler failure and corrected diskutil mount-point query."
+        },
+        {
+          "path": "src/bsl/application/j13_annotation_verification.py",
+          "increase": 12,
+          "reason": "Decode observed USFM word/presentation markers for English comparison while retaining raw evidence; preserve closing-marker whitespace."
+        },
+        {
+          "path": "tools/j13_lab_01_compile_candidate.py",
+          "increase": 78,
+          "reason": "Controller publication ownership, symlink/containment protection, pre/post archive checks, actual-file verification and rollback."
+        },
+        {
+          "path": "tests/test_j13_annotation_verification.py",
+          "increase": 321,
+          "reason": "Required controller/rejection tests plus concrete concurrency, volume-query and USFM extraction regressions."
+        },
+        {
+          "path": "tests/test_j13_package_compilation.py",
+          "increase": 46,
+          "reason": "Compiler failure cleanup and exhaustive explicit control-range/whitespace boundary cases. Actual native runtime reporting for CI execution evidence. Explicit pytest session ownership prevents duplicate native builds across imported fixture registrations."
+        },
+        {
+          "path": ".github/workflows/vs01-t01-ci.yml",
+          "increase": 2,
+          "reason": "Owner-approved one-line runner replacement, counted as one addition and one deletion."
+        }
+      ],
+      "separately_reported_files": [
+        {
+          "path": "activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json",
+          "nonblank_lines": 219,
+          "bytes": 21481,
+          "sha256": "6b3ed11fbd47113bdc7e5ec8abe3b9491119e0d06377b30c7ccdd389dc4e22d4"
+        },
+        {
+          "path": "activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.sha256",
+          "nonblank_lines": 1,
+          "bytes": 134,
+          "sha256": "a369eb158f3b2ef491c2d24345081776a2f93c0ad5b4a52186640242308dc436"
+        },
+        {
+          "path": "artifacts/J13-LAB-01/J13-LAB-01-verification-summary.md",
+          "nonblank_lines": 17,
+          "bytes": 1735,
+          "sha256": "c8fb192e5d750b68b8d584955ebda40b396293ef968f1f4c62df2a8508a0170c"
+        },
+        {
+          "path": "artifacts/J13-LAB-01/translation-annotation-compilation-receipt.j13-pilot-01.candidate.json",
+          "nonblank_lines": 1,
+          "bytes": 77503,
+          "sha256": "5f4f85288fc312fafdf164ac93f1c553e55a6b6c892f209de78d7cc4e6d46bdc"
+        },
+        {
+          "path": "artifacts/J13-LAB-01/translation-annotation-compilation-receipt.j13-pilot-01.candidate.sha256",
+          "nonblank_lines": 1,
+          "bytes": 137,
+          "sha256": "dc8ffc59e810e416f01d2912368b7d3c86d3e24ab4bb4af23076cf3451bb3adf"
+        },
+        {
+          "path": "artifacts/J13-LAB-01/translation-annotation-package.j13-pilot-01.candidate.json",
+          "nonblank_lines": 1,
+          "bytes": 20925,
+          "sha256": "77648d3c8f562df6110eecbb7c978cfbd13e0b7b7ec7583ba98b1f72ade8cbfa"
+        },
+        {
+          "path": "artifacts/J13-LAB-01/translation-annotation-package.j13-pilot-01.candidate.sha256",
+          "nonblank_lines": 1,
+          "bytes": 125,
+          "sha256": "d2b844859a6854a09aa68bfd727c265bb4d5f936c63ed104f7924840cc1c34fe"
+        },
+        {
+          "path": "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v1.schema.json",
+          "nonblank_lines": 1014,
+          "bytes": 24908,
+          "sha256": "e161c569d44cbf0156d381068568fb1b1fa9fc83d3a48396f4bd05fdbe4b9704"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream-authority.json",
+          "nonblank_lines": 217,
+          "bytes": 10718,
+          "sha256": "e3ff1619cf1621fcf046eae9ad9198455cf54a306f6573353e43e153e3e1277a"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.43-john.json",
+          "nonblank_lines": 8625,
+          "bytes": 363613,
+          "sha256": "dcd00363d91b65e6261cb9794c1cf558a210c3f3db768c1e3956dbd86b818da2"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/biblos/engwebp-2020-2242945d71ca925b.manifest.json",
+          "nonblank_lines": 6503,
+          "bytes": 205605,
+          "sha256": "1a5caadeee5b724f6efdaa6fe24c784606285f93b85db2f14ba9d7c0db74ced5"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/biblos/translation-annotation-package-v1.schema.json",
+          "nonblank_lines": 485,
+          "bytes": 11701,
+          "sha256": "f4ed1437b95c037d619b93c9e414948eb8f8fb4f5602b365c9cf250956aefd49"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/J13-PILOT-01-owner-editorial-decision.md",
+          "nonblank_lines": 61,
+          "bytes": 3070,
+          "sha256": "737b24a9400d586b62674df1ba775db198391d3cb5d20fe78a1172d06fd82c94"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/john-13-01-38-loved-to-the-end-washed-and-commanded.md",
+          "nonblank_lines": 503,
+          "bytes": 38570,
+          "sha256": "9f764364ce618f73104368ba01d1c0662ce0e9af2906a901a8efcfaeaa254866"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/reader-annotation-projection-v1.schema.json",
+          "nonblank_lines": 964,
+          "bytes": 23467,
+          "sha256": "8102fb1f5e6fc5f6f876cee2c1f1392b81151a2b40340e65265c38268b095e63"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/source-registry.md",
+          "nonblank_lines": 205,
+          "bytes": 14975,
+          "sha256": "784782342e651a894280032595f3644dee6d1a69ac77e085734c4b85564880f0"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-01-to-the-end.r2.json",
+          "nonblank_lines": 315,
+          "bytes": 14107,
+          "sha256": "361328b03698409003dda39d3538d7ba73a6fad70e38407d69d5a67d2c3b7908"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-08-no-share-with-me.r2.json",
+          "nonblank_lines": 315,
+          "bytes": 14200,
+          "sha256": "b71b86a85fbb93870a6eae4ba7f5cd827dfa440eb4543362df4c1052d05e642e"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-10-bathed-versus-washed.r2.json",
+          "nonblank_lines": 338,
+          "bytes": 15509,
+          "sha256": "18d3477bb95ac1a8e8afe08d10d31dd1b13f063fe6bd0b99723c16211a7dd801"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-15-example-or-pattern.r2.json",
+          "nonblank_lines": 315,
+          "bytes": 14402,
+          "sha256": "fc0d66d7a586731872c4715718ed84e98c4c25790558185b58ad1c64dc54e690"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-17-blessed-or-happy.r2.json",
+          "nonblank_lines": 315,
+          "bytes": 14074,
+          "sha256": "a036eda7aca5a41ca8ef90defa4d0f978073848a1527e2244835dbe3cedf7fcb"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-19-i-am-or-i-am-he.r2.json",
+          "nonblank_lines": 307,
+          "bytes": 13870,
+          "sha256": "a222d7c1f55f184cb365b96ad2695214a38d7ce7948f10da46ef13697f376eee"
+        },
+        {
+          "path": "fixtures/J13-LAB-01/upstream/notes/tan-john-13-30-night-symbolism.r1.json",
+          "nonblank_lines": 308,
+          "bytes": 13984,
+          "sha256": "d5a7209088ff03054abaf5c1cc6adde02de3465429ea51e1332ba1cd5ff4c696"
+        },
+        {
+          "path": "uv.lock",
+          "nonblank_lines": 512,
+          "bytes": 64061,
+          "sha256": "4e3167343afb49e83247d2c1260518c6db7f47497bdc27203533f5c110cb5790"
+        }
+      ],
+      "final_handoff_accounting": "The handoff pair is reported separately in the completion comment after writing; it is excluded from the original handwritten budget measurement."
+    },
+    {
+      "dependency_receipt": {
+        "name": "jsonschema",
+        "version": "4.25.1",
+        "license": "MIT",
+        "purpose": "Exact frozen external Notes/Biblos Draft 2020-12 runtime and test validation.",
+        "maintenance": "Upstream python-jsonschema project; installed metadata identifies source, issue tracker, changelog and Tidelift support. Exact owner-approved version remains pinned; no upgrade or repository maintenance claim inferred.",
+        "security_posture": "Pinned original schema bytes, duplicate-member/nonfinite/invalid-Unicode rejection before validation, lockfile integrity, no optional format extras or dynamic remote schema acquisition. No external vulnerability scan/advisory query was performed and no vulnerability-free claim is made.",
+        "alternatives": "Pydantic alone does not implement exact external Draft 2020-12 semantics; a custom validator would duplicate the standard. Native Foundation is narrowly authorized for Unicode semantics, not JSON Schema.",
+        "removal_strategy": "Remove this pin and its otherwise unused lockfile entries only when the external-schema validation operation is retired or an owner-approved conformant replacement passes the same fixtures and rejection tests.",
+        "installed_transitives": {
+          "attrs": "26.1.0",
+          "jsonschema-specifications": "2025.9.1",
+          "referencing": "0.37.0",
+          "rpds-py": "2026.6.3"
+        },
+        "additional_new_dependencies": 0
+      }
+    },
+    {
+      "complexity_details": [
+        {
+          "path": "src/bsl/contracts/translation_annotation_compilation.py",
+          "nonblank_module_lines": 147,
+          "functions": [
+            {
+              "name": "exact_value",
+              "logical_lines": 4
+            },
+            {
+              "name": "coherent_decision",
+              "logical_lines": 14
+            },
+            {
+              "name": "receipt_bindings",
+              "logical_lines": 13
+            }
+          ],
+          "max_function_logical_lines": 14
+        },
+        {
+          "path": "src/bsl/infrastructure/j13_authority.py",
+          "nonblank_module_lines": 199,
+          "functions": [
+            {
+              "name": "sha",
+              "logical_lines": 2
+            },
+            {
+              "name": "_pairs",
+              "logical_lines": 7
+            },
+            {
+              "name": "decode",
+              "logical_lines": 4
+            },
+            {
+              "name": "read_regular",
+              "logical_lines": 9
+            },
+            {
+              "name": "inventory",
+              "logical_lines": 8
+            },
+            {
+              "name": "load_j13_upstream_authority",
+              "logical_lines": 27
+            },
+            {
+              "name": "_source",
+              "logical_lines": 21
+            },
+            {
+              "name": "load_j13_source_authority",
+              "logical_lines": 25
+            },
+            {
+              "name": "__init__",
+              "logical_lines": 12
+            },
+            {
+              "name": "close",
+              "logical_lines": 2
+            },
+            {
+              "name": "check",
+              "logical_lines": 17
+            }
+          ],
+          "max_function_logical_lines": 27
+        },
+        {
+          "path": "src/bsl/application/j13_annotation_verification.py",
+          "nonblank_module_lines": 283,
+          "functions": [
+            {
+              "name": "_value",
+              "logical_lines": 6
+            },
+            {
+              "name": "_verse",
+              "logical_lines": 18
+            },
+            {
+              "name": "_evidence",
+              "logical_lines": 26
+            },
+            {
+              "name": "_web_display",
+              "logical_lines": 8
+            },
+            {
+              "name": "_unsupported",
+              "logical_lines": 20
+            },
+            {
+              "name": "_revision",
+              "logical_lines": 3
+            },
+            {
+              "name": "_evaluate",
+              "logical_lines": 37
+            },
+            {
+              "name": "verify_j13_annotation_batch",
+              "logical_lines": 5
+            }
+          ],
+          "max_function_logical_lines": 37
+        },
+        {
+          "path": "src/bsl/application/j13_package_compilation.py",
+          "nonblank_module_lines": 260,
+          "functions": [
+            {
+              "name": "canonical_package_bytes",
+              "logical_lines": 2
+            },
+            {
+              "name": "prose_fields",
+              "logical_lines": 16
+            },
+            {
+              "name": "prose_failures",
+              "logical_lines": 11
+            },
+            {
+              "name": "validate_anchors",
+              "logical_lines": 25
+            },
+            {
+              "name": "project_annotation",
+              "logical_lines": 9
+            },
+            {
+              "name": "_candidate",
+              "logical_lines": 18
+            },
+            {
+              "name": "_unique",
+              "logical_lines": 5
+            },
+            {
+              "name": "validate_package",
+              "logical_lines": 19
+            },
+            {
+              "name": "compile_j13_package_candidate",
+              "logical_lines": 4
+            },
+            {
+              "name": "canonical_receipt_bytes",
+              "logical_lines": 2
+            },
+            {
+              "name": "build_outputs",
+              "logical_lines": 23
+            }
+          ],
+          "max_function_logical_lines": 25
+        },
+        {
+          "path": "tools/j13_lab_01_compile_candidate.py",
+          "nonblank_module_lines": 149,
+          "functions": [
+            {
+              "name": "_compile",
+              "logical_lines": 20
+            },
+            {
+              "name": "_output_parent",
+              "logical_lines": 13
+            },
+            {
+              "name": "_remove_owned",
+              "logical_lines": 8
+            },
+            {
+              "name": "_remove_owned_directory",
+              "logical_lines": 7
+            },
+            {
+              "name": "_write_outputs",
+              "logical_lines": 7
+            },
+            {
+              "name": "_verify_outputs",
+              "logical_lines": 7
+            },
+            {
+              "name": "_publish",
+              "logical_lines": 32
+            },
+            {
+              "name": "main",
+              "logical_lines": 22
+            }
+          ],
+          "max_function_logical_lines": 32
+        },
+        {
+          "path": "tools/j13_unicode_profile.swift",
+          "nonblank_module_lines": 87
+        }
+      ]
+    },
+    {
+      "repair_scope": {
+        "commit": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+        "tree": "c8ace8ed622fee6dc38413943cee97c9fbe880e5",
+        "changed_paths": [
+          ".github/workflows/vs01-t01-ci.yml",
+          "tests/test_j13_package_compilation.py"
+        ],
+        "production_and_candidate_files_unchanged": true,
+        "reproduction_remains_valid": "Six source hashes and all five artifacts are identical to the reproduced implementation; no additional real archive/controller invocation."
+      }
+    },
+    {
+      "session_fixture_repair": {
+        "commit": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+        "tree": "ac124d1705aa23fc86329e6a5f08e227db4f141d",
+        "changed_path": "tests/test_j13_package_compilation.py",
+        "reason": "CI runtime evidence exposed duplicate session fixture registrations. One configuration-owned instance and one saved session finalizer enforce the required build-once lifecycle.",
+        "combined_smoke": "120 passed; exactly one runtime line",
+        "full_suite": "897 passed, 27 skipped; exactly one runtime line",
+        "production_or_artifact_change": false
+      }
+    }
+  ],
+  "review_targets": [
+    {
+      "path": "artifacts/J13-LAB-01/J13-LAB-01-verification-summary.md",
+      "purpose": "Owner record-level review; no suggested revision has been applied."
+    },
+    {
+      "path": "artifacts/J13-LAB-01/translation-annotation-compilation-receipt.j13-pilot-01.candidate.json",
+      "purpose": "Exact raw values, source snapshots, rights, claims, decisions and package binding.",
+      "accepted_evidence": [
+        {
+          "annotation_id": "tan:john.13.8:no-share-with-me",
+          "claims": [
+            {
+              "claim_id": "claim:john.13.8:no-share-with-me:1",
+              "assessment": "Exact bound/admitted English comparison.",
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:english"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.8:no-share-with-me:2",
+              "assessment": "Peter refuses washing; the negative condition makes washing necessary for having a share with Jesus. The lexicon supports part/share/portion; participation is a contextual paraphrase. The limits decline sacramental conclusions absent from this wording.",
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:greek",
+                "source:john.13.8:no-share-with-me:morphology",
+                "source:john.13.8:no-share-with-me:lexicon"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.8:no-share-with-me:3",
+              "assessment": "Peter refuses washing; the negative condition makes washing necessary for having a share with Jesus. The lexicon supports part/share/portion; participation is a contextual paraphrase. The limits decline sacramental conclusions absent from this wording.",
+              "assertion_ids": [
+                "source:john.13.8:no-share-with-me:greek",
+                "source:john.13.8:no-share-with-me:lexicon",
+                "source:john.13.8:no-share-with-me:english"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:8",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value_sha256": "28b1e52eeaa9fd58b1587515f363b3690c5b2cae93069a52db1f63df61d0098c"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:8",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value_sha256": "e8fec07d5854aa9ea0fb564e26c27948bee69c53537b3a123f8abd1d06aa63a4"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:8",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value_sha256": "f198270dfe7c3b8101cd3d23aece45ab0ccc59d75f1b20f4b8aefed4f97c5286"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.8:no-share-with-me:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='μέρος|G3313']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value_sha256": "cdc7d6a0fb48b4e995140eaf0b453cacc1087008938562947b7e42f5e8f126d6"
+            }
+          ]
+        },
+        {
+          "annotation_id": "tan:john.13.10:bathed-versus-washed",
+          "claims": [
+            {
+              "claim_id": "claim:john.13.10:bathed-versus-washed:1",
+              "assessment": "Exact bound/admitted English comparison.",
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:english"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.10:bathed-versus-washed:2",
+              "assessment": "The perfect passive participle identifies an already bathed person; feet are the object of the separate washing. The two entries support whole-body versus local washing. The English contrast preserves this distinction. The limits exclude variant adjudication and sacramental claims.",
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:greek",
+                "source:john.13.10:bathed-versus-washed:morphology"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.10:bathed-versus-washed:3",
+              "assessment": "The perfect passive participle identifies an already bathed person; feet are the object of the separate washing. The two entries support whole-body versus local washing. The English contrast preserves this distinction. The limits exclude variant adjudication and sacramental claims.",
+              "assertion_ids": [
+                "source:john.13.10:bathed-versus-washed:lexicon",
+                "source:john.13.10:bathed-versus-washed:english"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:10",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value_sha256": "3e6000c0c314318a447bd6a2b6166cf3539739e05476929071db081ed82671d5"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:10",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value_sha256": "a8fcedb584c837a26cbd9e6fe932a296ba23e03deb3b4dd45acfa9fdaa96de96"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:10",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value_sha256": "1d758b9a78c76762af0877a228f684e0e81d69cff05b9f2ea7d75e42608f1bfd"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='λούω|G3068']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value_sha256": "a95a268a8a10b892eea75c08c56aaa8e973de6e35317fe3f4bc698d28ba8171f"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.10:bathed-versus-washed:lexicon",
+              "attribution": "Abbott-Smith Greek Lexicon TEI release 1.1; public-domain TEI source.",
+              "component": "abbott-smith.tei.xml",
+              "component_sha256": "6bdeda42d25d5fa3c3b0a230a6cf9e753f1ec431d0ef3613054786b427dfe323",
+              "locator": "entry[@n='νίπτω|G3538']",
+              "snapshot_identity": "5ef75e98d5f0c9b8455dc875a66ee06cbd7bbf5da01a6daab240083effb11bb9",
+              "source_id": "SP01-SRC-005",
+              "value_sha256": "2be388ba4a7b0078984398c3c15a4609acb8fe8d6cbacfcdc1f6ba4efec19ce9"
+            }
+          ]
+        },
+        {
+          "annotation_id": "tan:john.13.19:i-am-or-i-am-he",
+          "claims": [
+            {
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:1",
+              "assessment": "Exact bound/admitted English comparison.",
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:english"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:2",
+              "assessment": "The clause ends with first-person I am and no following pronoun. WEB supplies he. Another exact Johannine occurrence establishes repeated wording. Prediction before occurrence and belief afterward support the foreknowledge limit; divine-name and Exodus claims are explicitly withheld.",
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:greek",
+                "source:john.13.19:i-am-or-i-am-he:morphology"
+              ]
+            },
+            {
+              "claim_id": "claim:john.13.19:i-am-or-i-am-he:3",
+              "assessment": "The clause ends with first-person I am and no following pronoun. WEB supplies he. Another exact Johannine occurrence establishes repeated wording. Prediction before occurrence and belief afterward support the foreknowledge limit; divine-name and Exodus claims are explicitly withheld.",
+              "assertion_ids": [
+                "source:john.13.19:i-am-or-i-am-he:greek",
+                "source:john.13.19:i-am-or-i-am-he:english"
+              ]
+            }
+          ],
+          "evidence": [
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 13:19",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value_sha256": "849759e8e3f368a65b97baa64c10bdd200c81ac9bb206cd0d98b255c44d38360"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:greek",
+              "attribution": "SBL Greek New Testament (SBLGNT), copyright © 2010 Society of Biblical Literature and Logos Bible Software, licensed CC BY 4.0. Source: https://github.com/Faithlife/SBLGNT",
+              "component": "data/sblgnt/text/John.txt",
+              "component_sha256": "ada9643154a990ae2725ab847c6cfb576ce2c3bcd4945d47606e8a90c8d065f5",
+              "locator": "John 6:48",
+              "snapshot_identity": "74a7ea1a9eed418e20eaa67ad066adc22f6a0989d60dd634bd1a3cf0ae86fd31",
+              "source_id": "SP01-SRC-001",
+              "value_sha256": "c747ef7f715656448bbb8fc2f21fea5ab4fb11757005b26c81cb7105b91e654e"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:morphology",
+              "attribution": "Tauber, J. K., ed. (2017). MorphGNT: SBLGNT Edition, Version 6.12. DOI: 10.5281/zenodo.376200. Morphological parsing and lemmatization licensed CC BY-SA 3.0.",
+              "component": "64-Jn-morphgnt.txt",
+              "component_sha256": "e7d8200408e61860aa20f733611f0215bc51b122774d521f0dea89bd785c52c5",
+              "locator": "John 13:19",
+              "snapshot_identity": "865877202c118c7df2d6159768393a13d2ee390dc298671df631dec4275cd586",
+              "source_id": "SP01-SRC-002",
+              "value_sha256": "8cf1f5ec508b27da6687bf5d3920cb20ee168cd22a51d0ce0948ef959376e5c5"
+            },
+            {
+              "allowed_operations": [
+                "ACQUIRE_AND_RETAIN",
+                "PARSE_NORMALIZE",
+                "EXACT_RUNTIME_LOOKUP",
+                "PUBLIC_BENCHMARK_EXCERPT",
+                "PUBLIC_DEMO"
+              ],
+              "assertion_id": "source:john.13.19:i-am-or-i-am-he:english",
+              "attribution": "World English Bible Classic, 2020 stable text; public domain. World English Bible is a trademark; modified derivatives must not be presented as the World English Bible.",
+              "component": "73-JHNeng-web.usfm",
+              "component_sha256": "8dbe3b7733da40bf6bfb7c96bff015833781f01548bf3ec4a8042d1dd21b7cc4",
+              "locator": "John 13:19",
+              "snapshot_identity": "8d465020ab17ff07670ad6324a8d9bab9f510db2c626a3d29b8d1983aea79eb8",
+              "source_id": "SP01-SRC-004",
+              "value_sha256": "1dbe79d479892528f4e61e98af9c1a044483f206d52cb3d0eb1b337a6d6898df"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "command": "uv sync --frozen; uv lock --check",
+      "result": "PASS at implementation commit"
+    },
+    {
+      "command": "uv run ruff format --check .; uv run ruff check .; uv run pyright",
+      "result": "PASS; 0 type errors/warnings"
+    },
+    {
+      "command": "uv run ruff check src/bsl/application/j13* src/bsl/infrastructure/j13* src/bsl/contracts/translation_annotation_compilation.py tools/j13_lab_01_compile_candidate.py --select C901,PLR1702 --preview",
+      "result": "PASS: complexity <=10 and nesting <=3"
+    },
+    {
+      "command": "uv run pytest --basetemp=.local/evidence/J13-LAB-01/implementation-head-suite --cov=bsl --cov=tools.j13_lab_01_compile_candidate --cov-branch --cov-report=term-missing --cov-report=json:.local/evidence/J13-LAB-01/implementation-head-coverage.json --cov-fail-under=90",
+      "result": "897 passed, 27 local disposable-database skips in 45.64 seconds; all focused J13/native/schema/external-schema tests included"
+    },
+    {
+      "command": "pnpm install --frozen-lockfile --strict-peer-dependencies; pnpm check:generated; pnpm lint; pnpm typecheck; pnpm test; pnpm build; pnpm check:dist; pnpm test:browser",
+      "result": "PASS: 6 unit and 7 browser tests; local pnpm 11.19.0/Node 24.19.0 reported engine warnings against frozen 11.24.0/24.20.0; existing CI uses the frozen versions"
+    },
+    {
+      "command": "pnpm build; pnpm check:dist; git diff --exit-code -- web/dist web/src/generated web/pnpm-lock.yaml",
+      "result": "PASS: second build byte-identical; generated/dist/lockfile unchanged"
+    },
+    {
+      "command": "git diff --check; git fsck --full",
+      "result": "PASS; dangling Git objects reported without cleanup"
+    },
+    {
+      "command": "uv run python tools/j13_lab_01_compile_candidate.py --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --output-dir .local/evidence/J13-LAB-01/compile-1",
+      "attempt": 1,
+      "result": "preflight tool failure: diskutil addressed archive subfolder, not mounted volume",
+      "exit_code": 1
+    },
+    {
+      "command": "uv run python tools/j13_lab_01_compile_candidate.py --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --output-dir .local/evidence/J13-LAB-01/compile-1",
+      "attempt": 2,
+      "result": "completed, superseded after USFM display extraction defect was diagnosed",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run python tools/j13_lab_01_compile_candidate.py --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --output-dir .local/evidence/J13-LAB-01/corrected-compile-1",
+      "attempt": 3,
+      "result": "success; five outputs equal",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run python tools/j13_lab_01_compile_candidate.py --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --output-dir .local/evidence/J13-LAB-01/corrected-compile-2",
+      "attempt": 4,
+      "result": "success; five outputs equal",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run python tools/j13_lab_01_compile_candidate.py --archive-root /Volumes/BSL-Archive/BiblicalScholarLab --output-dir .local/evidence/J13-LAB-01/artifact-reproduction --check-against artifacts/J13-LAB-01",
+      "attempt": 5,
+      "result": "success; all five outputs equal committed artifacts",
+      "exit_code": 0
+    },
+    {
+      "command": "uv sync --frozen; uv lock --check; uv run ruff format --check .; uv run ruff check .; uv run pyright; uv run pytest --basetemp=.local/evidence/J13-LAB-01/macos-repair-head-suite --cov=bsl --cov=tools.j13_lab_01_compile_candidate --cov-branch --cov-report=term-missing --cov-report=json:.local/evidence/J13-LAB-01/macos-repair-head-coverage.json --cov-fail-under=90",
+      "head": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+      "result": "PASS: 897 passed, 27 local disposable-database skips in 45.38 seconds; changed branches 220/238; native runtime identity emitted."
+    },
+    {
+      "command": "uv sync --frozen; uv lock --check; uv run ruff format --check .; uv run ruff check .; uv run pyright; uv run pytest --basetemp=.local/evidence/J13-LAB-01/final-implementation-suite --cov=bsl --cov=tools.j13_lab_01_compile_candidate --cov-branch --cov-report=term-missing --cov-report=json:.local/evidence/J13-LAB-01/final-implementation-coverage.json --cov-fail-under=90",
+      "head": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+      "result": "PASS: 897 passed, 27 local disposable-database skips in 44.65 seconds. Overall combined 91.0229645%; changed Python branches 220/238 (92.4369748%); exactly one native runtime/construction report."
+    }
+  ],
+  "evaluations": [
+    {
+      "coverage": {
+        "covered": 220,
+        "total": 238,
+        "percent": 92.43697478991596,
+        "per_file": {
+          "src/bsl/application/j13_annotation_verification.py": {
+            "covered": 53,
+            "total": 58,
+            "statements_covered": 127,
+            "statements_total": 135
+          },
+          "src/bsl/application/j13_package_compilation.py": {
+            "covered": 55,
+            "total": 62,
+            "statements_covered": 136,
+            "statements_total": 143
+          },
+          "src/bsl/contracts/translation_annotation_compilation.py": {
+            "covered": 22,
+            "total": 22,
+            "statements_covered": 117,
+            "statements_total": 117
+          },
+          "src/bsl/infrastructure/j13_authority.py": {
+            "covered": 48,
+            "total": 52,
+            "statements_covered": 154,
+            "statements_total": 158
+          },
+          "tools/j13_lab_01_compile_candidate.py": {
+            "covered": 42,
+            "total": 44,
+            "statements_covered": 125,
+            "statements_total": 125
+          }
+        },
+        "overall_combined": 91.02296450939457,
+        "swift_coverage_measured": false
+      },
+      "python_version": "3.12.12",
+      "native_runtime": {
+        "swift_version": "Apple Swift version 6.2.4 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)\nTarget: arm64-apple-macosx26.0\n",
+        "os_identity": "macOS-26.5.1-arm64-arm-64bit",
+        "helper_source_sha256": "9dfeee89f5d77be5c1e856dead3c2d5519baa78b89c328b8e04688ee7b95a12b"
+      },
+      "unicode_conformance": "Frozen positive/negative profile and prose matrix, all retained independent counterexamples, POSIX/case boundaries, explicit control ranges, whitespace, Greek/Hebrew/combining/emoji, UTF-16 surrogate/grapheme splits and field/scalar limits; real helper exercised. Python coverage does not measure Swift. No finite-suite equivalence claim across historical/future Unicode/iOS versions."
+    },
+    {
+      "real_invocations": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "purpose": "first comparison attempt",
+            "output": ".local/evidence/J13-LAB-01/compile-1",
+            "result": "preflight tool failure: diskutil addressed archive subfolder, not mounted volume",
+            "exit_code": 1,
+            "source_snapshot_loads": 0,
+            "output_files": 0,
+            "evidence": "compile-1-error.log"
+          },
+          {
+            "attempt": 2,
+            "purpose": "provisional first comparison",
+            "output": ".local/evidence/J13-LAB-01/compile-1",
+            "result": "completed, superseded after USFM display extraction defect was diagnosed",
+            "exit_code": 0,
+            "output_files": 5,
+            "evidence": "comparison-1-execution.json"
+          },
+          {
+            "attempt": 3,
+            "purpose": "corrected comparison 1",
+            "output": ".local/evidence/J13-LAB-01/corrected-compile-1",
+            "exit_code": 0,
+            "result": "success; five outputs equal",
+            "output_files": 5
+          },
+          {
+            "attempt": 4,
+            "purpose": "corrected comparison 2",
+            "output": ".local/evidence/J13-LAB-01/corrected-compile-2",
+            "exit_code": 0,
+            "result": "success; five outputs equal",
+            "output_files": 5
+          },
+          {
+            "attempt": 5,
+            "purpose": "post-implementation artifact reproduction",
+            "output": ".local/evidence/J13-LAB-01/artifact-reproduction",
+            "exit_code": 0,
+            "result": "success; all five outputs equal committed artifacts",
+            "output_files": 5
+          }
+        ],
+        "archive_unchanged_from_initial": true,
+        "total_attempts": 5,
+        "failed_preflight_attempts": 1,
+        "superseded_provisional_compilations": 1,
+        "final_comparison_compilations": 2,
+        "final_artifact_reproductions": 1
+      },
+      "archive_inventory_before_after": "5eb61a5117c34e64af80c6b3cc3a38385fd54cbad2864bdb0b615ae0490a85cc",
+      "archive_unchanged_including_incoming": true,
+      "source_policy": "Existing admitted SBLGNT/MorphGNT/WEB/Abbott-Smith only. Unused ASV components not read. KJV not acquired. Deferred Notes records never fetched or read.",
+      "prohibited_operation_counts": [
+        [
+          "source_admissions",
+          0
+        ],
+        [
+          "archive_writes",
+          0
+        ],
+        [
+          "database_connections",
+          0
+        ],
+        [
+          "network",
+          0
+        ],
+        [
+          "models",
+          0
+        ],
+        [
+          "providers",
+          0
+        ],
+        [
+          "cloud",
+          0
+        ],
+        [
+          "training",
+          0
+        ],
+        [
+          "upstream_mutations",
+          0
+        ],
+        [
+          "deferred_record_reads",
+          0
+        ],
+        [
+          "T09",
+          0
+        ],
+        [
+          "T10",
+          0
+        ]
+      ],
+      "counter_scope": "Real J13 producer operation. Synthetic/disposable regression fixtures and previously authorized GitHub CI are separately permitted."
+    },
+    {
+      "ci_snapshot": "All three workflows passed on macOS-runner repair head 615bf00. Native conformance: 897 passed, 27 skipped, overall combined coverage 90.88%. Subsequent test-session ownership fix at a445e10 passed all 897 local tests and emits exactly one runtime report. Final handoff-head CI and runtime evidence are supplied by the completion comment; no future result is claimed here.",
+      "observed_implementation_ci": [
+        {
+          "workflow": "vs01-t05-ci",
+          "run_id": 33935916852,
+          "head": "27c8a959720b4d7ec8fac38573baf259a2af6135",
+          "conclusion": "success",
+          "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33935916852"
+        },
+        {
+          "workflow": "vs01-t09b-web-ci",
+          "run_id": 33935916780,
+          "head": "27c8a959720b4d7ec8fac38573baf259a2af6135",
+          "conclusion": "success",
+          "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33935916780"
+        }
+      ],
+      "observed_repair_ci": [
+        {
+          "workflow": "vs01-t01-ci",
+          "run_id": 33937054699,
+          "head": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+          "conclusion": "success",
+          "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33937054699"
+        },
+        {
+          "workflow": "vs01-t05-ci",
+          "run_id": 33937054592,
+          "head": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+          "conclusion": "success",
+          "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33937054592"
+        },
+        {
+          "workflow": "vs01-t09b-web-ci",
+          "run_id": 33937054606,
+          "head": "615bf00fe889851570efd18c3f7a3f896ce2449b",
+          "conclusion": "success",
+          "url": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33937054606"
+        }
+      ],
+      "observed_native_ci_runtime": {
+        "swift_version": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0\n",
+        "os_identity": "macOS-26.6.2-arm64-arm-64bit",
+        "helper_source_sha256": "9dfeee89f5d77be5c1e856dead3c2d5519baa78b89c328b8e04688ee7b95a12b"
+      }
+    },
+    {
+      "native_ci_failure": {
+        "disposition": "BLOCKED_J13_LAB_01_PACKAGE_VALIDATION",
+        "meaning": "Actual candidate bytes passed owner-Mac validation and reproduced; mandatory validator conformance on existing Ubuntu CI failed. No claim the candidate bytes are malformed.",
+        "implementation_head": "27c8a959720b4d7ec8fac38573baf259a2af6135",
+        "ci_run": "https://github.com/abbudjoe/biblical-scholar-lab/actions/runs/33935916862",
+        "ci_result": "3 failed, 894 passed, 27 skipped",
+        "helper_source_sha256": "9dfeee89f5d77be5c1e856dead3c2d5519baa78b89c328b8e04688ee7b95a12b",
+        "ci_log_sha256": "034191893816b9f49a7c5d9b07d7dc1cb56b0f3d3e6ba43b6bcee1db33423ba7",
+        "cases": [
+          {
+            "text": "<ͅ>",
+            "codepoints": [
+              "U+003C",
+              "U+0345",
+              "U+003E"
+            ],
+            "owner_mac_expected_and_actual": null,
+            "ubuntu_actual": "markupViolation"
+          },
+          {
+            "text": "`́a`",
+            "codepoints": [
+              "U+0060",
+              "U+0301",
+              "U+0061",
+              "U+0060"
+            ],
+            "owner_mac_expected_and_actual": null,
+            "ubuntu_actual": "markupViolation"
+          },
+          {
+            "text": "ſ://x",
+            "codepoints": [
+              "U+017F",
+              "U+003A",
+              "U+002F",
+              "U+002F",
+              "U+0078"
+            ],
+            "owner_mac_expected_and_actual": null,
+            "ubuntu_actual": "markupViolation"
+          }
+        ],
+        "ci_compiler_availability": "Original Ubuntu helper compiled and executed but version stdout was not emitted. Repaired Apple CI emits its actual version/OS/helper hash; no compiler installation or skipped conformance check.",
+        "retained_boundaries": "Patterns, Foundation invocation, input strings and expected results unchanged. No Python regex fallback, compatibility filter or platform exemption.",
+        "proposed_new_authorization": {
+          "path": ".github/workflows/vs01-t01-ci.yml",
+          "old": "runs-on: ubuntu-latest",
+          "new": "runs-on: macos-latest",
+          "other_jobs": "vs01-t05-ci and vs01-t09b-web-ci unchanged",
+          "history": "Add repair commit; never amend existing implementation or authority commits. Final handoff-only commit follows the repaired implementation head."
+        },
+        "authorization_status": "Owner explicitly authorized the precise macOS workflow change and additive repair commit.",
+        "resolution_authorization": {
+          "recorded_at": "2026-09-05T01:43:26.236264+00:00",
+          "owner": "Joseph Abbud",
+          "owner_response": "Authorized",
+          "approved_action": {
+            "path": ".github/workflows/vs01-t01-ci.yml",
+            "change": "runs-on: ubuntu-latest -> runs-on: macos-latest",
+            "additional_repair_commit": true,
+            "preserve_existing_commits": true,
+            "complete_final_handoff_and_exact_head_ci": true
+          },
+          "other_workflows_unchanged": true,
+          "native_expectations_and_operations_unchanged": true
+        },
+        "resolution_status": "All three repaired-head CI workflows passed; exact frozen counterexamples pass on Apple Foundation. Final-head CI is separately bound by completion comment.",
+        "record_kind": "historical failed Ubuntu gate, retained as a concrete counterexample",
+        "ci_log_path": ".local/evidence/J13-LAB-01/implementation-python-ci.log",
+        "failed_steps_log": {
+          "path": ".local/evidence/J13-LAB-01/implementation-python-ci-failure.log",
+          "sha256": "3d068a15a248d4004459db80df6be6e020a4149d822f46158c0a9e47d96ee2ed"
+        }
+      }
+    },
+    {
+      "final_local_session_ownership": {
+        "head": "a445e105eaba8d3f0ccfcdad2bfdf9967bf82715",
+        "native_runtime_reports": 1,
+        "tests_passed": 897,
+        "tests_skipped": 27,
+        "production_and_artifact_hashes_unchanged": true,
+        "real_cli_attempts_unchanged": 5
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/J13-LAB-01/J13-LAB-01-verification-summary.md",
+      "sha256": "c8fb192e5d750b68b8d584955ebda40b396293ef968f1f4c62df2a8508a0170c",
+      "bytes": 1735
+    },
+    {
+      "path": "artifacts/J13-LAB-01/translation-annotation-compilation-receipt.j13-pilot-01.candidate.json",
+      "sha256": "5f4f85288fc312fafdf164ac93f1c553e55a6b6c892f209de78d7cc4e6d46bdc",
+      "bytes": 77503
+    },
+    {
+      "path": "artifacts/J13-LAB-01/translation-annotation-compilation-receipt.j13-pilot-01.candidate.sha256",
+      "sha256": "dc8ffc59e810e416f01d2912368b7d3c86d3e24ab4bb4af23076cf3451bb3adf",
+      "bytes": 137
+    },
+    {
+      "path": "artifacts/J13-LAB-01/translation-annotation-package.j13-pilot-01.candidate.json",
+      "sha256": "77648d3c8f562df6110eecbb7c978cfbd13e0b7b7ec7583ba98b1f72ade8cbfa",
+      "bytes": 20925
+    },
+    {
+      "path": "artifacts/J13-LAB-01/translation-annotation-package.j13-pilot-01.candidate.sha256",
+      "sha256": "d2b844859a6854a09aa68bfd727c265bb4d5f936c63ed104f7924840cc1c34fe",
+      "bytes": 125
+    },
+    {
+      "package_series_id": "tap:j13-pilot-01",
+      "package_revision": 1,
+      "annotation_count": 3,
+      "receipt_identity": "1565dfdecb33c000714a25721603043e0d8e8a6de95558364d9677bf5a2369da",
+      "package_non_activatable": true,
+      "editorial_state": "draft",
+      "reader_delivery": "requires_review",
+      "training": "disallowed",
+      "schema_sha256": "e161c569d44cbf0156d381068568fb1b1fa9fc83d3a48396f4bd05fdbe4b9704"
+    }
+  ],
+  "delegated_operations": [
+    {
+      "agent": "authority_review",
+      "role": "read-only independent spec-conformance reviewer",
+      "code_authorship": false,
+      "result": "Clean after publication/cleanup/actual-byte, diskutil mount-path and USFM separator repairs. Not independent ChatGPT governance review, not owner approval."
+    },
+    {
+      "agent": "authority_review",
+      "role": "read-only narrow CI/session ownership reviewer",
+      "result": "Owner-authorized runner change and explicit runtime evidence clean; session-owned helper repair clean, combined smoke120 passed with one build/report. No code authored by reviewer."
+    }
+  ],
+  "complexity_receipt": {
+    "production_loc_added": 1125,
+    "production_loc_removed": 0,
+    "test_loc_added": 816,
+    "test_loc_removed": 1,
+    "generated_loc": 21543,
+    "production_files_added": 6,
+    "production_files_removed": 0,
+    "modules_added": [
+      "src/bsl/contracts/translation_annotation_compilation.py",
+      "src/bsl/infrastructure/j13_authority.py",
+      "src/bsl/application/j13_annotation_verification.py",
+      "src/bsl/application/j13_package_compilation.py",
+      "tools/j13_lab_01_compile_candidate.py",
+      "tools/j13_unicode_profile.swift"
+    ],
+    "modules_removed": [],
+    "tables_added": [],
+    "migrations_added": [],
+    "endpoints_added": [],
+    "cli_commands_added": [
+      "tools/j13_lab_01_compile_candidate.py --archive-root <path> --output-dir <path> [--check-against <path>]"
+    ],
+    "dependencies_added": [
+      "jsonschema==4.25.1"
+    ],
+    "dependencies_removed": [],
+    "public_contracts_changed": [
+      "TranslationAnnotationCompilationReceipt v1"
+    ],
+    "abstractions": [
+      {
+        "kind": "bounded private native process interface",
+        "operations": [
+          "plain-text-v1",
+          "Unicode-scalar count",
+          "UTF-16/grapheme endpoints"
+        ],
+        "shared_public_contract": false
+      },
+      {
+        "kind": "existing CI workflow modified under explicit owner authorization",
+        "new_production_module": false,
+        "path": ".github/workflows/vs01-t01-ci.yml",
+        "added_lines": 1,
+        "deleted_lines": 1
+      }
+    ],
+    "simpler_alternatives_considered": [
+      "Frozen Pydantic receipt, direct source records and pure composition; no service/framework.",
+      "Python regex/character counts cannot replace frozen Foundation operations.",
+      "Earlier reduction attempts retained; no new compression solely for line headroom."
+    ],
+    "known_duplication_or_debt": [
+      "Bounded Foundation patterns intentionally copied under explicit owner authorization; frozen source identity and regression cases guard future changes.",
+      "Observed USFM markers only; unknown or malformed source markup fails closed."
+    ],
+    "waivers": [
+      "SIMPLICITY_WAIVER — J13-LAB-01 VERIFICATION COMPLETION. Joseph Abbud's owner-delivered continuation authorizes GPT-6 Astra/high and waives the 1,500-substantive-changed-line ceiling and resulting split requirement only for completing already-required tests, correcting defects those tests expose, and finishing the already-authorized verification and package-candidate deliverables. This supersedes the total-line hard stop in the activation, original prompt and earlier continuations. It authorizes no new features, sources, dependencies, contracts, production modules or unrelated work, and sets no replacement line ceiling. Starting measurement: 1,500 substantive lines, zero existing overrun. Final: 1,959 added + 4 deleted = 1,963; excess over the original ceiling and increase from the preserved baseline: 463. Splitting would leave the same producer operation incompletely verified; further forced compression risks lost checks, readability or hidden behavior. Alternatives already attempted were removal of redundant fixture checks, receipt/schema constant reuse, duplicate-validation consolidation and independent reduction review; those attempts were not repeated merely for line headroom. ChatGPT disposition: WAIVER_RECOMMENDED_FOR_REQUIRED_VERIFICATION_COMPLETION, not clean implementation review or merge approval. Joseph approval: this owner-delivered continuation approves the task-specific exception. Reevaluation: new capability, source operation, dependency, contract, production module, store, interface or unrelated path remains outside the exception; an increased line count alone is not grounds to stop. This final committed handoff records the effective authorization and satisfies the committed-waiver requirement; no advance waiver commit, new waiver file, activation/index regeneration or handoff-schema change is required. Future task budgets remain unchanged."
+    ],
+    "simplicity_conformance": "PASS"
+  },
+  "known_risks": [
+    "Owner package review and separate exact-head ChatGPT governance review remain mandatory.",
+    "John 13:1 and 13:15 require owner prose revision; John 13:17 requires exact comparison authority before admission.",
+    "Local PostgreSQL tests skipped; exact-head disposable PostgreSQL CI is required.",
+    "The final head/CI cannot exist inside their own handoff commit; the completion comment binds them without rewriting history.",
+    "Finite Foundation conformance evidence does not prove equivalence across all runtime versions.",
+    "Linux Foundation concretely differs for three retained witnesses. Owner approved Apple Foundation CI; no universal cross-platform equivalence claim."
+  ],
+  "decisions_required": [
+    "ChatGPT reviews exact final PR head.",
+    "Joseph reviews the candidate and record-level exclusions; no reader admission or merge is authorized here."
+  ],
+  "billable_actions": {
+    "performed": false,
+    "actual_cost_usd": 0
+  },
+  "next_required_action": "CHATGPT_REVIEW",
+  "merge_performed": false,
+  "next_task_started": false
+}
