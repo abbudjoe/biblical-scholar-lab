@@ -1,8 +1,8 @@
 # Package Status
 
-## J13-LAB-01 bounded reactivation
+## J13-LAB-02 private pilot finalization
 
-J13-LAB-01 is the only reactivated bounded Lab task: independent verification and non-activatable package-candidate compilation under [the exact v3 activation](../activations/ACT-J13-LAB-01-VERIFY-COMPILE-PACKAGE-CANDIDATE-v3.json). No source admission is activated. T09-OP01, T10, TNEVAL-A0 through A4, old model/training/cloud paths, and later work remain unstarted and unauthorized. Owner package review is required before any Biblos admission or merge claim.
+J13-LAB-01 is merged at `ff362da6300a16b4c36aacc5039ff5fe90a39bae`. J13-LAB-02 alone is active under [its exact activation](../activations/ACT-J13-LAB-02-FINALIZE-PRIVATE-PILOT-RELEASE-v1.json) for local private release derivation of the unchanged three approved notes. Actual Biblos admission, public release, other original tasks and all evaluations remain unauthorized.
 
 ## Current disposition
 
@@ -175,7 +175,7 @@ P1-T05 implementation work in Biblos is not a dependency for this Lab design sta
 
 ## Next eligible program action
 
-J13-LAB-01 alone is active under the bounded authority above.
+J13-LAB-02 alone is active under the bounded authority above.
 
 A future next step requires a new bounded handoff from the top-level program. Possible later design work may include:
 
