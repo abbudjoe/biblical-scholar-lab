@@ -158,6 +158,14 @@
       "schema_path": "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v1.schema.json",
       "owning_task": "J13-LAB-01",
       "sha256": "e161c569d44cbf0156d381068568fb1b1fa9fc83d3a48396f4bd05fdbe4b9704"
+    },
+    {
+      "contract": "TranslationAnnotationCompilationReceipt",
+      "schema_version": "translation-annotation-compilation-receipt-v2",
+      "owning_design": "DR-31",
+      "schema_path": "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v2.schema.json",
+      "owning_task": "J13-LAB-02",
+      "sha256": "97745ac272232df28717f34cfc9656add2061013552be5e2de8d68d24313ae9d"
     }
   ]
 }

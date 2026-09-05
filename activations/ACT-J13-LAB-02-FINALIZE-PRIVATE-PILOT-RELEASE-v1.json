@@ -1,0 +1,134 @@
+{
+  "activated_adapters": [
+    "Reuse existing duplicate-safe JSON, RFC8785/hashing, SourceSnapshot evidence binding, native Swift/Foundation helper, anchor/prose checks and ownership-aware output-integrity routines.",
+    "Read-only GitHub retrieval of PR 23 merge receipt and the two exact already-frozen consumer conformance references when a local exact copy is absent. No current upstream branch substitution, new sources or consumer execution."
+  ],
+  "activated_contracts": [
+    "TranslationAnnotationCompilationReceipt version 2: release variant in existing family; Python model TranslationAnnotationCompilationReceiptV2, schema_version translation-annotation-compilation-receipt-v2. Version 1 remains intact.",
+    "External TranslationAnnotationPackage v1 and ReaderAnnotationProjection v1: exact existing read-only authorities, no schema change or new family."
+  ],
+  "activated_data_stores": [
+    "Existing Git authorities, hash-only release manifest and Lab-local existing-decision record.",
+    "Existing canonical archive read-only for the four used admitted sources and their retained licensing/attribution evidence; no archive publication, .incoming mutation or database access.",
+    "Private ignored .local/releases/J13-LAB-02 and .local/evidence/J13-LAB-02 for real release outputs and validation evidence; not a shared store or production dependency."
+  ],
+  "activated_interfaces": [
+    "Internal exact owner-decision loader, payload-rights assessment, allowlisted candidate-to-release derivation, and independent release validator within the three named release production/tool files.",
+    "uv run python -m tools.j13_lab_02_finalize_private_pilot --archive-root <path> --producer-commit <sha> --output-dir <path> [--check-against <path>]; local/offline only, no general CLI or service."
+  ],
+  "activated_invariants": [
+    "Execution is authorized only by Joseph directly delivering this exact activation and runnable task to the Lab Codex worker. Governance-chat authoring does not execute the task.",
+    "Joseph's GPT-6 Astra/high direction controls this task. The only inherited activation-schema exception is root_turn.model: gpt-6 rather than obsolete gpt-5.6; validate all remaining schema constraints unchanged. Do not edit AGENTS.md or the governance schema.",
+    "Start from Lab main ff362da6300a16b4c36aacc5039ff5fe90a39bae, tree a62d2372902c7d27d64f28ca9eda9968e921372c; PR 23 is merged. Use current-tree verification, not historical branch reconstruction.",
+    "Historical input package 77648d3c8f562df6110eecbb7c978cfbd13e0b7b7ec7583ba98b1f72ade8cbfa and receipt 5f4f85288fc312fafdf164ac93f1c553e55a6b6c892f209de78d7cc4e6d46bdc remain byte-identical; preserve all J13-LAB-01 fixtures, artifacts, six production/helper files, and candidate receipt schema/validator.",
+    "The exact Lab-local owner decision is the object in the runnable prompt, canonical-file SHA-256 77fc75c831da6fbf8bed11d7e1c227466a7d3b205627b3318d62326f2a63bbf8. Its prior editorial approval is corroborated by PR 23 comment 5548832754; it does not grant source rights or specialist review.",
+    "The roster is exactly tan:john.13.8:no-share-with-me, tan:john.13.10:bathed-versus-washed, tan:john.13.19:i-am-or-i-am-he; annotation and Notes projection revisions stay 2.",
+    "Preserve all decoded editorial strings without normalization, arrays/order, claims and support edges, anchors, target Scripture identities, source version IDs/locators, annotation IDs/revisions/supersession, and model_assisted_editorial_review label.",
+    "Do not reevaluate, rewrite, research, or add excluded/deferred records. Existing regression tests remain permitted.",
+    "Use only the frozen Notes/Biblos manifest and existing admitted evidence. Consumer commit remains 8d9a8a2e051089fbd05a3d03e32da445a6d13f48; never use unmerged PR 11.",
+    "Reader-delivery review inventories the actual shipped Greek/English excerpts, morphology-derived statements, lexical paraphrases, citations, and notices. Trace permissions and obligations to exact retained license evidence, not merely owner approval, availability, admission or PUBLIC_DEMO.",
+    "No source acquisition or license campaign. Existing exact source snapshots and retained license/attribution objects may be read without owner-archive or database mutation. Report unresolved rights accurately; no subset release or replacement record.",
+    "Successful reader delivery requires supported findings for all three records and fulfilled applicable attribution/license conditions. Reciprocal-license obligations, factual use versus copied expression, and source-specific terms require explicit bounded assessment; no automatic relicensing of owner prose.",
+    "New package keeps series tap:j13-pilot-01 and uses package_revision=2. Omit supersedes_package_file_sha256; first installation uses expectedPredecessor=nil. Bind candidate derivation only in the detached receipt. Annotation supersedes_revision=1 stays unchanged.",
+    "Release annotations have editorial_state=owner_approved, source_verification_state=verified, lifecycle_state=active and reader_delivery.decision=allowed only after exact approval and rights checks. Other eligibility decisions stay unchanged; training remains disallowed.",
+    "Allowed differences are only package revision, editorial approval, reader-delivery metadata, resolved non-reader limitation wording without new grants, and evidence-required source attribution/display notices. An explicit path/value delta validator rejects every other difference.",
+    "The package schema and plain-text-v1 are unchanged. Required notices with URLs that cannot occupy package plain-text fields travel in an accompanying SOURCE-NOTICES text file, cryptographically bound in the private receipt and admission handoff. Do not weaken plain-text-v1 or discard a required notice.",
+    "Add only version 2 of the existing TranslationAnnotationCompilationReceipt family. Keep the version-1 class and schema bytes unchanged. Versioned release model is separate, strict/frozen/closed, with family name preserved in registry; this is not a fourth family.",
+    "Version 2 binds exact candidate/receipt, owner record, Notes revisions, payload-specific rights evidence and notices, current producer commit/file hashes, permitted delta, release file bytes/hash, first-install semantics, and biblos_admission_performed=false.",
+    "A receipt self-hash is an integrity check, not permission. Release validation reconstructs the permitted derivation from pinned candidate/approval and validated evidence; recomputed outer hashes must not authorize content changes or unsupported rights.",
+    "Output package and receipt use RFC 8785 UTF-8 bytes without a trailing newline; their file hashes are detached. Two independent builds from identical frozen inputs must be byte-identical. No timestamp/randomness or final-commit self-reference inside deterministic artifacts.",
+    "The repository is public. Actual private-pilot release JSON, full rights/compilation receipt, and notices remain under ignored .local/releases/J13-LAB-02 with private permissions and are delivered only via private task/conversation attachment. Commit only code, schemas, existing-decision metadata and hash-only release manifest/handoff. No public Actions upload, GitHub Release, or force-added private output.",
+    "No new dependency, endpoint, UI, persistent store, generic release platform, Notes/Biblos mutation, model/provider evaluation, training/cloud task or deployment.",
+    "One task branch and draft PR; no artificial exact commit count. A final handoff-only commit follows normal governance. No approval request for unchanged prose. Worker stops READY_FOR_CHATGPT_REVIEW; governance stops READY_FOR_BIBLOS_ADMISSION only after clean review, meaning ready to attempt, not already admitted.",
+    "Task-scoped simplicity exception, effective on explicit delivery: 1,500 remains the measurement/review threshold, not a stop solely for required tests or necessary defect fixes within the named release scope. Record starting/final measured amounts, reasons, attempted simplification, reevaluation condition, ChatGPT recommendation and delivery approval in the existing handoff. No new capabilities/files/dependencies are permitted by this exception; function/module complexity and coverage remain binding. The old J13-LAB-01 waiver is not reused."
+  ],
+  "activated_paths": [
+    "activations/ACT-J13-LAB-02-FINALIZE-PRIVATE-PILOT-RELEASE-v1.json",
+    "activations/ACT-J13-LAB-02-FINALIZE-PRIVATE-PILOT-RELEASE-v1.sha256",
+    "README.md",
+    "design/DECISION_INDEX.md",
+    "design/PACKAGE_STATUS.md",
+    "artifacts/J13-LAB-02/owner-decision.json",
+    "artifacts/J13-LAB-02/release-manifest.json",
+    "src/bsl/contracts/translation_annotation_compilation_release.py",
+    "src/bsl/application/j13_private_pilot_release.py",
+    "tools/j13_lab_02_finalize_private_pilot.py",
+    "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v2.schema.json",
+    "contracts/registry.json",
+    "tests/test_j13_private_pilot_release.py",
+    "tests/test_cli_and_schemas.py",
+    "handoffs/J13-LAB-02/J13-LAB-02-ASTRA-v1.md",
+    "handoffs/J13-LAB-02/J13-LAB-02-ASTRA-v1.json"
+  ],
+  "activated_user_visible_capability": "A private three-annotation reader package with attribution/notices, a separate release compilation receipt, and an admission handoff ready for an independent Biblos importer attempt after exact-head review.",
+  "activation_id": "ACT-J13-LAB-02-FINALIZE-PRIVATE-PILOT-RELEASE-v1",
+  "approved_design_commit": "ff362da6300a16b4c36aacc5039ff5fe90a39bae",
+  "approved_design_ids": [
+    "DR-10",
+    "DR-28",
+    "DR-30",
+    "DR-31",
+    "J13-LAB-02"
+  ],
+  "budgets": {
+    "handwritten_production_files_hard_limit": 3,
+    "migrations_hard_limit": 0,
+    "new_direct_dependencies_hard_limit": 0,
+    "new_public_contracts_hard_limit": 1,
+    "substantive_changed_lines_hard_limit": 1500,
+    "substantive_changed_lines_target": 600
+  },
+  "completion_criteria": [
+    "All three exact annotations are released only if reader rights and notice fulfillment pass; exclusions/deferred records and all historical bytes remain unchanged.",
+    "A versioned release receipt in the same family proves exact derivation and first-install compatibility without requiring candidate admission; v1 still validates unchanged.",
+    "Private immutable artifacts, reproducibility evidence and public hash-only manifest are ready for review; no actual Biblos admission or extra operation is claimed.",
+    "Tests, coverage, original-schema preservation, registry, source/approval/content integrity and exact-head CI pass. One draft PR stops at READY_FOR_CHATGPT_REVIEW and remains unmerged."
+  ],
+  "explicit_non_goals": [
+    "Another editorial review of unchanged prose; reopening excluded/deferred records; new Scripture/source verification campaign.",
+    "Source acquisition, owner archive/database mutation, Notes/Biblos mutation, actual Biblos import, P1-T13/UI implementation, public release, commercial distribution, retrieval/evaluation/training grants.",
+    "Candidate or original receipt mutation, fourth contract family, generic publication service, registry/sync/vector store, new dependency or workflow.",
+    "Model/API evaluation, OCR/VLM, cloud campaign, training/adaptation/serving/quantization/distillation, T09-OP01/T10 or deployment."
+  ],
+  "objective": "Derive a rights-supported, owner-approved, immutable first-install release from the reviewed three-annotation candidate, without changing its editorial content or claiming Biblos admission.",
+  "owner_approval": {
+    "approved_at": null,
+    "owner": "Joseph Abbud",
+    "status": "APPROVED"
+  },
+  "prohibited_scaffolding": [
+    "No general permission engine, plugin layer, CMS, service/endpoint, shared database, signing/update infrastructure or abstract release framework.",
+    "No copied Biblos importer or guessed Unicode implementation; reuse frozen native helper.",
+    "No unsafe candidate-schema relaxation or approval flags accepted without exact authority; no self-referential receipt/commit."
+  ],
+  "required_evidence": [
+    "Exact merged base, owner-decision bytes/hash, retained merge-receipt evidence, candidate/receipt hashes and frozen Notes/Biblos identities.",
+    "Payload field-to-source/permission/notice inventory; license object hashes/locators and scope analysis; required-notice fulfillment; unsupported rights listed without compensating roster changes.",
+    "Private release package and receipt file hashes/bytes; notice file hash/bytes; exact allowed delta and content-invariance digest; producer commit and file fingerprints; two-build equality.",
+    "Public hash-only release manifest and handoff with private artifact attachments supplied separately to Joseph; no full private evidence in the public PR.",
+    "Validation commands/results, both contract-version registry hashes, substantive-line/complexity receipt, exact-head CI, actual operation counts, archive before/after evidence and no upstream mutations."
+  ],
+  "required_tests": [
+    "Historical candidate, receipt, original receipt schema/model, upstream fixtures and original six producer/helper files remain unchanged.",
+    "Complete exact roster, all frozen prose/claims/edges/anchors/source identities, allowed delta, and accurate review label.",
+    "Missing/mismatched owner decision, changed candidate/receipt bytes, ungrounded rights approval, missing license notices, and false operation grants reject even after recomputing outer identities.",
+    "Original candidate remains ineligible; release satisfies the exact pinned consumer states. Revision 2 with absent predecessor and expected predecessor nil passes first-install semantics; missing/mismatched/unexpected predecessor cases reject.",
+    "Duplicate decoded JSON members, closed-object/schema failures, invalid Unicode/anchors, duplicate/dangling references, wrong receipt binding and unauthorized delta reject atomically.",
+    "Version-1 validation/schema remain unchanged; version-2 strict/frozen/closed model, generated schema and same-family versioned registry tests pass.",
+    "Actual payload-rights inventory includes Greek/English excerpts, morphology facts/derivatives and lexical prose, with source-specific notices and bounded supported bases; unresolved cases yield no reader-ready package.",
+    "Two independent builds plus byte drift check; source/approval reload consistency; output containment, ownership-aware failure cleanup, no mutation of private prior outputs or owner archive; no forbidden network/database/model calls.",
+    "Existing full Python/schema/format/type regressions and required CI; overall branch-aware coverage >=90% and changed Python branch coverage including release controller >=90%. No exclusions or test deletions to meet metrics."
+  ],
+  "root_turn": {
+    "base_branch": "main",
+    "luna_delegation_allowed": false,
+    "model": "gpt-6",
+    "reasoning_effort": "high",
+    "task_branch": "codex/j13-lab-02-finalize-private-pilot-release",
+    "task_id": "J13-LAB-02",
+    "title": "Finalize the exact three-note private offline pilot release"
+  },
+  "schema_version": "1.0",
+  "status": "APPROVED",
+  "vertical_slice_id": "J13-LAB-02"
+}

@@ -1,0 +1,363 @@
+{
+  "task_id": "J13-LAB-02",
+  "worker": "GPT-6 Astra / high",
+  "base_commit": "ff362da6300a16b4c36aacc5039ff5fe90a39bae",
+  "base_tree": "a62d2372902c7d27d64f28ca9eda9968e921372c",
+  "implementation_head_sha": "a762110d05f5608ea96cfda60617519fa1793e25",
+  "producer_commit": "a762110d05f5608ea96cfda60617519fa1793e25",
+  "pre_handoff_head_sha": "f9bd4d74d00d99420efc95910f364eb64ab3061e",
+  "activation_sha256": "ef38fd4e87b85b3b5062ede0c7890058450a16d250af6d9e452f39ef04fcff68",
+  "local_validation_complete": true,
+  "requested_terminal_state": "READY_FOR_CHATGPT_REVIEW",
+  "final_head_and_ci_binding": "Completion comment after this handoff-only commit and exact-head CI; no future commit identity embedded.",
+  "github_auth": {
+    "auth_mode": "GH_CLI_EXISTING_AUTH",
+    "active_login": "abbudjoe",
+    "active_account": true,
+    "token_override_variables": {
+      "GH_TOKEN": "absent",
+      "GITHUB_TOKEN": "absent",
+      "GH_ENTERPRISE_TOKEN": "absent",
+      "GITHUB_ENTERPRISE_TOKEN": "absent"
+    },
+    "credentials_displayed_or_changed": false
+  },
+  "owner_authority": {
+    "direct_delivery_activates_this_task": true,
+    "owner_decision_sha256": "77fc75c831da6fbf8bed11d7e1c227466a7d3b205627b3318d62326f2a63bbf8",
+    "prior_approval_comment_id": 5548832754,
+    "prior_approval_comment_sha256": "0125e0c139afc84170c93a676f3d0c5c5dde1969b603063d3e82463dc1faf136",
+    "new_editorial_approval_required": false,
+    "activation_schema_exception": "Only /root_turn/model const overridden in memory to gpt-6; original schema unchanged; all other constraints pass; approval timestamp remains null."
+  },
+  "release_inventory": [
+    {
+      "byte_count": 22801,
+      "name": "SOURCE-NOTICES.j13-pilot-01.txt",
+      "sha256": "e86597b413b6d01d007118dfd6bebfac45adb4907041aa406e54d8cda2282efb"
+    },
+    {
+      "byte_count": 164409,
+      "name": "translation-annotation-compilation-receipt.j13-pilot-01.release.json",
+      "sha256": "5e4d463fc4e9c90a0f0eb1a1cf481019c0fdece25e593a392f9793d46737c989"
+    },
+    {
+      "byte_count": 98,
+      "name": "SOURCE-NOTICES.j13-pilot-01.sha256",
+      "sha256": "5516b2b3f82e26ba8f068750179b74c3ae92ef4a3d394ff25390ee27f8eaebb0"
+    },
+    {
+      "byte_count": 1495,
+      "name": "J13-LAB-02-admission-handoff.md",
+      "sha256": "cb88f7ae6fab1efbabeba74176e73c025bf3aa998cd11616bbf254df535e7535"
+    },
+    {
+      "byte_count": 123,
+      "name": "translation-annotation-package.j13-pilot-01.release.sha256",
+      "sha256": "5abf8e0331a617d568e316417d1c8f77529481a7378f1917b57ff4aa667a0322"
+    },
+    {
+      "byte_count": 22510,
+      "name": "translation-annotation-package.j13-pilot-01.release.json",
+      "sha256": "989b26354d176fdfc1dafdc6e9e5b4444ab1a6b81d69e038f9618e5244da6964"
+    },
+    {
+      "byte_count": 135,
+      "name": "translation-annotation-compilation-receipt.j13-pilot-01.release.sha256",
+      "sha256": "46849d8862a37064681dd4a8d6b5ad7a91c8fe1c0c62c17f344a282331807626"
+    }
+  ],
+  "release_manifest_sha256": "cde7b8bd59f617452d3d4e1aa8864fe3cc9ea60bcff01818822f8ca12f8b0123",
+  "roster": [
+    {
+      "annotation_issue_id": "tan:john.13.8:no-share-with-me",
+      "annotation_revision": 2,
+      "supersedes_revision": 1
+    },
+    {
+      "annotation_issue_id": "tan:john.13.10:bathed-versus-washed",
+      "annotation_revision": 2,
+      "supersedes_revision": 1
+    },
+    {
+      "annotation_issue_id": "tan:john.13.19:i-am-or-i-am-he",
+      "annotation_revision": 2,
+      "supersedes_revision": 1
+    }
+  ],
+  "source_rights_summary": [
+    {
+      "result": "supported",
+      "source_id": "SP01-SRC-001"
+    },
+    {
+      "result": "supported",
+      "source_id": "SP01-SRC-002"
+    },
+    {
+      "result": "supported",
+      "source_id": "SP01-SRC-004"
+    },
+    {
+      "result": "supported",
+      "source_id": "SP01-SRC-005"
+    }
+  ],
+  "rights_scope": "Exact three-note private offline pilot; required notices travel with reader set. MorphGNT use is bounded grammatical facts without adapted data; owner prose is not relicensed.",
+  "private_delivery": "Exact seven files retained under ignored private release output directories; no attachment-upload tool available. Joseph receives exact local locations and hashes in the private conversation. External governance must receive the exact private bytes before final readiness.",
+  "protected_content_equal": true,
+  "protected_content_sha256": "77648d3c8f562df6110eecbb7c978cfbd13e0b7b7ec7583ba98b1f72ade8cbfa",
+  "permitted_delta_sha256": "9695671e7a7eb0fcad5a7daabd87c2cdc1628d9568ba0d76e503bfde98b15160",
+  "permitted_delta_count": 29,
+  "historical_candidate_unchanged": true,
+  "original_six_source_files_and_upstream_fixtures_unchanged": true,
+  "v1_schema_sha256": "e161c569d44cbf0156d381068568fb1b1fa9fc83d3a48396f4bd05fdbe4b9704",
+  "new_contract_versions": 1,
+  "new_shared_contract_families": 0,
+  "validation": [
+    {
+      "command": "uv sync --frozen",
+      "exit_code": 0,
+      "log": "head-check-0.log"
+    },
+    {
+      "command": "uv lock --check",
+      "exit_code": 0,
+      "log": "head-check-1.log"
+    },
+    {
+      "command": "uv run ruff format --check .",
+      "exit_code": 0,
+      "log": "head-check-2.log"
+    },
+    {
+      "command": "uv run ruff check .",
+      "exit_code": 0,
+      "log": "head-check-3.log"
+    },
+    {
+      "command": "uv run pyright",
+      "exit_code": 0,
+      "log": "head-check-4.log"
+    },
+    {
+      "command": "uv run pytest -q tests/test_j13_private_pilot_release.py",
+      "exit_code": 0,
+      "log": "head-check-5.log"
+    },
+    {
+      "command": "uv run pytest -q tests/test_cli_and_schemas.py::test_schema_generation_has_no_drift_and_registry_hashes_match",
+      "exit_code": 0,
+      "log": "head-check-6.log"
+    },
+    {
+      "command": "uv run pytest --cov=bsl --cov=tools.j13_lab_02_finalize_private_pilot --cov-branch --cov-report=term-missing --cov-report=json:.local/evidence/J13-LAB-02/coverage.json --cov-fail-under=90",
+      "exit_code": 0,
+      "log": "head-check-7.log"
+    },
+    {
+      "command": "uv run ruff check src/bsl/application/j13_private_pilot_release.py src/bsl/contracts/translation_annotation_compilation_release.py tools/j13_lab_02_finalize_private_pilot.py --select C901,PLR1702 --preview",
+      "exit_code": 0,
+      "log": "head-check-8.log"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "log": "head-check-9.log"
+    },
+    {
+      "command": "git fsck --full",
+      "exit_code": 0,
+      "log": "head-check-10.log"
+    }
+  ],
+  "coverage": {
+    "measurement": "all branches in the three new release Python files; controller included",
+    "files": [
+      {
+        "file": "src/bsl/application/j13_private_pilot_release.py",
+        "branch_total": 120,
+        "branch_covered": 119,
+        "branch_percent": 99.16666666666667,
+        "statement_percent": 99.59349593495935
+      },
+      {
+        "file": "src/bsl/contracts/translation_annotation_compilation_release.py",
+        "branch_total": 14,
+        "branch_covered": 14,
+        "branch_percent": 100.0,
+        "statement_percent": 100.0
+      },
+      {
+        "file": "tools/j13_lab_02_finalize_private_pilot.py",
+        "branch_total": 38,
+        "branch_covered": 37,
+        "branch_percent": 97.36842105263158,
+        "statement_percent": 98.98989898989899
+      }
+    ],
+    "combined_branch_percent": 98.83720930232558,
+    "overall_branch_aware_coverage_percent": 91.44200626959248
+  },
+  "real_attempts": {
+    "successful": 2,
+    "failed": 0,
+    "seven_files_equal": true,
+    "private_directory_mode": "0700",
+    "private_file_mode": "0600",
+    "archive_unchanged": true
+  },
+  "implementation_repairs": [
+    "Tests exposed tools import setup, synthetic source inventory setup, empty-root JSON pointer traversal, and an erroneous loader argument; corrected in the implementation commit.",
+    "Independent review exposed contextual provenance trust, output-directory creation race, and notice evidence lineage; root-cause fixes and regressions passed."
+  ],
+  "internal_conformance_review": "No remaining material defects after repairs; exact private artifacts independently reviewed; does not replace external exact-head governance review.",
+  "required_workflows": [
+    "vs01-t01-ci",
+    "vs01-t05-ci",
+    "vs01-t09b-web-ci"
+  ],
+  "ci_status_at_handoff_creation": "Not yet run for the future handoff head. Final completion comment binds actual final head/tree and all workflow IDs/results.",
+  "private_evidence_hashes": [
+    {
+      "name": "implementation-head-checks.json",
+      "sha256": "0c47f6516a10efd7b6e52e7c2507e5a2161c2efa4ddb2a6c33037b22822d822b",
+      "bytes": 1743
+    },
+    {
+      "name": "coverage.json",
+      "sha256": "026fc002515d0204aec5116ba19b3a5e5ac47e825f84e86b5c5788d482e5eace",
+      "bytes": 664812
+    },
+    {
+      "name": "changed-branch-coverage.json",
+      "sha256": "8fe70ef78f675153c600577b3df3fbb6c0b34f17d9ffa45e3ed64a7de5806c45",
+      "bytes": 872
+    },
+    {
+      "name": "complexity.json",
+      "sha256": "062597e268c022b96b4fdebe7dc250d25d580e5b2285c4eb6116593acb1f4ab6",
+      "bytes": 2993
+    },
+    {
+      "name": "archive-preflight.json",
+      "sha256": "204a744e8911b5b66e30061ca915843ead96076e4c2a8c93e72dd3e377c45dc2",
+      "bytes": 174
+    },
+    {
+      "name": "real-build-1.json",
+      "sha256": "6044f5bae114809b4e0eeba1dc1962a4d621bb817e10f45f6fc2981278338228",
+      "bytes": 3201
+    },
+    {
+      "name": "real-build-2.json",
+      "sha256": "acd4f1a440f1f5b4696a5d506c590315905b66d9fe485d9ef82edd21eed5532e",
+      "bytes": 3200
+    },
+    {
+      "name": "real-comparison.json",
+      "sha256": "0c7e867348a39a4798d34315a2b9f7686911f4c50e55a22802ca9d4f2441d449",
+      "bytes": 1400
+    },
+    {
+      "name": "real-commands.json",
+      "sha256": "ecce9a572ac0983f02342c2646724a94049ab89d03bc888cfe84baf4f39bc099",
+      "bytes": 701
+    },
+    {
+      "name": "private-artifact-review.json",
+      "sha256": "ca339d2040b306eb438a07a914ce93b62d43961ae61ce3af43d8f1cd287c401f",
+      "bytes": 393
+    },
+    {
+      "name": "review-repairs.json",
+      "sha256": "5b059462f55dda453b8f87f06ca4b83002685c770a002160391a326135df35fd",
+      "bytes": 478
+    },
+    {
+      "name": "auth-preflight.json",
+      "sha256": "1c3628505e6e006c11a8bbc956940c924a3a234145f7468eb6fba6dafedfc2b1",
+      "bytes": 313
+    },
+    {
+      "name": "focused-first.log",
+      "sha256": "06576f428bbdf3c4940015cab3e7b802965bade1249cd53c0df2975206fd56fc",
+      "bytes": 1002
+    },
+    {
+      "name": "focused-second.log",
+      "sha256": "299f9081f826066cf75db0706e0a3b4c596c7fc2200115ce69cbb0fcb3fcf7ee",
+      "bytes": 44958
+    },
+    {
+      "name": "focused-third.log",
+      "sha256": "70115966abdab9288afe543282748df02e730287ed3f501f52a8804f54c228d5",
+      "bytes": 4513
+    },
+    {
+      "name": "focused-fourth.log",
+      "sha256": "929cdedde99a9674945306a28c4b493e2b1354068223772a9b38380ce12c160c",
+      "bytes": 4231
+    },
+    {
+      "name": "focused-fifth.log",
+      "sha256": "5d3b8597aaa20a6776a938b454103e8294cf7c52af567d141e8cf2fe766ca593",
+      "bytes": 1443
+    },
+    {
+      "name": "focused-sixth.log",
+      "sha256": "d2a43604704bbfd2f3aa67a8438fd5d7fdfe0107045e98bdf98ce99d93292a24",
+      "bytes": 460
+    }
+  ],
+  "prohibited_operation_counts": {
+    "runtime_network": 0,
+    "source_acquisition": 0,
+    "owner_archive_mutation": 0,
+    "owner_database_connections": 0,
+    "Notes_mutations": 0,
+    "Biblos_mutations": 0,
+    "real_consumer_import": 0,
+    "model_provider_api_evaluation": 0,
+    "cloud_training": 0,
+    "deployment": 0,
+    "public_release": 0,
+    "commercial_distribution": 0,
+    "original_batch_rerun_by_release": 0,
+    "excluded_deferred_reevaluation_by_release": 0
+  },
+  "permitted_operations_note": "Existing full regression tests and governance GitHub access are authorized; disposable CI database regression is separate from owner database access.",
+  "biblos_admission_performed": false,
+  "pr_must_remain_draft": true,
+  "merge_authorized": false,
+  "remaining_gate": "External governance reviews exact live PR head and exact private bytes. Only after clean review can READY_FOR_BIBLOS_ADMISSION mean ready to attempt independent admission.",
+  "simplicity_receipt": {
+    "rule": "DR-30 and task-scoped J13-LAB-02 completion waiver",
+    "target": 600,
+    "review_threshold": 1500,
+    "starting_changed_lines": 0,
+    "final_changed_lines": 2736,
+    "excess": 1236,
+    "count_method": "All added and removed physical diff lines, including comments, tests, activation and generated schema; no exclusions. Logical complexity is separately measured by tokenize.NEWLINE.",
+    "module_logical_lines": {
+      "application": 248,
+      "contract": 122,
+      "controller": 102
+    },
+    "max_function_logical_lines": 27,
+    "cyclomatic_complexity_max": 10,
+    "nesting_max": 3,
+    "new_handwritten_production_files": 3,
+    "new_dependencies": 0,
+    "migrations": 0,
+    "reason": "Splitting would separate the single bounded derivation from its required strict receipt, source/approval/notice proofs, controller ownership fixes, and adversarial tests.",
+    "simplifications_attempted": [
+      "Reused original source loader, duplicate-safe JSON, canonical serialization, native Unicode helper, anchor/prose checks and ownership-aware writer primitives.",
+      "One same-family receipt version, three implementation/tool files, no general release/permission framework.",
+      "Preserved registry formatting and changed only concise status lines."
+    ],
+    "reevaluate_if": "Scope, files, dependencies, interfaces, stores or source authority expands; total lines alone do not stop required bounded completion.",
+    "chatgpt_disposition": "WAIVER_RECOMMENDED_FOR_BOUNDED_RELEASE_COMPLETION",
+    "joseph_delivery_approval": "Joseph directly delivered this exact task and activation, including the new J13-LAB-02 completion exception; no reuse of the old J13-LAB-01 waiver."
+  }
+}

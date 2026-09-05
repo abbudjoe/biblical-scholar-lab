@@ -1,0 +1,538 @@
+{
+  "$defs": {
+    "_Delta": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "basis_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Basis Ids",
+          "type": "array"
+        },
+        "new_canonical_json": {
+          "title": "New Canonical Json",
+          "type": "string"
+        },
+        "old_canonical_json": {
+          "title": "Old Canonical Json",
+          "type": "string"
+        },
+        "pointer": {
+          "title": "Pointer",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pointer",
+        "old_canonical_json",
+        "new_canonical_json",
+        "reason",
+        "basis_ids"
+      ],
+      "title": "_Delta",
+      "type": "object"
+    },
+    "_File": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "exclusiveMinimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "byte_count"
+      ],
+      "title": "_File",
+      "type": "object"
+    },
+    "_Material": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "annotation_id": {
+          "title": "Annotation Id",
+          "type": "string"
+        },
+        "basis_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Basis Ids",
+          "type": "array"
+        },
+        "material_type": {
+          "enum": [
+            "quotation",
+            "original prose",
+            "lexical paraphrase",
+            "morphology-derived statement",
+            "citation/notice"
+          ],
+          "title": "Material Type",
+          "type": "string"
+        },
+        "pointer": {
+          "title": "Pointer",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "result": {
+          "const": "supported",
+          "title": "Result",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "annotation_id",
+        "pointer",
+        "text",
+        "material_type",
+        "basis_ids",
+        "reason",
+        "result"
+      ],
+      "title": "_Material",
+      "type": "object"
+    },
+    "_Note": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "annotation_issue_id": {
+          "title": "Annotation Issue Id",
+          "type": "string"
+        },
+        "annotation_revision": {
+          "const": 2,
+          "title": "Annotation Revision",
+          "type": "integer"
+        },
+        "notes_git_blob": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Notes Git Blob",
+          "type": "string"
+        },
+        "notes_original_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Notes Original Sha256",
+          "type": "string"
+        },
+        "reader_annotation_projection_revision": {
+          "const": 2,
+          "title": "Reader Annotation Projection Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "annotation_issue_id",
+        "annotation_revision",
+        "reader_annotation_projection_revision",
+        "notes_git_blob",
+        "notes_original_sha256"
+      ],
+      "title": "_Note",
+      "type": "object"
+    },
+    "_Right": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "basis_id": {
+          "title": "Basis Id",
+          "type": "string"
+        },
+        "components": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "fulfillment": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fulfillment",
+          "type": "array"
+        },
+        "grant": {
+          "title": "Grant",
+          "type": "string"
+        },
+        "obligations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Obligations",
+          "type": "array"
+        },
+        "permission_evidence": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Permission Evidence",
+          "type": "array"
+        },
+        "reciprocal_assessment": {
+          "title": "Reciprocal Assessment",
+          "type": "string"
+        },
+        "result": {
+          "const": "supported",
+          "title": "Result",
+          "type": "string"
+        },
+        "snapshot_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Snapshot Identity",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_version": {
+          "title": "Source Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basis_id",
+        "source_id",
+        "source_version",
+        "snapshot_identity",
+        "components",
+        "permission_evidence",
+        "grant",
+        "obligations",
+        "fulfillment",
+        "reciprocal_assessment",
+        "result"
+      ],
+      "title": "_Right",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "activation_sha256": {
+      "const": "ef38fd4e87b85b3b5062ede0c7890058450a16d250af6d9e452f39ef04fcff68",
+      "title": "Activation Sha256",
+      "type": "string"
+    },
+    "approval_comment_id": {
+      "const": 5548832754,
+      "title": "Approval Comment Id",
+      "type": "integer"
+    },
+    "approval_comment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Approval Comment Sha256",
+      "type": "string"
+    },
+    "approval_pull_request": {
+      "const": 23,
+      "title": "Approval Pull Request",
+      "type": "integer"
+    },
+    "approval_repository": {
+      "const": "abbudjoe/biblical-scholar-lab",
+      "title": "Approval Repository",
+      "type": "string"
+    },
+    "archive_inventory_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Inventory Sha256",
+      "type": "string"
+    },
+    "biblos_admission_performed": {
+      "const": false,
+      "title": "Biblos Admission Performed",
+      "type": "boolean"
+    },
+    "consumer_commit": {
+      "const": "8d9a8a2e051089fbd05a3d03e32da445a6d13f48",
+      "title": "Consumer Commit",
+      "type": "string"
+    },
+    "consumer_references": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Consumer References",
+      "type": "array"
+    },
+    "consumer_schema": {
+      "const": "translation-annotation-package-v1",
+      "title": "Consumer Schema",
+      "type": "string"
+    },
+    "consumer_schema_sha256": {
+      "const": "f4ed1437b95c037d619b93c9e414948eb8f8fb4f5602b365c9cf250956aefd49",
+      "title": "Consumer Schema Sha256",
+      "type": "string"
+    },
+    "declared_predecessor_present": {
+      "const": false,
+      "title": "Declared Predecessor Present",
+      "type": "boolean"
+    },
+    "delivery_scope": {
+      "const": "Joseph-controlled private offline Biblos pilot only",
+      "title": "Delivery Scope",
+      "type": "string"
+    },
+    "deterministic_output_proof": {
+      "const": "Contextual reconstruction binds every byte; independent seven-file equality is recorded in execution evidence.",
+      "title": "Deterministic Output Proof",
+      "type": "string"
+    },
+    "expected_installed_predecessor": {
+      "title": "Expected Installed Predecessor",
+      "type": "null"
+    },
+    "first_install": {
+      "const": true,
+      "title": "First Install",
+      "type": "boolean"
+    },
+    "input_candidate": {
+      "$ref": "#/$defs/_File"
+    },
+    "input_receipt": {
+      "$ref": "#/$defs/_File"
+    },
+    "input_receipt_identity": {
+      "const": "1565dfdecb33c000714a25721603043e0d8e8a6de95558364d9677bf5a2369da",
+      "title": "Input Receipt Identity",
+      "type": "string"
+    },
+    "non_reader_eligibility_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Non Reader Eligibility Sha256",
+      "type": "string"
+    },
+    "notes": {
+      "items": {
+        "$ref": "#/$defs/_Note"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "notice_file": {
+      "$ref": "#/$defs/_File"
+    },
+    "owner_decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Owner Decision Sha256",
+      "type": "string"
+    },
+    "package_file": {
+      "$ref": "#/$defs/_File"
+    },
+    "package_revision": {
+      "const": 2,
+      "title": "Package Revision",
+      "type": "integer"
+    },
+    "package_series_id": {
+      "const": "tap:j13-pilot-01",
+      "title": "Package Series Id",
+      "type": "string"
+    },
+    "payload_inventory": {
+      "items": {
+        "$ref": "#/$defs/_Material"
+      },
+      "title": "Payload Inventory",
+      "type": "array"
+    },
+    "permitted_delta": {
+      "items": {
+        "$ref": "#/$defs/_Delta"
+      },
+      "title": "Permitted Delta",
+      "type": "array"
+    },
+    "permitted_delta_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Permitted Delta Sha256",
+      "type": "string"
+    },
+    "producer_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Producer Commit",
+      "type": "string"
+    },
+    "producer_files": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Producer Files",
+      "type": "array"
+    },
+    "protected_content_equal": {
+      "const": true,
+      "title": "Protected Content Equal",
+      "type": "boolean"
+    },
+    "protected_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Protected Content Sha256",
+      "type": "string"
+    },
+    "receipt_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Identity",
+      "type": "string"
+    },
+    "remaining_gate": {
+      "const": "Exact-head governance review of private bytes, then independent Biblos admission with notices.",
+      "title": "Remaining Gate",
+      "type": "string"
+    },
+    "review_label": {
+      "const": "model_assisted_editorial_review",
+      "title": "Review Label",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "translation-annotation-compilation-receipt-v2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_rights": {
+      "items": {
+        "$ref": "#/$defs/_Right"
+      },
+      "title": "Source Rights",
+      "type": "array"
+    },
+    "upstream_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Upstream Manifest Sha256",
+      "type": "string"
+    },
+    "variant": {
+      "const": "private-offline-pilot-release",
+      "title": "Variant",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "variant",
+    "receipt_identity",
+    "activation_sha256",
+    "input_candidate",
+    "input_receipt",
+    "input_receipt_identity",
+    "owner_decision_sha256",
+    "approval_comment_id",
+    "approval_pull_request",
+    "approval_repository",
+    "approval_comment_sha256",
+    "notes",
+    "upstream_manifest_sha256",
+    "consumer_commit",
+    "consumer_schema",
+    "consumer_schema_sha256",
+    "consumer_references",
+    "producer_commit",
+    "producer_files",
+    "source_rights",
+    "payload_inventory",
+    "package_series_id",
+    "package_revision",
+    "first_install",
+    "expected_installed_predecessor",
+    "declared_predecessor_present",
+    "protected_content_equal",
+    "protected_content_sha256",
+    "permitted_delta",
+    "permitted_delta_sha256",
+    "non_reader_eligibility_sha256",
+    "delivery_scope",
+    "review_label",
+    "package_file",
+    "notice_file",
+    "archive_inventory_sha256",
+    "deterministic_output_proof",
+    "biblos_admission_performed",
+    "remaining_gate"
+  ],
+  "title": "TranslationAnnotationCompilationReceiptV2",
+  "type": "object"
+}

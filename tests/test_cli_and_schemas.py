@@ -54,6 +54,7 @@ from bsl.contracts.runtime_screening import (
 from bsl.contracts.source_admission import AdmissionDecision, FetchReceipt, SourceAcquisitionDryRun, SourceSnapshot
 from bsl.contracts.study_workspace import VS01StudyWorkspaceProjection
 from bsl.contracts.translation_annotation_compilation import TranslationAnnotationCompilationReceipt
+from bsl.contracts.translation_annotation_compilation_release import TranslationAnnotationCompilationReceiptV2
 from bsl.interfaces.cli import main
 
 ROOT = Path(__file__).parents[1]
@@ -146,6 +147,10 @@ SCHEMAS = (
         ROOT / "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v1.schema.json",
         TranslationAnnotationCompilationReceipt,
     ),
+    (
+        ROOT / "contracts/json-schema/translation-annotation/translation-annotation-compilation-receipt-v2.schema.json",
+        TranslationAnnotationCompilationReceiptV2,
+    ),
 )
 
 
@@ -158,7 +163,10 @@ def test_schema_generation_has_no_drift_and_registry_hashes_match() -> None:
     for path, model in SCHEMAS:
         assert path.read_bytes() == schema_bytes(model)
     registry = json.loads((ROOT / "contracts/registry.json").read_text())
-    names = [model.__name__ for _path, model in SCHEMAS]
+    families = {"TranslationAnnotationCompilationReceiptV2": "TranslationAnnotationCompilationReceipt"}
+    names = [families.get(model.__name__, model.__name__) for _path, model in SCHEMAS]
+    identities = [(e["contract"], e["schema_version"]) for e in registry["contracts"]]
+    assert len(identities) == len(set(identities))
     assert [entry["contract"] for entry in registry["contracts"]] == names
     for entry in registry["contracts"]:
         path = ROOT / entry["schema_path"]
